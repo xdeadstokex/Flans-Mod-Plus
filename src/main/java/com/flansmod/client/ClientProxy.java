@@ -46,6 +46,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
@@ -111,6 +112,7 @@ import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketBuyArmour;
 import com.flansmod.common.network.PacketBuyWeapon;
 import com.flansmod.common.network.PacketCraftDriveable;
+import com.flansmod.common.network.PacketGiveItem;
 import com.flansmod.common.network.PacketRepairDriveable;
 import com.flansmod.common.teams.ArmourBoxType;
 import com.flansmod.common.teams.BlockArmourBox;
@@ -391,6 +393,13 @@ public class ClientProxy extends CommonProxy
 	{
 		FlansMod.getPacketHandler().sendToServer(new PacketBuyArmour(box.shortName, shortName, piece));
 		FlansModClient.shootTimeLeft = FlansModClient.shootTimeRight = 10;
+	}
+	
+	@Override
+	public void addItem(EntityPlayer player, int id){
+		super.addItem(player, id);
+		if(player.worldObj.isRemote)
+			FlansMod.getPacketHandler().sendToServer(new PacketGiveItem(57));
 	}
 	
 	@Override

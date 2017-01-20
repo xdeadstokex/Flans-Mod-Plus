@@ -424,10 +424,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 
 			//Calculate the new pitch and consider pitch limiters
 			float newPlayerPitch = playerLooking.getPitch() - deltaY / lookSpeed * FlansMod.proxy.getMouseSensitivity();
-			if(newPlayerPitch > -seatInfo.minPitch)
-				newPlayerPitch = -seatInfo.minPitch;
-			if(newPlayerPitch < -seatInfo.maxPitch)
-				newPlayerPitch = -seatInfo.maxPitch;
+
 
 			//Calculate new yaw and consider yaw limiters
 			float newPlayerYaw = playerLooking.getYaw() + deltaX / lookSpeed * FlansMod.proxy.getMouseSensitivity();

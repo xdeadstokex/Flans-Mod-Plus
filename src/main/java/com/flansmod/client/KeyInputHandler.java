@@ -5,6 +5,8 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.input.Keyboard;
 
@@ -12,6 +14,8 @@ import com.flansmod.api.IControllable;
 import com.flansmod.client.gui.GuiTeamScores;
 import com.flansmod.client.gui.GuiTeamSelect;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.driveables.DriveableType;
+import com.flansmod.common.network.PacketGiveItem;
 import com.flansmod.common.network.PacketGunMode;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketRequestDebug;
@@ -135,6 +139,7 @@ public class KeyInputHandler
 		{
 			FlansModClient.reloadModels(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
 		}
+		
 
 		//Handle driving keys
 		if(ridingEntity instanceof IControllable)

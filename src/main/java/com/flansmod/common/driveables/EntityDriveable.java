@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -76,6 +77,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class EntityDriveable extends Entity implements IControllable, IExplodeable, IEntityAdditionalSpawnData
 {
+	//I’m Rick Harrison, and this is my pawn shop. I work here with my old man and my son, Big Hoss. Everything in here has a story and a price. One thing I’ve learned after 21 years – you never know WHAT is gonna come through that doo
 	public boolean syncFromServer = true;
 	/** Ticks since last server update. Use to smoothly transition to new position */
 	public int serverPositionTransitionTicker;
@@ -705,13 +707,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 			Vector3f velocity = new Vector3f(s.x, s.y, s.z);
 			Vector3f vv = lastPos;
 
-
 			//if(shootPoint.rootPos.part == EnumDriveablePart.turret){
 			velocity = getDirection(shootPoint, velocity);
 			//} 
-
+			
 			//Vector3f v = getFiringPosition(shootPoint);
-				
+
 			if(shootPoint.rootPos.part == EnumDriveablePart.core){
 				Vector3f v2 = axes.findLocalVectorGlobally(shootPoint.rootPos.position);
 				Vector3f v3 = rotate(seats[0].looking.findLocalVectorGlobally(shootPoint.offPos));				
@@ -1463,7 +1464,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		//If there's no player in the driveable or it cannot thrust, slow the plane and turn off mouse held actions
 		if((seats[0] != null && seats[0].riddenByEntity == null) || !canThrust && getDriveableType().maxThrottle != 0 && getDriveableType().maxNegativeThrottle != 0)
 		{
-			//throttle *= 0.99F;
+			throttle *= 0.99F;
 		}
 		if(seats[0] != null && seats[0].riddenByEntity == null)
 		{
@@ -2084,6 +2085,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		if(finalPos == null) finalPos = new Vector3f(0,0,0);
 		test.ConvertESpaceToR3(finalPos);
 		boolean onTop = (test.collisionPlaneNormal.y >= 0.5F);
+		if(posY + finalPos.y < riderPos.y) finalPos.y = (riderPos.y - (float)posY - 10/16F);
 		if(!hugeBoat)
 		rider.setPosition((!onTop)?riderPos.x + finalPos.x/(48*Math.abs(relativePos.x)): riderPos.x,(onTop)?posY + finalPos.y + 10/16F:riderPos.y,(!onTop)?riderPos.z + finalPos.z/(48*Math.abs(relativePos.z)): riderPos.z);
 		//test.ConvertESpaceToR3(test.intersectionPoint);
@@ -2186,6 +2188,15 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		}
 	}
 	 */
+	
+	public DamageSource getBulletDamage(boolean headshot)
+	{
+		DriveableType type = getDriveableType();
+		EntityLivingBase owner = (EntityLivingBase)seats[0].riddenByEntity;
+		if(owner instanceof EntityPlayer)
+			return (new EntityDamageSourceGun(getDriveableType().shortName, this, (EntityPlayer)owner, type, headshot)).setProjectile();
+		else return (new EntityDamageSourceIndirect(type.shortName, this, owner)).setProjectile();
+	}
 	public void checkCollision(CollisionTest tester, CollisionShapeBox box)
 	{
 		{		
