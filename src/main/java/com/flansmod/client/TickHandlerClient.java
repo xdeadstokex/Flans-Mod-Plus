@@ -456,6 +456,9 @@ public class TickHandlerClient
 						if(entP.flareDelay > 0)
 							mc.fontRenderer.drawString("Flare : Reloading"  , 2, 52, 0xdaa520);
 					}
+					Vector3f up2 = (Vector3f)entP.axes.getYAxis().normalise();
+					mc.fontRenderer.drawString(String.format("Lift : %.0f%%", (float)entP.getSpeedXYZ()*(float)entP.getSpeedXYZ()*up2.y), 92, 22, 0xffffff);
+
 				}
 				if(ent instanceof EntityVehicle)
 				{

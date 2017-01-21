@@ -11,10 +11,11 @@ public class FlightController {
 	public EnumPlaneMode mode;
 
 	//Physics parameters
-	public float gravity;
-	public float drag;
-	public float thrust;
-	public float lift;
+	public float gravity = 1;
+	public float drag = 0;
+	public float thrust = 0;
+	public float lift = 0;
+	public Vector3f angularMomentum = new Vector3f(0,0,0);
 
 	public void UpdateParams(EntityPlane plane)
 	{
@@ -36,15 +37,18 @@ public class FlightController {
 		gravity = 0.98F / 10F;
 		drag = 1F - (0.05F * type.drag);
 
-		if(mode == EnumPlaneMode.PLANE)
+		switch(mode)
+		{
+		case PLANE :
 		{
 			PlaneModeFly(plane);
 		}
-
-		if(mode == EnumPlaneMode.HELI)
+		case HELI :
 		{
 			HeliModeFly(plane);
 		}
+		}
+
 	}
 
 	public void SetAxes(EntityPlane plane)
@@ -52,6 +56,8 @@ public class FlightController {
 		PlaneType type = plane.getPlaneType();
 		//Set angles
 		float sensitivityAdjust = (throttle > 0.5F ? 1.5F - throttle : 4F * throttle - 1F);
+		if((float)plane.getSpeedXYZ() < 0.5)
+		sensitivityAdjust *= (float)plane.getSpeedXYZ()*2;
 		if(sensitivityAdjust < 0F)
 			sensitivityAdjust = 0F;
 		//Scalar
@@ -59,6 +65,7 @@ public class FlightController {
 		float yaw = yawControl * (yawControl > 0 ? type.turnLeftModifier : type.turnRightModifier) * sensitivityAdjust;
 		float pitch = pitchControl * (pitchControl > 0 ? type.lookUpModifier : type.lookDownModifier) * sensitivityAdjust;
 		float roll = rollControl * (rollControl > 0 ? type.rollLeftModifier : type.rollRightModifier) * sensitivityAdjust;
+
 		//Damage modifiers
 		if(mode == EnumPlaneMode.PLANE)
 		{
@@ -71,11 +78,87 @@ public class FlightController {
 				roll -= 2F * plane.getSpeedXZ();
 			if(!plane.isPartIntact(EnumDriveablePart.rightWing))
 				roll += 2F * plane.getSpeedXZ();
+		} else if(mode == EnumPlaneMode.HELI)
+		{
+			if(!plane.isPartIntact(EnumDriveablePart.tail))
+			{
+				yaw = 10*throttle;
+			}
 		}
 
-		plane.axes.rotateLocalYaw(yaw);
-		plane.axes.rotateLocalPitch(pitch);
-		plane.axes.rotateLocalRoll(-roll);
+		angularMomentum.x = moveToTarget(angularMomentum.x, yaw, 1);
+		angularMomentum.y = moveToTarget(angularMomentum.y, pitch, 1);
+		angularMomentum.z = moveToTarget(angularMomentum.z, roll, 1);
+
+		LimitAngularMomentum(angularMomentum, 20);
+
+		plane.axes.rotateLocalYaw(angularMomentum.x);
+		plane.axes.rotateLocalPitch(angularMomentum.y);
+		plane.axes.rotateLocalRoll(-angularMomentum.z);
+		
+		angularMomentum.scale(0.99F);
+	}
+	
+	public float moveToTarget(float current, float target, float speed)
+	{	
+		
+		float pitchToMove = (float)((Math.sqrt(target*target)) - Math.sqrt((current*current)));
+		for(; pitchToMove > 180F; pitchToMove -= 360F) {}
+		for(; pitchToMove <= -180F; pitchToMove += 360F) {}
+		
+		float signDeltaY = 0;
+		if(pitchToMove > speed){
+			signDeltaY = 1;
+		} else if(pitchToMove < -speed){
+			signDeltaY = -1;
+		} else {
+			signDeltaY = 0;
+			return target;
+		}
+		
+		
+		if(current > target)
+		{
+			current = current - speed;
+		}
+		
+		else if(current < target)
+		{
+			current = current + speed;
+		}
+		
+		return current;
+	}
+
+	public void LimitAngularMomentum(Vector3f vec, float angle)
+	{
+		//Limit X
+		if(vec.x > angle)
+		{
+			vec.x = angle;
+		}
+		if(vec.x < -angle)
+		{
+			vec.x = -angle;
+		}
+		//Limit y
+		if(vec.y > angle)
+		{
+			vec.y = angle;
+		}
+		if(vec.y < -angle)
+		{
+			vec.y = -angle;
+		}
+		//Limit z
+		if(vec.z > angle)
+		{
+			vec.z = angle;
+		}
+		if(vec.z < -angle)
+		{
+			vec.z = -angle;
+		}
 	}
 
 	public void PlaneModeFly(EntityPlane plane)
@@ -86,8 +169,8 @@ public class FlightController {
 		int numPropsWorking = 0;
 		int numProps = 0;
 		float fuelConsumptionMultiplier = 2F;
-		float flap = (float)Math.sqrt(plane.flapsYaw*plane.flapsYaw) + (float)Math.sqrt(plane.flapsPitchLeft*plane.flapsPitchLeft) + + (float)Math.sqrt(plane.flapsPitchRight*plane.flapsPitchRight);
-		drag -=flap/500;
+		float flap = angularMomentum.length();
+		drag -=flap/100;
 		throttle -= - flap/500;
 		//Count the number of working propellers
 		for(Propeller prop : type.propellers)
@@ -110,39 +193,40 @@ public class FlightController {
 		float newSpeed = lastTickSpeed + thrust * 2F;
 
 		//Calculate the amount to alter motion by
-		float proportionOfMotionToCorrect = 2F * throttle - 0.5F;
+		float proportionOfMotionToCorrect = 2F * throttle;
 		if(proportionOfMotionToCorrect < 0F)
 			proportionOfMotionToCorrect = 0F;
 		if(proportionOfMotionToCorrect > 1.5F)
 			proportionOfMotionToCorrect = 1.5F;
 
-		plane.motionY -= gravity;
 
 		//Apply lift
 		int numWingsIntact = 0;
 		if(plane.isPartIntact(EnumDriveablePart.rightWing)) numWingsIntact++;
 		if(plane.isPartIntact(EnumDriveablePart.leftWing)) numWingsIntact++;
 
-		float amountOfLift = 2F * gravity * throttle * numWingsIntact / 2F * drag;
-		if(amountOfLift > gravity)
-			amountOfLift = gravity;
+		lift = (float)plane.getSpeedXYZ() * (float)plane.getSpeedXYZ() * numWingsIntact / 2F;
 		Vector3f up2 = (Vector3f)plane.axes.getYAxis().normalise();
-		amountOfLift *= Math.sqrt(up2.y*up2.y);
-
-		plane.motionY += amountOfLift;
-
+		lift *= Math.sqrt(up2.y*up2.y);
+		if(lift > gravity){
+			lift = gravity;
+		}
 
 		//Cut out some motion for correction
 		plane.motionX *= 1F - proportionOfMotionToCorrect;
 		plane.motionY *= 1F - proportionOfMotionToCorrect;
 		plane.motionZ *= 1F - proportionOfMotionToCorrect;
 
+		if(lift<gravity && throttle < 0.5) forwards.y = 0;
 		//Add the corrected motion
 		plane.motionX += proportionOfMotionToCorrect * newSpeed * forwards.x;
 		plane.motionY += proportionOfMotionToCorrect * newSpeed * forwards.y;
 		plane.motionZ += proportionOfMotionToCorrect * newSpeed * forwards.z;
 		
-		plane.motionY -= - flap/500;
+		plane.motionY += lift;
+		plane.motionY -= gravity;
+		
+	
 
 		if(!plane.isPartIntact(EnumDriveablePart.rightWing) && !plane.isPartIntact(EnumDriveablePart.rightWing)){
 			plane.motionY += -1;
@@ -163,6 +247,12 @@ public class FlightController {
 		plane.lastPos = new Vector3f(plane.motionX, plane.motionY, plane.motionZ);
 
 		data.fuelInTank -= thrust * fuelConsumptionMultiplier * data.engine.fuelConsumption;
+		
+		if(plane.getSpeedXYZ() > 2){
+			plane.axes.rotateLocalPitch(((float)Math.random()-0.5F)/4);
+			plane.axes.rotateLocalYaw(((float)Math.random()-0.5F)/4);
+			plane.axes.rotateLocalRoll(((float)Math.random()-0.5F)/4);
+		}
 
 	}
 
@@ -218,11 +308,10 @@ public class FlightController {
 		//motionX += rand.nextGaussian() * wobbleFactor;
 		//motionY += rand.nextGaussian() * wobbleFactor;
 		//motionZ += rand.nextGaussian() * wobbleFactor;
-		drag = 1-(1-drag)/5;
 		//Apply drag
-		plane.motionX *= drag;
+		plane.motionX *= 1-(1-drag)/5;
 		plane.motionY *= drag;
-		plane.motionZ *= drag;
+		plane.motionZ *= 1-(1-drag)/5;
 
 		plane.lastPos = new Vector3f(plane.motionX, plane.motionY, plane.motionZ);
 

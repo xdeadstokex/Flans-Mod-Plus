@@ -458,8 +458,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 	        }
 		}
         
-		//wheelsYaw -= 1F;
-        
 
 		//Get vehicle type
         VehicleType type = this.getVehicleType();
