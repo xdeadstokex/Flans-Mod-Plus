@@ -1431,7 +1431,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         		//FlansMod.proxy.spawnParticle(emitter.effectType, posX + pos.x, posY + pos.y, posZ + pos.z, velocity.x, velocity.y, velocity.z);
         		
     			FlansMod.getPacketHandler().sendToAllAround(
-    					new PacketParticle(emitter.effectType,
+    					new PacketParticle("flansmod.afterburn",
     	        				posX + pos.x, posY + pos.y, posZ + pos.z, velocity.x, velocity.y, velocity.z),
     	        				posX + pos.x, posY + pos.y, posZ + pos.z, 150, dimension);
         		
@@ -2085,7 +2085,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		if(finalPos == null) finalPos = new Vector3f(0,0,0);
 		test.ConvertESpaceToR3(finalPos);
 		boolean onTop = (test.collisionPlaneNormal.y >= 0.5F);
-		if(posY + finalPos.y < riderPos.y) finalPos.y = (riderPos.y - (float)posY - 10/16F);
+		if(posY + finalPos.y +10/16F< riderPos.y) finalPos.y = (riderPos.y - (float)posY - 10F/16F);
 		if(!hugeBoat)
 		rider.setPosition((!onTop)?riderPos.x + finalPos.x/(48*Math.abs(relativePos.x)): riderPos.x,(onTop)?posY + finalPos.y + 10/16F:riderPos.y,(!onTop)?riderPos.z + finalPos.z/(48*Math.abs(relativePos.z)): riderPos.z);
 		//test.ConvertESpaceToR3(test.intersectionPoint);
@@ -2533,6 +2533,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 				rider.motionX = rider.motionX;
 				rider.motionY = rider.motionY;
 				rider.motionZ = rider.motionZ;
+				if(rider.motionY < 0) rider.motionY = 0;
 			}
 			else
 			{

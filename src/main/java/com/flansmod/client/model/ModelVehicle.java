@@ -243,7 +243,9 @@ public class ModelVehicle extends ModelDriveable
 					aBodyDoorCloseModel.render(f5, oldRotateOrder);
 			}
 			for (ModelRendererTurbo aSteeringWheelModel : steeringWheelModel) {
+				if(!vehicle.hugeBoat)
 				aSteeringWheelModel.rotateAngleX = vehicle.wheelsYaw * 3.14159265F / 180F * 3F;
+				else aSteeringWheelModel.rotateAngleX = -vehicle.wheelsYaw * 3.14159265F / 180F * 3F;
 				aSteeringWheelModel.render(f5, oldRotateOrder);
 			}
         }

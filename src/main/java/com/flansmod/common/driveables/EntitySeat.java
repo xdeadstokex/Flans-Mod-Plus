@@ -23,6 +23,7 @@ import com.flansmod.api.IControllable;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
+import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemShootable;
@@ -473,7 +474,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 
 			float targetX;
 			
-			if(FlansModClient.controlModeMouse || !driver ||(driveable instanceof EntityPlane))
+			if(FlansModClient.controlModeMouse || !driver ||(driveable instanceof EntityPlane)||(driveable instanceof EntityMecha))
 			targetX = playerLooking.getYaw();
 			else targetX = targetYaw;
 			
@@ -536,7 +537,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 			//Calculate the new pitch and consider pitch limiters
 			float targetY = playerLooking.getPitch();
 			
-			if(!FlansModClient.controlModeMouse && driver && !(driveable instanceof EntityPlane)) targetY = targetPitch;
+			if(!FlansModClient.controlModeMouse && driver && !(driveable instanceof EntityPlane) && !(driveable instanceof EntityMecha)) targetY = targetPitch;
 
 			float pitchToMove = (targetY - looking.getPitch());
 			for(; pitchToMove > 180F; pitchToMove -= 360F) {}

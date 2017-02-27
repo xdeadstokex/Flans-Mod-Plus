@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -25,8 +26,10 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.client.audio.PositionedSoundRecord;
 
 import com.flansmod.api.IExplodeable;
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.model.AnimTankTrack;
 import com.flansmod.client.model.AnimTrackLink;
 import com.flansmod.common.FlansMod;
@@ -62,6 +65,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 	public int shellDelay, gunDelay;
 	/** Position of looping sounds */
 	public int soundPosition;
+	public int driftPosition;
 	public int idlePosition;
 	/** Front wheel yaw, used to control the vehicle steering */
 	public float wheelsYaw;
@@ -515,6 +519,8 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 			soundPosition--;	
 		if(idlePosition > 0)
 			idlePosition--;	
+		if(driftPosition > 0)
+			driftPosition--;	
 				
 		if(type.tank && !hasBothTracks()) throttle = 0;
 		if(disabled) wheelsYaw = 0;
@@ -662,7 +668,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 						//wheel.motionX -= wheel.getSpeedXZ() * Math.sin(wheel.rotationYaw * 3.14159265F / 180F) * velocityScale * wheelsYaw;
 						//wheel.motionZ += wheel.getSpeedXZ() * Math.cos(wheel.rotationYaw * 3.14159265F / 180F) * velocityScale * wheelsYaw;
 					}
-					float adjThrot = (float)Math.sqrt(throttle*throttle);
+					float adjThrot = (float)Math.sqrt(wheel.getSpeedXZ()*wheel.getSpeedXZ());
 					float grip = 1-adjThrot;
 					grip = 0;
 					float adjYaw = (float)Math.sqrt(wheelsYaw*wheelsYaw);
@@ -685,8 +691,14 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 						wheel.motionZ *= 1F;
 					}
 					
-					if(adjYaw - (adjYaw*grip) > 5)
+					if(adjYaw - (adjYaw*grip) > 5 && !hugeBoat && wheel.getSpeedXYZ() >= 0.7F){
+						if (driftPosition <= 0 && hasEnoughFuel() && wheel == wheels[0])
+						{
+							PacketPlaySound.sendSoundPacket(posX + wheel.motionX, posY, posZ + wheel.motionZ, 500, dimension, type.driftSound, false);
+							driftPosition = 65;
+						}
 					FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("explode",wheel.posX, wheel.posY, wheel.posZ, 0,0,0), posX, posY, posZ, 150, dimension);
+					}
 				}
 			}
 			

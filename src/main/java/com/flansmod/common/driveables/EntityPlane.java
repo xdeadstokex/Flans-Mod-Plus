@@ -8,11 +8,14 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 
+import com.flansmod.client.model.animation.AnimationController;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.network.PacketDriveableControl;
 import com.flansmod.common.network.PacketDriveableKey;
+import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.network.PacketPlaneAnimator;
 import com.flansmod.common.network.PacketPlaneControl;
 import com.flansmod.common.network.PacketPlaySound;
@@ -23,6 +26,8 @@ import com.flansmod.common.vector.Vector3f;
 import com.jcraft.jorbis.Block;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
 
 public class EntityPlane extends EntityDriveable
 {
@@ -73,6 +78,8 @@ public class EntityPlane extends EntityDriveable
 	public float zSpeed = 0;
 	public float rollSpeed = 0;
 	public FlightController control = new FlightController();
+	public AnimationController anim = new AnimationController();
+	public boolean initiatedAnim = false;
 
 
 	public EntityPlane(World world)
@@ -361,6 +368,7 @@ public class EntityPlane extends EntityDriveable
 					else mode = EnumPlaneMode.HELI;
 					player.addChatMessage(new ChatComponentText(mode == EnumPlaneMode.HELI ? "Entering hover mode" : "Entering plane mode"));
 				}
+				anim.changeState(varWing?0:1);
 				toggleTimer = 10;
 				FlansMod.getPacketHandler().sendToServer(new PacketDriveableControl(this));
 			}
@@ -430,6 +438,23 @@ public class EntityPlane extends EntityDriveable
 		prevTailWheelRot = tailWheelRot;
 		prevDoorPos = doorPos;
 		prevDoorRot = doorRot;
+		if(getPlaneType().valkyrie){
+			if(!initiatedAnim){ 
+				anim.initPoses();
+				anim.initAnim();
+				initiatedAnim = true;
+				anim.changeState(varWing?0:1);
+			}
+			
+			if(initiatedAnim)
+			{ 
+				int i = varWing?0:1;
+				anim.UpdateAnim(i);
+				
+			}
+		}
+		
+
 
 		//Get plane type
 		PlaneType type = getPlaneType();
@@ -516,7 +541,7 @@ public class EntityPlane extends EntityDriveable
 				((EntityPlayer)seats[0].riddenByEntity).addChatMessage(new ChatComponentText("Deploying landing gear"));
 			}
 			varGear = true;
-			if(!type.foldWingForLand){
+			if(type.foldWingForLand){
 				if(varWing && (EntityPlayer)seats[0].riddenByEntity != null){
 					((EntityPlayer)seats[0].riddenByEntity).addChatMessage(new ChatComponentText("Extending wings"));
 				}
@@ -644,7 +669,9 @@ public class EntityPlane extends EntityDriveable
 				wheel.rotationYaw = axes.getYaw();
 
 				//Pull wheels towards car
-				Vector3f targetWheelPos = axes.findLocalVectorGlobally(getPlaneType().wheelPositions[wheel.ID].position);
+				Vector3f wPos = getPlaneType().wheelPositions[wheel.ID].position;
+				if(type.valkyrie && !varWing) wPos = new Vector3f(wPos.x, wPos.y - 80/16F, wPos.z);
+				Vector3f targetWheelPos = axes.findLocalVectorGlobally(wPos);
 				Vector3f currentWheelPos = new Vector3f(wheel.posX - posX, wheel.posY - posY, wheel.posZ - posZ);
 
 				float targetWheelLength = targetWheelPos.length();
@@ -756,6 +783,14 @@ public class EntityPlane extends EntityDriveable
 			FlansMod.getPacketHandler().sendToAllAround(new PacketPlaneControl(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
 			FlansMod.getPacketHandler().sendToAllAround(new PacketPlaneAnimator(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
 
+		}
+		
+		if(initiatedAnim)
+		{
+			Vector3f v = anim.getPositionOnPart(new Vector3f(-151, -30, -24), anim.parts.get(7));
+			v = axes.findLocalVectorGlobally(new Vector3f(-v.x, -v.y, v.z));
+			if(v.x != Float.NaN && v.y != Float.NaN && v.z != Float.NaN)
+			FlansMod.proxy.spawnParticle("flansmod.afterburn", posX+v.x/16F, posY+(v.y/16F), posZ+v.z/16F, 0, 0.5F, 0);
 		}
 	}
 

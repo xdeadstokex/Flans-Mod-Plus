@@ -1059,6 +1059,7 @@ public class ItemGun extends Item implements IFlanItem
 	/** Reload method. Called automatically when firing with an empty clip */
 	public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload)
 	{	
+
 		//Deployable guns cannot be reloaded in the inventory
 		if(gunType.deployable)
 			return false;

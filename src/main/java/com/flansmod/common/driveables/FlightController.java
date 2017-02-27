@@ -55,9 +55,12 @@ public class FlightController {
 	{
 		PlaneType type = plane.getPlaneType();
 		//Set angles
-		float sensitivityAdjust = (throttle > 0.5F ? 1.5F - throttle : 4F * throttle - 1F);
+		float sensitivityAdjust = ((float)plane.getSpeedXYZ()/2 > 0.5F ? 1.5F - (float)plane.getSpeedXYZ()/2 : 4F * (float)plane.getSpeedXYZ()/2 - 1F);
+		if(mode == EnumPlaneMode.HELI){
+			sensitivityAdjust = (throttle > 0.5F ? 1.5F - throttle : 4F * throttle - 1F);	
+		}
 		if((float)plane.getSpeedXYZ() < 0.5)
-		sensitivityAdjust *= (float)plane.getSpeedXYZ()*2;
+		//sensitivityAdjust *= (float)plane.getSpeedXYZ()*2;
 		if(sensitivityAdjust < 0F)
 			sensitivityAdjust = 0F;
 		//Scalar
@@ -65,7 +68,7 @@ public class FlightController {
 		float yaw = yawControl * (yawControl > 0 ? type.turnLeftModifier : type.turnRightModifier) * sensitivityAdjust;
 		float pitch = pitchControl * (pitchControl > 0 ? type.lookUpModifier : type.lookDownModifier) * sensitivityAdjust;
 		float roll = rollControl * (rollControl > 0 ? type.rollLeftModifier : type.rollRightModifier) * sensitivityAdjust;
-
+		if(plane.axes.getPitch() <= 60 && plane.getSpeedXYZ() < 0.2 && mode == EnumPlaneMode.PLANE && throttle >= 0.1F){pitch = -1;}
 		//Damage modifiers
 		if(mode == EnumPlaneMode.PLANE)
 		{
@@ -211,13 +214,13 @@ public class FlightController {
 		if(lift > gravity){
 			lift = gravity;
 		}
-
+	
 		//Cut out some motion for correction
 		plane.motionX *= 1F - proportionOfMotionToCorrect;
 		plane.motionY *= 1F - proportionOfMotionToCorrect;
 		plane.motionZ *= 1F - proportionOfMotionToCorrect;
+	
 
-		if(lift<gravity && throttle < 0.5) forwards.y = 0;
 		//Add the corrected motion
 		plane.motionX += proportionOfMotionToCorrect * newSpeed * forwards.x;
 		plane.motionY += proportionOfMotionToCorrect * newSpeed * forwards.y;
@@ -225,7 +228,7 @@ public class FlightController {
 		
 		plane.motionY += lift;
 		plane.motionY -= gravity;
-		
+		if(plane.axes.getPitch() <= 60 && plane.getSpeedXYZ() < 0.2){plane.motionY -= gravity;}
 	
 
 		if(!plane.isPartIntact(EnumDriveablePart.rightWing) && !plane.isPartIntact(EnumDriveablePart.rightWing)){

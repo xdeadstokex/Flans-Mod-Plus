@@ -49,6 +49,9 @@ public class VehicleType extends DriveableType
 	public int trackLinkFix = 5;
 	public boolean flipLinkFix = false;
 	
+	public String driftSound = "";
+	public int driftSoundLength;
+	
 	public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
 
 	public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
@@ -148,7 +151,13 @@ public class VehicleType extends DriveableType
 				shootSoundSecondary = split[1];
 				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
 			}
-			
+			else if(split[0].equals("DriftSoundLength"))
+				driftSoundLength = Integer.parseInt(split[1]);
+			else if(split[0].equals("DriftSound"))
+			{
+				driftSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+			}
 			if(split[0].equalsIgnoreCase("AddSmokePoint") || split[0].equalsIgnoreCase("AddSmokeDispenser"))
 			{
 				SmokePoint smoke = new SmokePoint();
