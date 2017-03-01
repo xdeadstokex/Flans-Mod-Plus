@@ -9,11 +9,12 @@ import com.flansmod.client.model.animation.PoseComponent;
 public class AnimationController 
 {
 	public ArrayList<AnimationPart> parts = new ArrayList<AnimationPart>();
-	int state = 0;
+	public int state = 0;
 	int animStage = 1;
 	ArrayList<AnimationPose> poses = new ArrayList<AnimationPose>();
 	AnimationPose pose;
 	int timeSinceSwitch = 0;
+	
 	
 	public void initAnim()
 	{
@@ -84,10 +85,10 @@ public class AnimationController
 		pose.parts.add(new PoseComponent("nose",new Vector3f(0,0,0), new Vector3f(0,0,0), 2, 2, false));
 		pose.parts.add(new PoseComponent("leftlegtop",new Vector3f(0,0,0), new Vector3f(0,0,0), 2, 2, false));
 		pose.parts.add(new PoseComponent("leftlegmid",new Vector3f(0,0,0), new Vector3f(-20,0,-50), 2, 8, false));
-		pose.parts.add(new PoseComponent("leftlegshin",new Vector3f(-5,10,0), new Vector3f(0,0,-100), 2, 16, false));
+		pose.parts.add(new PoseComponent("leftlegshin",new Vector3f(0,0,0), new Vector3f(0,0,-100), 2, 16, false));
 		pose.parts.add(new PoseComponent("rightlegtop",new Vector3f(0,0,0), new Vector3f(0,0,0), 2, 2, false));
 		pose.parts.add(new PoseComponent("rightlegmid",new Vector3f(0,0,0), new Vector3f(20,0,-50), 2, 8, false));
-		pose.parts.add(new PoseComponent("rightlegshin",new Vector3f(-5,10,0), new Vector3f(0,0,-100), 2, 16, false));
+		pose.parts.add(new PoseComponent("rightlegshin",new Vector3f(0,0,0), new Vector3f(0,0,-100), 2, 16, false));
 		pose.parts.add(new PoseComponent("rearbody",new Vector3f(0,0,0), new Vector3f(0,0,0), 2, 2, false));
 		pose.parts.add(new PoseComponent("tailmid",new Vector3f(0,0,0), new Vector3f(0,0,170), 2, 12, false));
 		pose.parts.add(new PoseComponent("finleft",new Vector3f(0,0,0), new Vector3f(-100,0,0), 2, 14, false));
@@ -164,9 +165,11 @@ public class AnimationController
 			p.prevRot = p.rotation;
 			if(pose != null){
 				PoseComponent q = pose.parts.get(p.type);
+				if(!checkIfFinished(p.offset, q.position))
 				p.offset = transformPart(p.offset, q.position, new Vector3f(q.speed1,q.speed1,q.speed1));
 				if(animHasFinished)
 				animHasFinished = checkIfFinished(p.offset, q.position);
+				if(!checkIfFinished(p.rotation, q.rotation))
 				p.rotation = transformPart(p.rotation, q.rotation, new Vector3f(q.speed2,q.speed2,q.speed2));
 				if(animHasFinished)
 				animHasFinished = checkIfFinished(p.rotation, q.rotation);
@@ -209,69 +212,45 @@ public class AnimationController
 		return i;
 	}
 	
-	public Vector3f getPositionOnPart(Vector3f in, AnimationPart p)
+	public Vector3f getPositionOnPart(Vector3f in, AnimationPart p, RotatedAxes rot)
 	{
-		Vector3f trans = new Vector3f(0,0,0);
-		trans = getFullPosition(p);
-		
-		Vector3f pos = p.position;
-		
-		
+		Vector3f p1 = p.position;
+		Vector3f p2 = in;
+		//Sub P1 from P2
+		p.rotateToPartAxis(rot);
+		p1 = rot.findLocalVectorGlobally(p1);
+		p2 = rot.findLocalVectorGlobally(p2);
+		Vector3f trans = new Vector3f(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+
 		return trans;
 	}
 	
-	public Vector3f getFullRotation(AnimationPart p)
+	public Vector3f getFullPosition(Vector3f in, AnimationPart p)
 	{
-		Vector3f rot = new Vector3f(0,0,0);
+		AnimationPart core = getCorePart();
+		Vector3f pos = new Vector3f(core.position.x,core.position.y,core.position.z);
+		RotatedAxes rot = new RotatedAxes(0,0,0);
 		ArrayList<Integer> chain = new ArrayList<Integer>();
 		chain = generateChain(p, chain);
-		
-		for(int i = 0; i < chain.size(); i++)
+		for(int i = chain.size() - 1; i > 0; i--)
 		{
-			AnimationPart q = parts.get(chain.get(i));
-			Vector3f.add(rot, q.rotation, rot);
+			AnimationPart child = parts.get(chain.get(i-1));
+			AnimationPart part = parts.get(chain.get(i));		
+			Vector3f tPos = getPositionOnPart(Vector3f.add(child.position,  new Vector3f(child.offset.x, -child.offset.y, child.offset.z), null), part, rot);
+			Vector3f.add(tPos, pos, pos);
 		}
-		return rot;
-	}
-	
-	public Vector3f getFullPosition(AnimationPart p)
-	{
-		Vector3f pos = new Vector3f(0,0,0);
-		if(p.parent>= 0)
-		{
-			AnimationPart parent = parts.get(p.parent);
-			Vector3f.add(pos, getPosition(p, parent), pos);
-			Vector3f.add(pos, getFullPosition(parent), pos);
-		}
-		
+
+		Vector3f tPos = getPositionOnPart(Vector3f.add(in,  new Vector3f(p.offset.x, -p.offset.y, p.offset.z), null), p, rot);
+		Vector3f.add(tPos, pos, pos);
 		return pos;
 	}
+	
 	
 	public ArrayList<Integer> generateChain(AnimationPart p, ArrayList<Integer> i)
 	{
 		i.add(p.type);
 		if(p.parent >= 0) generateChain(parts.get(p.parent), i);
 		return i;
-	}
-	
-	public Vector3f getPosition(AnimationPart p1, AnimationPart p2)
-	{
-		Vector3f pos1 = p1.position;
-		Vector3f pos2 = p2.position;
-		Vector3f tPos = Vector3f.sub(pos2, pos1, null); //Subtract position of higher bone from lower bone
-		Vector3f rota = getFullRotation(p1);
-		RotatedAxes rot = new RotatedAxes(rota.x, rota.y, rota.z);
-		tPos = rot.findLocalVectorGlobally(tPos);
-		Vector3f.add(tPos, pos1, tPos);
-		Vector3f off = p1.offset;
-		off = rot.findLocalVectorGlobally(off);
-		Vector3f.add(tPos, off, tPos);
-		return tPos;
-	}
-	/** Takes a vector (such as the origin of a seat / gun) and translates it from local coordinates to global coordinates */
-	public Vector3f rotate(Vector3f inVec, RotatedAxes axes)
-	{
-		return axes.findLocalVectorGlobally(inVec);
 	}
 	
 	public Vector3f transformPart(Vector3f current, Vector3f target, Vector3f rate){

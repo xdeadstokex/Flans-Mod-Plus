@@ -1431,7 +1431,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         		//FlansMod.proxy.spawnParticle(emitter.effectType, posX + pos.x, posY + pos.y, posZ + pos.z, velocity.x, velocity.y, velocity.z);
         		
     			FlansMod.getPacketHandler().sendToAllAround(
-    					new PacketParticle("flansmod.afterburn",
+    					new PacketParticle(emitter.effectType,
     	        				posX + pos.x, posY + pos.y, posZ + pos.z, velocity.x, velocity.y, velocity.z),
     	        				posX + pos.x, posY + pos.y, posZ + pos.z, 150, dimension);
         		

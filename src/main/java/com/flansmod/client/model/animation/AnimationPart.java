@@ -2,6 +2,7 @@ package com.flansmod.client.model.animation;
 
 import java.util.ArrayList;
 
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.vector.Vector3f;
 
 public class AnimationPart 
@@ -23,5 +24,13 @@ public class AnimationPart
 		this.position = pos;
 		this.offset = off;
 		this.rotation = rot;
+	}
+	
+	public RotatedAxes rotateToPartAxis(RotatedAxes rot)
+	{
+		rot.rotateLocalYaw(prevRot.y);
+		rot.rotateLocalPitch(-prevRot.z);
+		rot.rotateLocalRoll(-prevRot.x);
+		return rot;
 	}
 }
