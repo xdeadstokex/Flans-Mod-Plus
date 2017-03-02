@@ -99,7 +99,7 @@ public class EntityPlane extends EntityDriveable
 
 	public EntityPlane(World world, double x, double y, double z, EntityPlayer placer, PlaneType type, DriveableData data)
 	{
-		this(world, x, y, z, type, data);
+		this(world, x, y + 90/16F, z, type, data);
 		rotateYaw(placer.rotationYaw + 90F);
 		rotatePitch(type.restingPitch);
 	}
@@ -457,17 +457,19 @@ public class EntityPlane extends EntityDriveable
 		{
 			Vector3f v = anim.getFullPosition(new Vector3f(151, -25, -24), anim.parts.get(5));
 			v = axes.findLocalVectorGlobally(new Vector3f(-v.x, -v.y, v.z));
-			if(!(Float.isNaN(v.x)))
-			{
-				//FlansMod.proxy.spawnParticle("flansmod.afterburn", posX+v.x/16F, posY+(v.y/16F), posZ+(v.z/16F), 0, 0F, 0);
-				FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.afterburn",posX + v.x/16F, posY + v.y/16F, posZ + v.z/16F, 0,0,0),posX + v.x/16F, posY + v.y/16F, posZ + v.z/16F, 150, dimension);
-			}
 			Vector3f v2 = anim.getFullPosition(new Vector3f(151, -25, 24), anim.parts.get(8));
 			
 			v2 = axes.findLocalVectorGlobally(new Vector3f(-v2.x, -v2.y, v2.z));
-			if(!(Float.isNaN(v.x))){
-				//FlansMod.proxy.spawnParticle("flansmod.afterburn", posX+v2.x/16F, posY+(v2.y/16F), posZ+(v2.z/16F), 0, 0F, 0);
-				FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.afterburn",posX + v2.x/16F, posY + v2.y/16F, posZ + v2.z/16F, 0,0,0),posX + v2.x/16F, posY + v2.y/16F, posZ + v2.z/16F, 150, dimension);
+			for(int i = 0; i < 4; i++){
+				if(!(Float.isNaN(v.x))){
+					//FlansMod.proxy.spawnParticle("flansmod.afterburn", posX+v2.x/16F, posY+(v2.y/16F), posZ+(v2.z/16F), 0, 0F, 0);
+					FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.afterburn",posX + v2.x/16F, posY + v2.y/16F, posZ + v2.z/16F, 0,0,0),posX + v2.x/16F, posY + v2.y/16F, posZ + v2.z/16F, 150, dimension);
+				}
+				if(!(Float.isNaN(v.x)))
+				{
+					//FlansMod.proxy.spawnParticle("flansmod.afterburn", posX+v.x/16F, posY+(v.y/16F), posZ+(v.z/16F), 0, 0F, 0);
+					FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.afterburn",posX + v.x/16F, posY + v.y/16F, posZ + v.z/16F, 0,0,0),posX + v.x/16F, posY + v.y/16F, posZ + v.z/16F, 150, dimension);
+				}
 			}
 
 		}
@@ -688,7 +690,7 @@ public class EntityPlane extends EntityDriveable
 
 				//Pull wheels towards car
 				Vector3f wPos = getPlaneType().wheelPositions[wheel.ID].position;
-				if(type.valkyrie && !varWing) wPos = new Vector3f(wPos.x, wPos.y - 80/16F, wPos.z);
+				if(type.valkyrie && varWing) wPos = new Vector3f(wPos.x, wPos.y + 90/16F, wPos.z);
 				Vector3f targetWheelPos = axes.findLocalVectorGlobally(wPos);
 				Vector3f currentWheelPos = new Vector3f(wheel.posX - posX, wheel.posY - posY, wheel.posZ - posZ);
 
@@ -712,6 +714,7 @@ public class EntityPlane extends EntityDriveable
 
 					if(this.ticksExisted > 5)
 					{
+						if(!(type.valkyrie && anim.timeSinceSwitch < 10))
 						axes.rotateGlobal(-dAngle * type.wheelSpringStrength, rotateAround);
 					}
 

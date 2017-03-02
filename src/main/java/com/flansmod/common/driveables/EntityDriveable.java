@@ -1806,7 +1806,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		float damage = (float) (fallDist < -0.3 ? -fallDist * 50 : 0);
 
 		boolean no_damage = true;
-		if (damage > 0 && invulnerableUnmountCount == 0 && this.ticksExisted > 20)
+		if (damage > 0 && invulnerableUnmountCount == 0 && this.ticksExisted > 20 && !no_damage)
 		{
 			DriveableType type = getDriveableType();
 			damage = (int)(damage * type.fallDamageFactor);

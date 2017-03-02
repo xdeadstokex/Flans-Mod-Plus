@@ -303,11 +303,14 @@ public class RenderPlane extends Render implements IItemRenderer
 	
 	public int getPartId(int i)
 	{
+		/**
 		int id = 0;
 		if(i == 2) id = 0;
 		else if(i == 1) id = 1;
 		else if(i == 0) id = 2;
 		else id = i;
+		*/
+		int id = i;
 		return id;
 	}
 	
