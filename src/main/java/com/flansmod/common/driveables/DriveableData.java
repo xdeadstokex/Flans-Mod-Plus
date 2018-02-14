@@ -30,7 +30,16 @@ public class DriveableData implements IInventory
 	public HashMap<EnumDriveablePart, DriveablePart> parts;
 	
 	public boolean inventoryChanged = false;;
-		
+	
+	/** Paintjob index */
+	public int paintjobID;	
+	
+	public DriveableData(NBTTagCompound tags, int paintjobID)
+	{
+		this(tags);
+		this.paintjobID = paintjobID;
+	}
+	
 	public DriveableData(NBTTagCompound tags)
 	{
 		parts = new HashMap<EnumDriveablePart, DriveablePart>();
@@ -51,6 +60,7 @@ public class DriveableData implements IInventory
 		numMissiles = dType.numMissileSlots;
 		numGuns = dType.ammoSlots();
 		engine = PartType.getPart(tag.getString("Engine"));
+		paintjobID = tag.getInteger("Paint");
 		ammo = new ItemStack[numGuns];
 		bombs = new ItemStack[numBombs];
 		missiles = new ItemStack[numMissiles];
@@ -83,6 +93,7 @@ public class DriveableData implements IInventory
     {
 		tag.setString("Type", type);
 		tag.setString("Engine", engine.shortName);
+		tag.setInteger("Paint", paintjobID);
 		for(int i = 0; i < ammo.length; i++)
 		{
 			if(ammo[i] != null)

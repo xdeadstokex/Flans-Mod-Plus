@@ -2,6 +2,7 @@ package com.flansmod.common.guns;
 
 import java.util.ArrayList;
 
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -10,10 +11,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.client.model.ModelAttachment;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
-public class AttachmentType extends InfoType implements IScope
+public class AttachmentType extends PaintableType implements IScope
 {
 	public static ArrayList<AttachmentType> attachments = new ArrayList<AttachmentType>();
 	
@@ -182,5 +184,18 @@ public class AttachmentType extends InfoType implements IScope
 				return attachment;
 		}
 		return null;
+	}
+	
+	@Override
+	public float GetRecommendedScale()
+	{
+		return 100.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return model;
 	}
 }

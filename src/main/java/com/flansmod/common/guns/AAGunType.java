@@ -3,6 +3,7 @@ package com.flansmod.common.guns;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 
 import com.flansmod.client.model.ModelAAGun;
@@ -11,6 +12,8 @@ import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class AAGunType extends InfoType
 {
@@ -50,6 +53,16 @@ public class AAGunType extends InfoType
 		infoTypes.add(this);
 	}
 
+	@Override
+	protected void preRead(TypeFile file) 
+	{
+	}
+
+	@Override
+	protected void postRead(TypeFile file) 
+	{		
+	}
+	
 	@Override
 	protected void read(String[] split, TypeFile file)
 	{
@@ -194,5 +207,18 @@ public class AAGunType extends InfoType
 	public void reloadModel()
 	{
 		model = FlansMod.proxy.loadModel(modelString, shortName, ModelAAGun.class);
+	}
+
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 50.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel()
+	{
+		return model;
 	}
 }

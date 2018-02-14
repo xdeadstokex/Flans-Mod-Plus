@@ -119,4 +119,23 @@ public class ToolType extends InfoType
 	{
 		return tools.get(shortName);
 	}
+
+	@Override
+	protected void preRead(TypeFile file) 
+	{
+		
+	}
+
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 0.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return null;
+	}
 }

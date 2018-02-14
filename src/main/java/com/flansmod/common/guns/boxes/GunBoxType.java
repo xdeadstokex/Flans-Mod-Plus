@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -51,7 +52,6 @@ public class GunBoxType extends InfoType
 	@Override
 	public void preRead(TypeFile file)
 	{
-		super.preRead(file);
 		//Make sure NumGuns is read before anything else
 		for(String line : file.lines)
 		{
@@ -85,7 +85,6 @@ public class GunBoxType extends InfoType
 	@Override
 	public void postRead(TypeFile file)
 	{
-    	super.postRead(file);
 		gunBoxMap.put(this.shortName, this);
 	}
 
@@ -281,5 +280,18 @@ public class GunBoxType extends InfoType
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 50.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return null;
 	}
 }

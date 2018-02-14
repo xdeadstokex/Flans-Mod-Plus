@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemDye;
@@ -15,6 +16,8 @@ import net.minecraft.nbt.NBTTagList;
 import com.flansmod.client.model.ModelGun;
 import com.flansmod.client.model.ModelMG;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.paintjob.PaintableType;
+import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
@@ -23,7 +26,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class GunType extends InfoType implements IScope
+public class GunType extends PaintableType implements IScope
 {
 	public static final Random rand = new Random();
 	
@@ -193,12 +196,6 @@ public class GunType extends InfoType implements IScope
 	/** The number of generic attachment slots there are on this gun */
 	public int numGenericAttachmentSlots = 0;
 
-	//Paintjobs
-	/** The list of all available paintjobs for this gun */
-	public ArrayList<Paintjob> paintjobs = new ArrayList<Paintjob>();
-	/** The default paintjob for this gun. This is created automatically in the load process from existing info */
-	public Paintjob defaultPaintjob;
-
 	/** The static hashmap of all guns by shortName */
 	public static HashMap<String, GunType> guns = new HashMap<String, GunType>();
 	/** The static list of all guns */
@@ -218,18 +215,18 @@ public class GunType extends InfoType implements IScope
 	}
 
 	@Override
+	public void preRead(TypeFile file) 
+	{	
+		super.preRead(file);
+	}
+	
+	@Override
 	public void postRead(TypeFile file)
 	{
+		super.postRead(file);
+		
 		gunList.add(this);
 		guns.put(shortName, this);
-
-		//After all lines have been read, set up the default paintjob
-		defaultPaintjob = new Paintjob(iconPath, texture, new ItemStack[0]);
-		//Move to a new list to ensure that the default paintjob is always first
-		ArrayList<Paintjob> newPaintjobList = new ArrayList<Paintjob>();
-		newPaintjobList.add(defaultPaintjob);
-		newPaintjobList.addAll(paintjobs);
-		paintjobs = newPaintjobList;
 	}
 
 	@Override
@@ -510,15 +507,6 @@ public class GunType extends InfoType implements IScope
 			else if(split[0].equals("NumGenericAttachmentSlots"))
 				numGenericAttachmentSlots = Integer.parseInt(split[1]);
 
-			//Paintjobs
-			else if(split[0].toLowerCase().equals("paintjob"))
-			{
-				ItemStack[] dyeStacks = new ItemStack[(split.length - 3) / 2];
-				for(int i = 0; i < (split.length - 3) / 2; i++)
-					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), getDyeDamageValue(split[i * 2 + 3]));
-				paintjobs.add(new Paintjob(split[1], split[2], dyeStacks));
-			}
-
 			//Shield settings
 			else if(split[0].toLowerCase().equals("shield"))
 			{
@@ -547,21 +535,6 @@ public class GunType extends InfoType implements IScope
 		}
 
 
-	}
-
-	/** Return a dye damage value from a string name */
-	private int getDyeDamageValue(String dyeName)
-	{
-		int damage = -1;
-		for(int i = 0; i < ItemDye.field_150923_a.length; i++)
-		{
-			if(ItemDye.field_150923_a[i].equals(dyeName))
-				damage = i;
-		}
-		if(damage == -1)
-			FlansMod.log("Failed to find dye colour : " + dyeName + " while adding " + contentPack);
-
-		return damage;
 	}
 
 	public boolean isAmmo(ShootableType type)
@@ -834,5 +807,18 @@ public class GunType extends InfoType implements IScope
 				return paintjob;
 		}
 		return defaultPaintjob;
+	}
+	
+	@Override
+	public float GetRecommendedScale()
+	{
+		return 60.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return model;
 	}
 }

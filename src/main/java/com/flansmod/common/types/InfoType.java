@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
 
-public class InfoType
+public abstract class InfoType
 {
 	/** infoTypes */
 	public static List<InfoType> infoTypes = new ArrayList<InfoType>();
@@ -65,10 +69,10 @@ public class InfoType
 	}
 	
 	/** Method for performing actions prior to reading the type file */
-	protected void preRead(TypeFile file) {}
+	protected abstract void preRead(TypeFile file);
 	
 	/** Method for performing actions after reading the type file */
-	protected void postRead(TypeFile file) {}
+	protected abstract void postRead(TypeFile file);
 
 	/** Pack reader */
 	protected void read(String[] split, TypeFile file)
@@ -318,6 +322,21 @@ public class InfoType
 		return null;
 	}
 	
+	/** Return a dye damage value from a string name */
+	protected int getDyeDamageValue(String dyeName)
+	{
+		int damage = -1;
+		for(int i = 0; i < ItemDye.field_150923_a.length; i++)
+		{
+			if(ItemDye.field_150923_a[i].equals(dyeName))
+				damage = i;
+		}
+		if(damage == -1)
+			FlansMod.log("Failed to find dye colour : " + dyeName + " while adding " + contentPack);
+
+		return damage;
+	}
+	
 	/** To be overriden by subtypes for model reloading */
 	public void reloadModel()
 	{
@@ -338,7 +357,12 @@ public class InfoType
 	{
 		
 	}
+	
+	public abstract float GetRecommendedScale();
 
+	@SideOnly(Side.CLIENT)
+	public abstract ModelBase GetModel();
+	
 	public static InfoType getType(ItemStack itemStack) 
 	{
 		if(itemStack == null)

@@ -19,9 +19,11 @@ import com.flansmod.client.model.animation.AnimationPart;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveablePart;
 import com.flansmod.common.driveables.DriveablePosition;
+import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.ShootPoint;
+import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.ItemPlane;
 import com.flansmod.common.driveables.PlaneType;
@@ -234,7 +236,9 @@ public class RenderPlane extends Render implements IItemRenderer
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) 
 	{
-		return FlansModResourceHandler.getTexture(((EntityPlane)entity).getPlaneType());
+		DriveableType type = ((EntityDriveable)entity).getDriveableType();
+		Paintjob paintjob = type.getPaintjob(((EntityDriveable)entity).getDriveableData().paintjobID);
+		return FlansModResourceHandler.getPaintjobTexture(paintjob);
 	}
 
 	@Override

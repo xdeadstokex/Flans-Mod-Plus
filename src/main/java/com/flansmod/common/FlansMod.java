@@ -63,6 +63,8 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketHandler;
+import com.flansmod.common.paintjob.BlockPaintjobTable;
+import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.teams.ArmourBoxType;
@@ -121,6 +123,7 @@ public class FlansMod
     public static int noticeSpawnKillTime = 10;
     public static float hitCrossHairColor[] = new float[]{ 1.0F, 1.0F, 1.0F, 1.0F };
     public static boolean addGunpowderRecipe = true;
+    public static boolean addAllPaintjobsToCreative = true;
     public static int teamsConfigInteger = 32;
     public static String teamsConfigString = "Hello!";
     public static boolean teamsConfigBoolean = false;
@@ -152,6 +155,7 @@ public class FlansMod
 
 	//Items and creative tabs
 	public static BlockFlansWorkbench workbench;
+	public static BlockPaintjobTable paintjobTable;
 	public static BlockSpawner spawner;
 	public static ItemOpStick opStick;
 	public static ItemFlagpole flag;
@@ -211,7 +215,11 @@ public class FlansMod
 		spawner = (BlockSpawner)(new BlockSpawner(Material.iron).setBlockName("teamsSpawner").setBlockUnbreakable().setResistance(1000000F));
 		GameRegistry.registerBlock(spawner, ItemBlockManyNames.class, "teamsSpawner");
 		GameRegistry.registerTileEntity(TileEntitySpawner.class, "teamsSpawner");
-
+		
+		paintjobTable = new BlockPaintjobTable();
+		GameRegistry.registerBlock(paintjobTable, "paintjobTable");
+		GameRegistry.registerTileEntity(TileEntityPaintjobTable.class, MODID);
+		
 		proxy.registerRenderers();
 
 		//Read content packs
@@ -565,7 +573,7 @@ public class FlansMod
         //generalConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, generalConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
         //generalConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, generalConfigString, "A String!");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", Configuration.CATEGORY_GENERAL, addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
-
+        addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
         //teamsConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, teamsConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
         //teamsConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, teamsConfigString, "A String!");
         //teamsConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, teamsConfigBoolean, "A Boolean!");

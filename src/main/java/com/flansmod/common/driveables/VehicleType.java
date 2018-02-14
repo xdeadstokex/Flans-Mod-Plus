@@ -70,7 +70,7 @@ public class VehicleType extends DriveableType
     }
 
     @Override
-	protected void postRead(TypeFile file)
+	public void postRead(TypeFile file)
     {
     	super.postRead(file);
     }

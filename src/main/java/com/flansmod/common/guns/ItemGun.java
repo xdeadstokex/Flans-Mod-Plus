@@ -64,6 +64,9 @@ import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
+import com.flansmod.common.paintjob.IPaintableItem;
+import com.flansmod.common.paintjob.PaintableType;
+import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.teams.EntityFlag;
 import com.flansmod.common.teams.EntityFlagpole;
 import com.flansmod.common.teams.EntityGunItem;
@@ -79,7 +82,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemGun extends Item implements IFlanItem
+public class ItemGun extends Item implements IPaintableItem
 {
 	public GunType type;
 	private static boolean rightMouseHeld;
@@ -93,18 +96,28 @@ public class ItemGun extends Item implements IFlanItem
 	public int impactY = 0;
 	public int impactZ = 0;
 	
+	@Override
+	public InfoType getInfoType()
+	{
+		return type;
+	}
 
+	@Override
+	public PaintableType GetPaintableType() 
+	{
+		return type;
+	}
 
 	//public boolean sendPosToServer = false;
 
-	public HashMap<String, IIcon> icons = new HashMap<String, IIcon>();
+	public IIcon[] icons;
 
 	public ItemGun(GunType gun)
 	{
 		maxStackSize = 1;
 		type = gun;
 		type.item = this;
-		setMaxDamage(type.numAmmoItemsInGun);
+		setHasSubtypes(true);
 		setCreativeTab(FlansMod.tabFlanGuns);
 		GameRegistry.registerItem(this, type.shortName, FlansMod.MODID);
 	}
@@ -1357,26 +1370,40 @@ public class ItemGun extends Item implements IFlanItem
 		return true;
 	}
 
+	// ----------------- Paintjobs -----------------
+	
     @Override
     public void getSubItems(Item item, CreativeTabs tabs, List list)
     {
-    	ItemStack gunStack = new ItemStack(item, 1, 0);
-    	GunType type = ((ItemGun)item).type;
-    	NBTTagCompound tags = new NBTTagCompound();
-    	tags.setString("Paint", type.defaultPaintjob.iconName);
-    	gunStack.stackTagCompound = tags;
-        list.add(gunStack);
+    	PaintableType type = ((IPaintableItem)item).GetPaintableType();
+    	if(FlansMod.addAllPaintjobsToCreative)
+    	{
+    		for(Paintjob paintjob : type.paintjobs)
+    			addPaintjobToList(item, type, paintjob, list);
+    	}
+        else addPaintjobToList(item, type, type.defaultPaintjob, list);
     }
+    
+    private void addPaintjobToList(Item item, PaintableType type, Paintjob paintjob, List list)
+    {
+    	ItemStack paintableStack = new ItemStack(item, 1, paintjob.ID);
+    	NBTTagCompound tags = new NBTTagCompound();
+    	paintableStack.setTagCompound(tags);
+        list.add(paintableStack);
+    }
+    
+    // ---------------------------------------------
 
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister icon)
     {
+    	icons = new IIcon[type.paintjobs.size()];
+    	
         itemIcon = icon.registerIcon("FlansMod:" + type.iconPath);
-    	for(Paintjob paintjob : type.paintjobs)
+    	for(int i = 0; i < type.paintjobs.size(); i++)
     	{
-    		icons.put(paintjob.iconName, icon.registerIcon("FlansMod:" + paintjob.iconName));
-    		//itemIcon = icon.registerIcon("FlansMod:" + type.iconPath);
+    		icons[i] = icon.registerIcon("FlansMod:" + type.paintjobs.get(i).iconName);
     	}
     }
 
@@ -1384,13 +1411,7 @@ public class ItemGun extends Item implements IFlanItem
     @SideOnly(Side.CLIENT)
     public IIcon getIconIndex(ItemStack stack)
     {
-    	//For backwards compatibility, give old guns the default paint job
-    	if(stack.stackTagCompound == null)
-    		stack.stackTagCompound = new NBTTagCompound();
-    	if(!stack.stackTagCompound.hasKey("Paint"))
-    		stack.stackTagCompound.setString("Paint", type.defaultPaintjob.iconName);
-
-        return icons.get(stack.stackTagCompound.getString("Paint"));
+        return icons[stack.getItemDamage()];
     }
 
     @Override
@@ -1415,10 +1436,4 @@ public class ItemGun extends Item implements IFlanItem
         	map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", type.meleeDamage, 0));
        	return map;
     }
-
-	@Override
-	public InfoType getInfoType()
-	{
-		return type;
-	}
 }

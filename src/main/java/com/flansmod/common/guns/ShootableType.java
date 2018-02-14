@@ -12,7 +12,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ShootableType extends InfoType
+public abstract class ShootableType extends InfoType
 {
 	//Aesthetics
 	/** The model to render for this grenade in the world */
@@ -102,6 +102,11 @@ public class ShootableType extends InfoType
 		super(file);
 	}
 
+	@Override
+	protected void preRead(TypeFile file) 
+	{
+	}
+	
 	@Override
 	public void postRead(TypeFile file)
 	{
@@ -263,5 +268,18 @@ public class ShootableType extends InfoType
 	public static ShootableType getShootableType(String string)
 	{
 		return shootables.get(string);
+	}
+	
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 0.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return model;
 	}
 }

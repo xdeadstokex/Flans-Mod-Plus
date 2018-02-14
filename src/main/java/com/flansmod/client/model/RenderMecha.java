@@ -24,6 +24,8 @@ import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveablePart;
 import com.flansmod.common.driveables.DriveablePosition;
+import com.flansmod.common.driveables.DriveableType;
+import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.ShootPoint;
 import com.flansmod.common.driveables.EnumDriveablePart;
 import com.flansmod.common.driveables.mechas.EntityMecha;
@@ -34,6 +36,7 @@ import com.flansmod.common.driveables.mechas.MechaItemType;
 import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.vector.Vector3f;
 
 public class RenderMecha extends Render implements IItemRenderer
@@ -368,7 +371,9 @@ public class RenderMecha extends Render implements IItemRenderer
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) 
 	{
-		return FlansModResourceHandler.getTexture(((EntityMecha)entity).getMechaType());
+		DriveableType type = ((EntityDriveable)entity).getDriveableType();
+		Paintjob paintjob = type.getPaintjob(((EntityDriveable)entity).getDriveableData().paintjobID);
+		return FlansModResourceHandler.getPaintjobTexture(paintjob);
 	}
 
 	

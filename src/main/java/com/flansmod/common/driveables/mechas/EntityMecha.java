@@ -554,7 +554,7 @@ public class EntityMecha extends EntityDriveable
         
         else if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null) && !locked)
 		{
-			ItemStack mechaStack = new ItemStack(type.item, 1, 0);
+			ItemStack mechaStack = new ItemStack(type.item, 1, driveableData.paintjobID);
 			mechaStack.stackTagCompound = new NBTTagCompound();
 			driveableData.writeToNBT(mechaStack.stackTagCompound);
 			inventory.writeToNBT(mechaStack.stackTagCompound);

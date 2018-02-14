@@ -1,5 +1,7 @@
 package com.flansmod.common.guns;
 
+import com.flansmod.common.paintjob.Paintjob;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
@@ -115,13 +117,13 @@ public class ContainerGunModTable extends Container
 		//Nope.
 	}
 	
-	public void clickPaintjob(String name)
+	public void clickPaintjob(int id)
 	{
 		ItemStack gunStack = inventory.getStackInSlot(0);
         if(gunStack != null && gunStack.getItem() instanceof ItemGun)
         {
         	GunType gunType = ((ItemGun)gunStack.getItem()).type;
-        	clickPaintjob(gunType.getPaintjob(name));
+        	clickPaintjob(gunType.getPaintjob(id));
         }
 	}
 	

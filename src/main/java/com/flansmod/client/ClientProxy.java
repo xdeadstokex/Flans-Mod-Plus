@@ -75,6 +75,7 @@ import com.flansmod.client.gui.GuiDriveableRepair;
 import com.flansmod.client.gui.GuiGunBox;
 import com.flansmod.client.gui.GuiGunModTable;
 import com.flansmod.client.gui.GuiMechaInventory;
+import com.flansmod.client.gui.GuiPaintjobTable;
 import com.flansmod.client.model.RenderAAGun;
 import com.flansmod.client.model.RenderBullet;
 import com.flansmod.client.model.RenderFlag;
@@ -114,6 +115,7 @@ import com.flansmod.common.network.PacketBuyWeapon;
 import com.flansmod.common.network.PacketCraftDriveable;
 import com.flansmod.common.network.PacketGiveItem;
 import com.flansmod.common.network.PacketRepairDriveable;
+import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.teams.ArmourBoxType;
 import com.flansmod.common.teams.BlockArmourBox;
 import com.flansmod.common.teams.EntityFlag;
@@ -291,9 +293,10 @@ public class ClientProxy extends CommonProxy
 		case 10: return new GuiMechaInventory	(player.inventory, world, (EntityMecha)((EntitySeat)player.ridingEntity).driveable);
 		case 11: return new GuiArmourBox(player.inventory, ((BlockArmourBox)world.getBlock(x, y, z)).type);
 		case 12: return new GuiDriveableInventory(player.inventory, world, ((EntitySeat)player.ridingEntity).driveable, 3);
-		}
-		return null;
-	}
+		case 13: return new GuiPaintjobTable(player.inventory, world, (TileEntityPaintjobTable)world.getTileEntity(x, y, z));
+ 		}
+ 		return null;
+ 	}
 	
 	/** Called when the player presses the plane inventory key. Opens menu client side */
 	@Override

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.guns.GunType;
+import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
@@ -28,7 +30,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class DriveableType extends InfoType
+public class DriveableType extends PaintableType
 {
 	@SideOnly(value = Side.CLIENT)
 	/** The plane model */
@@ -40,7 +42,7 @@ public class DriveableType extends InfoType
 	/** Recipe parts associated to each driveable part */
 	public HashMap<EnumDriveablePart, ItemStack[]> partwiseRecipe = new HashMap<EnumDriveablePart, ItemStack[]>();
 	/** Recipe parts as one complete list */
-	public ArrayList<ItemStack> recipe = new ArrayList<ItemStack>();
+	public ArrayList<ItemStack> driveableRecipe = new ArrayList<ItemStack>();
 
 	//Ammo
 	/** If true, then all ammo is accepted. Default is true to minimise backwards compatibility issues */
@@ -291,7 +293,13 @@ public class DriveableType extends InfoType
 		}
 		types.add(this);
     }
-
+    
+    @Override
+    public void postRead(TypeFile file)
+    {
+    	super.postRead(file);
+    }
+    
     @Override
 	protected void read(String[] split, TypeFile file)
 	{
@@ -608,7 +616,7 @@ public class DriveableType extends InfoType
 				ShootPoint sPoint = new ShootPoint(rootPos, offPos);
 				shootPointsSecondary.add(sPoint);
 				pilotGuns.add(pilotGun);
-				recipe.add(new ItemStack(pilotGun.type.item));
+				driveableRecipe.add(new ItemStack(pilotGun.type.item));
 			}
 			else if(split[0].equals("BombPosition"))
 			{
@@ -644,7 +652,7 @@ public class DriveableType extends InfoType
 					String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
 					int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
 					stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
-					recipe.add(stacks[i]);
+					driveableRecipe.add(stacks[i]);
 				}
 				partwiseRecipe.put(part, stacks);
 			}
@@ -664,7 +672,7 @@ public class DriveableType extends InfoType
 					FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
 					return;
 				}
-				recipe.add(new ItemStack(Items.dye, amount, damage));
+				driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
 			}
 
 
@@ -742,7 +750,7 @@ public class DriveableType extends InfoType
 				if(seat.gunType != null)
 				{
 					seat.gunnerID = numPassengerGunners++;
-					recipe.add(new ItemStack(seat.gunType.item));
+					driveableRecipe.add(new ItemStack(seat.gunType.item));
 				}
 			}
 			else if(split[0].equals("GunOrigin"))
@@ -1083,6 +1091,12 @@ public class DriveableType extends InfoType
 		return null;
 	}
 	
+	@Override
+	public float GetRecommendedScale()
+	{
+		return 100.0f / cameraDistance;
+	}
+	
 	public class ParticleEmitter
 	{
 		/** The name of the effect */
@@ -1105,5 +1119,12 @@ public class DriveableType extends InfoType
 		public float minHealth;
 		/** Maximum health for the emitter to work */
 		public float maxHealth;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return model;
 	}
 }

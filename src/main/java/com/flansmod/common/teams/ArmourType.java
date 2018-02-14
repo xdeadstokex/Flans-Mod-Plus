@@ -10,6 +10,7 @@ import com.flansmod.common.types.TypeFile;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelBase;
 
 public class ArmourType extends InfoType
 {
@@ -46,7 +47,17 @@ public class ArmourType extends InfoType
 		super(file);
 		armours.add(this);
 	}
+	
+	@Override
+	protected void preRead(TypeFile file) 
+	{
+	}
 
+	@Override
+	protected void postRead(TypeFile file) 
+	{
+	}
+	
 	@Override
 	protected void read(String[] split, TypeFile file)
 	{
@@ -128,5 +139,18 @@ public class ArmourType extends InfoType
 		model = FlansMod.proxy.loadModel(modelString, shortName, ModelCustomArmour.class);
 		if(model != null)
 			model.type = this;
+	}
+
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 50.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return model;
 	}
 }

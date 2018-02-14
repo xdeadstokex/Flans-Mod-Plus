@@ -832,7 +832,7 @@ public class EntityPlane extends EntityDriveable
 
 		if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null) && !locked)
 		{
-			ItemStack planeStack = new ItemStack(type.item, 1, 0);
+			ItemStack planeStack = new ItemStack(type.item, 1, driveableData.paintjobID);
 			planeStack.stackTagCompound = new NBTTagCompound();
 			driveableData.writeToNBT(planeStack.stackTagCompound);
 			entityDropItem(planeStack, 0.5F);

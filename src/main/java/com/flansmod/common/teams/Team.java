@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,9 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class Team extends InfoType
 {
@@ -49,6 +53,18 @@ public class Team extends InfoType
 	{
 		super(file);
 		teams.add(this);
+	}
+	
+
+	@Override
+	protected void preRead(TypeFile file) 
+	{
+	}
+	
+
+	@Override
+	protected void postRead(TypeFile file) 
+	{
 	}
 	
 	@Override
@@ -232,5 +248,18 @@ public class Team extends InfoType
 			return dataB.score - dataA.score;
 		}
 		
+	}
+
+	@Override
+	public float GetRecommendedScale() 
+	{
+		return 50.0f;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ModelBase GetModel() 
+	{
+		return null;
 	}
 }

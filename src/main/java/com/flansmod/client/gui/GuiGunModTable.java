@@ -19,8 +19,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.ContainerGunModTable;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
-import com.flansmod.common.guns.Paintjob;
 import com.flansmod.common.network.PacketGunPaint;
+import com.flansmod.common.paintjob.Paintjob;
 
 public class GuiGunModTable extends GuiContainer 
 {
@@ -250,7 +250,7 @@ public class GuiGunModTable extends GuiContainer
 		if(hoveringOver == null)
 			return;
 		
-		FlansMod.getPacketHandler().sendToServer(new PacketGunPaint(hoveringOver.iconName));
+		FlansMod.getPacketHandler().sendToServer(new PacketGunPaint(hoveringOver.ID));
 		((ContainerGunModTable)inventorySlots).clickPaintjob(hoveringOver);
     }
 }
