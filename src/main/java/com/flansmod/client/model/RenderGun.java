@@ -653,7 +653,7 @@ public class RenderGun implements IItemRenderer
 					Minecraft mc = Minecraft.getMinecraft();
 					renderAnimArm(mc.thePlayer, model, type, animations);
 				}
-				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.stackTagCompound.getString("Paint"))));
+				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 
 
 				if(shouldRender)
