@@ -28,6 +28,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.AttachmentType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.network.PacketGunPaint;
 import com.flansmod.common.paintjob.ContainerPaintjobTable;
@@ -222,7 +223,9 @@ public class GuiPaintjobTable extends GuiContainer
 					case attachment: 
 					{
 						mc.renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
-						((ModelAttachment)paintableType.GetModel()).renderAttachment(0.0625f);
+						AttachmentType model = (AttachmentType)paintableType;
+						GL11.glScalef(model.modelScale, model.modelScale, model.modelScale);
+						((ModelAttachment)paintableType.GetModel()).renderAttachment(1F / 16F);
 						break;
 					}
 					case plane:

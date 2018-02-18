@@ -669,19 +669,15 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				Paintjob paintjob = scopeAttachment.getPaintjob(scopeItemStack.getItemDamage());
-				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
+				initRenderAttachment(scopeAttachment, scopeItemStack, model.scopeAttachPoint, type);
 				if(model.scopeIsOnBreakAction)
 				{
 					GL11.glTranslatef(model.barrelBreakPoint.x, model.barrelBreakPoint.y, model.barrelBreakPoint.z);
 					GL11.glRotatef(reloadRotate * -model.breakAngle, 0F, 0F, 1F);
 					GL11.glTranslatef(-model.barrelBreakPoint.x, -model.barrelBreakPoint.y, -model.barrelBreakPoint.z);
 				}
-				GL11.glTranslatef(model.scopeAttachPoint.x * type.modelScale, model.scopeAttachPoint.y * type.modelScale, model.scopeAttachPoint.z * type.modelScale);
-
 				if(model.scopeIsOnSlide)
 					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
-				GL11.glScalef(scopeAttachment.modelScale, scopeAttachment.modelScale, scopeAttachment.modelScale);
 				ModelAttachment scopeModel = scopeAttachment.model;
 				if(scopeModel != null)
 					scopeModel.renderAttachment(f);
@@ -695,12 +691,9 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				Paintjob paintjob = gripAttachment.getPaintjob(gripItemStack.getItemDamage());
-				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
-				GL11.glTranslatef(model.gripAttachPoint.x * type.modelScale, model.gripAttachPoint.y * type.modelScale, model.gripAttachPoint.z * type.modelScale);
+				initRenderAttachment(gripAttachment, gripItemStack, model.gripAttachPoint, type);
 				if(model.gripIsOnPump)
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
-				GL11.glScalef(gripAttachment.modelScale, gripAttachment.modelScale, gripAttachment.modelScale);
 				ModelAttachment gripModel = gripAttachment.model;
 				if(gripModel != null)
 					gripModel.renderAttachment(f);
@@ -714,10 +707,7 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				Paintjob paintjob = barrelAttachment.getPaintjob(barrelItemStack.getItemDamage());
-				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
-				GL11.glTranslatef(model.barrelAttachPoint.x * type.modelScale, model.barrelAttachPoint.y * type.modelScale, model.barrelAttachPoint.z * type.modelScale);
-				GL11.glScalef(barrelAttachment.modelScale, barrelAttachment.modelScale, barrelAttachment.modelScale);
+				initRenderAttachment(barrelAttachment, barrelItemStack, model.barrelAttachPoint, type);
 				ModelAttachment barrelModel = barrelAttachment.model;
 				if(barrelModel != null)
 					barrelModel.renderAttachment(f);
@@ -731,10 +721,7 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				Paintjob paintjob = stockAttachment.getPaintjob(stockItemStack.getItemDamage());
-				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
-				GL11.glTranslatef(model.stockAttachPoint.x * type.modelScale, model.stockAttachPoint.y * type.modelScale, model.stockAttachPoint.z * type.modelScale);
-				GL11.glScalef(stockAttachment.modelScale, stockAttachment.modelScale, stockAttachment.modelScale);
+				initRenderAttachment(stockAttachment, stockItemStack, model.stockAttachPoint, type);
 				ModelAttachment stockModel = stockAttachment.model;
 				if(stockModel != null)
 					stockModel.renderAttachment(f);
@@ -743,6 +730,15 @@ public class RenderGun implements IItemRenderer
 			GL11.glPopMatrix();
 		}
 		GL11.glPopMatrix();
+	}
+
+	/* Clean up some redunant code */
+	private void initRenderAttachment(AttachmentType attachment, ItemStack stack, Vector3f model, GunType type)
+	{
+		Paintjob paintjob = attachment.getPaintjob(stack.getItemDamage());
+		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
+		GL11.glTranslatef(model.x * type.modelScale, model.y * type.modelScale, model.z * type.modelScale);
+		GL11.glScalef(attachment.modelScale, attachment.modelScale, attachment.modelScale);
 	}
 	
     private void renderFirstPersonArm(EntityPlayer player, ModelGun model,  GunAnimations anim)
@@ -761,7 +757,9 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
-        } else {
+        }
+		else
+		{
 	        GL11.glRotatef(model.rightArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
@@ -771,7 +769,7 @@ public class RenderGun implements IItemRenderer
         modelBipedMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
         modelBipedMain.bipedRightArm.offsetY = 0F;
         if(!model.rightHandAmmo)
-        modelBipedMain.bipedRightArm.render(0.0625F);
+        	modelBipedMain.bipedRightArm.render(0.0625F);
         GL11.glPopMatrix();
         
         GL11.glPushMatrix();
@@ -781,7 +779,9 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
-        } else {
+        }
+		else
+		{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
@@ -790,7 +790,7 @@ public class RenderGun implements IItemRenderer
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
         modelBipedMain.bipedLeftArm.offsetY = 0F;
         if(!model.leftHandAmmo)
-        modelBipedMain.bipedLeftArm.render(0.0625F);
+        	modelBipedMain.bipedLeftArm.render(0.0625F);
         GL11.glPopMatrix();
     }
     
@@ -811,7 +811,9 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
-        } else {
+        }
+		else
+		{
 	        GL11.glRotatef(model.rightArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
@@ -821,7 +823,7 @@ public class RenderGun implements IItemRenderer
         modelBipedMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
         modelBipedMain.bipedRightArm.offsetY = 0F;
         if(model.rightHandAmmo)
-        modelBipedMain.bipedRightArm.render(0.0625F);
+        	modelBipedMain.bipedRightArm.render(0.0625F);
         GL11.glPopMatrix();
         
         GL11.glPushMatrix();
@@ -831,7 +833,9 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
-        } else {
+        }
+		else
+		{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
@@ -840,7 +844,7 @@ public class RenderGun implements IItemRenderer
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
         modelBipedMain.bipedLeftArm.offsetY = 0F;
         if(model.leftHandAmmo)
-        modelBipedMain.bipedLeftArm.render(0.0625F);
+        	modelBipedMain.bipedLeftArm.render(0.0625F);
         GL11.glPopMatrix();
         
         GL11.glPopMatrix();
