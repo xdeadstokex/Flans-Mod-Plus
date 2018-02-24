@@ -65,6 +65,8 @@ public class ModelGun extends ModelBase
 	
 	//Various animation parameters
 	public float gunSlideDistance = 1F / 4F;
+	public float RecoilSlideDistance = 1F / 4F;
+	public float RotateSlideDistance = 1F/ 4F;
 	public EnumAnimationType animationType = EnumAnimationType.NONE;
 	public EnumMeleeAnimation meleeAnimation = EnumMeleeAnimation.DEFAULT;
 	public float tiltGunTime = 0.25F, unloadClipTime = 0.25F, loadClipTime = 0.25F, untiltGunTime = 0.25F;

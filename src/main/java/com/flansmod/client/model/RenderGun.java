@@ -328,8 +328,16 @@ public class RenderGun implements IItemRenderer
 		GL11.glPushMatrix();
 		if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
 		{
-			GL11.glTranslatef(0F, 0, 0);
-		}
+
+			GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.RecoilSlideDistance, 0F, 0F);
+			
+			GL11.glRotatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.RotateSlideDistance, 0F,0F,1F);
+			}
+		
+
+
+		
+		
 		//Make sure we actually have the renderEngine
 		if(renderEngine == null)
 			renderEngine = Minecraft.getMinecraft().renderEngine;
