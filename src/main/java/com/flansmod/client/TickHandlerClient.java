@@ -97,10 +97,12 @@ public class TickHandlerClient
 		Minecraft mc = Minecraft.getMinecraft();
 
 		//Remove crosshairs if looking down the sights of a gun
-		if(event.type == ElementType.CROSSHAIRS && FlansModClient.currentScope != null)
+		if(event.type == ElementType.CROSSHAIRS && mc.thePlayer != null && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemGun)
 		{
-			event.setCanceled(true);
-			return;
+			if(!((ItemGun)mc.thePlayer.getHeldItem().getItem()).type.showCrosshair || FlansModClient.currentScope != null) {
+				   event.setCanceled(true);
+				   return;
+				}
 		}
 
 		ScaledResolution scaledresolution = new ScaledResolution(FlansModClient.minecraft, FlansModClient.minecraft.displayWidth, FlansModClient.minecraft.displayHeight);
