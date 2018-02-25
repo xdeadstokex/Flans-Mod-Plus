@@ -80,6 +80,8 @@ public class GunType extends PaintableType implements IScope
 	public boolean oneHanded = false;
 	/** For one shot items like a panzerfaust */
 	public boolean consumeGunUponUse = false;
+	/** Show the crosshair when holding this weapon */
+	public boolean showCrosshair = false;
 	/** Item to drop on shooting */
 	public String dropItemOnShoot = null;
 	//Custom Melee Stuff
@@ -286,6 +288,9 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("LockOnToLivings"))
 				lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());
 
+			else if(split[0].equals("showCrosshair"))
+			    showCrosshair = Boolean.parseBoolean(split[1]);			
+			
 			else if(split[0].equals("ConsumeGunOnUse"))
 				consumeGunUponUse = Boolean.parseBoolean(split[1]);
 			else if(split[0].equals("DropItemOnShoot"))
