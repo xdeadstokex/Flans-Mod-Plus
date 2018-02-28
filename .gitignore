@@ -45,3 +45,4 @@ upload.bat
 gradlew
 gradlew.bat
 classes/production/
+src/main/java/com/flansmod/client/model/dwfirearms/
