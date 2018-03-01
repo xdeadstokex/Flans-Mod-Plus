@@ -27,15 +27,15 @@ public class ContainerGunModTable extends Container
 		addSlotToContainer(gunSlot);
 		
 		//Attachment Slots
-		addSlotToContainer(new SlotGun(inventory, 1, 17, 89, gunSlot));
-		addSlotToContainer(new SlotGun(inventory, 2, 35, 89, gunSlot));
-		addSlotToContainer(new SlotGun(inventory, 3, 53, 89, gunSlot));
-		addSlotToContainer(new SlotGun(inventory, 4, 71, 89, gunSlot));
+		for(int k = 0; k < 8; k++)
+		{
+			addSlotToContainer(new SlotGun(inventory, k + 1, 17 + (k * 18), 89, gunSlot));
+		}
 
 		//Generic Attachment Slots
 		for(int col = 0; col < 8; col++)
 		{
-			addSlotToContainer(new SlotGun(inventory, 5 + col, 17 + (col * 18), 115 + (col * 18), gunSlot));
+			addSlotToContainer(new SlotGun(inventory, 9 + col, 17 + (col * 18), 115 + (col * 18), gunSlot));
 		}
 
 		//Main inventory slots
@@ -78,13 +78,13 @@ public class ContainerGunModTable extends Container
             ItemStack slotStack = currentSlot.getStack();
             stack = slotStack.copy();
             
-            if(slotID >= 13)
+            if(slotID >= 17)
             {
             	return null;
             }
             else 
             {
-            	if(!mergeItemStack(slotStack, 13, inventorySlots.size(), true))
+            	if(!mergeItemStack(slotStack, 17, inventorySlots.size(), true))
             	{
             		return null;
             	}

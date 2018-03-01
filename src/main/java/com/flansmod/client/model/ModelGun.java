@@ -13,7 +13,7 @@ public class ModelGun extends ModelBase
 	//Shapebox template. For quick copy pasting
 	//, 0F, /* 0 */ 0F, 0F, 0F, /* 1 */ 0F, 0F, 0F, /* 2 */ 0F, 0F, 0F, /* 3 */ 0F, 0F, 0F, /* 4 */ 0F, 0F, 0F, /* 5 */ 0F, 0F, 0F, /* 6 */ 0F, 0F, 0F, /* 7 */ 0F, 0F, 0F);	
 	
-	//These first 6 models are static with no animation
+	//These first 7 models are static with no animation
 	public ModelRendererTurbo[] gunModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] backpackModel = new ModelRendererTurbo[0]; //For flamethrowers and such like. Rendered on the player's back
 	//These models appear when no attachment exists
@@ -21,6 +21,7 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] defaultScopeModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] defaultStockModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] defaultGripModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] defaultGadgetModel = new ModelRendererTurbo[0];
 	
 	//Animated models follow. 
 	public ModelRendererTurbo[] ammoModel = new ModelRendererTurbo[0];
@@ -31,6 +32,7 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] pumpModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] minigunBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] leverActionModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] accessoryModel = new ModelRendererTurbo[0];
 	/** The point about which the minigun barrel rotates. Rotation is along the line of the gun through this point */
 	public Vector3f minigunBarrelOrigin = new Vector3f();
 	
@@ -39,6 +41,10 @@ public class ModelGun extends ModelBase
 	public Vector3f scopeAttachPoint = new Vector3f();
 	public Vector3f stockAttachPoint = new Vector3f();
 	public Vector3f gripAttachPoint = new Vector3f();
+	public Vector3f gadgetAttachPoint = new Vector3f();
+	public Vector3f slideAttachPoint = new Vector3f();
+	public Vector3f pumpAttachPoint = new Vector3f();
+	public Vector3f accessoryAttachPoint = new Vector3f();
 	
 	//Muzzle flash models
 	public ModelRendererTurbo flashModel[][] = new ModelRendererTurbo[0][0];
@@ -82,6 +88,8 @@ public class ModelGun extends ModelBase
 	public float endLoadedAmmoDistance = 1F;
 	/** If true, then the grip attachment will move with the shotgun pump */
 	public boolean gripIsOnPump = false;
+	/** If true, then the gadget attachment will move with the shotgun pump */
+	public boolean gadgetIsOnPump = false;
 	/** The rotation point for the barrel break */
 	public Vector3f barrelBreakPoint = new Vector3f();
 	/** The amount the revolver barrel flips out by */
@@ -195,6 +203,11 @@ public class ModelGun extends ModelBase
 	{
 		render(defaultGripModel, f);
 	}
+
+	public void renderDefaultGadget(float f)
+	{
+		render(defaultGadgetModel, f);
+	}
 	
 	public void renderAmmo(float f)
 	{
@@ -219,6 +232,11 @@ public class ModelGun extends ModelBase
 	public void renderBreakAction(float f)
 	{
 		render(breakActionModel, f);
+	}
+
+	public void renderAccessory(float f)
+	{
+		render(accessoryModel, f);
 	}
 	
 	public void renderFlash (float f, int i)
@@ -249,6 +267,7 @@ public class ModelGun extends ModelBase
 		flip(defaultScopeModel);
 		flip(defaultStockModel);
 		flip(defaultGripModel);
+		flip(defaultGadgetModel);
 		flip(ammoModel);
 		flip(slideModel);
 		flip(pumpModel);
@@ -256,6 +275,7 @@ public class ModelGun extends ModelBase
 		flip(revolverBarrelModel);
 		flip(revolver2BarrelModel);
 		flip(breakActionModel);
+		flip(accessoryModel);
 	}	
 	
 	protected void flip(ModelRendererTurbo[] model)
@@ -275,6 +295,7 @@ public class ModelGun extends ModelBase
 		translate(defaultScopeModel, x, y, z);
 		translate(defaultStockModel, x, y, z);
 		translate(defaultGripModel, x, y, z);
+		translate(defaultGadgetModel, x, y, z);
 		translate(ammoModel, x, y, z);
 		translate(slideModel, x, y, z);
 		translate(pumpModel, x, y, z);
@@ -282,6 +303,7 @@ public class ModelGun extends ModelBase
 		translate(revolverBarrelModel, x, y, z);
 		translate(revolver2BarrelModel, x, y, z);
 		translate(breakActionModel, x, y, z);
+		translate(accessoryModel, x, y, z);
 	}
 	
 	protected void translate(ModelRendererTurbo[] model, float x, float y, float z)
@@ -293,6 +315,4 @@ public class ModelGun extends ModelBase
 			mod.rotationPointZ += z;
 		}
 	}
-
-
 }

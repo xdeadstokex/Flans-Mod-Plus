@@ -1,5 +1,7 @@
 package com.flansmod.client.gui;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.client.renderer.RenderHelper;
@@ -14,7 +16,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 import com.flansmod.client.ClientProxy;
 import com.flansmod.client.model.GunAnimations;
@@ -30,6 +31,7 @@ public class GuiGunModTable extends GuiContainer
 	private static final ResourceLocation texture = new ResourceLocation("flansmod", "gui/gunTableNew.png");
 	private static final Random rand = new Random();
 	private Paintjob hoveringOver = null;
+	private String hoveringOverModSlots = null;
 	private int mouseX, mouseY;
 	private InventoryPlayer inventory;
 	private boolean flipGunModel = false;
@@ -96,6 +98,11 @@ public class GuiGunModTable extends GuiContainer
 			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getSpread(gunStack), 2)), 241, 74, 0x404040);
 			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getRecoilPitch(gunStack), 2)), 241, 86, 0x404040);
 			fontRendererObj.drawString(String.valueOf(roundFloat(reloadt / 20, 2)) + "s", 241, 98, 0x404040);
+
+			//Draw attachment tooltips
+			if(hoveringOverModSlots != null)
+				drawHoveringText(Collections.singletonList(hoveringOverModSlots), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
+
 		}
     }
 	
@@ -110,7 +117,7 @@ public class GuiGunModTable extends GuiContainer
 		mc.renderEngine.bindTexture(texture);
 		drawTexturedModalRect(xOrigin, yOrigin, 0, 0, xSize, ySize);
 
-		for(int z = 1; z < 13; z++)
+		for(int z = 1; z < 17; z++)
 			inventorySlots.getSlot(z).yDisplayPosition = -1000;
 
 		ItemStack gunStack = inventorySlots.getSlot(0).getStack();
@@ -121,7 +128,8 @@ public class GuiGunModTable extends GuiContainer
 		{
 			GunType gunType = ((ItemGun)gunStack.getItem()).type;
 			boolean[] allowBools = {gunType.allowBarrelAttachments, gunType.allowScopeAttachments, gunType.allowStockAttachments,
-					gunType.allowGripAttachments};
+					gunType.allowGripAttachments, gunType.allowGadgetAttachments, gunType.allowSlideAttachments,
+					gunType.allowPumpAttachments, gunType.allowAccessoryAttachments};
 			int reloadt = Math.round(gunType.getReloadTime(gunStack));
 
 			//draw flip display button
@@ -229,7 +237,7 @@ public class GuiGunModTable extends GuiContainer
 	/*
      * Gun stat bars.
      * Loops through and uses smoothing(lastStats[]) to display stat values.
-     * [NOTE: I thought too much into this]
+     * TODO: This needs some optimisation.
      */
 	public void displayGunValues(int[] stats)
 	{
@@ -301,7 +309,6 @@ public class GuiGunModTable extends GuiContainer
 		int mouseYInGUI = mouseY - guiTop;
 
 		hoveringOver = null;
-
 		ItemStack gunStack = inventorySlots.getSlot(0).getStack();
 		if(gunStack != null && gunStack.getItem() instanceof ItemGun)
 		{
@@ -324,6 +331,22 @@ public class GuiGunModTable extends GuiContainer
 					if(mouseXInGUI >= slotX && mouseXInGUI < slotX + 18 && mouseYInGUI >= slotY && mouseYInGUI < slotY + 18)
 						hoveringOver = paintjob;
 				}
+			}
+
+			//Show attachment tooltips
+			hoveringOverModSlots = null;
+			String[] text = {"Barrel", "Scope", "Stock", "Grip", "Gadget", "Slide", "Pump", "Accessory"};
+			boolean[] allowBools = {gunType.allowBarrelAttachments, gunType.allowScopeAttachments, gunType.allowStockAttachments,
+					gunType.allowGripAttachments, gunType.allowGadgetAttachments, gunType.allowSlideAttachments,
+					gunType.allowPumpAttachments, gunType.allowAccessoryAttachments};
+
+			for(int a = 0; a < allowBools.length; a++)
+			{
+				int slotX = 16 + a * 18;
+				int slotY = 88;
+				if(mouseXInGUI >= slotX && mouseXInGUI < slotX + 18 && mouseYInGUI >= slotY && mouseYInGUI < slotY + 18
+						&& !inventorySlots.getSlot(a + 1).getHasStack() && allowBools[a])
+					hoveringOverModSlots = text[a];
 			}
 		}
 	}
