@@ -8,6 +8,8 @@ public class GunAnimations
 	
 	/** (Purely aesthetic) gun animation variables */
 	public boolean isGunEmpty;
+	/** Recoil */
+	public float gunRecoil = 0F, lastGunRecoil = 0F;
 	/** Slide */
 	public float gunSlide = 0F, lastGunSlide = 0F;
 	/** Delayed Reload Animations */
@@ -91,13 +93,20 @@ public class GunAnimations
 			if(gunPullback >= 0.999F)
 				isFired = false;
 		}
-		
+
+		//Recoil model
+		lastGunRecoil = gunRecoil;
+		if(gunRecoil > 0)
+			gunRecoil *= 0.5F;
+
+		//Slide model
 		lastGunSlide = gunSlide;
 		if(isGunEmpty)
 			lastGunSlide = gunSlide = 0.5F;
 		if(gunSlide > 0 && !isGunEmpty)
-			gunSlide *= 0.4F;
-		
+			gunSlide *= 0.5F;
+
+		//Recload
 		lastReloadAnimationProgress = reloadAnimationProgress;
 		if(reloading)
 			reloadAnimationProgress += 1F / reloadAnimationTime;
@@ -128,6 +137,7 @@ public class GunAnimations
 	{
 		minigunBarrelRotationSpeed += 2F;
 		lastGunSlide = gunSlide = 1F;
+		lastGunRecoil = gunRecoil = 1F;
 		timeUntilPump = pumpDelay;
 		timeToPumpFor = pumpTime;
 		timeUntilPullback = hammerDelay;

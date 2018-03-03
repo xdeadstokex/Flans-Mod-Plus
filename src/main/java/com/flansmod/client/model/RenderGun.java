@@ -331,9 +331,10 @@ public class RenderGun implements IItemRenderer
 			GL11.glTranslatef(0F, 0, 0);
 
 			//Gun recoil
-			//GL11.glRotatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * -10F, 0F, 0F, 1F);
+            GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * model.RecoilSlideDistance, 0F, 0F);
+            GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * model.RotateSlideDistance, 0F,0F,1F);
 
-			//Do not move gun when there's a pump in the reload
+            //Do not move gun when there's a pump in the reload
 			if(model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
 			{
 				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * -5F, 0F, 1F, 0F);
