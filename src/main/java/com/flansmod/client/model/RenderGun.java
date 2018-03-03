@@ -329,6 +329,22 @@ public class RenderGun implements IItemRenderer
 		if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
 		{
 			GL11.glTranslatef(0F, 0, 0);
+
+			//Gun recoil
+			//GL11.glRotatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * -10F, 0F, 0F, 1F);
+
+			//Do not move gun when there's a pump in the reload
+			if(model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
+			{
+				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * -5F, 0F, 1F, 0F);
+				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * 5F, 1F, 0F, 0F);
+			}
+
+			if(model.isSingleAction)
+			{
+				GL11.glRotatef(-(1 - Math.abs(animations.lastGunPullback + (animations.gunPullback - animations.lastGunPullback) * smoothing)) * -5F, 0F,0F,1F);
+				GL11.glRotatef(-(1 - Math.abs(animations.lastGunPullback + (animations.gunPullback - animations.lastGunPullback) * smoothing)) * 2.5F, 1F,0F,0F);
+			}
 		}
 		//Make sure we actually have the renderEngine
 		if(renderEngine == null)
@@ -356,7 +372,7 @@ public class RenderGun implements IItemRenderer
 		ItemStack slideItemStack = type.getSlideItemStack(item);
 		ItemStack pumpItemStack = type.getPumpItemStack(item);
 		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
-		
+
 		ItemStack[] bulletStacks = new ItemStack[type.numAmmoItemsInGun];
 		boolean empty = true;
 		for(int i = 0; i < type.numAmmoItemsInGun; i++)
@@ -365,7 +381,16 @@ public class RenderGun implements IItemRenderer
 			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && bulletStacks[i].getItemDamage() < bulletStacks[i].getMaxDamage())
 				empty = false;
 		}
-				
+
+		//Sanity check for empty guns
+		if(model.slideLockOnEmpty)
+		{
+			if(empty)
+				animations.onGunEmpty(true);
+			else if(!empty && !animations.reloading)
+				animations.onGunEmpty(false);
+		}
+
 		//Load texture
 		if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms)
 		{
@@ -373,8 +398,6 @@ public class RenderGun implements IItemRenderer
 			renderFirstPersonArm(mc.thePlayer, model, animations);
 		}
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
-		
-
 		
 		if(scopeAttachment != null)
 			GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset / 16F, 0F);
@@ -430,6 +453,16 @@ public class RenderGun implements IItemRenderer
 					model.renderDefaultScope(f);
 			}
 			GL11.glPopMatrix();
+
+			//Render the hammer
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(model.hammerSpinPoint.x, model.hammerSpinPoint.y, model.hammerSpinPoint.z);
+				GL11.glRotatef(-animations.hammerRotation, 0F, 0F, 1F);
+				GL11.glTranslatef(-model.hammerSpinPoint.x, -model.hammerSpinPoint.y, -model.hammerSpinPoint.z);
+				model.renderHammer(f);
+			}
+			GL11.glPopMatrix();
 			
 			//Render the pump-action handle
 			if(pumpAttachment == null)
@@ -456,7 +489,7 @@ public class RenderGun implements IItemRenderer
 				model.renderMinigunBarrel(f);
 				GL11.glPopMatrix();
 			}
-			
+
 			//Render the cocking handle
 			
 			//Render the revolver barrel

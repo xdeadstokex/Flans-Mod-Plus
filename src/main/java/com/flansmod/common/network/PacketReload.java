@@ -55,6 +55,18 @@ public class PacketReload extends PacketBase
     	if(data != null && stack != null && stack.getItem() instanceof ItemGun)
     	{
     		GunType type = ((ItemGun)stack.getItem()).type;
+			//Check if the gun is empty
+			boolean empty = true;
+			for(int i = 0; i < type.numAmmoItemsInGun; i++)
+			{
+				ItemStack bulletStack = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
+				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
+				{
+					empty = false;
+					break;
+				}
+			}
+
     		if(((ItemGun)stack.getItem()).reload(stack, type, playerEntity.worldObj, playerEntity, true, left))
     		{
     			//Set the reload delay
@@ -64,8 +76,10 @@ public class PacketReload extends PacketBase
     			else data.reloadingRight = true;
 				//Send reload packet to induce reload effects client side
 				FlansMod.getPacketHandler().sendTo(new PacketReload(left), playerEntity);
-				//Play reload sound
-				if(type.reloadSound != null)
+				//Play reload sound, empty variant if not null
+				if(empty && type.reloadSoundOnEmpty != null)
+					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, type.reloadSoundOnEmpty, true);
+				else if(type.reloadSound != null)
 					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, FlansMod.soundRange, playerEntity.dimension, type.reloadSound, false);
     		}
     	}

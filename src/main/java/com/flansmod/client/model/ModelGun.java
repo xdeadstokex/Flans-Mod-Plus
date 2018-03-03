@@ -32,7 +32,7 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] pumpModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] minigunBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] leverActionModel = new ModelRendererTurbo[0];
-	public ModelRendererTurbo[] accessoryModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] hammerModel = new ModelRendererTurbo[0];
 	/** The point about which the minigun barrel rotates. Rotation is along the line of the gun through this point */
 	public Vector3f minigunBarrelOrigin = new Vector3f();
 	
@@ -80,8 +80,8 @@ public class ModelGun extends ModelBase
 	public boolean scopeIsOnBreakAction = false;
 	/** For rifles and shotguns. Currently a generic reload animation regardless of how full the internal magazine already is */
 	public float numBulletsInReloadAnimation = 1;
-	/** For shotgun pump handles and rifle bolts */
-	public int pumpDelay = 0, pumpDelayAfterReload = 0, pumpTime = 1;
+	/** For shotgun pump handles, rifle bolts and hammer pullbacks */
+	public int pumpDelay = 0, pumpDelayAfterReload = 0, pumpTime = 1, hammerDelay = 0;
 	/** For shotgun pump handle */
 	public float pumpHandleDistance = 4F / 16F;
 	/** For end loaded projectiles */
@@ -106,6 +106,13 @@ public class ModelGun extends ModelBase
 	public boolean spinningCocking = false;
 	/** The point, in model co-ordinates, about which the gun is spun */
 	public Vector3f spinPoint = new Vector3f();
+	/** The point where the hammer will pivot and spin from */
+	public Vector3f hammerSpinPoint = new Vector3f();
+	public float hammerAngle = 75F;
+	/** Single action cocking check */
+	public boolean isSingleAction = false;
+	/** If true, lock the slide when the last bullet is fired */
+	public boolean slideLockOnEmpty = false;
 	
 	/** Custom reload Parameters. If Enum.CUSTOM is set, these parameters can build an animation within the gun model classes */
 	public float rotateGunVertical = 0F;
@@ -234,9 +241,9 @@ public class ModelGun extends ModelBase
 		render(breakActionModel, f);
 	}
 
-	public void renderAccessory(float f)
+	public void renderHammer(float f)
 	{
-		render(accessoryModel, f);
+		render(hammerModel, f);
 	}
 	
 	public void renderFlash (float f, int i)
@@ -275,8 +282,8 @@ public class ModelGun extends ModelBase
 		flip(revolverBarrelModel);
 		flip(revolver2BarrelModel);
 		flip(breakActionModel);
-		flip(accessoryModel);
-	}	
+		flip(hammerModel);
+	}
 	
 	protected void flip(ModelRendererTurbo[] model)
 	{
@@ -303,7 +310,7 @@ public class ModelGun extends ModelBase
 		translate(revolverBarrelModel, x, y, z);
 		translate(revolver2BarrelModel, x, y, z);
 		translate(breakActionModel, x, y, z);
-		translate(accessoryModel, x, y, z);
+		translate(hammerModel, x, y, z);
 	}
 	
 	protected void translate(ModelRendererTurbo[] model, float x, float y, float z)

@@ -130,6 +130,8 @@ public class GunType extends PaintableType implements IScope
 	public boolean distortSound = true;
 	/** The sound to play upon reloading */
 	public String reloadSound;
+	/** The sound to play upon reloading when empty */
+	public String reloadSoundOnEmpty;
 	public int idleSoundRange = 50;
 	public int meleeSoundRange = 50;
 	public int reloadSoundRange = 50;
@@ -337,6 +339,11 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("ReloadSound"))
 			{
 				reloadSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+			else if(split[0].equals("EmptyReloadSound"))
+			{
+				reloadSoundOnEmpty = split[1];
 				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
 			}
 			else if(split[0].equals("IdleSound"))

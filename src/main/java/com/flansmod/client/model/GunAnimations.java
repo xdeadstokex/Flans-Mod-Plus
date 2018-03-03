@@ -7,6 +7,7 @@ public class GunAnimations
 	public static GunAnimations defaults = new GunAnimations();
 	
 	/** (Purely aesthetic) gun animation variables */
+	public boolean isGunEmpty;
 	/** Slide */
 	public float gunSlide = 0F, lastGunSlide = 0F;
 	/** Delayed Reload Animations */
@@ -17,9 +18,7 @@ public class GunAnimations
 	public boolean pumping = false;
 	
 	public boolean reloading = false;
-	
 	public float reloadAnimationTime = 0;
-	
 	public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
 
 	public float minigunBarrelRotation = 0F;
@@ -27,7 +26,14 @@ public class GunAnimations
 	
 	public int muzzleFlashTime = 0;
 	public int flashInt = 0;
-	
+
+	/** Hammer model mechanics */
+	/** If in single action, the model will play a modified animation and delay hammer reset */
+	public float hammerRotation = 0F;
+	public int timeUntilPullback = 0;
+	public float gunPullback = -1F, lastGunPullback = -1F;
+	public boolean isFired = false;
+
 	/** Melee animations */
 	public int meleeAnimationProgress = 0, meleeAnimationLength = 0;
 	
@@ -39,6 +45,7 @@ public class GunAnimations
 	public void update()
 	{
 		lastPumped = pumped;
+		lastGunPullback = gunPullback;
 		
 		if(timeUntilPump > 0)
 		{
@@ -50,11 +57,26 @@ public class GunAnimations
 				lastPumped = pumped = -1F;
 			}
 		}
+
+		if(timeUntilPullback > 0)
+		{
+			timeUntilPullback--;
+			if(timeUntilPullback == 0)
+			{
+				//Reset the hammer
+				isFired = true;
+				lastGunPullback = gunPullback = -1F;
+			}
+		}
+		else
+		{
+			//Automatically reset hammer
+			hammerRotation *= 0.6F;
+		}
+
 		
 		if(muzzleFlashTime > 0)
-		{
 			muzzleFlashTime--;
-		}
 		
 		if(pumping)
 		{
@@ -62,14 +84,25 @@ public class GunAnimations
 			if(pumped >= 0.999F)
 				pumping = false;
 		}
+
+		if(isFired)
+		{
+			gunPullback += 2F / 4;
+			if(gunPullback >= 0.999F)
+				isFired = false;
+		}
 		
 		lastGunSlide = gunSlide;
-		if(gunSlide > 0)
+		if(isGunEmpty)
+			lastGunSlide = gunSlide = 0.5F;
+		if(gunSlide > 0 && !isGunEmpty)
 			gunSlide *= 0.4F;
 		
 		lastReloadAnimationProgress = reloadAnimationProgress;
 		if(reloading)
 			reloadAnimationProgress += 1F / reloadAnimationTime;
+		if(reloading && reloadAnimationProgress >= 0.9F)	//reset if slide locked
+			isGunEmpty = false;
 		if(reloading && reloadAnimationProgress >= 1F)
 			reloading = false;
 		
@@ -84,13 +117,21 @@ public class GunAnimations
 				meleeAnimationProgress = meleeAnimationLength = 0;
 		}
 	}
+
+	//Not to be used for mechas
+	public void onGunEmpty(boolean atLastBullet)
+	{
+		isGunEmpty = atLastBullet;
+	}
 	
-	public void doShoot(int pumpDelay, int pumpTime)
+	public void doShoot(int pumpDelay, int pumpTime, int hammerDelay, float hammerAngle)
 	{
 		minigunBarrelRotationSpeed += 2F;
 		lastGunSlide = gunSlide = 1F;
 		timeUntilPump = pumpDelay;
 		timeToPumpFor = pumpTime;
+		timeUntilPullback = hammerDelay;
+		hammerRotation = hammerAngle;
 		muzzleFlashTime = 2;
 		
 		Random r = new Random();

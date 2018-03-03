@@ -424,12 +424,15 @@ public class ItemGun extends Item implements IPaintableItem
 
 		if(FlansModClient.shootTime(left) <= 0)
 		{
+			boolean onLastBullet = false;
 			boolean hasAmmo = false;
 			for(int i = 0; i < gunType.numAmmoItemsInGun; i++)
 			{
 				ItemStack bulletStack = getBulletItemStack(stack, i);
 				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
 				{
+					if(bulletStack.getMaxDamage() - bulletStack.getItemDamage() == 1 && gunType.model.slideLockOnEmpty)
+						onLastBullet = true;
 					hasAmmo = true;
 					break;
 				}
@@ -459,7 +462,11 @@ public class ItemGun extends Item implements IPaintableItem
 				}
 				int pumpDelay = gunType.model == null ? 0 : gunType.model.pumpDelay;
 				int pumpTime = gunType.model == null ? 1 : gunType.model.pumpTime;
-				animations.doShoot(pumpDelay, pumpTime);
+				int hammerDelay = gunType.model == null ? 0 : gunType.model.hammerDelay;
+				float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
+
+				animations.onGunEmpty(onLastBullet);
+				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle);
 				if(!player.isSneaking())
 				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
@@ -588,8 +595,6 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 				}
 			}
-
-
 		}
 	}
 
@@ -1031,9 +1036,11 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 					//Send reload packet to induce reload effects client side
 					FlansMod.getPacketHandler().sendTo(new PacketReload(left), entityplayer);
-					//Play reload sound
-					if(gunType.reloadSound != null)
-						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSound, true);
+					//Play reload sound, empty variant if not null
+					if(gunType.reloadSoundOnEmpty != null)
+						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSoundOnEmpty, true);
+					else if(gunType.reloadSound != null)
+					 	PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSound, true);
 				}
 			}
 			//A bullet stack was found, so try shooting with it
