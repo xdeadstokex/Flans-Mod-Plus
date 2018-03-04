@@ -44,6 +44,8 @@ public class AttachmentType extends PaintableType implements IScope
 	public float bulletSpeedMultiplier = 1F;
 	/** This modifies the reload time, which is then rounded down to the nearest tick */
 	public float reloadTimeMultiplier = 1F;
+	/** Movement speed modifier */
+	public float moveSpeedMultiplier = 1F;
 	/** If set to anything other than null, then this attachment will override the weapon's default firing mode */
 	public EnumFireMode modeOverride = null;
 	
@@ -115,6 +117,8 @@ public class AttachmentType extends PaintableType implements IScope
 				bulletSpeedMultiplier = Float.parseFloat(split[1]);
 			else if(split[0].equals("ReloadTimeMultiplier"))
 				reloadTimeMultiplier = Float.parseFloat(split[1]);
+			else if(split[0].equals("MovementSpeedMultiplier"))
+				moveSpeedMultiplier = Float.parseFloat(split[1]);
 			//Scope Variables
 			else if(split[0].equals("ZoomLevel"))
 				zoomLevel = Float.parseFloat(split[1]);

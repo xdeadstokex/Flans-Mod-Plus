@@ -1207,7 +1207,23 @@ public class ItemGun extends Item implements IPaintableItem
 
 			if(spread <= 0)
 			{
-				spread = gunType.getSpread(stack);
+				float result = gunType.getSpread(stack);
+
+				//If aiming down sights, then lower spread by 50% if more than one bullet, 80% if one bullet
+				if (FlansModClient.currentScope != null && numBullets > 1)
+					result = result * 0.5F;
+				else if (FlansModClient.currentScope != null)
+					result = result * 0.2F;
+
+				//If crouch/sneak, then lower spread by 10%
+				if(entityplayer.isSneaking())
+					result = result * 0.9F;
+
+				//If running, then increase spread by 75%
+				if (entityplayer.isSprinting())
+					result = result * 1.75F;
+
+				spread = result;
 			}
 
 			for (int k = 0; k < numBullets; k++)
@@ -1438,7 +1454,7 @@ public class ItemGun extends Item implements IPaintableItem
     {
        	Multimap map = super.getAttributeModifiers(stack);
        	map.put(SharedMonsterAttributes.knockbackResistance.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "KnockbackResist", type.knockbackModifier, 0));
-       	map.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "MovementSpeed", type.moveSpeedModifier - 1F, 2));
+       	map.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "MovementSpeed", type.getMovementSpeed(stack) - 1F, 2));
         if(type.secondaryFunction == EnumSecondaryFunction.MELEE)
         	map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", type.meleeDamage, 0));
        	return map;

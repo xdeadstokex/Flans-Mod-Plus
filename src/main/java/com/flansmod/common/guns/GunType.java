@@ -785,6 +785,17 @@ public class GunType extends PaintableType implements IScope
 		return stackReloadTime;
 	}
 
+	/** Get the movement speed of a specific gun, taking into account attachments */
+	public float getMovementSpeed(ItemStack stack)
+	{
+		float stackMovement = moveSpeedModifier;
+		for(AttachmentType attachment : getCurrentAttachments(stack))
+		{
+			stackMovement *= attachment.moveSpeedMultiplier;
+		}
+		return stackMovement;
+	}
+
 	public void setFireMode(ItemStack stack, int fireMode)
 	{
 		if(!stack.hasTagCompound())
