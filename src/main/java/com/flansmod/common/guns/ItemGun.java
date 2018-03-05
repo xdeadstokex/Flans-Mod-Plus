@@ -2,10 +2,7 @@ package com.flansmod.common.guns;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -60,7 +57,7 @@ import com.flansmod.common.guns.raytracing.PlayerBulletHit;
 import com.flansmod.common.guns.raytracing.PlayerHitbox;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
 import com.flansmod.common.network.PacketGunFire;
-import com.flansmod.common.network.PacketParticle;
+import com.flansmod.common.network.PacketGunSpread;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
@@ -71,7 +68,6 @@ import com.flansmod.common.teams.EntityFlag;
 import com.flansmod.common.teams.EntityFlagpole;
 import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
-import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
 import com.google.common.collect.Multimap;
@@ -259,6 +255,9 @@ public class ItemGun extends Item implements IPaintableItem
 					gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
 					gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
 					gameSettings.fovSetting = FlansModClient.originalFOV;
+
+					//Send default spread packet to server
+					FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
 				}
 			}
 			//Do not shoot ammo bags, flags or dropped gun items
@@ -376,6 +375,13 @@ public class ItemGun extends Item implements IPaintableItem
 						FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
 						gameSettings.thirdPersonView = 0;
 						FlansModClient.originalFOV = gameSettings.fovSetting;
+
+						//Send ads spread packet to server
+						float spread = type.getSpread(itemstack);
+						if(type.numBullets == 1)
+							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
+						else
+							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
 					}
 					else
 					{
@@ -385,6 +391,9 @@ public class ItemGun extends Item implements IPaintableItem
 						gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
 						gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
 						gameSettings.fovSetting = FlansModClient.originalFOV;
+
+						//Send default spread packet to server
+						FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
 					}
 					FlansModClient.scopeTime = 10;
 				}
@@ -471,7 +480,9 @@ public class ItemGun extends Item implements IPaintableItem
 				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack);
-				}else{
+				}
+				else
+				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack) - gunType.decreaseRecoilPitch;
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
 				}
@@ -1208,12 +1219,6 @@ public class ItemGun extends Item implements IPaintableItem
 			if(spread <= 0)
 			{
 				float result = gunType.getSpread(stack);
-
-				//If aiming down sights, then lower spread by 50% if more than one bullet, 80% if one bullet
-				if (FlansModClient.currentScope != null && numBullets > 1)
-					result = result * 0.5F;
-				else if (FlansModClient.currentScope != null)
-					result = result * 0.2F;
 
 				//If crouch/sneak, then lower spread by 10%
 				if(entityplayer.isSneaking())

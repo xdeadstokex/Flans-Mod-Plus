@@ -214,6 +214,9 @@ public class GunType extends PaintableType implements IScope
 	/** Gives knockback resistance to the player */
 	public float knockbackModifier = 0F;
 
+	/** Default spread of the gun. Do not modify. */
+	private float defaultSpread = 0F;
+
 	public GunType(TypeFile file)
 	{
 		super(file);
@@ -267,7 +270,7 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("Knockback"))
 				knockback = Float.parseFloat(split[1]);
 			else if(split[0].equals("Accuracy") || split[0].equals("Spread"))
-				bulletSpread = Float.parseFloat(split[1]);
+				defaultSpread = bulletSpread = Float.parseFloat(split[1]);
 			else if(split[0].equals("NumBullets"))
 				numBullets = Integer.parseInt(split[1]);
 			else if(split[0].equals("AllowNumBulletsByBulletType"))
@@ -735,6 +738,17 @@ public class GunType extends PaintableType implements IScope
 	public float getSpread(ItemStack stack)
 	{
 		float stackSpread = bulletSpread;
+		for(AttachmentType attachment : getCurrentAttachments(stack))
+		{
+			stackSpread *= attachment.spreadMultiplier;
+		}
+		return stackSpread;
+	}
+
+	/** Get the default spread of a specific gun, taking into account attachments */
+	public float getDefaultSpread(ItemStack stack)
+	{
+		float stackSpread = defaultSpread;
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackSpread *= attachment.spreadMultiplier;
