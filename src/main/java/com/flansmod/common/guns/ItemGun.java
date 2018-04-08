@@ -1180,13 +1180,25 @@ public class ItemGun extends Item implements IPaintableItem
 	{
 		//flash(entityplayer);
 		ShootableType bullet = ((ItemShootable)bulletStack.getItem()).type;
+		boolean lastBullet = false;
+		ItemStack[] bulletStacks = new ItemStack[type.numAmmoItemsInGun];
+		for(int i = 0; i < type.numAmmoItemsInGun; i++)
+		{
+			bulletStacks[i] = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
+			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && (bulletStacks[i].getMaxDamage() - bulletStacks[i].getItemDamage() == 1))
+				lastBullet = true;
+		}
+
 		// Play a sound if the previous sound has finished
 		if (soundDelay <= 0 && gunType.shootSound != null)
 		{
 			AttachmentType barrel = gunType.getBarrel(stack);
 			boolean silenced = barrel != null && barrel.silencer;
 			//world.playSoundAtEntity(entityplayer, type.shootSound, 10F, type.distortSound ? 1.0F / (world.rand.nextFloat() * 0.4F + 0.8F) : 1.0F);
-			PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.shootSound, gunType.distortSound, silenced);
+			if(lastBullet && type.lastShootSound != null)
+				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.lastShootSound, gunType.distortSound, silenced);
+			else
+				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.shootSound, gunType.distortSound, silenced);
 			soundDelay = gunType.shootSoundLength;
 		}
 		if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable)

@@ -316,7 +316,6 @@ public class RenderGun implements IItemRenderer
 				}
 				default : break;
 			}
-			
 			renderGun(item, gunType, f, model, animations, reloadRotate, type);
 		}
 		GL11.glPopMatrix();
@@ -428,8 +427,17 @@ public class RenderGun implements IItemRenderer
 				model.renderFlash(f, animations.flashInt);
 				GL11.glPopMatrix();
 			}
-			
 			//Render various shoot / reload animated parts
+			//Render the m1-garand case ejection
+			if(animations.isCaseFired)
+			{
+				GL11.glPushMatrix();
+				{
+					model.renderM1Casing(f, animations);
+				}
+				GL11.glPopMatrix();
+			}
+
 			//Render the slide
 			if(slideAttachment == null)
 			{
