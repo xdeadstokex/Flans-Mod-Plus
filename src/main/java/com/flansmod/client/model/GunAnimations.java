@@ -171,6 +171,10 @@ public class GunAnimations
 			timeUntilCasingReset = 60;
 			isCaseFired = true;
 		}
+		else
+		{
+			isCaseFired = false;
+		}
 	}
 		
 	public void doReload(int reloadTime, int pumpDelay, int pumpTime)
