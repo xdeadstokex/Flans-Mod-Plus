@@ -54,7 +54,7 @@ public class KeyInputHandler
     //public static KeyBinding trimKey = new KeyBinding("Trim Key", Keyboard.KEY_O, "Flan's Mod");
     public static KeyBinding debugKey = new KeyBinding("Debug Key", Keyboard.KEY_F10, "Flan's Mod");
     public static KeyBinding reloadModelsKey = new KeyBinding("Reload Models Key", Keyboard.KEY_F9, "Flan's Mod");
-	//public static KeyBinding selectorKey = new KeyBinding("Selector Key", Keyboard.KEY_K, "Flan's Mod");
+	public static KeyBinding secondaryKey = new KeyBinding("Select Gun Underbarrel", Keyboard.KEY_K, "Flan's Mod");
     //public static KeyBinding zoomKey = new KeyBinding("Zoom Key", 2 - 100, "Flan's Mod");
 
 	Minecraft mc;
@@ -87,6 +87,7 @@ public class KeyInputHandler
 		ClientRegistry.registerKeyBinding(reloadModelsKey);
 		//ClientRegistry.registerKeyBinding(zoomKey);
 		//ClientRegistry.registerKeyBinding(selectorKey);
+		ClientRegistry.registerKeyBinding(secondaryKey);
 
 		mc = Minecraft.getMinecraft();
 	}
@@ -118,7 +119,12 @@ public class KeyInputHandler
 		}
 		if(gunModeKey.isPressed())
 		{
-			FlansMod.getPacketHandler().sendToServer(new PacketGunMode());
+			FlansMod.getPacketHandler().sendToServer(new PacketGunMode(1));
+			return;
+		}
+		if(secondaryKey.isPressed())
+		{
+			FlansMod.getPacketHandler().sendToServer(new PacketGunMode(2));
 			return;
 		}
 		/*if(selectorKey.isPressed())

@@ -1,5 +1,10 @@
 package com.flansmod.common.network;
 
+import com.flansmod.client.FlansModClient;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.guns.EnumSecondaryFunction;
+import com.flansmod.common.guns.GunType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,10 +20,18 @@ import com.flansmod.common.guns.ItemGun;
 
 public class PacketGunMode extends PacketBase 
 {
+	private int handle = 0;
+
 	/** Only server to client */
 	public EnumFireMode mode = EnumFireMode.SEMIAUTO;
+	public boolean isInSecondary;
 	
 	public PacketGunMode() {}
+
+	public PacketGunMode(int aHandle)
+	{
+		handle = aHandle;
+	}
 	
 	public PacketGunMode(EnumFireMode md)
 	{
@@ -45,40 +58,54 @@ public class PacketGunMode extends PacketBase
 	public void handleServerSide(EntityPlayerMP playerEntity) 
 	{
 		ItemStack itemStack = playerEntity.inventory.getCurrentItem();
-		if(itemStack != null && itemStack.getItem() instanceof ItemGun)
+
+		if(handle == 1)
 		{
-			ItemGun gun = (ItemGun) itemStack.getItem();
-			
-			EnumFireMode currentMode = gun.type.getFireMode(itemStack);
-			EnumFireMode nextMode = currentMode;
-
-			EnumFireMode[] submode = gun.type.submode;
-			for( int i=0; i<submode.length; i++ )
+			if(itemStack != null && itemStack.getItem() instanceof ItemGun)
 			{
-				if(currentMode == submode[i])
+				ItemGun gun = (ItemGun) itemStack.getItem();
+				EnumFireMode currentMode = gun.type.getFireMode(itemStack);
+				EnumFireMode nextMode = currentMode;
+				EnumFireMode[] submode = gun.type.submode;
+				for( int i=0; i<submode.length; i++ )
 				{
-					nextMode = submode[ (i + 1) % submode.length ];
-					break;
+					if(currentMode == submode[i])
+					{
+						nextMode = submode[ (i + 1) % submode.length ];
+						break;
+					}
 				}
-			}
 
-			if(currentMode != nextMode)
-			{
-//				FlansMod.log("[Server]Switched the gun mode : " + currentMode + " -> " + nextMode);
-				
-				gun.type.setFireMode(itemStack, nextMode.ordinal());
-				
-		//		playerEntity.worldObj.playSoundEffect(
-		//				playerEntity.posX+0.5,
-		//				playerEntity.posY+0.5,
-		//				playerEntity.posZ+0.5,
-		//				"random.click", 2.3F, 1.0F);
-
-				FlansMod.getPacketHandler().sendTo(new PacketGunMode(nextMode), playerEntity);
+				if(currentMode != nextMode)
+				{
+//					FlansMod.log("[Server]Switched the gun mode : " + currentMode + " -> " + nextMode);
+					gun.type.setFireMode(itemStack, nextMode.ordinal());
+					//		playerEntity.worldObj.playSoundEffect(
+					//				playerEntity.posX+0.5,
+					//				playerEntity.posY+0.5,
+					//				playerEntity.posZ+0.5,
+					//				"random.click", 2.3F, 1.0F);
+					FlansMod.getPacketHandler().sendTo(new PacketGunMode(nextMode), playerEntity);
+				}
+//					FlansMod.log("[Server]Do not switch the gun mode : " + currentMode);
 			}
-			else
+		}
+		else
+		{
+			//Do not toggle whilst gun is reloading
+			PlayerData data = PlayerHandler.getPlayerData(playerEntity);
+			if(data.shootTimeLeft <= 0)
 			{
-//				FlansMod.log("[Server]Do not switch the gun mode : " + currentMode);
+				if(itemStack != null && itemStack.getItem() instanceof ItemGun && ((ItemGun)itemStack.getItem()).type.secondaryFunction == EnumSecondaryFunction.UNDER_BARREL)
+				{
+					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
+					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
+
+//					if(mode)
+//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numSecAmmoItems;
+//					else
+//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numPrimaryAmmoItems;
+				}
 			}
 		}
 	}
@@ -88,11 +115,31 @@ public class PacketGunMode extends PacketBase
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
 		ItemStack itemStack = clientPlayer.inventory.getCurrentItem();
-		if(itemStack != null && itemStack.getItem() instanceof ItemGun)
-		{
-//			FlansMod.log("[Client]Switched the gun mode : " + this.mode);
 
-			((ItemGun)itemStack.getItem()).type.setFireMode(itemStack, this.mode.ordinal());
+		if(handle == 1)
+		{
+			if(itemStack != null && itemStack.getItem() instanceof ItemGun)
+			{
+//				FlansMod.log("[Client]Switched the gun mode : " + this.mode);
+				((ItemGun)itemStack.getItem()).type.setFireMode(itemStack, this.mode.ordinal());
+			}
+		}
+		else
+		{
+			//Do not toggle whilst gun is reloading
+			if(FlansModClient.shootTimeLeft <= 0)
+			{
+				if(itemStack != null && itemStack.getItem() instanceof ItemGun && ((ItemGun)itemStack.getItem()).type.secondaryFunction == EnumSecondaryFunction.UNDER_BARREL)
+				{
+					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
+					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
+
+//					if(mode)
+//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numSecAmmoItems;
+//					else
+//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numPrimaryAmmoItems;
+				}
+			}
 		}
 	}
 }

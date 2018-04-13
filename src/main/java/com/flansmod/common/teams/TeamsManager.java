@@ -724,11 +724,11 @@ public class TeamsManager
 				if(ammoItemstack != null && ammoItemstack.getItem() instanceof ItemShootable)
 				{
 					ShootableType bulletType = ((ItemShootable)ammoItemstack.getItem()).type;
-					if(gunType.isAmmo(bulletType))
+					if(gunType.isAmmo(bulletType, gunEntity.getEntityItem()))
 					{
 						gunEntity.ammoStacks.add(ammoItemstack.copy());
 						ammoItemstack.stackSize = 0;
-					}	
+					}
 				}
 			}
 		}

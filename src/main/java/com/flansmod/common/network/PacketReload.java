@@ -77,6 +77,8 @@ public class PacketReload extends PacketBase
 				//Send reload packet to induce reload effects client side
 				FlansMod.getPacketHandler().sendTo(new PacketReload(left), playerEntity);
 				//Play reload sound, empty variant if not null
+				if(type.getSecondaryFire(stack) && type.secondaryReloadSound != null)
+					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, type.secondaryReloadSound, true);
 				if(empty && type.reloadSoundOnEmpty != null)
 					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, type.reloadSoundOnEmpty, true);
 				else if(type.reloadSound != null)
@@ -132,7 +134,7 @@ public class PacketReload extends PacketBase
 			for (int j = 0; j < clientPlayer.inventory.getSizeInventory(); j++)
 			{
 				ItemStack item = clientPlayer.inventory.getStackInSlot(j);
-				if (item != null && item.getItem() instanceof ItemShootable && type.isAmmo(((ItemShootable)(item.getItem())).type))
+				if (item != null && item.getItem() instanceof ItemShootable && type.isAmmo(((ItemShootable)(item.getItem())).type, stack))
 				{
 					int bulletsInThisSlot = item.getMaxDamage() - item.getItemDamage();
 					if(bulletsInThisSlot > bulletsInBestSlot)

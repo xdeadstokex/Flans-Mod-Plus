@@ -60,6 +60,7 @@ public class GunType extends PaintableType implements IScope
 	public int shootDelay = 0;
 	/** Number of ammo items that the gun may hold. Most guns will hold one magazine.
 	 * Some may hold more, such as Nerf pistols, revolvers or shotguns */
+	public int numPrimaryAmmoItems = 1;
 	public int numAmmoItemsInGun = 1;
 	/** The firing mode of the gun. One of semi-auto, full-auto, minigun or burst */
 	public EnumFireMode mode = EnumFireMode.FULLAUTO;
@@ -73,9 +74,6 @@ public class GunType extends PaintableType implements IScope
 	public boolean canShootUnderwater = true;
 	/** The amount of knockback to impact upon the player per shot */
 	public float knockback = 0F;
-	/** The secondary function of this gun. By default, the left mouse button triggers this */
-	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
-	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
 	/** If true, then this gun can be dual wielded */
 	public boolean oneHanded = false;
 	/** For one shot items like a panzerfaust */
@@ -99,9 +97,7 @@ public class GunType extends PaintableType implements IScope
 	public int lockOnSoundTime = 0;
 	public String lockOnSound = "";
 	public int maxRangeLockOn = 80;
-
 	public boolean canSetPosition = false;
-
 	public boolean lockOnToPlanes = false, lockOnToVehicles = false, lockOnToMechas = false, lockOnToPlayers = false, lockOnToLivings = false;
 
 	//Information
@@ -152,8 +148,6 @@ public class GunType extends PaintableType implements IScope
 	public int loopedSoundLength = 20;
 	/** Played when the player stops holding shoot */
 	public String cooldownSound;
-
-
 	/** The sound to play upon weapon swing */
 	public String meleeSound;
 	/** The sound to play while holding the weapon in the hand*/
@@ -215,6 +209,21 @@ public class GunType extends PaintableType implements IScope
 	public int activateSlowInInventoryLevel = -1;
 	/** Gives knockback resistance to the player */
 	public float knockbackModifier = 0F;
+
+	//Secondary Functions
+	/** The secondary function of this gun. By default, the left mouse button triggers this */
+	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
+	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
+	/** The list of bullet types that can be used in the secondary mode */
+	public List<ShootableType> secondaryAmmo = new ArrayList<ShootableType>();
+	/** The time (in ticks) it takes to reload this gun */
+	public int secondaryReloadTime = 0;
+	/** The sound played upon shooting */
+	public String secondaryShootSound;
+	/** The sound to play upon reloading */
+	public String secondaryReloadSound;
+	/** The number of bullet stacks in the magazine */
+	public int numSecAmmoItems = 1;
 
 	/** Default spread of the gun. Do not modify. */
 	private float defaultSpread = 0F;
@@ -468,7 +477,7 @@ public class GunType extends PaintableType implements IScope
 					ammo.add(type);
 			}
 			else if(split[0].equals("NumAmmoSlots") || split[0].equals("NumAmmoItemsInGun") || split[0].equals("LoadIntoGun"))
-				numAmmoItemsInGun = Integer.parseInt(split[1]);
+				numPrimaryAmmoItems = numAmmoItemsInGun = Integer.parseInt(split[1]);
 			else if(split[0].equals("BulletSpeed"))
 				bulletSpeed = Float.parseFloat(split[1]);
 			else if(split[0].equals("CanShootUnderwater"))
@@ -538,6 +547,30 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("NumGenericAttachmentSlots"))
 				numGenericAttachmentSlots = Integer.parseInt(split[1]);
 
+			//Secondary Stuff
+			else if(split[0].equals("SecondaryMode") &&  Boolean.parseBoolean(split[1]))
+				secondaryFunction = EnumSecondaryFunction.UNDER_BARREL;
+			else if(split[0].equals("SecondaryAmmo"))
+			{
+				ShootableType type = ShootableType.getShootableType(split[1]);
+				if(type != null)
+					secondaryAmmo.add(type);
+			}
+			else if(split[0].equals("SecondaryReloadTime"))
+				secondaryReloadTime = Integer.parseInt(split[1]);
+			else if(split[0].equals("LoadSecondaryIntoGun"))
+				numSecAmmoItems = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryShootSound"))
+			{
+				secondaryShootSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+			else if(split[0].equals("SecondaryReloadSound"))
+			{
+				secondaryReloadSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+
 			//Shield settings
 			else if(split[0].toLowerCase().equals("shield"))
 			{
@@ -568,9 +601,18 @@ public class GunType extends PaintableType implements IScope
 
 	}
 
+	/** Used only for driveables */
 	public boolean isAmmo(ShootableType type)
 	{
 		return ammo.contains(type);
+	}
+
+	public boolean isAmmo(ShootableType type, ItemStack stack)
+	{
+		if(getSecondaryFire(stack))
+			return secondaryAmmo.contains(type);
+		else
+			return ammo.contains(type);
 	}
 
 	public boolean isAmmo(ItemStack stack)
@@ -579,11 +621,11 @@ public class GunType extends PaintableType implements IScope
 			return false;
 		else if(stack.getItem() instanceof ItemBullet)
 		{
-			return isAmmo(((ItemBullet)stack.getItem()).type);
+			return isAmmo(((ItemBullet)stack.getItem()).type, stack);
 		}
 		else if(stack.getItem() instanceof ItemGrenade)
 		{
-			return isAmmo(((ItemGrenade)stack.getItem()).type);
+			return isAmmo(((ItemGrenade)stack.getItem()).type, stack);
 		}
 		return false;
 	}
@@ -861,6 +903,44 @@ public class GunType extends PaintableType implements IScope
 		}
 		return mode;
 	}
+
+	/** Set the secondary or primary fire mode */
+	public void setSecondaryFire(ItemStack stack, boolean mode)
+	{
+		if(!stack.hasTagCompound())
+			stack.setTagCompound(new NBTTagCompound());
+
+		stack.stackTagCompound.setBoolean("secondaryFire", mode);
+	}
+
+	/** Get whether the gun is in secondary or primary fire mode */
+	public boolean getSecondaryFire(ItemStack stack)
+	{
+		if(!stack.hasTagCompound())
+			stack.setTagCompound(new NBTTagCompound());
+
+		if(!stack.getTagCompound().hasKey("secondaryFire"))
+		{
+			stack.stackTagCompound.setBoolean("secondaryFire", false);
+			return stack.getTagCompound().getBoolean("secondaryFire");
+		}
+
+//		if(stack.getTagCompound().getBoolean("secondaryFire"))
+//			numAmmoItemsInGun = numSecAmmoItems;
+//		else
+//			numAmmoItemsInGun = numPrimaryAmmoItems;
+
+		return stack.getTagCompound().getBoolean("secondaryFire");
+	}
+
+//	/** test */
+//	public int getNumAmmoItemsInGun(ItemStack stack)
+//	{
+//		if(getSecondaryFire(stack))
+//			return numSecAmmoItems;
+//		else
+//			return numPrimaryAmmoItems;
+//	}
 
 	/** Static String to GunType method */
 	public static GunType getGun(String s)

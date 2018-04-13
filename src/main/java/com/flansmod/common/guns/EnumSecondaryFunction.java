@@ -2,7 +2,7 @@ package com.flansmod.common.guns;
 
 public enum EnumSecondaryFunction 
 {
-	ZOOM, ADS_ZOOM, MELEE, CUSTOM_MELEE;
+	ZOOM, ADS_ZOOM, MELEE, CUSTOM_MELEE, UNDER_BARREL;
 	
 	public static EnumSecondaryFunction get(String s)
 	{
@@ -13,6 +13,8 @@ public enum EnumSecondaryFunction
 			return MELEE;
 		else if(s.equals("custommelee")) 
 			return CUSTOM_MELEE;
+		else if(s.equals("underbarrel"))
+			return UNDER_BARREL;
 		else return ADS_ZOOM;
 	}
 }
