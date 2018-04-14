@@ -61,7 +61,7 @@ public class GunType extends PaintableType implements IScope
 	/** Number of ammo items that the gun may hold. Most guns will hold one magazine.
 	 * Some may hold more, such as Nerf pistols, revolvers or shotguns */
 	public int numPrimaryAmmoItems = 1;
-	public int numAmmoItemsInGun = 1;
+	//public int numAmmoItemsInGun = 1;
 	/** The firing mode of the gun. One of semi-auto, full-auto, minigun or burst */
 	public EnumFireMode mode = EnumFireMode.FULLAUTO;
 	public EnumFireMode[] submode = new EnumFireMode[]{ EnumFireMode.FULLAUTO };
@@ -216,17 +216,26 @@ public class GunType extends PaintableType implements IScope
 	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
 	/** The list of bullet types that can be used in the secondary mode */
 	public List<ShootableType> secondaryAmmo = new ArrayList<ShootableType>();
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public float secondaryDamage = 0;
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public float secondarySpread = 0;
 	/** The time (in ticks) it takes to reload this gun */
 	public int secondaryReloadTime = 0;
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public int secondaryShootDelay = 0;
 	/** The sound played upon shooting */
 	public String secondaryShootSound;
 	/** The sound to play upon reloading */
 	public String secondaryReloadSound;
+	/** The number of bullet entities created by each shot */
+	public int secondaryNumBullets = 1;
 	/** The number of bullet stacks in the magazine */
 	public int numSecAmmoItems = 1;
 
-	/** Default spread of the gun. Do not modify. */
+	/** Default spreads of the gun. Do not modify. */
 	private float defaultSpread = 0F;
+	private float secondaryDefaultSpread = 0F;
 
 	public GunType(TypeFile file)
 	{
@@ -477,7 +486,7 @@ public class GunType extends PaintableType implements IScope
 					ammo.add(type);
 			}
 			else if(split[0].equals("NumAmmoSlots") || split[0].equals("NumAmmoItemsInGun") || split[0].equals("LoadIntoGun"))
-				numPrimaryAmmoItems = numAmmoItemsInGun = Integer.parseInt(split[1]);
+				numPrimaryAmmoItems = Integer.parseInt(split[1]);
 			else if(split[0].equals("BulletSpeed"))
 				bulletSpeed = Float.parseFloat(split[1]);
 			else if(split[0].equals("CanShootUnderwater"))
@@ -556,8 +565,18 @@ public class GunType extends PaintableType implements IScope
 				if(type != null)
 					secondaryAmmo.add(type);
 			}
+			else if(split[0].equals("SecondaryDamage"))
+				secondaryDamage = Float.parseFloat(split[1]);
+			else if(split[0].equals("SecondarySpread"))
+				secondarySpread = secondaryDefaultSpread = Float.parseFloat(split[1]);
+			else if(split[0].equals("SecondaryShootDelay"))
+				secondaryShootDelay = Integer.parseInt(split[1]);
 			else if(split[0].equals("SecondaryReloadTime"))
 				secondaryReloadTime = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryShootDelay"))
+				secondaryShootDelay = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryNumBullets"))
+				secondaryNumBullets = Integer.parseInt(split[1]);
 			else if(split[0].equals("LoadSecondaryIntoGun"))
 				numSecAmmoItems = Integer.parseInt(split[1]);
 			else if(split[0].equals("SecondaryShootSound"))
@@ -776,6 +795,9 @@ public class GunType extends PaintableType implements IScope
 	public float getDamage(ItemStack stack)
 	{
 		float stackDamage = damage;
+		if(getSecondaryFire(stack))
+			stackDamage = secondaryDamage;
+
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackDamage *= attachment.damageMultiplier;
@@ -787,6 +809,9 @@ public class GunType extends PaintableType implements IScope
 	public float getSpread(ItemStack stack)
 	{
 		float stackSpread = bulletSpread;
+		if(getSecondaryFire(stack))
+			stackSpread = secondarySpread;
+
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackSpread *= attachment.spreadMultiplier;
@@ -798,6 +823,9 @@ public class GunType extends PaintableType implements IScope
 	public float getDefaultSpread(ItemStack stack)
 	{
 		float stackSpread = defaultSpread;
+		if(getSecondaryFire(stack))
+			stackSpread = secondaryDefaultSpread;
+
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackSpread *= attachment.spreadMultiplier;
@@ -841,11 +869,34 @@ public class GunType extends PaintableType implements IScope
 	public float getReloadTime(ItemStack stack)
 	{
 		float stackReloadTime = reloadTime;
+		if(getSecondaryFire(stack))
+			stackReloadTime = secondaryReloadTime;
+
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackReloadTime *= attachment.reloadTimeMultiplier;
 		}
 		return stackReloadTime;
+	}
+
+	/** Get the fire rate of a specific gun */
+	public int getShootDelay(ItemStack stack)
+	{
+		int fireRate = shootDelay;
+		if(getSecondaryFire(stack))
+			fireRate = secondaryShootDelay;
+
+		return fireRate;
+	}
+
+	/** Get the number of bullets fired per shot of a specific gun */
+	public int getNumBullets(ItemStack stack)
+	{
+		int amount = numBullets;
+		if(getSecondaryFire(stack))
+			amount = secondaryNumBullets;
+
+		return amount;
 	}
 
 	/** Get the movement speed of a specific gun, taking into account attachments */
@@ -925,22 +976,17 @@ public class GunType extends PaintableType implements IScope
 			return stack.getTagCompound().getBoolean("secondaryFire");
 		}
 
-//		if(stack.getTagCompound().getBoolean("secondaryFire"))
-//			numAmmoItemsInGun = numSecAmmoItems;
-//		else
-//			numAmmoItemsInGun = numPrimaryAmmoItems;
-
 		return stack.getTagCompound().getBoolean("secondaryFire");
 	}
 
-//	/** test */
-//	public int getNumAmmoItemsInGun(ItemStack stack)
-//	{
-//		if(getSecondaryFire(stack))
-//			return numSecAmmoItems;
-//		else
-//			return numPrimaryAmmoItems;
-//	}
+	/** Get the max size of ammo items depending on what mode the gun is in */
+	public int getNumAmmoItemsInGun(ItemStack stack)
+	{
+		if(!getSecondaryFire(stack))
+			return numPrimaryAmmoItems;
+		else
+			return numSecAmmoItems;
+	}
 
 	/** Static String to GunType method */
 	public static GunType getGun(String s)

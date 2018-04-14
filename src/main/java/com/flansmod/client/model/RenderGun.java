@@ -373,9 +373,9 @@ public class RenderGun implements IItemRenderer
 		ItemStack pumpItemStack = type.getPumpItemStack(item);
 		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
 
-		ItemStack[] bulletStacks = new ItemStack[type.numAmmoItemsInGun];
+		ItemStack[] bulletStacks = new ItemStack[type.getNumAmmoItemsInGun(item)];
 		boolean empty = true;
-		for(int i = 0; i < type.numAmmoItemsInGun; i++)
+		for(int i = 0; i < type.getNumAmmoItemsInGun(item); i++)
 		{
 			bulletStacks[i] = ((ItemGun)item.getItem()).getBulletItemStack(item, i);
 			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && bulletStacks[i].getItemDamage() < bulletStacks[i].getMaxDamage())

@@ -91,11 +91,18 @@ public class BlockGunBox extends Block
 					tags.setString("Paint", gunType.defaultPaintjob.iconName);
 					//Add ammo tags
 					NBTTagList ammoTagsList = new NBTTagList();
-					for(int j = 0; j < gunType.numAmmoItemsInGun; j++)
+					for(int j = 0; j < gunType.numPrimaryAmmoItems; j++)
 					{
 						ammoTagsList.appendTag(new NBTTagCompound());
 					}
 					tags.setTag("ammo", ammoTagsList);
+
+					NBTTagList secAmmoTagsList = new NBTTagList();
+					for(int j = 0; j < gunType.numSecAmmoItems; j++)
+					{
+						secAmmoTagsList.appendTag(new NBTTagCompound());
+					}
+					tags.setTag("secondaryAmmo", secAmmoTagsList);
 					
 					gunStack.stackTagCompound = tags;
 				}

@@ -759,7 +759,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 				if(gun.ammo.size() > 0)
 				{
 					ShootableType bulletToGive = gun.ammo.get(0);
-					int numToGive = Math.min(bulletToGive.maxStackSize, type.numClips * gun.numAmmoItemsInGun);
+					int numToGive = Math.min(bulletToGive.maxStackSize, type.numClips * gun.getNumAmmoItemsInGun(player.getCurrentEquippedItem()));
 					if(player.inventory.addItemStackToInventory(new ItemStack(bulletToGive.item, numToGive)))
 					{
 						used = true;

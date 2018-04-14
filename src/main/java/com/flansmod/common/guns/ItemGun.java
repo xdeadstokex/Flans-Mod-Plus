@@ -145,7 +145,7 @@ public class ItemGun extends Item implements IPaintableItem
 		if(!gun.stackTagCompound.hasKey(s))
 		{
 			NBTTagList ammoTagsList = new NBTTagList();
-			for(int i = 0; i < type.numAmmoItemsInGun; i++)
+			for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
 			{
 				ammoTagsList.appendTag(new NBTTagCompound());
 			}
@@ -167,25 +167,38 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			gun.stackTagCompound = new NBTTagCompound();
 		}
-
-		String s;
+		
 		if(type.getSecondaryFire(gun))
-			s = "secondaryAmmo";
-		else
-			s = "ammo";
-
-		//If the gun has no ammo tags, give it some
-		if(!gun.stackTagCompound.hasKey(s))
 		{
-			NBTTagList ammoTagsList = new NBTTagList();
-			for(int i = 0; i < type.numAmmoItemsInGun; i++)
+			//If the gun has no ammo tags, give it some
+			if(!gun.stackTagCompound.hasKey("secondaryAmmo"))
 			{
-				ammoTagsList.appendTag(new NBTTagCompound());
+				NBTTagList ammoTagsList = new NBTTagList();
+				for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
+				{
+					ammoTagsList.appendTag(new NBTTagCompound());
+				}
+				gun.stackTagCompound.setTag("secondaryAmmo", ammoTagsList);
 			}
-			gun.stackTagCompound.setTag(s, ammoTagsList);
 		}
+		else
+		{
+			//If the gun has no ammo tags, give it some
+			if(!gun.stackTagCompound.hasKey("ammo"))
+			{
+				NBTTagList ammoTagsList = new NBTTagList();
+				for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
+				{
+					ammoTagsList.appendTag(new NBTTagCompound());
+				}
+				gun.stackTagCompound.setTag("ammo", ammoTagsList);
+			}
+		}
+
 		//Take the list of ammo tags
-		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList(s, Constants.NBT.TAG_COMPOUND);
+		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList("ammo", Constants.NBT.TAG_COMPOUND);
+		if(type.getSecondaryFire(gun))
+			ammoTagsList = gun.stackTagCompound.getTagList("secondaryAmmo", Constants.NBT.TAG_COMPOUND);
 		//Get the specific ammo tags required
 		NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
 		//Represent empty slots by nulltypes
@@ -224,7 +237,7 @@ public class ItemGun extends Item implements IPaintableItem
 			lines.add(line);
 			}
 		}
-		for(int i = 0; i < type.numAmmoItemsInGun; i++)
+		for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
 		{
 			ItemStack bulletStack = getBulletItemStack(stack, i);
 			if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
@@ -392,7 +405,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 						//Send ads spread packet to server
 						float spread = type.getSpread(itemstack);
-						if(type.numBullets == 1)
+						if(type.getNumBullets(itemstack) == 1)
 							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
 						else
 							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
@@ -449,7 +462,7 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			boolean onLastBullet = false;
 			boolean hasAmmo = false;
-			for(int i = 0; i < gunType.numAmmoItemsInGun; i++)
+			for(int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++)
 			{
 				ItemStack bulletStack = getBulletItemStack(stack, i);
 				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
@@ -501,8 +514,8 @@ public class ItemGun extends Item implements IPaintableItem
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
 				}
 				if(left)
-					FlansModClient.shootTimeLeft = gunType.shootDelay;
-				else FlansModClient.shootTimeRight = gunType.shootDelay;
+					FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
+				else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
 				if(gunType.consumeGunUponUse)
 					return true;
 
@@ -1030,7 +1043,7 @@ public class ItemGun extends Item implements IPaintableItem
 			//Go through the bullet stacks in the gun and see if any of them are not null
 			int bulletID = 0;
 			ItemStack bulletStack = null;
-			for(; bulletID < gunType.numAmmoItemsInGun; bulletID++)
+			for(; bulletID < gunType.getNumAmmoItemsInGun(gunStack); bulletID++)
 			{
 				ItemStack checkingStack = getBulletItemStack(gunStack, bulletID);
 				if(checkingStack != null && checkingStack.getItem() != null && checkingStack.getItemDamage() < checkingStack.getMaxDamage())
@@ -1116,7 +1129,7 @@ public class ItemGun extends Item implements IPaintableItem
 		//For playing sounds afterwards
 		boolean reloadedSomething = false;
 		//Check each ammo slot, one at a time
-		for(int i = 0; i < gunType.numAmmoItemsInGun; i++)
+		for(int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++)
 		{
 			//Get the stack in the slot
 			ItemStack bulletStack = getBulletItemStack(gunStack, i);
@@ -1198,8 +1211,8 @@ public class ItemGun extends Item implements IPaintableItem
 		//flash(entityplayer);
 		ShootableType bullet = ((ItemShootable)bulletStack.getItem()).type;
 		boolean lastBullet = false;
-		ItemStack[] bulletStacks = new ItemStack[type.numAmmoItemsInGun];
-		for(int i = 0; i < type.numAmmoItemsInGun; i++)
+		ItemStack[] bulletStacks = new ItemStack[type.getNumAmmoItemsInGun(stack)];
+		for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
 		{
 			bulletStacks[i] = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
 			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && (bulletStacks[i].getMaxDamage() - bulletStacks[i].getItemDamage() == 1))
@@ -1244,7 +1257,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 			if(numBullets <= 0)
 			{
-				numBullets = gunType.numBullets;
+				numBullets = gunType.getNumBullets(stack);
 			}
 
 			if(spread <= 0)
@@ -1283,8 +1296,8 @@ public class ItemGun extends Item implements IPaintableItem
 				dropItem(world, entityplayer, gunType.dropItemOnShoot);
 		}
 		if(left)
-			PlayerHandler.getPlayerData(entityplayer).shootTimeLeft = gunType.shootDelay;
-		else PlayerHandler.getPlayerData(entityplayer).shootTimeRight = gunType.shootDelay;
+			PlayerHandler.getPlayerData(entityplayer).shootTimeLeft = gunType.getShootDelay(stack);
+		else PlayerHandler.getPlayerData(entityplayer).shootTimeRight = gunType.getShootDelay(stack);
 		if(gunType.knockback > 0)
 		{
 			//TODO : Apply knockback

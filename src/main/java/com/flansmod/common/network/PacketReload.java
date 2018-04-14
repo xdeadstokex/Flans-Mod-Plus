@@ -57,7 +57,7 @@ public class PacketReload extends PacketBase
     		GunType type = ((ItemGun)stack.getItem()).type;
 			//Check if the gun is empty
 			boolean empty = true;
-			for(int i = 0; i < type.numAmmoItemsInGun; i++)
+			for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
 			{
 				ItemStack bulletStack = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
 				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
@@ -99,8 +99,8 @@ public class PacketReload extends PacketBase
     	{
     		GunType type = ((ItemGun)stack.getItem()).type;
     		if(left)
-    			FlansModClient.shootTimeLeft = type.reloadTime;
-    		else FlansModClient.shootTimeRight = type.reloadTime;
+    			FlansModClient.shootTimeLeft = (int)type.getReloadTime(stack);
+    		else FlansModClient.shootTimeRight = (int)type.getReloadTime(stack);
     		
     		//Apply animations
     		GunAnimations animations = null;
@@ -126,7 +126,7 @@ public class PacketReload extends PacketBase
     		}
 			int pumpDelay = type.model == null ? 0 : type.model.pumpDelayAfterReload;
 			int pumpTime = type.model == null ? 1 : type.model.pumpTime;
-			animations.doReload(type.reloadTime, pumpDelay, pumpTime);
+			animations.doReload((int)type.getReloadTime(stack), pumpDelay, pumpTime);
     		
 			//Iterate over all inventory slots and find the magazine / bullet item with the most bullets
 			int bestSlot = -1;

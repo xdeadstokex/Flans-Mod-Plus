@@ -403,7 +403,7 @@ public class EntityMecha extends EntityDriveable
 					//Go through the bullet stacks in the gun and see if any of them are not null
 					int bulletID = 0;
 					ItemStack bulletStack = null;
-					for(; bulletID < gunType.numAmmoItemsInGun; bulletID++)
+					for(; bulletID < gunType.getNumAmmoItemsInGun(heldStack); bulletID++)
 					{
 						ItemStack checkingStack = gunItem.getBulletItemStack(heldStack, bulletID);
 						if(checkingStack != null && checkingStack.getItem() != null && checkingStack.getItemDamage() < checkingStack.getMaxDamage())

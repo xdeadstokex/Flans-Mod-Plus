@@ -42,7 +42,12 @@ public class PacketGunSpread extends PacketBase
     {
         ItemStack stack = player.inventory.getCurrentItem();
         if(stack != null && stack.getItem() instanceof ItemGun)
-            ((ItemGun)stack.getItem()).type.bulletSpread = spread;
+        {
+            if(((ItemGun)stack.getItem()).type.getSecondaryFire(stack))
+                ((ItemGun)stack.getItem()).type.secondarySpread = spread;
+            else
+                ((ItemGun)stack.getItem()).type.bulletSpread = spread;
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.flansmod.common.guns;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,8 @@ public class AttachmentType extends PaintableType implements IScope
 	
 	/** The type of attachment. Each gun can have one barrel, one scope, one grip, one stock and some number of generics up to a limit set by the gun */
 	public EnumAttachmentType type = EnumAttachmentType.generic;
-	
+
+	//Attachment Function add-ons
 	/** This variable controls whether or not bullet sounds should be muffled */
 	public boolean silencer = false;
 	/** If true, then this attachment will act like a flashlight */

@@ -100,11 +100,6 @@ public class PacketGunMode extends PacketBase
 				{
 					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
 					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
-
-//					if(mode)
-//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numSecAmmoItems;
-//					else
-//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numPrimaryAmmoItems;
 				}
 			}
 		}
@@ -133,11 +128,6 @@ public class PacketGunMode extends PacketBase
 				{
 					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
 					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
-
-//					if(mode)
-//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numSecAmmoItems;
-//					else
-//						((ItemGun)itemStack.getItem()).type.numAmmoItemsInGun = ((ItemGun)itemStack.getItem()).type.numPrimaryAmmoItems;
 				}
 			}
 		}
