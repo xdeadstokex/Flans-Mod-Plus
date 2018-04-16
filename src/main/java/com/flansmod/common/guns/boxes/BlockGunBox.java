@@ -96,13 +96,6 @@ public class BlockGunBox extends Block
 						ammoTagsList.appendTag(new NBTTagCompound());
 					}
 					tags.setTag("ammo", ammoTagsList);
-
-					NBTTagList secAmmoTagsList = new NBTTagList();
-					for(int j = 0; j < gunType.numSecAmmoItems; j++)
-					{
-						secAmmoTagsList.appendTag(new NBTTagCompound());
-					}
-					tags.setTag("secondaryAmmo", secAmmoTagsList);
 					
 					gunStack.stackTagCompound = tags;
 				}

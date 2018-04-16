@@ -1,5 +1,6 @@
 package com.flansmod.common.network;
 
+import com.flansmod.common.guns.GunType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,8 +44,10 @@ public class PacketGunSpread extends PacketBase
         ItemStack stack = player.inventory.getCurrentItem();
         if(stack != null && stack.getItem() instanceof ItemGun)
         {
-            if(((ItemGun)stack.getItem()).type.getSecondaryFire(stack))
-                ((ItemGun)stack.getItem()).type.secondarySpread = spread;
+            GunType type = ((ItemGun)stack.getItem()).type;
+
+            if(type.getGrip(stack) != null && type.getSecondaryFire(stack))
+                ((ItemGun)stack.getItem()).type.getGrip(stack).secondarySpread = spread;
             else
                 ((ItemGun)stack.getItem()).type.bulletSpread = spread;
         }

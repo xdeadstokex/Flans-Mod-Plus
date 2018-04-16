@@ -1,5 +1,6 @@
 package com.flansmod.common.network;
 
+import com.flansmod.common.guns.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,10 +14,6 @@ import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemGun;
-import com.flansmod.common.guns.ItemShootable;
-import com.flansmod.common.guns.ShootableType;
 
 //When the client receives one, it "reloads". Basically to stop client side recoil effects when the gun should be in a reload animation
 //When the server receives one, it is interpreted as a forced reload
@@ -76,13 +73,20 @@ public class PacketReload extends PacketBase
     			else data.reloadingRight = true;
 				//Send reload packet to induce reload effects client side
 				FlansMod.getPacketHandler().sendTo(new PacketReload(left), playerEntity);
+
 				//Play reload sound, empty variant if not null
-				if(type.getSecondaryFire(stack) && type.secondaryReloadSound != null)
-					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, type.secondaryReloadSound, true);
-				if(empty && type.reloadSoundOnEmpty != null)
-					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, type.reloadSoundOnEmpty, true);
+				String soundToPlay = null;
+				AttachmentType grip = type.getGrip(stack);
+
+				if(type.getSecondaryFire(stack) && grip != null && grip.secondaryReloadSound != null)
+					soundToPlay = grip.secondaryReloadSound;
+				else if(empty && type.reloadSoundOnEmpty != null)
+					soundToPlay = type.reloadSoundOnEmpty;
 				else if(type.reloadSound != null)
-					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, FlansMod.soundRange, playerEntity.dimension, type.reloadSound, false);
+					soundToPlay = type.reloadSound;
+
+				if(soundToPlay != null)
+					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true);
     		}
     	}
 	}

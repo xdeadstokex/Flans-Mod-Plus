@@ -215,7 +215,7 @@ public class GunType extends PaintableType implements IScope
 	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
 	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
 	/** The list of bullet types that can be used in the secondary mode */
-	public List<ShootableType> secondaryAmmo = new ArrayList<ShootableType>();
+	public ArrayList<ShootableType> secondaryAmmo = new ArrayList<ShootableType>();
 	/** The delay between shots in ticks (1/20ths of seconds) */
 	public float secondaryDamage = 0;
 	/** The delay between shots in ticks (1/20ths of seconds) */
@@ -556,40 +556,6 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("NumGenericAttachmentSlots"))
 				numGenericAttachmentSlots = Integer.parseInt(split[1]);
 
-			//Secondary Stuff
-			else if(split[0].equals("SecondaryMode") &&  Boolean.parseBoolean(split[1]))
-				secondaryFunction = EnumSecondaryFunction.UNDER_BARREL;
-			else if(split[0].equals("SecondaryAmmo"))
-			{
-				ShootableType type = ShootableType.getShootableType(split[1]);
-				if(type != null)
-					secondaryAmmo.add(type);
-			}
-			else if(split[0].equals("SecondaryDamage"))
-				secondaryDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondarySpread"))
-				secondarySpread = secondaryDefaultSpread = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondaryShootDelay"))
-				secondaryShootDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryReloadTime"))
-				secondaryReloadTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryShootDelay"))
-				secondaryShootDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryNumBullets"))
-				secondaryNumBullets = Integer.parseInt(split[1]);
-			else if(split[0].equals("LoadSecondaryIntoGun"))
-				numSecAmmoItems = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryShootSound"))
-			{
-				secondaryShootSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-			}
-			else if(split[0].equals("SecondaryReloadSound"))
-			{
-				secondaryReloadSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-			}
-
 			//Shield settings
 			else if(split[0].toLowerCase().equals("shield"))
 			{
@@ -628,10 +594,21 @@ public class GunType extends PaintableType implements IScope
 
 	public boolean isAmmo(ShootableType type, ItemStack stack)
 	{
-		if(getSecondaryFire(stack))
-			return secondaryAmmo.contains(type);
-		else
-			return ammo.contains(type);
+		boolean result = ammo.contains(type);
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+		{
+			List<ShootableType> t = new ArrayList<ShootableType>();
+			for(String s: getGrip(stack).secondaryAmmo)
+			{
+				ShootableType shoot = ShootableType.getShootableType(s);
+				if(type != null)
+					t.add(shoot);
+			}
+			result = t.contains(type);
+		}
+
+		return result;
 	}
 
 	public boolean isAmmo(ItemStack stack)
@@ -639,7 +616,7 @@ public class GunType extends PaintableType implements IScope
 		if (stack == null)
 			return false;
 		else if(stack.getItem() instanceof ItemBullet)
-		{
+			{
 			return isAmmo(((ItemBullet)stack.getItem()).type, stack);
 		}
 		else if(stack.getItem() instanceof ItemGrenade)
@@ -795,8 +772,9 @@ public class GunType extends PaintableType implements IScope
 	public float getDamage(ItemStack stack)
 	{
 		float stackDamage = damage;
-		if(getSecondaryFire(stack))
-			stackDamage = secondaryDamage;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			stackDamage = getGrip(stack).secondaryDamage;
 
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
@@ -809,8 +787,9 @@ public class GunType extends PaintableType implements IScope
 	public float getSpread(ItemStack stack)
 	{
 		float stackSpread = bulletSpread;
-		if(getSecondaryFire(stack))
-			stackSpread = secondarySpread;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			stackSpread = getGrip(stack).secondarySpread;
 
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
@@ -823,8 +802,9 @@ public class GunType extends PaintableType implements IScope
 	public float getDefaultSpread(ItemStack stack)
 	{
 		float stackSpread = defaultSpread;
-		if(getSecondaryFire(stack))
-			stackSpread = secondaryDefaultSpread;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			stackSpread = getGrip(stack).secondaryDefaultSpread;
 
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
@@ -869,8 +849,9 @@ public class GunType extends PaintableType implements IScope
 	public float getReloadTime(ItemStack stack)
 	{
 		float stackReloadTime = reloadTime;
-		if(getSecondaryFire(stack))
-			stackReloadTime = secondaryReloadTime;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			stackReloadTime = getGrip(stack).secondaryReloadTime;
 
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
@@ -883,8 +864,9 @@ public class GunType extends PaintableType implements IScope
 	public int getShootDelay(ItemStack stack)
 	{
 		int fireRate = shootDelay;
-		if(getSecondaryFire(stack))
-			fireRate = secondaryShootDelay;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			fireRate = getGrip(stack).secondaryShootDelay;
 
 		return fireRate;
 	}
@@ -893,8 +875,9 @@ public class GunType extends PaintableType implements IScope
 	public int getNumBullets(ItemStack stack)
 	{
 		int amount = numBullets;
-		if(getSecondaryFire(stack))
-			amount = secondaryNumBullets;
+
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			amount = getGrip(stack).secondaryNumBullets;
 
 		return amount;
 	}
@@ -982,10 +965,10 @@ public class GunType extends PaintableType implements IScope
 	/** Get the max size of ammo items depending on what mode the gun is in */
 	public int getNumAmmoItemsInGun(ItemStack stack)
 	{
-		if(!getSecondaryFire(stack))
-			return numPrimaryAmmoItems;
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			return getGrip(stack).numSecAmmoItems;
 		else
-			return numSecAmmoItems;
+			return numPrimaryAmmoItems;
 	}
 
 	/** Static String to GunType method */

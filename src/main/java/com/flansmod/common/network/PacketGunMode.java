@@ -3,8 +3,7 @@ package com.flansmod.common.network;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.guns.EnumSecondaryFunction;
-import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,8 +14,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.guns.EnumFireMode;
-import com.flansmod.common.guns.ItemGun;
 
 public class PacketGunMode extends PacketBase 
 {
@@ -96,10 +93,19 @@ public class PacketGunMode extends PacketBase
 			PlayerData data = PlayerHandler.getPlayerData(playerEntity);
 			if(data.shootTimeLeft <= 0)
 			{
-				if(itemStack != null && itemStack.getItem() instanceof ItemGun && ((ItemGun)itemStack.getItem()).type.secondaryFunction == EnumSecondaryFunction.UNDER_BARREL)
+				if(itemStack != null && itemStack.getItem() instanceof ItemGun)
 				{
-					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
-					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
+					GunType type = ((ItemGun)itemStack.getItem()).type;
+					AttachmentType attachment = type.getGrip(itemStack);
+
+					if(attachment != null && attachment.secondaryFire)
+					{
+						boolean mode = type.getSecondaryFire(itemStack);
+						((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
+
+						if(attachment.toggleSound != null)
+							PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, attachment.toggleSound, true);
+					}
 				}
 			}
 		}
@@ -124,9 +130,12 @@ public class PacketGunMode extends PacketBase
 			//Do not toggle whilst gun is reloading
 			if(FlansModClient.shootTimeLeft <= 0)
 			{
-				if(itemStack != null && itemStack.getItem() instanceof ItemGun && ((ItemGun)itemStack.getItem()).type.secondaryFunction == EnumSecondaryFunction.UNDER_BARREL)
+				GunType type = ((ItemGun)itemStack.getItem()).type;
+				AttachmentType attachment = type.getGrip(itemStack);
+
+				if(attachment != null && attachment.secondaryFire)
 				{
-					boolean mode = ((ItemGun)itemStack.getItem()).type.getSecondaryFire(itemStack);
+					boolean mode = type.getSecondaryFire(itemStack);
 					((ItemGun)itemStack.getItem()).type.setSecondaryFire(itemStack, !mode);
 				}
 			}

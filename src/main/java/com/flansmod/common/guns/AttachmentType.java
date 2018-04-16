@@ -50,7 +50,31 @@ public class AttachmentType extends PaintableType implements IScope
 	public float moveSpeedMultiplier = 1F;
 	/** If set to anything other than null, then this attachment will override the weapon's default firing mode */
 	public EnumFireMode modeOverride = null;
-	
+
+	//Underbarrel functions
+	/** This variable controls whether the underbarrel is enabled */
+	public boolean secondaryFire = false;
+	/** The list of bullet types that can be used in the secondary mode */
+	public List<String> secondaryAmmo = new ArrayList<String>();
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public float secondaryDamage = 1;
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public float secondarySpread = 1;
+	/** The time (in ticks) it takes to reload this gun */
+	public int secondaryReloadTime = 1;
+	/** The delay between shots in ticks (1/20ths of seconds) */
+	public int secondaryShootDelay = 1;
+	/** The sound played upon shooting */
+	public String secondaryShootSound;
+	/** The sound to play upon reloading */
+	public String secondaryReloadSound;
+	/** The sound to play if toggling between primary and underbarrel */
+	public String toggleSound;
+	/** The number of bullet entities created by each shot */
+	public int secondaryNumBullets = 1;
+	/** The number of bullet stacks in the magazine */
+	public int numSecAmmoItems = 1;
+
 	//Scope variables (These variables only come into play for scope attachments)
 	/** The zoomLevel of this scope */
 	public float zoomLevel = 1F;
@@ -70,8 +94,11 @@ public class AttachmentType extends PaintableType implements IScope
 	//Some more mundane variables
 	/** The max stack size in the inventory */
 	public int maxStackSize = 1;
+
+	/** Default spread of the underbarrel. Do not modify. */
+	public float secondaryDefaultSpread = 0F;
 	
-	public AttachmentType(TypeFile file) 
+	public AttachmentType(TypeFile file)
 	{
 		super(file);
 		attachments.add(this);
@@ -105,6 +132,41 @@ public class AttachmentType extends PaintableType implements IScope
 			//Mode override
 			else if(split[0].equals("ModeOverride"))
 				modeOverride = EnumFireMode.getFireMode(split[1]);
+
+			//Secondary Stuff
+			else if(split[0].equals("SecondaryMode"))
+				secondaryFire = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("SecondaryAmmo"))
+				secondaryAmmo.add(split[1]);
+			else if(split[0].equals("SecondaryDamage"))
+				secondaryDamage = Float.parseFloat(split[1]);
+			else if(split[0].equals("SecondarySpread"))
+				secondarySpread = secondaryDefaultSpread = Float.parseFloat(split[1]);
+			else if(split[0].equals("SecondaryShootDelay"))
+				secondaryShootDelay = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryReloadTime"))
+				secondaryReloadTime = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryShootDelay"))
+				secondaryShootDelay = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryNumBullets"))
+				secondaryNumBullets = Integer.parseInt(split[1]);
+			else if(split[0].equals("LoadSecondaryIntoGun"))
+				numSecAmmoItems = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryShootSound"))
+			{
+				secondaryShootSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+			else if(split[0].equals("SecondaryReloadSound"))
+			{
+				secondaryReloadSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+			else if(split[0].equals("ModeSwitchSound"))
+			{
+				toggleSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
 			
 			//Multipliers
 			else if(split[0].equals("MeleeDamageMultiplier"))

@@ -49,12 +49,13 @@ public class InventoryGunModTable extends InventoryBasic
 			NBTTagCompound gunTags = new NBTTagCompound();
 			//Copy the ammo and paintjob from the old stack
 			gunTags.setTag("ammo", getStackInSlot(0).stackTagCompound.getTag("ammo"));
-			if(getStackInSlot(0).stackTagCompound.getTag("secondaryAmmo") != null)
-				gunTags.setTag("secondaryAmmo", getStackInSlot(0).stackTagCompound.getTag("secondaryAmmo"));
 
 			if(getStackInSlot(0).stackTagCompound.getTag("Paint") != null)
 				gunTags.setTag("Paint", getStackInSlot(0).stackTagCompound.getTag("Paint"));
-			
+
+			//if(getStackInSlot(0).stackTagCompound.getTag("secondaryAmmo") != null)
+			//	gunTags.setTag("secondaryAmmo", getStackInSlot(0).stackTagCompound.getTag("secondaryAmmo"));
+
 			//Add each attachment from the inventory to our gun stack
 	    	NBTTagCompound attachmentTags = new NBTTagCompound();
 			for(int i = 0; i < 8; i++)

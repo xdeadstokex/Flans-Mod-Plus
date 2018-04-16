@@ -167,38 +167,25 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			gun.stackTagCompound = new NBTTagCompound();
 		}
-		
-		if(type.getSecondaryFire(gun))
-		{
-			//If the gun has no ammo tags, give it some
-			if(!gun.stackTagCompound.hasKey("secondaryAmmo"))
-			{
-				NBTTagList ammoTagsList = new NBTTagList();
-				for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
-				{
-					ammoTagsList.appendTag(new NBTTagCompound());
-				}
-				gun.stackTagCompound.setTag("secondaryAmmo", ammoTagsList);
-			}
-		}
-		else
-		{
-			//If the gun has no ammo tags, give it some
-			if(!gun.stackTagCompound.hasKey("ammo"))
-			{
-				NBTTagList ammoTagsList = new NBTTagList();
-				for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
-				{
-					ammoTagsList.appendTag(new NBTTagCompound());
-				}
-				gun.stackTagCompound.setTag("ammo", ammoTagsList);
-			}
-		}
 
-		//Take the list of ammo tags
-		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList("ammo", Constants.NBT.TAG_COMPOUND);
+		String s;
 		if(type.getSecondaryFire(gun))
-			ammoTagsList = gun.stackTagCompound.getTagList("secondaryAmmo", Constants.NBT.TAG_COMPOUND);
+			s = "secondaryAmmo";
+		else
+			s = "ammo";
+
+		//If the gun has no ammo tags, give it some
+		if(!gun.stackTagCompound.hasKey(s))
+		{
+			NBTTagList ammoTagsList = new NBTTagList();
+			for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
+			{
+				ammoTagsList.appendTag(new NBTTagCompound());
+			}
+			gun.stackTagCompound.setTag(s, ammoTagsList);
+		}
+		//Take the list of ammo tags
+		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList(s, Constants.NBT.TAG_COMPOUND);
 		//Get the specific ammo tags required
 		NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
 		//Represent empty slots by nulltypes
@@ -386,7 +373,7 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 				}
 				IScope currentScope = type.getCurrentScope(itemstack);
-				if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM || type.secondaryFunction == EnumSecondaryFunction.UNDER_BARREL) && Mouse.isButtonDown(0) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
+				if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(0) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
 				{
 					if(FlansModClient.currentScope == null)
 					{
@@ -1074,13 +1061,19 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 					//Send reload packet to induce reload effects client side
 					FlansMod.getPacketHandler().sendTo(new PacketReload(left), entityplayer);
-					//Play reload sound, empty variant if not null
-					if(type.getSecondaryFire(gunStack) && gunType.secondaryReloadSound != null)
-						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.secondaryReloadSound, true);
+					//Play reload sound
+					String soundToPlay = null;
+					AttachmentType grip = gunType.getGrip(gunStack);
+
+					if(gunType.getSecondaryFire(gunStack) && grip != null && grip.secondaryReloadSound != null)
+						soundToPlay = grip.secondaryReloadSound;
 					else if(gunType.reloadSoundOnEmpty != null)
-						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSoundOnEmpty, true);
+						soundToPlay = gunType.reloadSoundOnEmpty;
 					else if(gunType.reloadSound != null)
-					 	PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSound, true);
+						soundToPlay = gunType.reloadSound;
+
+					if(soundToPlay != null)
+						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
 				}
 			}
 			//A bullet stack was found, so try shooting with it
@@ -1223,14 +1216,20 @@ public class ItemGun extends Item implements IPaintableItem
 		if (soundDelay <= 0 && gunType.shootSound != null)
 		{
 			AttachmentType barrel = gunType.getBarrel(stack);
+			AttachmentType grip = gunType.getGrip(stack);
+
 			boolean silenced = barrel != null && barrel.silencer;
 			//world.playSoundAtEntity(entityplayer, type.shootSound, 10F, type.distortSound ? 1.0F / (world.rand.nextFloat() * 0.4F + 0.8F) : 1.0F);
-			if(type.getSecondaryFire(stack) && gunType.secondaryShootSound != null)
-				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.secondaryShootSound, gunType.distortSound, silenced);
+			String soundToPlay = null;
+			if(gunType.getSecondaryFire(stack) && grip != null && grip.secondaryShootSound != null)
+				soundToPlay = grip.secondaryShootSound;
 			else if(lastBullet && gunType.lastShootSound != null)
-				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.lastShootSound, gunType.distortSound, silenced);
-			else
-				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.shootSound, gunType.distortSound, silenced);
+				soundToPlay = gunType.lastShootSound;
+			else if(gunType.shootSound != null)
+				soundToPlay = gunType.shootSound;
+
+			if(soundToPlay != null)
+				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, soundToPlay, gunType.distortSound, silenced);
 			soundDelay = gunType.shootSoundLength;
 		}
 		if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable)

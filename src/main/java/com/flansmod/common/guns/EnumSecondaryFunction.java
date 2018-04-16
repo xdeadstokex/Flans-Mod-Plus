@@ -13,8 +13,6 @@ public enum EnumSecondaryFunction
 			return MELEE;
 		else if(s.equals("custommelee")) 
 			return CUSTOM_MELEE;
-		else if(s.equals("underbarrel"))
-			return UNDER_BARREL;
 		else return ADS_ZOOM;
 	}
 }
