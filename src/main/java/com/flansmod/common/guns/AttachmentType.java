@@ -60,6 +60,8 @@ public class AttachmentType extends PaintableType implements IScope
 	public float secondaryDamage = 1;
 	/** The delay between shots in ticks (1/20ths of seconds) */
 	public float secondarySpread = 1;
+	/** The speed of bullets upon leaving this gun */
+	public float secondarySpeed = 5.0F;
 	/** The time (in ticks) it takes to reload this gun */
 	public int secondaryReloadTime = 1;
 	/** The delay between shots in ticks (1/20ths of seconds) */
@@ -140,8 +142,10 @@ public class AttachmentType extends PaintableType implements IScope
 				secondaryAmmo.add(split[1]);
 			else if(split[0].equals("SecondaryDamage"))
 				secondaryDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondarySpread"))
+			else if(split[0].equals("SecondarySpread") || split[0].equals("SecondaryAccuracy"))
 				secondarySpread = secondaryDefaultSpread = Float.parseFloat(split[1]);
+			else if(split[0].equals("SecondaryBulletSpeed"))
+				secondarySpeed = Float.parseFloat(split[1]);
 			else if(split[0].equals("SecondaryShootDelay"))
 				secondaryShootDelay = Integer.parseInt(split[1]);
 			else if(split[0].equals("SecondaryReloadTime"))

@@ -1,5 +1,7 @@
 package com.flansmod.client.model;
 
+import com.flansmod.common.guns.*;
+import net.minecraft.item.Item;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -18,12 +20,6 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.EnumFireMode;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.IScope;
-import com.flansmod.common.guns.ItemBullet;
-import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.vector.Vector3f;
 
@@ -324,14 +320,41 @@ public class RenderGun implements IItemRenderer
 	/** Gun render method, seperated from transforms so that mecha renderer may also call this */
 	public void renderGun(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations, float reloadRotate, ItemRenderType rtype)
 	{
+		//Make sure we actually have the renderEngine
+		if(renderEngine == null)
+			renderEngine = Minecraft.getMinecraft().renderEngine;
+
+		//If we have no animation variables, use defaults
+		if(animations == null)
+			animations = GunAnimations.defaults;
+
+		//Get all the attachments that we may need to render
+		AttachmentType scopeAttachment = type.getScope(item);
+		AttachmentType barrelAttachment = type.getBarrel(item);
+		AttachmentType stockAttachment = type.getStock(item);
+		AttachmentType gripAttachment = type.getGrip(item);
+		AttachmentType gadgetAttachment = type.getGadget(item);
+		AttachmentType slideAttachment = type.getSlide(item);
+		AttachmentType pumpAttachment = type.getPump(item);
+		AttachmentType accessoryAttachment = type.getAccessory(item);
+
+		ItemStack scopeItemStack = type.getScopeItemStack(item);
+		ItemStack barrelItemStack = type.getBarrelItemStack(item);
+		ItemStack stockItemStack = type.getStockItemStack(item);
+		ItemStack gripItemStack = type.getGripItemStack(item);
+		ItemStack gadgetItemStack = type.getGadgetItemStack(item);
+		ItemStack slideItemStack = type.getSlideItemStack(item);
+		ItemStack pumpItemStack = type.getPumpItemStack(item);
+		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
+
 		GL11.glPushMatrix();
 		if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
 		{
 			GL11.glTranslatef(0F, 0, 0);
 
 			//Gun recoil
-            GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * model.RecoilSlideDistance, 0F, 0F);
-            GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * model.RotateSlideDistance, 0F,0F,1F);
+            GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilDistance(gripAttachment, type, item), 0F, 0F);
+            GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilAngle(gripAttachment, type, item), 0F,0F,1F);
 
             //Do not move gun when there's a pump in the reload
 			if(model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
@@ -346,39 +369,13 @@ public class RenderGun implements IItemRenderer
 				GL11.glRotatef(-(1 - Math.abs(animations.lastGunPullback + (animations.gunPullback - animations.lastGunPullback) * smoothing)) * 2.5F, 1F,0F,0F);
 			}
 		}
-		//Make sure we actually have the renderEngine
-		if(renderEngine == null)
-			renderEngine = Minecraft.getMinecraft().renderEngine;
-		
-		//If we have no animation variables, use defaults
-		if(animations == null)
-			animations = GunAnimations.defaults;
-		
-		//Get all the attachments that we may need to render
-		AttachmentType scopeAttachment = type.getScope(item);
-		AttachmentType barrelAttachment = type.getBarrel(item);
-		AttachmentType stockAttachment = type.getStock(item);
-		AttachmentType gripAttachment = type.getGrip(item);
-		AttachmentType gadgetAttachment = type.getGadget(item);
-		AttachmentType slideAttachment = type.getSlide(item);
-		AttachmentType pumpAttachment = type.getPump(item);
-		AttachmentType accessoryAttachment = type.getAccessory(item);
-		
-		ItemStack scopeItemStack = type.getScopeItemStack(item);
-		ItemStack barrelItemStack = type.getBarrelItemStack(item);
-		ItemStack stockItemStack = type.getStockItemStack(item);
-		ItemStack gripItemStack = type.getGripItemStack(item);
-		ItemStack gadgetItemStack = type.getGadgetItemStack(item);
-		ItemStack slideItemStack = type.getSlideItemStack(item);
-		ItemStack pumpItemStack = type.getPumpItemStack(item);
-		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
 
 		ItemStack[] bulletStacks = new ItemStack[type.getNumAmmoItemsInGun(item)];
 		boolean empty = true;
 		for(int i = 0; i < type.getNumAmmoItemsInGun(item); i++)
 		{
 			bulletStacks[i] = ((ItemGun)item.getItem()).getBulletItemStack(item, i);
-			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && bulletStacks[i].getItemDamage() < bulletStacks[i].getMaxDamage())
+			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemShootable && bulletStacks[i].getItemDamage() < bulletStacks[i].getMaxDamage())
 				empty = false;
 		}
 
@@ -525,8 +522,21 @@ public class RenderGun implements IItemRenderer
 			GL11.glPushMatrix();
 			{
 				boolean shouldRender = true;
+
+				EnumAnimationType anim = model.animationType;
+				if(gripAttachment != null && type.getSecondaryFire(item))
+					anim = gripAttachment.model.secondaryAnimType;
+
+				float tiltGunTime = model.tiltGunTime, unloadClipTime = model.unloadClipTime, loadClipTime = model.loadClipTime;
+				if(gripAttachment != null && type.getSecondaryFire(item))
+				{
+					tiltGunTime = gripAttachment.model.tiltGunTime;
+					unloadClipTime = gripAttachment.model.unloadClipTime;
+					loadClipTime = gripAttachment.model.loadClipTime;
+				}
+
 				//Check to see if the ammo should be rendered first
-				switch(model.animationType)
+				switch(anim)
 				{
 					case END_LOADED : case BACK_LOADED :
 					{
@@ -542,14 +552,14 @@ public class RenderGun implements IItemRenderer
 					//Calculate the amount of tilt required for the reloading animation
 					float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress + (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
 					float clipPosition = 0F;
-					if(effectiveReloadAnimationProgress > model.tiltGunTime && effectiveReloadAnimationProgress < model.tiltGunTime + model.unloadClipTime)
-						clipPosition = (effectiveReloadAnimationProgress - model.tiltGunTime) / model.unloadClipTime;
-					if(effectiveReloadAnimationProgress >= model.tiltGunTime + model.unloadClipTime && effectiveReloadAnimationProgress < model.tiltGunTime + model.unloadClipTime + model.loadClipTime)
-						clipPosition = 1F - (effectiveReloadAnimationProgress - (model.tiltGunTime + model.unloadClipTime)) / model.loadClipTime;
-					float loadOnlyClipPosition = Math.max(0F, Math.min(1F, 1F - ((effectiveReloadAnimationProgress - model.tiltGunTime) / (model.unloadClipTime + model.loadClipTime))));
+					if(effectiveReloadAnimationProgress > tiltGunTime && effectiveReloadAnimationProgress < tiltGunTime + unloadClipTime)
+						clipPosition = (effectiveReloadAnimationProgress - tiltGunTime) / unloadClipTime;
+					if(effectiveReloadAnimationProgress >= tiltGunTime + unloadClipTime && effectiveReloadAnimationProgress < tiltGunTime + unloadClipTime + loadClipTime)
+						clipPosition = 1F - (effectiveReloadAnimationProgress - (tiltGunTime + unloadClipTime)) / loadClipTime;
+					float loadOnlyClipPosition = Math.max(0F, Math.min(1F, 1F - ((effectiveReloadAnimationProgress - tiltGunTime) / (unloadClipTime + loadClipTime))));
 					
 					//Rotate the gun dependent on the animation type
-					switch(model.animationType)
+					switch(anim)
 					{
 						case BREAK_ACTION : 
 						{
@@ -619,7 +629,7 @@ public class RenderGun implements IItemRenderer
 						}
 						case RIFLE : 
 						{
-							float thing = clipPosition * model.numBulletsInReloadAnimation;
+							float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
 							int bulletNum = MathHelper.floor_float(thing);
 							float bulletProgress = thing - bulletNum;
 							
@@ -631,7 +641,7 @@ public class RenderGun implements IItemRenderer
 						}
 						case RIFLE_TOP : 
 						{
-							float thing = clipPosition * model.numBulletsInReloadAnimation;
+							float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
 							int bulletNum = MathHelper.floor_float(thing);
 							float bulletProgress = thing - bulletNum;
 							
@@ -643,7 +653,7 @@ public class RenderGun implements IItemRenderer
 						}
 						case SHOTGUN : case STRIKER :
 						{
-							float thing = clipPosition * model.numBulletsInReloadAnimation;
+							float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
 							int bulletNum = MathHelper.floor_float(thing);
 							float bulletProgress = thing - bulletNum;
 							
@@ -662,53 +672,29 @@ public class RenderGun implements IItemRenderer
 						}
 						case END_LOADED :
 						{
-							//float bulletProgress = 1F;
-							//if(effectiveReloadAnimationProgress > model.tiltGunTime)
-							//	bulletProgress = 1F - Math.min((effectiveReloadAnimationProgress - model.tiltGunTime) / (model.unloadClipTime + model.loadClipTime), 1);
-							
-
-							
 							float dYaw = (loadOnlyClipPosition > 0.5F ? loadOnlyClipPosition * 2F - 1F : 0F);
-							
-							
+
 							GL11.glRotatef(-45F * dYaw, 0F, 0F, 1F);
-							GL11.glTranslatef(-model.endLoadedAmmoDistance * dYaw, -0.5F * dYaw, 0F);
-							
+							GL11.glTranslatef(-getEndLoadedDistance(gripAttachment, type, item) * dYaw, -0.5F * dYaw, 0F);
+
 							float xDisplacement = (loadOnlyClipPosition < 0.5F ? loadOnlyClipPosition * 2F : 1F);
-							
-							GL11.glTranslatef(model.endLoadedAmmoDistance * xDisplacement, 0F, 0F);
-							
-							/*
-							GL11.glTranslatef(1F * bulletProgress, -3F * bulletProgress, 0F);
-							if(bulletProgress > 0.5F)
-								GL11.glRotatef(-90F * (bulletProgress * 2F), 0F, 0F, 1F);	
-							
-							if(bulletProgress < 0.5F)
-							{
-								GL11.glTranslatef(-3F * (bulletProgress - 0.5F), 0F, 0F);
-								
-							}
-							*/
-							
-							
+							GL11.glTranslatef(getEndLoadedDistance(gripAttachment, type, item) * xDisplacement, 0F, 0F);
 							break;
 						}
 						case BACK_LOADED :
 						{
 							float dYaw = (loadOnlyClipPosition > 0.5F ? loadOnlyClipPosition * 2F - 1F : 0F);
-							
-							
 							//GL11.glRotatef(-45F * dYaw, 0F, 0F, 1F);
-							GL11.glTranslatef(model.endLoadedAmmoDistance * dYaw, -0.5F * dYaw, 0F);
-							
+							GL11.glTranslatef(getEndLoadedDistance(gripAttachment, type, item) * dYaw, -0.5F * dYaw, 0F);
+
 							float xDisplacement = (loadOnlyClipPosition < 0.5F ? loadOnlyClipPosition * 2F : 1F);
-							
-							GL11.glTranslatef(-model.endLoadedAmmoDistance * xDisplacement, 0F, 0F);
+							GL11.glTranslatef(-getEndLoadedDistance(gripAttachment, type, item) * xDisplacement, 0F, 0F);
 						}
 						
 						default : break;
 					}
 				}
+
 				if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms)
 				{
 					Minecraft mc = Minecraft.getMinecraft();
@@ -716,9 +702,23 @@ public class RenderGun implements IItemRenderer
 				}
 				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 
-
 				if(shouldRender)
+				{
+					if(gripAttachment != null && type.getSecondaryFire(item))
+						renderAttachmentAmmo(f, gripAttachment, gripItemStack, model, type);
+					else
+						model.renderAmmo(f);
+				}
+			}
+			GL11.glPopMatrix();
+
+			//Render a static model of the ammo NOT being reloaded
+			GL11.glPushMatrix();
+			{
+				if(type.getSecondaryFire(item))
 					model.renderAmmo(f);
+				else if (gripAttachment != null && !type.getSecondaryFire(item))
+					renderAttachmentAmmo(f, gripAttachment, gripItemStack, model, type);
 			}
 			GL11.glPopMatrix();
 		}
@@ -855,13 +855,23 @@ public class RenderGun implements IItemRenderer
 		GL11.glPopMatrix();
 	}
 
-	/* Clean up some redunant code */
+	/** Clean up some redunant code */
 	private void initRenderAttachment(AttachmentType attachment, ItemStack stack, Vector3f model, GunType type)
 	{
 		Paintjob paintjob = attachment.getPaintjob(stack.getItemDamage());
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
 		GL11.glTranslatef(model.x * type.modelScale, model.y * type.modelScale, model.z * type.modelScale);
 		GL11.glScalef(attachment.modelScale, attachment.modelScale, attachment.modelScale);
+	}
+
+	/** Load the attachment ammo model plus its texture */
+	private void renderAttachmentAmmo(float f, AttachmentType grip, ItemStack gripStack, ModelGun model, GunType type)
+	{
+		Paintjob paintjob = grip.getPaintjob(gripStack.getItemDamage());
+		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
+		GL11.glTranslatef(model.gripAttachPoint.x, model.gripAttachPoint.y, model.gripAttachPoint.z);
+		grip.model.renderAttachmentAmmo(f);
+		renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
 	}
 	
     private void renderFirstPersonArm(EntityPlayer player, ModelGun model,  GunAnimations anim)
@@ -972,5 +982,40 @@ public class RenderGun implements IItemRenderer
         
         GL11.glPopMatrix();
     }
-	
+
+	/** Get the end loaded distance, based on ammo type to reload */
+	private float getEndLoadedDistance(AttachmentType grip, GunType gun, ItemStack gunStack)
+	{
+		if(grip != null && gun.getSecondaryFire(gunStack))
+			return grip.model.endLoadedAmmoDistance;
+		else
+			return gun.model.endLoadedAmmoDistance;
+	}
+
+	/** Get the number of bullets to reload in animation, based on ammo type to reload */
+	private float getNumBulletsInReload(AttachmentType grip, GunType gun, ItemStack gunStack)
+	{
+		if(grip != null && gun.getSecondaryFire(gunStack))
+			return grip.model.numBulletsInReloadAnimation;
+		else
+			return gun.model.numBulletsInReloadAnimation;
+	}
+
+	/** Get the recoil distance, based on ammo type to reload */
+	private float getRecoilDistance(AttachmentType grip, GunType gun, ItemStack gunStack)
+	{
+		if(grip != null && gun.getSecondaryFire(gunStack))
+			return grip.model.recoilDistance;
+		else
+			return gun.model.recoilDistance;
+	}
+
+	/** Get the recoil angle, based on ammo type to reload */
+	private float getRecoilAngle(AttachmentType grip, GunType gun, ItemStack gunStack)
+	{
+		if(grip != null && gun.getSecondaryFire(gunStack))
+			return grip.model.recoilAngle;
+		else
+			return gun.model.recoilAngle;
+	}
 }
