@@ -220,8 +220,8 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			if(type.showAttachments)
 			{
-			String line = attachment.name;
-			lines.add(line);
+				String line = attachment.name;
+				lines.add(line);
 			}
 		}
 		for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)

@@ -214,28 +214,9 @@ public class GunType extends PaintableType implements IScope
 	/** The secondary function of this gun. By default, the left mouse button triggers this */
 	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
 	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
-	/** The list of bullet types that can be used in the secondary mode */
-	public ArrayList<ShootableType> secondaryAmmo = new ArrayList<ShootableType>();
-	/** The delay between shots in ticks (1/20ths of seconds) */
-	public float secondaryDamage = 0;
-	/** The delay between shots in ticks (1/20ths of seconds) */
-	public float secondarySpread = 0;
-	/** The time (in ticks) it takes to reload this gun */
-	public int secondaryReloadTime = 0;
-	/** The delay between shots in ticks (1/20ths of seconds) */
-	public int secondaryShootDelay = 0;
-	/** The sound played upon shooting */
-	public String secondaryShootSound;
-	/** The sound to play upon reloading */
-	public String secondaryReloadSound;
-	/** The number of bullet entities created by each shot */
-	public int secondaryNumBullets = 1;
-	/** The number of bullet stacks in the magazine */
-	public int numSecAmmoItems = 1;
 
 	/** Default spreads of the gun. Do not modify. */
 	private float defaultSpread = 0F;
-	private float secondaryDefaultSpread = 0F;
 
 	public GunType(TypeFile file)
 	{
@@ -914,9 +895,21 @@ public class GunType extends PaintableType implements IScope
 		}
 	}
 
-	/** Get the firing mode of a specific gun, taking into account attachments */
+	/** Get the firing mode of a specific gun, taking into account attachments and secondary fire mode */
 	public EnumFireMode getFireMode(ItemStack stack)
 	{
+		//Check for secondary fire mode
+		if(getGrip(stack) != null && getSecondaryFire(stack))
+			return getGrip(stack).secondaryFireMode;
+
+		//Else check for any mode overrides from attachments
+		for(AttachmentType attachment : getCurrentAttachments(stack))
+		{
+			if(attachment.modeOverride != null)
+				return attachment.modeOverride;
+		}
+
+		//Else set the fire mode from the gun
 		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("GunMode"))
 		{
 			int gm = stack.getTagCompound().getByte("GunMode");
@@ -933,12 +926,6 @@ public class GunType extends PaintableType implements IScope
 		}
 
 		setFireMode(stack, mode.ordinal());
-		
-		for(AttachmentType attachment : getCurrentAttachments(stack))
-		{
-			if(attachment.modeOverride != null)
-				return attachment.modeOverride;
-		}
 		return mode;
 	}
 

@@ -393,6 +393,11 @@ public class EntityMecha extends EntityDriveable
 			{
 				ItemGun gunItem = (ItemGun)heldItem;
 				GunType gunType = gunItem.type;
+
+				//If gun is in secondary/underbarrel fire, turn it off.
+				if(heldStack.stackTagCompound.hasKey("secondaryAmmo"))
+					if(gunType.getSecondaryFire(heldStack))
+						gunType.setSecondaryFire(heldStack, false);
 				
 				//Get the correct shoot delay
 				int delay = left ? shootDelayLeft : shootDelayRight;

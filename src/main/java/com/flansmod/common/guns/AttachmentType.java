@@ -70,6 +70,8 @@ public class AttachmentType extends PaintableType implements IScope
 	public String secondaryShootSound;
 	/** The sound to play upon reloading */
 	public String secondaryReloadSound;
+	/** The firing mode of the gun. One of semi-auto, full-auto, minigun or burst */
+	public EnumFireMode secondaryFireMode = EnumFireMode.SEMIAUTO;
 	/** The sound to play if toggling between primary and underbarrel */
 	public String toggleSound;
 	/** The number of bullet entities created by each shot */
@@ -156,6 +158,8 @@ public class AttachmentType extends PaintableType implements IScope
 				secondaryNumBullets = Integer.parseInt(split[1]);
 			else if(split[0].equals("LoadSecondaryIntoGun"))
 				numSecAmmoItems = Integer.parseInt(split[1]);
+			else if(split[0].equals("SecondaryFireMode"))
+				secondaryFireMode = EnumFireMode.getFireMode(split[1]);
 			else if(split[0].equals("SecondaryShootSound"))
 			{
 				secondaryShootSound = split[1];
