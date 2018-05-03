@@ -46,15 +46,15 @@ public class FlansModExplosion extends Explosion
     public InfoType type;
     public EntityPlayer player;
     private float radius;
-    private final float damegeVsLiving;
-    private final float damegeVsPlayer;
-    private final float damegeVsPlane;
-    private final float damegeVsVehicle;
+    private final float damageVsLiving;
+    private final float damageVsPlayer;
+    private final float damageVsPlane;
+    private final float damageVsVehicle;
     public boolean breakBlocks;
 
 	public FlansModExplosion(World w, Entity e, EntityPlayer p, InfoType t,
 			double x, double y, double z, float r, boolean breakBlocks,
-			 float damegeLiving, float damagePlayer, float damegePlane, float damegeVehicle, int smokeCount, int debrisCount)
+			 float damageLiving, float damagePlayer, float damagePlane, float damageVehicle, int smokeCount, int debrisCount)
 	{
 		super(w, e, x, y, z, r);
 		this.radius = r;
@@ -64,10 +64,10 @@ public class FlansModExplosion extends Explosion
         isFlaming = false;
         isSmoking = true;
         this.breakBlocks = breakBlocks;
-        damegeVsPlayer = damagePlayer;
-        damegeVsLiving  = damegeLiving;
-        damegeVsPlane   = damegePlane;
-        damegeVsVehicle = damegeVehicle;
+        damageVsPlayer = damagePlayer;
+        damageVsLiving  = damageLiving;
+        damageVsPlane   = damagePlane;
+        damageVsVehicle = damageVehicle;
         doExplosionA();
         doExplosionB(true);
         spawnParticle(smokeCount, debrisCount);
@@ -171,10 +171,10 @@ public class FlansModExplosion extends Explosion
 
                     EntityDriveable entityDriveable = null;
                     float damage = (float)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize + 1.0D);
-                    if(entity instanceof EntityPlayer)      damage *= damegeVsPlayer;
-                    else if(entity instanceof EntityLivingBase) damage *= damegeVsLiving;
-                    else if(entity instanceof EntityPlane)      damage *= damegeVsPlane;
-                    else if(entity instanceof EntityVehicle)    damage *= damegeVsVehicle;
+                    if(entity instanceof EntityPlayer)      damage *= damageVsPlayer;
+                    else if(entity instanceof EntityLivingBase) damage *= damageVsLiving;
+                    else if(entity instanceof EntityPlane)      damage *= damageVsPlane;
+                    else if(entity instanceof EntityVehicle)    damage *= damageVsVehicle;
                     else if(entity instanceof EntityWheel)
                     {
                     	entityDriveable = ((EntityWheel) entity).vehicle;
@@ -184,8 +184,8 @@ public class FlansModExplosion extends Explosion
                     	entityDriveable = ((EntitySeat) entity).driveable;
                     }
 
-                    if(entityDriveable instanceof EntityPlane)      damage *= damegeVsPlane;
-                    if(entityDriveable instanceof EntityVehicle)    damage *= damegeVsVehicle;
+                    if(entityDriveable instanceof EntityPlane)      damage *= damageVsPlane;
+                    if(entityDriveable instanceof EntityVehicle)    damage *= damageVsVehicle;
 
                     if( damage > 0.5F)
                     {
@@ -207,16 +207,18 @@ public class FlansModExplosion extends Explosion
             }
         }
         explosionSize = f;
+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(worldObj, this, new ArrayList(), this.explosionSize);
+//         net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, this);
     }
-	
+
 	public void spawnParticle(int numSmoke, int numDebris)
 	{
         float mod = radius*0.1F;
-        
+
 		for(int smoke = 0; smoke < numSmoke; smoke++)
 		{
 			float smokeRand = (float)Math.random();
-			
+
 			if(smokeRand < 0.25)
 			{
 			FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.flare",explosionX, explosionY, explosionZ, (float)Math.random()*mod, (float)Math.random()*mod, (float)Math.random()*mod), explosionX, explosionY, explosionZ, 150, worldObj.provider.dimensionId);
@@ -233,12 +235,12 @@ public class FlansModExplosion extends Explosion
 			}
 
 		}
- 
+
 		for(int debris = 0; debris < numDebris; debris++)
 		{
-			
+
 			float smokeRand = (float)Math.random();
-			
+
 			if(smokeRand < 0.25)
 			{
 			FlansMod.getPacketHandler().sendToAllAround(new PacketParticle("flansmod.debris1", explosionX, explosionY, explosionZ, (float)Math.random()*mod, (float)Math.random()*mod, (float)Math.random()*mod), explosionX, explosionY, explosionZ, 150, worldObj.provider.dimensionId);
@@ -312,26 +314,7 @@ public class FlansModExplosion extends Explosion
 
         if (!worldObj.isRemote && breakBlocks)
         {
-            iterator = affectedBlockPositions.iterator();
-
-            while (iterator.hasNext())
-            {
-                chunkposition = (ChunkPosition)iterator.next();
-                i = chunkposition.chunkPosX;
-                j = chunkposition.chunkPosY;
-                k = chunkposition.chunkPosZ;
-                block = worldObj.getBlock(i, j, k);
-
-                if (block.getMaterial() != Material.air)
-                {
-                    if (block.canDropFromExplosion(this))
-                    {
-                        block.dropBlockAsItemWithChance(worldObj, i, j, k, worldObj.getBlockMetadata(i, j, k), 1.0F / explosionSize, 0);
-                    }
-
-                    block.onBlockExploded(worldObj, i, j, k, this);
-                }
-            }
+          worldObj.createExplosion((Entity) null, explosionX, explosionY, explosionZ, radius, true);
         }
 
         if (!worldObj.isRemote && isFlaming)
@@ -365,13 +348,13 @@ public class FlansModExplosion extends Explosion
     {
         return exploder == null ? null : (exploder instanceof EntityTNTPrimed ? ((EntityTNTPrimed)exploder).getTntPlacedBy() : (exploder instanceof EntityLivingBase ? (EntityLivingBase)exploder : null));
     }
-    
+
 	public static void clientExplosion(World worldObj, float explosionSize,
 			double explosionX, double explosionY, double explosionZ)
 	{
 		List affectedBlockPositions = new ArrayList();
 		Entity exploder = null;
-		
+
 		Explosion explosion = new Explosion(worldObj, exploder, explosionX, explosionY, explosionZ, explosionSize);
 
 		if(explosionSize < 2)
@@ -379,7 +362,7 @@ public class FlansModExplosion extends Explosion
 			explosionX += explosionRNG.nextFloat() - 0.5F;
 			explosionZ += explosionRNG.nextFloat() - 0.5F;
 		}
-		
+
 		boolean isSmoking = true;
 
 		//	doExplosionA
@@ -392,7 +375,7 @@ public class FlansModExplosion extends Explosion
 			double d5;
 			double d6;
 			double d7;
-	
+
 			for (i = 0; i < boomRadius; ++i)
 			{
 				for (j = 0; j < boomRadius; ++j)
@@ -412,25 +395,25 @@ public class FlansModExplosion extends Explosion
 							d5 = explosionX;
 							d6 = explosionY;
 							d7 = explosionZ;
-	
+
 							for (float f2 = 0.3F; f1 > 0.0F; f1 -= f2 * 0.75F)
 							{
 								int j1 = MathHelper.floor_double(d5);
 								int k1 = MathHelper.floor_double(d6);
 								int l1 = MathHelper.floor_double(d7);
 								Block block = worldObj.getBlock(j1, k1, l1);
-	
+
 //								if (block.getMaterial() != Material.air)
 								{
 									float f3 = 0;//exploder != null ? exploder.func_145772_a(explosion, worldObj, j1, k1, l1, block) : block.getExplosionResistance(exploder, worldObj, j1, k1, l1, explosionX, explosionY, explosionZ);
 									f1 -= (f3 + 0.3F) * f2;
 								}
-	
+
 								if (f1 > 0.0F && (exploder == null || exploder.func_145774_a(explosion, worldObj, j1, k1, l1, block, f1)))
 								{
 									hashset.add(new ChunkPosition(j1, k1, l1));
 								}
-	
+
 								d5 += d0 * (double)f2;
 								d6 += d1 * (double)f2;
 								d7 += d2 * (double)f2;
@@ -439,7 +422,7 @@ public class FlansModExplosion extends Explosion
 					}
 				}
 			}
-	
+
 			affectedBlockPositions.addAll(hashset);
 			explosionSize *= 2.0F;
 			i = MathHelper.floor_double(explosionX - (double)explosionSize - 1.0D);
@@ -450,19 +433,19 @@ public class FlansModExplosion extends Explosion
 			int j2 = MathHelper.floor_double(explosionZ + (double)explosionSize + 1.0D);
 			List list = worldObj.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox((double)i, (double)k, (double)l, (double)j, (double)i2, (double)j2));
 			Vec3 vec3 = Vec3.createVectorHelper(explosionX, explosionY, explosionZ);
-	
+
 			for (int i1 = 0; i1 < list.size(); ++i1)
 			{
 				Entity entity = (Entity)list.get(i1);
 				double d4 = entity.getDistance(explosionX, explosionY, explosionZ) / (double)explosionSize;
-	
+
 				if (d4 <= 1.0D)
 				{
 					d5 = entity.posX - explosionX;
 					d6 = entity.posY + (double)entity.getEyeHeight() - explosionY;
 					d7 = entity.posZ - explosionZ;
 					double d9 = (double)MathHelper.sqrt_double(d5 * d5 + d6 * d6 + d7 * d7);
-	
+
 					if (d9 != 0.0D)
 					{
 						d5 /= d9;
@@ -478,13 +461,13 @@ public class FlansModExplosion extends Explosion
 					}
 				}
 			}
-	
+
 			explosionSize = f;
 		}
 		//	doExplosionB
 		{
 //			worldObj.playSoundEffect(explosionX, explosionY, explosionZ, "random.explode", 4.0F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
-	
+
 			if (explosionSize >= 2.0F && isSmoking)
 			{
 				worldObj.spawnParticle("hugeexplosion", explosionX, explosionY, explosionZ, 1.0D, 0.0D, 0.0D);
@@ -493,14 +476,14 @@ public class FlansModExplosion extends Explosion
 			{
 				worldObj.spawnParticle("largeexplode", explosionX, explosionY, explosionZ, 1.0D, 0.0D, 0.0D);
 			}
-	
+
 			Iterator iterator = affectedBlockPositions.iterator();
 
 			int cnt = 0;
 			while (iterator.hasNext())
 			{
 				cnt++;
-				
+
 				ChunkPosition chunkposition = (ChunkPosition)iterator.next();
 				int i = chunkposition.chunkPosX;
 				int j = chunkposition.chunkPosY;
@@ -522,7 +505,7 @@ public class FlansModExplosion extends Explosion
 				d3 *= d7;
 				d4 *= d7;
 				d5 *= d7;
-				
+
 				/*
 				if(false)
 				{
@@ -537,8 +520,8 @@ public class FlansModExplosion extends Explosion
 						FlansMod.proxy.spawnParticle("explode", (d0 + explosionX * 1.0D) / 2.0D, (d1 + explosionY * 1.0D) / 2.0D, (d2 + explosionZ * 1.0D) / 2.0D, d3, d4, d5);
 					}
 	//				FlansMod.proxy.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
-					
-	
+
+
 					block = Blocks.air;
 					if(explosionSize <= 2)
 					{
@@ -551,7 +534,7 @@ public class FlansModExplosion extends Explosion
 					{
 						block = getNearBlock(worldObj, i, j, k);
 					}
-	
+
 					if(block != Blocks.air)
 					{
 						float m = explosionSize;

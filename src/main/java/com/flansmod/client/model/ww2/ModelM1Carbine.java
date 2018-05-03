@@ -1,4 +1,4 @@
-//This File was created with the Minecraft-SMP Modelling Toolbox  2.2.1.1
+//This File was created with the Minecraft-SMP Modelling Toolbox 2.2.1.1
 // Copyright (C) 2015 Minecraft-SMP.de
 // This file is for Flan's Flying Mod Version 4.0.x+
 
