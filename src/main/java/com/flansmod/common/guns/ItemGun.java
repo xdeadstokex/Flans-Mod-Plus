@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -200,40 +201,66 @@ public class ItemGun extends Item implements IPaintableItem
 	@Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
+		KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
+
 		if(!type.packName.isEmpty())
 		{
-			lines.add(type.packName);
+			lines.add("\u00a7o" + type.packName);
 		}
 		if(type.description != null)
 		{
 			Collections.addAll(lines, type.description.split("_"));
 		}
-		if(type.showDamage)
-			lines.add("\u00a79Damage" + "\u00a77: " + type.getDamage(stack));
-		if(type.showRecoil)
-			lines.add("\u00a79Recoil" + "\u00a77: " + type.getRecoilPitch(stack));
-		if(type.showSpread)
-			lines.add("\u00a79Accuracy" + "\u00a77: " + type.getSpread(stack));
-		if(type.showReloadTime)
-			lines.add("\u00a79Reload Time" + "\u00a77: " + type.getReloadTime(stack) / 20 + "s");
-		for(AttachmentType attachment : type.getCurrentAttachments(stack))
+
+		//Reveal all the gun stats when holding down the sneak key
+		if(!GameSettings.isKeyDown(shift))
 		{
-			if(type.showAttachments)
+			//Show loaded ammo
+			for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
+			{
+				ItemStack bulletStack = getBulletItemStack(stack, i);
+				if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
+				{
+					BulletType bulletType = ((ItemBullet)bulletStack.getItem()).type;
+					//String line = bulletType.name + (bulletStack.getMaxDamage() == 1 ? "" : " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage());
+					String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
+					lines.add(line);
+				}
+			}
+
+			lines.add("");
+			lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
+		}
+		else
+		{
+			lines.add("");
+
+			AttachmentType barrel = type.getBarrel(stack);
+			if(barrel != null && barrel.silencer)
+				lines.add("\u00a7e[Suppressed]");
+
+			if(type.getSecondaryFire(stack))
+				lines.add("\u00a7e[Underbarrel]");
+
+			lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
+			lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilPitch(stack), 2));
+			lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack), 2));
+			lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
+			lines.add("\u00a79Mode" + "\u00a77: \u00a7f" + type.getFireMode(stack).toString().toLowerCase());
+
+			lines.add("");
+			lines.add("\u00a7eAttachments");
+			boolean empty = true;
+			for(AttachmentType attachment : type.getCurrentAttachments(stack))
 			{
 				String line = attachment.name;
 				lines.add(line);
+				if(line != null)
+					empty = false;
 			}
-		}
-		for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
-		{
-			ItemStack bulletStack = getBulletItemStack(stack, i);
-			if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
-			{
-				BulletType bulletType = ((ItemBullet)bulletStack.getItem()).type;
-				//String line = bulletType.name + (bulletStack.getMaxDamage() == 1 ? "" : " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage());
-				String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
-				lines.add(line);
-			}
+
+			if(empty)
+				lines.add("None");
 		}
 	}
 
@@ -1218,7 +1245,7 @@ public class ItemGun extends Item implements IPaintableItem
 			AttachmentType barrel = gunType.getBarrel(stack);
 			AttachmentType grip = gunType.getGrip(stack);
 
-			boolean silenced = barrel != null && barrel.silencer;
+			boolean silenced = barrel != null && barrel.silencer && !gunType.getSecondaryFire(stack);
 			//world.playSoundAtEntity(entityplayer, type.shootSound, 10F, type.distortSound ? 1.0F / (world.rand.nextFloat() * 0.4F + 0.8F) : 1.0F);
 			String soundToPlay = null;
 			if(gunType.getSecondaryFire(stack) && grip != null && grip.secondaryShootSound != null)
@@ -1507,4 +1534,15 @@ public class ItemGun extends Item implements IPaintableItem
         	map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", type.meleeDamage, 0));
        	return map;
     }
+
+	//Round values to n number of decimal points
+	public static float roundFloat(float value, int points)
+	{
+		int pow = 10;
+		for (int i = 1; i < points; i++)
+			pow *= 10;
+		float result = value * pow;
+
+		return (float)(int)((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
+	}
 }

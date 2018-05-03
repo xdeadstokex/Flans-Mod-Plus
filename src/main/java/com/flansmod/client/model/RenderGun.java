@@ -222,6 +222,10 @@ public class RenderGun implements IItemRenderer
 					
 					if(animations.reloading)
 					{
+						EnumAnimationType anim = model.animationType;
+						if(gunType.getGrip(item) != null && gunType.getSecondaryFire(item))
+							anim = gunType.getGrip(item).model.secondaryAnimType;
+
 						//Calculate the amount of tilt required for the reloading animation
 						float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress + (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
 						reloadRotate = 1F;
@@ -231,7 +235,7 @@ public class RenderGun implements IItemRenderer
 							reloadRotate = 1F - (effectiveReloadAnimationProgress - (model.tiltGunTime + model.unloadClipTime + model.loadClipTime)) / model.untiltGunTime;
 						
 						//Rotate the gun dependent on the animation type
-						switch(model.animationType)
+						switch(anim)
 						{
 							case BOTTOM_CLIP : case PISTOL_CLIP : case SHOTGUN : case END_LOADED : 
 							{

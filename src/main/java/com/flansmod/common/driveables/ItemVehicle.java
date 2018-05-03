@@ -103,17 +103,18 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
 	{
 		if(!type.packName.isEmpty())
 		{
-			lines.add(type.packName);
+			lines.add("\u00a7o" + type.packName);
 		}
 		if(type.description != null)
 		{
             Collections.addAll(lines, type.description.split("_"));
 		}
+
+		lines.add("");
 		NBTTagCompound tags = getTagCompound(stack, player.worldObj);
-		String engineName = tags.getString("Engine");
-		PartType part = PartType.getPart(engineName);
-		if(part != null)
-			lines.add(part.name);
+		PartType engine = PartType.getPart(tags.getString("Engine"));
+		if(engine != null)
+			lines.add("\u00a79Engine" + "\u00a77: " + engine.name);
 	}
 
     @Override
