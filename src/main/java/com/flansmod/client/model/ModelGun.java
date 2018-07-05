@@ -132,6 +132,8 @@ public class ModelGun extends ModelBase
 	
 	/** This offsets the render position for item frames */
 	public Vector3f itemFrameOffset = new Vector3f();
+	public float recoilDistance;
+	public float recoilAngle;
 	
 	//lighting stuff
 	private static float lightmapLastX;
@@ -323,5 +325,10 @@ public class ModelGun extends ModelBase
 			mod.rotationPointY += y;
 			mod.rotationPointZ += z;
 		}
+	}
+
+	public void renderM1Casing(float f, GunAnimations animations) {
+		// TODO Auto-generated method stub
+		
 	}
 }
