@@ -1,8 +1,5 @@
 package com.flansmod.client.model;
 
-import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.GunType;
-import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
@@ -36,10 +33,9 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] minigunBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] leverActionModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] hammerModel = new ModelRendererTurbo[0];
-	public ModelRendererTurbo[] m1clipModel = new ModelRendererTurbo[0];
 	/** The point about which the minigun barrel rotates. Rotation is along the line of the gun through this point */
 	public Vector3f minigunBarrelOrigin = new Vector3f();
-
+	
 	//These designate the locations of 3D attachment models on the gun
 	public Vector3f barrelAttachPoint = new Vector3f();
 	public Vector3f scopeAttachPoint = new Vector3f();
@@ -75,8 +71,8 @@ public class ModelGun extends ModelBase
 	
 	//Various animation parameters
 	public float gunSlideDistance = 1F / 4F;
-	public float recoilDistance = 2F / 16F;
-	public float recoilAngle = -8F;
+	public float RecoilSlideDistance = 2F / 16F;
+	public float RotateSlideDistance = -8F;
 	public EnumAnimationType animationType = EnumAnimationType.NONE;
 	public EnumMeleeAnimation meleeAnimation = EnumMeleeAnimation.DEFAULT;
 	public float tiltGunTime = 0.25F, unloadClipTime = 0.25F, loadClipTime = 0.25F, untiltGunTime = 0.25F;
@@ -251,21 +247,7 @@ public class ModelGun extends ModelBase
 	{
 		render(hammerModel, f);
 	}
-
-	//Eject the casing model when gun is empty
-	//This method can be rewritten with @override.
-	public void renderM1Casing(float f, GunAnimations anim)
-	{
-		anim.casingSpin += 0F;
-		anim.casingTrajectoryX += 0.15F;
-		anim.casingTrajectoryY += (-(0.1F * (float)Math.pow(anim.casingTrajectoryX, 2)) + 0.4F);
-		GL11.glTranslatef(0F, 0F, anim.casingTrajectoryX);
-		GL11.glTranslatef(0F, anim.casingTrajectoryY, 0F);
-		GL11.glRotatef(-anim.casingSpin, 0F, 1F, 0F);
-
-		render(m1clipModel, f);
-	}
-
+	
 	public void renderFlash (float f, int i)
 	{
 		if(hasFlash)
@@ -303,7 +285,6 @@ public class ModelGun extends ModelBase
 		flip(revolver2BarrelModel);
 		flip(breakActionModel);
 		flip(hammerModel);
-		flip(m1clipModel);
 	}
 	
 	protected void flip(ModelRendererTurbo[] model)
@@ -332,7 +313,6 @@ public class ModelGun extends ModelBase
 		translate(revolver2BarrelModel, x, y, z);
 		translate(breakActionModel, x, y, z);
 		translate(hammerModel, x, y, z);
-		translate(m1clipModel, x, y, z);
 	}
 	
 	protected void translate(ModelRendererTurbo[] model, float x, float y, float z)
