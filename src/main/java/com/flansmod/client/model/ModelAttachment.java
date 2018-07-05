@@ -18,8 +18,8 @@ public class ModelAttachment extends ModelBase
 	/** For big scopes, so that the player actually looks through them properly */
 	public float renderOffset = 0F;
 	/** Visual recoil of the gun when firing */
-	public float recoilDistance = 2F / 16F;
-	public float recoilAngle = -8F;
+	public float RecoilSlideDistance = 2F / 16F;
+	public float RotateSlideDistance = -8F;
 	
 	public void renderAttachment(float f)
 	{

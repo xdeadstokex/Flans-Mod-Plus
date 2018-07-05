@@ -357,8 +357,8 @@ public class RenderGun implements IItemRenderer
 			GL11.glTranslatef(0F, 0, 0);
 
 			//Gun recoil
-            GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilDistance(gripAttachment, type, item), 0F, 0F);
-            GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilAngle(gripAttachment, type, item), 0F,0F,1F);
+            GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilSlideDistance(gripAttachment, type, item), 0F, 0F);
+            GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRotateSlideDistance(gripAttachment, type, item), 0F,0F,1F);
 
             //Do not move gun when there's a pump in the reload
 			if(model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
@@ -1006,20 +1006,20 @@ public class RenderGun implements IItemRenderer
 	}
 
 	/** Get the recoil distance, based on ammo type to reload */
-	private float getRecoilDistance(AttachmentType grip, GunType gun, ItemStack gunStack)
+	private float getRecoilSlideDistance(AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
 		if(grip != null && gun.getSecondaryFire(gunStack))
-			return grip.model.recoilDistance;
+			return grip.model.RecoilSlideDistance;
 		else
-			return gun.model.recoilDistance;
+			return gun.model.RecoilSlideDistance;
 	}
 
 	/** Get the recoil angle, based on ammo type to reload */
-	private float getRecoilAngle(AttachmentType grip, GunType gun, ItemStack gunStack)
+	private float getRotateSlideDistance(AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
 		if(grip != null && gun.getSecondaryFire(gunStack))
-			return grip.model.recoilAngle;
+			return grip.model.RotateSlideDistance;
 		else
-			return gun.model.recoilAngle;
+			return gun.model.RotateSlideDistance;
 	}
 }
