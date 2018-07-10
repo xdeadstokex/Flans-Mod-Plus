@@ -164,7 +164,7 @@ public class TickHandlerClient
 					ItemGun gunItem = (ItemGun)stack.getItem();
 					GunType gunType = gunItem.type;
 					int x = 0;
-					for(int n = 0; n < gunType.getNumAmmoItemsInGun(stack); n++)
+					for(int n = 0; n < gunType.numAmmoItemsInGun; n++)
 					{
 						ItemStack bulletStack = ((ItemGun)stack.getItem()).getBulletItemStack(stack, n);
 						if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
@@ -196,7 +196,7 @@ public class TickHandlerClient
 						{
 							GunType offHandGunType = ((ItemGun)offHandStack.getItem()).type;
 							x = 0;
-							for(int n = 0; n < offHandGunType.getNumAmmoItemsInGun(offHandStack); n++)
+							for(int n = 0; n < offHandGunType.numAmmoItemsInGun; n++)
 							{
 								ItemStack bulletStack = ((ItemGun)offHandStack.getItem()).getBulletItemStack(offHandStack, n);
 								if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())

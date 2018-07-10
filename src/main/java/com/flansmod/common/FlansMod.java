@@ -15,22 +15,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-
+import com.flansmod.client.AimType;
+import com.flansmod.client.FlanMouseButton;
+import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
@@ -105,14 +92,30 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 
-@Mod(modid = FlansMod.MODID, name = "Flan's Mod", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
+@Mod(modid = FlansMod.MODID, name = "Arsenal Flans", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod
 {
 	//Core mod stuff
 	public static boolean DEBUG = false;
     public static Configuration configFile;
-	public static final String MODID = "flansmod";
+	public static final String MODID = "arsenalflans";
 	public static final String VERSION = "@VERSION@";
 	@Instance(MODID)
 	public static FlansMod INSTANCE;
@@ -129,7 +132,6 @@ public class FlansMod
     public static boolean teamsConfigBoolean = false;
 	@SidedProxy(clientSide = "com.flansmod.client.ClientProxy", serverSide = "com.flansmod.common.CommonProxy")
 	public static CommonProxy proxy;
-	//A standardised ticker for all bits of the mod to call upon if they need one
 	public static int ticker = 0;
 	public static long lastTime;
 	public static File flanDir;
@@ -180,6 +182,8 @@ public class FlansMod
 	/** Gun animation variables for each entity holding a gun. Currently only applicable to the player */
 	public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<EntityLivingBase, GunAnimations>(), gunAnimationsLeft = new HashMap<EntityLivingBase, GunAnimations>();
 
+	public static boolean debugMode = true;
+	
 
 	/** The mod pre-initialiser method */
 	@EventHandler
@@ -187,7 +191,7 @@ public class FlansMod
 	{
 		log("Preinitialising Flan's mod.");
         configFile = new Configuration(event.getSuggestedConfigurationFile());
-        syncConfig();
+        syncConfig(event.getSide());
 
 		//TODO : Load properties
 		//configuration = new Configuration(event.getSuggestedConfigurationFile());
@@ -595,6 +599,76 @@ public class FlansMod
         if(configFile.hasChanged())
             configFile.save();
     }
+    
+    public static void syncConfig(Side side) {
+    	printDebugLog = configFile.getBoolean("Print Debug Log", Configuration.CATEGORY_GENERAL, printDebugLog, "");
+    	printStackTrace = configFile.getBoolean("Print Stack Trace", Configuration.CATEGORY_GENERAL, printStackTrace, "");
+        //generalConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, generalConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
+        //generalConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, generalConfigString, "A String!");
+        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", Configuration.CATEGORY_GENERAL, addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
+        addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
+        //teamsConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, teamsConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
+        //teamsConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, teamsConfigString, "A String!");
+        //teamsConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, teamsConfigBoolean, "A Boolean!");
+
+        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	Configuration.CATEGORY_GENERAL,  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+
+        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime",	Configuration.CATEGORY_GENERAL,  10, 0, 600, "Min(default=10)");
+
+        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
+        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
+        
+        for(int i=0; i<hitCrossHairColor.length; i++)
+        {
+        	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
+        	hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor"+COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
+        			"Hit cross hair color "+COLOR[i]+"(default=1.0)");
+        }
+
+        if(side.isClient())
+        {
+        	String aimTypeInput = configFile.getString("Aim Type", "Settings", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
+            AimType aimType = AimType.fromString(aimTypeInput);
+            
+            if(aimType != null)
+            {
+            	FlansModClient.aimType = aimType;
+            } else
+            {
+            	log(String.format("The aim type '%s' does not exist.", aimTypeInput));
+            	FlansModClient.aimType = AimType.TOGGLE;
+            }
+            
+            String aimButtonInput = configFile.getString("Aim Button", "Settings", "left", "The mouse button used to aim a gun 'left' or 'right'");
+            FlanMouseButton aimButtonType = FlanMouseButton.fromString(aimButtonInput);
+            
+            if(aimButtonType != null)
+            {
+            	FlansModClient.aimButton = aimButtonType;
+            } else
+            {
+            	log(String.format("The aim button type '%s' does not exist.", aimTypeInput));
+            	FlansModClient.aimButton = FlanMouseButton.LEFT;
+            }
+            
+            String shootButtonInput = configFile.getString("Fire Button", "Settings", "right", "The mouse button used to fire a gun 'left' or 'right'");
+            FlanMouseButton shootButtonType = FlanMouseButton.fromString(shootButtonInput);
+            
+            if(shootButtonType != null)
+            {
+            	FlansModClient.fireButton = shootButtonType;
+            } else
+            {
+            	log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
+            	FlansModClient.fireButton = FlanMouseButton.RIGHT;
+            }
+            
+        }
+        
+        if(configFile.hasChanged())
+            configFile.save();
+    }
+    
     public static void updateBltssConfig(int min, int divisor)
     {
     	ConfigCategory category = configFile.getCategory(Configuration.CATEGORY_GENERAL);

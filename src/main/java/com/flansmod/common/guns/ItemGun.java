@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -38,6 +37,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.flansmod.client.AimType;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.debug.EntityDebugDot;
 import com.flansmod.client.debug.EntityDebugVector;
@@ -108,6 +108,7 @@ public class ItemGun extends Item implements IPaintableItem
 	//public boolean sendPosToServer = false;
 
 	public IIcon[] icons;
+	public IIcon defaultIcon;
 
 	public ItemGun(GunType gun)
 	{
@@ -135,26 +136,19 @@ public class ItemGun extends Item implements IPaintableItem
 			gun.stackTagCompound = new NBTTagCompound();
 			return null;
 		}
-
-		String s;
-		if(type.getSecondaryFire(gun))
-			s = "secondaryAmmo";
-		else
-			s = "ammo";
-
 		//If the gun has no ammo tags, give it some
-		if(!gun.stackTagCompound.hasKey(s))
+		if(!gun.stackTagCompound.hasKey("ammo"))
 		{
 			NBTTagList ammoTagsList = new NBTTagList();
-			for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
+			for(int i = 0; i < type.numAmmoItemsInGun; i++)
 			{
 				ammoTagsList.appendTag(new NBTTagCompound());
 			}
-			gun.stackTagCompound.setTag(s, ammoTagsList);
+			gun.stackTagCompound.setTag("ammo", ammoTagsList);
 			return null;
 		}
 		//Take the list of ammo tags
-		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList(s, Constants.NBT.TAG_COMPOUND);
+		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList("ammo", Constants.NBT.TAG_COMPOUND);
 		//Get the specific ammo tags required
 		NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
 		return ItemStack.loadItemStackFromNBT(ammoTags);
@@ -168,25 +162,18 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			gun.stackTagCompound = new NBTTagCompound();
 		}
-
-		String s;
-		if(type.getSecondaryFire(gun))
-			s = "secondaryAmmo";
-		else
-			s = "ammo";
-
 		//If the gun has no ammo tags, give it some
-		if(!gun.stackTagCompound.hasKey(s))
+		if(!gun.stackTagCompound.hasKey("ammo"))
 		{
 			NBTTagList ammoTagsList = new NBTTagList();
-			for(int i = 0; i < type.getNumAmmoItemsInGun(gun); i++)
+			for(int i = 0; i < type.numAmmoItemsInGun; i++)
 			{
 				ammoTagsList.appendTag(new NBTTagCompound());
 			}
-			gun.stackTagCompound.setTag(s, ammoTagsList);
+			gun.stackTagCompound.setTag("ammo", ammoTagsList);
 		}
 		//Take the list of ammo tags
-		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList(s, Constants.NBT.TAG_COMPOUND);
+		NBTTagList ammoTagsList = gun.stackTagCompound.getTagList("ammo", Constants.NBT.TAG_COMPOUND);
 		//Get the specific ammo tags required
 		NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
 		//Represent empty slots by nulltypes
@@ -201,66 +188,32 @@ public class ItemGun extends Item implements IPaintableItem
 	@Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
-		KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
-
-		if(!type.packName.isEmpty())
+		if(type.showDamage)
+			lines.add("\u00a79Damage" + "\u00a77: " + type.getDamage(stack));
+		if(type.showRecoil)
+			lines.add("\u00a79Recoil" + "\u00a77: " + type.getRecoilPitch(stack));
+		if(type.showSpread)
+			lines.add("\u00a79Accuracy" + "\u00a77: " + type.getSpread(stack));
+		if(type.showReloadTime)
+			lines.add("\u00a79Reload Time" + "\u00a77: " + type.getReloadTime(stack) / 20 + "s");
+		for(AttachmentType attachment : type.getCurrentAttachments(stack))
 		{
-			lines.add("\u00a7o" + type.packName);
-		}
-		if(type.description != null)
-		{
-			Collections.addAll(lines, type.description.split("_"));
-		}
-
-		//Reveal all the gun stats when holding down the sneak key
-		if(!GameSettings.isKeyDown(shift))
-		{
-			//Show loaded ammo
-			for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
+			if(type.showAttachments)
 			{
-				ItemStack bulletStack = getBulletItemStack(stack, i);
-				if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
-				{
-					BulletType bulletType = ((ItemBullet)bulletStack.getItem()).type;
-					//String line = bulletType.name + (bulletStack.getMaxDamage() == 1 ? "" : " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage());
-					String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
-					lines.add(line);
-				}
+			String line = attachment.name;
+			lines.add(line);
 			}
-
-			lines.add("");
-			lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
 		}
-		else
+		for(int i = 0; i < type.numAmmoItemsInGun; i++)
 		{
-			lines.add("");
-
-			AttachmentType barrel = type.getBarrel(stack);
-			if(barrel != null && barrel.silencer)
-				lines.add("\u00a7e[Suppressed]");
-
-			if(type.getSecondaryFire(stack))
-				lines.add("\u00a7e[Underbarrel]");
-
-			lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
-			lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilPitch(stack), 2));
-			lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack), 2));
-			lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
-			lines.add("\u00a79Mode" + "\u00a77: \u00a7f" + type.getFireMode(stack).toString().toLowerCase());
-
-			lines.add("");
-			lines.add("\u00a7eAttachments");
-			boolean empty = true;
-			for(AttachmentType attachment : type.getCurrentAttachments(stack))
+			ItemStack bulletStack = getBulletItemStack(stack, i);
+			if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
 			{
-				String line = attachment.name;
+				BulletType bulletType = ((ItemBullet)bulletStack.getItem()).type;
+				//String line = bulletType.name + (bulletStack.getMaxDamage() == 1 ? "" : " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage());
+				String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
 				lines.add(line);
-				if(line != null)
-					empty = false;
 			}
-
-			if(empty)
-				lines.add("None");
 		}
 	}
 
@@ -312,8 +265,8 @@ public class ItemGun extends Item implements IPaintableItem
 				//Get whether mice are held
 				lastRightMouseHeld = rightMouseHeld;
 				lastLeftMouseHeld = leftMouseHeld;
-				rightMouseHeld = Mouse.isButtonDown(1);
-				leftMouseHeld = Mouse.isButtonDown(0);
+				rightMouseHeld = Mouse.isButtonDown(FlansModClient.fireButton.getButton());
+				leftMouseHeld = Mouse.isButtonDown(FlansModClient.aimButton.getButton());
 
 
 				boolean offHandFull = false;
@@ -400,44 +353,89 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 				}
 				IScope currentScope = type.getCurrentScope(itemstack);
-				if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(0) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
+				
+				if(FlansModClient.aimType == AimType.TOGGLE)
 				{
-					if(FlansModClient.currentScope == null)
+					if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
 					{
-						/*if(type.allowNightVision)
-							isNightVision = true;
-						if(type.allowSlow)
-							isSlow = true;*/
-						FlansModClient.currentScope = currentScope;
-						FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
-						FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
-						float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-						gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
-						FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
-						gameSettings.thirdPersonView = 0;
-						FlansModClient.originalFOV = gameSettings.fovSetting;
+						if(FlansModClient.currentScope == null)
+						{
+							/*if(type.allowNightVision)
+								isNightVision = true;
+							if(type.allowSlow)
+								isSlow = true;*/
+							FlansModClient.currentScope = currentScope;
+							FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
+							FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+							float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+							gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+							FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+							gameSettings.thirdPersonView = 0;
+							FlansModClient.originalFOV = gameSettings.fovSetting;
 
-						//Send ads spread packet to server
-						float spread = type.getSpread(itemstack);
-						if(type.getNumBullets(itemstack) == 1)
-							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
+							//Send ads spread packet to server
+							float spread = type.getSpread(itemstack);
+							if(type.numBullets == 1)
+								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
+							else
+								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
+						}
 						else
-							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
-					}
-					else
-					{
-						//if(type.allowNightVision)
-							//isNightVision = false;
-						FlansModClient.currentScope = null;
-						gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
-						gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
-						gameSettings.fovSetting = FlansModClient.originalFOV;
+						{
+							//if(type.allowNightVision)
+								//isNightVision = false;
+							FlansModClient.currentScope = null;
+							gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+							gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+							gameSettings.fovSetting = FlansModClient.originalFOV;
 
-						//Send default spread packet to server
-						FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+							//Send default spread packet to server
+							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+						}
+						FlansModClient.scopeTime = 10;
 					}
-					FlansModClient.scopeTime = 10;
+				} else
+				{
+					if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && /*FlansModClient.scopeTime <= 0 &&*/ FMLClientHandler.instance().getClient().currentScreen == null)
+					{
+						if(FlansModClient.currentScope == null)
+						{
+							/*if(type.allowNightVision)
+								isNightVision = true;
+							if(type.allowSlow)
+								isSlow = true;*/
+							FlansModClient.currentScope = currentScope;
+							FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
+							FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+							float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+							gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+							FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+							gameSettings.thirdPersonView = 0;
+
+							//Send ads spread packet to server
+							float spread = type.getSpread(itemstack);
+							if(type.numBullets == 1)
+								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
+							else
+								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
+						}
+						FlansModClient.scopeTime = 10;
+					} else
+					{
+						if(!Mouse.isButtonDown(FlansModClient.aimButton.getButton()))
+						{
+							if(FlansModClient.currentScope != null)
+							{
+								FlansModClient.currentScope = null;
+								gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+								gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+								gameSettings.fovSetting = FlansModClient.originalFOV;
+							}
+						}
+					}
 				}
+				
+				
 			}
 		}
 		if (soundDelay > 0)
@@ -476,7 +474,7 @@ public class ItemGun extends Item implements IPaintableItem
 		{
 			boolean onLastBullet = false;
 			boolean hasAmmo = false;
-			for(int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++)
+			for(int i = 0; i < gunType.numAmmoItemsInGun; i++)
 			{
 				ItemStack bulletStack = getBulletItemStack(stack, i);
 				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
@@ -528,8 +526,8 @@ public class ItemGun extends Item implements IPaintableItem
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
 				}
 				if(left)
-					FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
-				else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
+					FlansModClient.shootTimeLeft = gunType.shootDelay;
+				else FlansModClient.shootTimeRight = gunType.shootDelay;
 				if(gunType.consumeGunUponUse)
 					return true;
 
@@ -556,6 +554,18 @@ public class ItemGun extends Item implements IPaintableItem
 
 	public void onUpdateServer(ItemStack itemstack, World world, Entity entity, int i, boolean flag)
 	{
+		if (itemstack.getTagCompound() == null) {
+			GunType gunType = this.type;
+			NBTTagCompound tags = new NBTTagCompound();
+			tags.setString("Paint", gunType.defaultPaintjob.iconName);
+			NBTTagList ammoTagsList = new NBTTagList();
+			for (int j = 0; j < gunType.numAmmoItemsInGun; j++) {
+				ammoTagsList.appendTag(new NBTTagCompound());
+			}
+			tags.setTag("ammo", ammoTagsList);
+			itemstack.stackTagCompound = tags;
+		}
+		
 		if(entity instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP player = (EntityPlayerMP)entity;
@@ -1057,7 +1067,7 @@ public class ItemGun extends Item implements IPaintableItem
 			//Go through the bullet stacks in the gun and see if any of them are not null
 			int bulletID = 0;
 			ItemStack bulletStack = null;
-			for(; bulletID < gunType.getNumAmmoItemsInGun(gunStack); bulletID++)
+			for(; bulletID < gunType.numAmmoItemsInGun; bulletID++)
 			{
 				ItemStack checkingStack = getBulletItemStack(gunStack, bulletID);
 				if(checkingStack != null && checkingStack.getItem() != null && checkingStack.getItemDamage() < checkingStack.getMaxDamage())
@@ -1088,19 +1098,11 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 					//Send reload packet to induce reload effects client side
 					FlansMod.getPacketHandler().sendTo(new PacketReload(left), entityplayer);
-					//Play reload sound
-					String soundToPlay = null;
-					AttachmentType grip = gunType.getGrip(gunStack);
-
-					if(gunType.getSecondaryFire(gunStack) && grip != null && grip.secondaryReloadSound != null)
-						soundToPlay = grip.secondaryReloadSound;
-					else if(gunType.reloadSoundOnEmpty != null)
-						soundToPlay = gunType.reloadSoundOnEmpty;
+					//Play reload sound, empty variant if not null
+					if(gunType.reloadSoundOnEmpty != null)
+						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSoundOnEmpty, true);
 					else if(gunType.reloadSound != null)
-						soundToPlay = gunType.reloadSound;
-
-					if(soundToPlay != null)
-						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
+					 	PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.reloadSound, true);
 				}
 			}
 			//A bullet stack was found, so try shooting with it
@@ -1149,7 +1151,7 @@ public class ItemGun extends Item implements IPaintableItem
 		//For playing sounds afterwards
 		boolean reloadedSomething = false;
 		//Check each ammo slot, one at a time
-		for(int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++)
+		for(int i = 0; i < gunType.numAmmoItemsInGun; i++)
 		{
 			//Get the stack in the slot
 			ItemStack bulletStack = getBulletItemStack(gunStack, i);
@@ -1163,8 +1165,7 @@ public class ItemGun extends Item implements IPaintableItem
 				for (int j = 0; j < inventory.getSizeInventory(); j++)
 				{
 					ItemStack item = inventory.getStackInSlot(j);
-
-					if(item != null && item.getItem() instanceof ItemShootable && gunType.isAmmo(((ItemShootable)(item.getItem())).type, gunStack))
+					if (item != null && item.getItem() instanceof ItemShootable && gunType.isAmmo(((ItemShootable)(item.getItem())).type))
 					{
 						int bulletsInThisSlot = item.getMaxDamage() - item.getItemDamage();
 						if(bulletsInThisSlot > bulletsInBestSlot)
@@ -1228,35 +1229,20 @@ public class ItemGun extends Item implements IPaintableItem
 	/** Method for shooting to avoid repeated code */
 	private void shoot(ItemStack stack, GunType gunType, World world, ItemStack bulletStack, EntityPlayer entityplayer, boolean left)
 	{
-		//flash(entityplayer);
 		ShootableType bullet = ((ItemShootable)bulletStack.getItem()).type;
-		boolean lastBullet = false;
-		ItemStack[] bulletStacks = new ItemStack[type.getNumAmmoItemsInGun(stack)];
-		for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
-		{
-			bulletStacks[i] = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
-			if(bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemBullet && (bulletStacks[i].getMaxDamage() - bulletStacks[i].getItemDamage() == 1))
-				lastBullet = true;
-		}
-
 		// Play a sound if the previous sound has finished
 		if (soundDelay <= 0 && gunType.shootSound != null)
 		{
 			AttachmentType barrel = gunType.getBarrel(stack);
-			AttachmentType grip = gunType.getGrip(stack);
-
-			boolean silenced = barrel != null && barrel.silencer && !gunType.getSecondaryFire(stack);
-			//world.playSoundAtEntity(entityplayer, type.shootSound, 10F, type.distortSound ? 1.0F / (world.rand.nextFloat() * 0.4F + 0.8F) : 1.0F);
-			String soundToPlay = null;
-			if(gunType.getSecondaryFire(stack) && grip != null && grip.secondaryShootSound != null)
-				soundToPlay = grip.secondaryShootSound;
-			else if(lastBullet && gunType.lastShootSound != null)
-				soundToPlay = gunType.lastShootSound;
-			else if(gunType.shootSound != null)
-				soundToPlay = gunType.shootSound;
-
-			if(soundToPlay != null)
-				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, soundToPlay, gunType.distortSound, silenced);
+			boolean silenced = barrel != null && barrel.silencer;
+			// Allows for specifying custom shoot sound for suppressed weapons and or allow for old system 
+			if(silenced && gunType.suppressedShootSound != null)
+			{
+				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.suppressedShootSound, gunType.distortSound, false);
+			} else
+			{
+				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, gunType.shootSound, gunType.distortSound, silenced);
+			}
 			soundDelay = gunType.shootSoundLength;
 		}
 		if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable)
@@ -1283,7 +1269,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 			if(numBullets <= 0)
 			{
-				numBullets = gunType.getNumBullets(stack);
+				numBullets = gunType.numBullets;
 			}
 
 			if(spread <= 0)
@@ -1322,8 +1308,8 @@ public class ItemGun extends Item implements IPaintableItem
 				dropItem(world, entityplayer, gunType.dropItemOnShoot);
 		}
 		if(left)
-			PlayerHandler.getPlayerData(entityplayer).shootTimeLeft = gunType.getShootDelay(stack);
-		else PlayerHandler.getPlayerData(entityplayer).shootTimeRight = gunType.getShootDelay(stack);
+			PlayerHandler.getPlayerData(entityplayer).shootTimeLeft = gunType.shootDelay;
+		else PlayerHandler.getPlayerData(entityplayer).shootTimeRight = gunType.shootDelay;
 		if(gunType.knockback > 0)
 		{
 			//TODO : Apply knockback
@@ -1498,6 +1484,7 @@ public class ItemGun extends Item implements IPaintableItem
     {
     	icons = new IIcon[type.paintjobs.size()];
     	
+    	defaultIcon = icon.registerIcon("flansmod:null");
         itemIcon = icon.registerIcon("FlansMod:" + type.iconPath);
     	for(int i = 0; i < type.paintjobs.size(); i++)
     	{
@@ -1509,7 +1496,13 @@ public class ItemGun extends Item implements IPaintableItem
     @SideOnly(Side.CLIENT)
     public IIcon getIconIndex(ItemStack stack)
     {
-        return icons[stack.getItemDamage()];
+    	if(icons != null)
+    	{
+    		return icons[stack.getItemDamage()];
+    	} else
+    	{
+    		return defaultIcon;
+    	}
     }
 
     @Override
@@ -1534,15 +1527,5 @@ public class ItemGun extends Item implements IPaintableItem
         	map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", type.meleeDamage, 0));
        	return map;
     }
-
-	//Round values to n number of decimal points
-	public static float roundFloat(float value, int points)
-	{
-		int pow = 10;
-		for (int i = 1; i < points; i++)
-			pow *= 10;
-		float result = value * pow;
-
-		return (float)(int)((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
-	}
+    
 }

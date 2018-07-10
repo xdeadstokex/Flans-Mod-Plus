@@ -101,20 +101,15 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
 	@Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
-		if(!type.packName.isEmpty())
-		{
-			lines.add("\u00a7o" + type.packName);
-		}
 		if(type.description != null)
 		{
             Collections.addAll(lines, type.description.split("_"));
 		}
-
-		lines.add("");
 		NBTTagCompound tags = getTagCompound(stack, player.worldObj);
-		PartType engine = PartType.getPart(tags.getString("Engine"));
-		if(engine != null)
-			lines.add("\u00a79Engine" + "\u00a77: " + engine.name);
+		String engineName = tags.getString("Engine");
+		PartType part = PartType.getPart(engineName);
+		if(part != null)
+			lines.add(part.name);
 	}
 
     @Override

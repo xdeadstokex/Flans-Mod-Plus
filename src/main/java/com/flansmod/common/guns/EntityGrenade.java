@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
-import mapwriter.forge.MwForge;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -460,44 +459,6 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 			}
 		}
 
-		if( thrower != null &&
-			type.motionSensor &&
-			ticksExisted%5==0 &&
-			motionTime == 0 &&
-			(!worldObj.isRemote || FlansMod.proxy.isThePlayer((EntityPlayer) thrower) || FlansMod.proxy.isOnSameTeamClientPlayer(thrower)))
-		{
-			MwForge.proxy.addEntityMarker(this, 100000);
-			
-			float checkRadius = type.motionSensorRange;
-			List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(checkRadius, checkRadius, checkRadius));
-			Entity entity;
-			for(Object obj : list)
-			{
-				if(obj instanceof Entity && obj != thrower && obj != this && !(obj instanceof EntityBullet))// && !(obj instanceof EntityGrenade))
-				{
-					entity = (Entity)obj;
-					if(entity.motionX !=0 || entity.motionY > 0 || entity.motionZ !=0 ||
-						Math.abs(entity.posX-entity.prevPosX) + Math.abs(entity.posY-entity.prevPosY) + Math.abs(entity.posZ-entity.prevPosZ) > 0.05)
-					{
-						if(!this.worldObj.isRemote)
-						{
-							PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.motionSoundRange, dimension, type.motionSound, true);
-							motionTime = type.motionTime;
-							break;
-						}
-						else
-						{
-							if(entity instanceof EntityPlayer && !FlansMod.proxy.isThePlayer((EntityPlayer)entity))
-							{
-								MwForge.proxy.addEntityMarker(entity, 160);
-								motionTime = type.motionTime;
-							}
-						}
-					}
-				}
-			}
-		}
-
 		//If throwing this grenade at an entity should hurt them, this bit checks for entities in the way and does so
 		//(Don't attack entities when stuck to stuff)
 		if((type.damageVsLiving > 0 || type.damageVsPlayer > 0) && !stuck)
@@ -759,7 +720,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 				if(gun.ammo.size() > 0)
 				{
 					ShootableType bulletToGive = gun.ammo.get(0);
-					int numToGive = Math.min(bulletToGive.maxStackSize, type.numClips * gun.getNumAmmoItemsInGun(player.getCurrentEquippedItem()));
+					int numToGive = Math.min(bulletToGive.maxStackSize, type.numClips * gun.numAmmoItemsInGun);
 					if(player.inventory.addItemStackToInventory(new ItemStack(bulletToGive.item, numToGive)))
 					{
 						used = true;

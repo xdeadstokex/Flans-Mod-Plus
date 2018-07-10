@@ -393,11 +393,6 @@ public class EntityMecha extends EntityDriveable
 			{
 				ItemGun gunItem = (ItemGun)heldItem;
 				GunType gunType = gunItem.type;
-
-				//If gun is in secondary/underbarrel fire, turn it off.
-				if(heldStack.stackTagCompound.hasKey("secondaryAmmo"))
-					if(gunType.getSecondaryFire(heldStack))
-						gunType.setSecondaryFire(heldStack, false);
 				
 				//Get the correct shoot delay
 				int delay = left ? shootDelayLeft : shootDelayRight;
@@ -408,7 +403,7 @@ public class EntityMecha extends EntityDriveable
 					//Go through the bullet stacks in the gun and see if any of them are not null
 					int bulletID = 0;
 					ItemStack bulletStack = null;
-					for(; bulletID < gunType.getNumAmmoItemsInGun(heldStack); bulletID++)
+					for(; bulletID < gunType.numAmmoItemsInGun; bulletID++)
 					{
 						ItemStack checkingStack = gunItem.getBulletItemStack(heldStack, bulletID);
 						if(checkingStack != null && checkingStack.getItem() != null && checkingStack.getItemDamage() < checkingStack.getMaxDamage())

@@ -7,7 +7,7 @@ public class GunAnimations
 	public static GunAnimations defaults = new GunAnimations();
 	
 	/** (Purely aesthetic) gun animation variables */
-	public boolean isGunEmpty = false;
+	public boolean isGunEmpty;
 	/** Recoil */
 	public float gunRecoil = 0F, lastGunRecoil = 0F;
 	/** Slide */
@@ -34,30 +34,21 @@ public class GunAnimations
 	public float hammerRotation = 0F;
 	public int timeUntilPullback = 0;
 	public float gunPullback = -1F, lastGunPullback = -1F;
-	public boolean hammer = false;
-
-	//Bullet casing
-	public float casingTrajectoryX = 0F;
-	public float casingTrajectoryY = 0F;
-	public float casingSpin = 0F;
-	public int timeUntilCasingReset = 0;
-	public boolean isCaseFired = false;
+	public boolean isFired = false;
 
 	/** Melee animations */
 	public int meleeAnimationProgress = 0, meleeAnimationLength = 0;
 	
 	public GunAnimations()
-	{}
+	{
+		
+	}
 	
 	public void update()
 	{
 		lastPumped = pumped;
 		lastGunPullback = gunPullback;
-
-		timeUntilCasingReset--;
-		if(timeUntilCasingReset <= 0)
-			isCaseFired = false;
-
+		
 		if(timeUntilPump > 0)
 		{
 			timeUntilPump--;
@@ -75,7 +66,7 @@ public class GunAnimations
 			if(timeUntilPullback == 0)
 			{
 				//Reset the hammer
-				hammer = true;
+				isFired = true;
 				lastGunPullback = gunPullback = -1F;
 			}
 		}
@@ -96,11 +87,11 @@ public class GunAnimations
 				pumping = false;
 		}
 
-		if(hammer)
+		if(isFired)
 		{
 			gunPullback += 2F / 4;
 			if(gunPullback >= 0.999F)
-				hammer = false;
+				isFired = false;
 		}
 
 		//Recoil model
@@ -115,7 +106,7 @@ public class GunAnimations
 		if(gunSlide > 0 && !isGunEmpty)
 			gunSlide *= 0.5F;
 
-		//Reload
+		//Recload
 		lastReloadAnimationProgress = reloadAnimationProgress;
 		if(reloading)
 			reloadAnimationProgress += 1F / reloadAnimationTime;
@@ -161,20 +152,6 @@ public class GunAnimations
 		if(result == 3) result = 2;
 		
 		flashInt = result;
-
-		casingSpin = 0F;
-		casingTrajectoryX = 0F;
-		casingTrajectoryY = 0F;
-
-		if(isGunEmpty)
-		{
-			timeUntilCasingReset = 60;
-			isCaseFired = true;
-		}
-		else
-		{
-			isCaseFired = false;
-		}
 	}
 		
 	public void doReload(int reloadTime, int pumpDelay, int pumpTime)
