@@ -440,7 +440,7 @@ public class RenderGun implements IItemRenderer
 			}
 
 			//Render the slide
-			if(slideAttachment == null)
+			if(slideAttachment == null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
 				{
@@ -734,7 +734,7 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(scopeAttachment, scopeItemStack, model.scopeAttachPoint, type);
+				preRenderAttachment(scopeAttachment, scopeItemStack, model.scopeAttachPoint, type);
 				if(model.scopeIsOnBreakAction)
 				{
 					GL11.glTranslatef(model.barrelBreakPoint.x, model.barrelBreakPoint.y, model.barrelBreakPoint.z);
@@ -743,10 +743,7 @@ public class RenderGun implements IItemRenderer
 				}
 				if(model.scopeIsOnSlide)
 					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
-				ModelAttachment scopeModel = scopeAttachment.model;
-				if(scopeModel != null)
-					scopeModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				postRenderAttachment(scopeAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -756,13 +753,10 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(gripAttachment, gripItemStack, model.gripAttachPoint, type);
+				preRenderAttachment(gripAttachment, gripItemStack, model.gripAttachPoint, type);
 				if(model.gripIsOnPump)
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
-				ModelAttachment gripModel = gripAttachment.model;
-				if(gripModel != null)
-					gripModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				postRenderAttachment(gripAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -772,11 +766,8 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(barrelAttachment, barrelItemStack, model.barrelAttachPoint, type);
-				ModelAttachment barrelModel = barrelAttachment.model;
-				if(barrelModel != null)
-					barrelModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				preRenderAttachment(barrelAttachment, barrelItemStack, model.barrelAttachPoint, type);
+				postRenderAttachment(barrelAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -786,26 +777,20 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(stockAttachment, stockItemStack, model.stockAttachPoint, type);
-				ModelAttachment stockModel = stockAttachment.model;
-				if(stockModel != null)
-					stockModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				preRenderAttachment(stockAttachment, stockItemStack, model.stockAttachPoint, type);
+				postRenderAttachment(stockAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
 
 		//Slide
-		if(slideAttachment != null)
+		if(slideAttachment != null && !type.getSecondaryFire(item))
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(slideAttachment, slideItemStack, model.slideAttachPoint, type);
+				preRenderAttachment(slideAttachment, slideItemStack, model.slideAttachPoint, type);
 				GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
-				ModelAttachment slideModel = slideAttachment.model;
-				if(slideModel != null)
-					slideModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				postRenderAttachment(slideAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -815,13 +800,10 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(gadgetAttachment, gadgetItemStack, model.gadgetAttachPoint, type);
+				preRenderAttachment(gadgetAttachment, gadgetItemStack, model.gadgetAttachPoint, type);
 				if(model.gadgetIsOnPump)
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
-				ModelAttachment gadgetModel = gadgetAttachment.model;
-				if(gadgetModel != null)
-					gadgetModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				postRenderAttachment(gadgetAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -831,11 +813,8 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(accessoryAttachment, accessoryItemStack, model.accessoryAttachPoint, type);
-				ModelAttachment AccessoryModel = accessoryAttachment.model;
-				if(AccessoryModel != null)
-					AccessoryModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				preRenderAttachment(accessoryAttachment, accessoryItemStack, model.accessoryAttachPoint, type);
+				postRenderAttachment(accessoryAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -845,12 +824,9 @@ public class RenderGun implements IItemRenderer
 		{
 			GL11.glPushMatrix();
 			{
-				initRenderAttachment(pumpAttachment, pumpItemStack, model.pumpAttachPoint, type);
+				preRenderAttachment(pumpAttachment, pumpItemStack, model.pumpAttachPoint, type);
 				GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
-				ModelAttachment pumpModel = pumpAttachment.model;
-				if(pumpModel != null)
-					pumpModel.renderAttachment(f);
-				renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
+				postRenderAttachment(pumpAttachment, type, f);
 			}
 			GL11.glPopMatrix();
 		}
@@ -859,13 +835,21 @@ public class RenderGun implements IItemRenderer
 		GL11.glPopMatrix();
 	}
 
-	/** Clean up some redunant code */
-	private void initRenderAttachment(AttachmentType attachment, ItemStack stack, Vector3f model, GunType type)
+	/** Clean up some redundant code */
+	private void preRenderAttachment(AttachmentType attachment, ItemStack stack, Vector3f model, GunType type)
 	{
 		Paintjob paintjob = attachment.getPaintjob(stack.getItemDamage());
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
 		GL11.glTranslatef(model.x * type.modelScale, model.y * type.modelScale, model.z * type.modelScale);
 		GL11.glScalef(attachment.modelScale, attachment.modelScale, attachment.modelScale);
+	}
+
+	private void postRenderAttachment(AttachmentType attachment, GunType type, float f)
+	{
+		ModelAttachment model = attachment.model;
+		if(model != null)
+			model.renderAttachment(f);
+		renderEngine.bindTexture(FlansModResourceHandler.getTexture(type));
 	}
 
 	/** Load the attachment ammo model plus its texture */
