@@ -520,7 +520,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 		//Rotate the wheels
 		if(hasEnoughFuel())
 		{
-			wheelsAngle += throttle / 7F;
+			wheelsAngle += throttle / 3.25F;
 		}
 		
 		prevDoorPos = doorPos;
