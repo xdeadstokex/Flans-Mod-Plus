@@ -109,13 +109,13 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 
-@Mod(modid = FlansMod.MODID, name = "Arsenal Flans", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
+@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod
 {
 	//Core mod stuff
 	public static boolean DEBUG = false;
     public static Configuration configFile;
-	public static final String MODID = "arsenalflans";
+	public static final String MODID = "flansmodultimate";
 	public static final String VERSION = "@VERSION@";
 	@Instance(MODID)
 	public static FlansMod INSTANCE;
