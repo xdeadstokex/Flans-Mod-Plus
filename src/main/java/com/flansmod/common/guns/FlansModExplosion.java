@@ -8,16 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
-import com.flansmod.common.driveables.EntityWheel;
-import com.flansmod.common.network.PacketExplosion;
-import com.flansmod.common.network.PacketParticle;
-import com.flansmod.common.types.InfoType;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentProtection;
@@ -27,6 +17,7 @@ import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -34,8 +25,17 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ExplosionEvent;
+
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EntityPlane;
+import com.flansmod.common.driveables.EntitySeat;
+import com.flansmod.common.driveables.EntityVehicle;
+import com.flansmod.common.driveables.EntityWheel;
+import com.flansmod.common.network.PacketExplosion;
+import com.flansmod.common.network.PacketFlak;
+import com.flansmod.common.network.PacketParticle;
+import com.flansmod.common.types.InfoType;
 
 public class FlansModExplosion extends Explosion
 {
@@ -51,7 +51,6 @@ public class FlansModExplosion extends Explosion
     private final float damegeVsPlane;
     private final float damegeVsVehicle;
     public boolean breakBlocks;
-    public boolean canceled = false;
 
 	public FlansModExplosion(World w, Entity e, EntityPlayer p, InfoType t,
 			double x, double y, double z, float r, boolean breakBlocks,
@@ -69,11 +68,6 @@ public class FlansModExplosion extends Explosion
         damegeVsLiving  = damegeLiving;
         damegeVsPlane   = damegePlane;
         damegeVsVehicle = damegeVehicle;
-
-        /*ExplosionEvent.Start event = new ExplosionEvent.Start(w, this);
-        MinecraftForge.EVENT_BUS.post(event);
-        this.canceled = event.isCanceled();*/
-        
         doExplosionA();
         doExplosionB(true);
         spawnParticle(smokeCount, debrisCount);
@@ -130,24 +124,12 @@ public class FlansModExplosion extends Explosion
                             int j1 = MathHelper.floor_double(d2);
                             Block block = worldObj.getBlock(l, i1, j1);
 
-                            
-                            
                             float f3 = exploder != null ? exploder.func_145772_a(this, worldObj, l, i1, j1, block) : block.getExplosionResistance(exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
-                            
-                            if(block.getMaterial() != Material.water && block.getMaterial() != Material.lava)
-                            {
-                                f1 -= (f3 + 0.3F) * f2;
-                            }
+                            f1 -= (f3 + 0.3F) * f2;
 
                             if (f1 > 0.0F && (exploder == null || exploder.func_145774_a(this, worldObj, l, i1, j1, block, f1)))
                             {
                                 hashset.add(new ChunkPosition(l, i1, j1));
-                            } else
-                            {
-                            	if(block.getMaterial() == Material.water && block.getMaterial() == Material.lava)
-                            	{
-                            		hashset.add(new ChunkPosition(l, i1, j1));
-                            	}
                             }
 
                             d0 += d3 * f2;
@@ -159,11 +141,7 @@ public class FlansModExplosion extends Explosion
             }
         }
 
-        if(!canceled)
-        {
-            affectedBlockPositions.addAll(hashset);
-        }
-        
+        affectedBlockPositions.addAll(hashset);
         explosionSize *= 2.0F;
         int i = MathHelper.floor_double(explosionX - explosionSize - 1.0D);
         int j = MathHelper.floor_double(explosionX + explosionSize + 1.0D);
@@ -351,7 +329,7 @@ public class FlansModExplosion extends Explosion
                         block.dropBlockAsItemWithChance(worldObj, i, j, k, worldObj.getBlockMetadata(i, j, k), 1.0F / explosionSize, 0);
                     }
 
-                    block.onBlockExploded(worldObj, i, j, k, this);  
+                    block.onBlockExploded(worldObj, i, j, k, this);
                 }
             }
         }
