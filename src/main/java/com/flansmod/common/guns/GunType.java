@@ -74,6 +74,9 @@ public class GunType extends PaintableType implements IScope
 	public boolean canShootUnderwater = true;
 	/** The amount of knockback to impact upon the player per shot */
 	public float knockback = 0F;
+	/** The secondary function of this gun. By default, the left mouse button triggers this */
+	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
+	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
 	/** If true, then this gun can be dual wielded */
 	public boolean oneHanded = false;
 	/** For one shot items like a panzerfaust */
@@ -97,7 +100,9 @@ public class GunType extends PaintableType implements IScope
 	public int lockOnSoundTime = 0;
 	public String lockOnSound = "";
 	public int maxRangeLockOn = 80;
+
 	public boolean canSetPosition = false;
+
 	public boolean lockOnToPlanes = false, lockOnToVehicles = false, lockOnToMechas = false, lockOnToPlayers = false, lockOnToLivings = false;
 
 	//Information
@@ -123,7 +128,9 @@ public class GunType extends PaintableType implements IScope
 	/** The sound played upon shooting */
 	public String shootSound;
 	/** The sound to play upon shooting on last round */
-	public String lastShootSound;
+    public String lastShootSound;
+	/** The sound played upon shooting with a suppressor */
+	public String suppressedShootSound;
 	/** The length of the sound for looping sounds */
 	public int shootSoundLength;
 	/** Whether to distort the sound or not. Generally only set to false for looping sounds */
@@ -148,6 +155,8 @@ public class GunType extends PaintableType implements IScope
 	public int loopedSoundLength = 20;
 	/** Played when the player stops holding shoot */
 	public String cooldownSound;
+
+
 	/** The sound to play upon weapon swing */
 	public String meleeSound;
 	/** The sound to play while holding the weapon in the hand*/
@@ -210,12 +219,7 @@ public class GunType extends PaintableType implements IScope
 	/** Gives knockback resistance to the player */
 	public float knockbackModifier = 0F;
 
-	//Secondary Functions
-	/** The secondary function of this gun. By default, the left mouse button triggers this */
-	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
-	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
-
-	/** Default spreads of the gun. Do not modify. */
+	/** Default spread of the gun. Do not modify. */
 	private float defaultSpread = 0F;
 
 	public GunType(TypeFile file)
@@ -293,10 +297,7 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("LockOnToPlayers"))
 				lockOnToPlayers = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("LockOnToLivings"))
-				lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());
-
-			else if(split[0].equals("showCrosshair"))
-			    showCrosshair = Boolean.parseBoolean(split[1]);			
+				lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());	
 			
 			else if(split[0].equals("ConsumeGunOnUse"))
 				consumeGunUponUse = Boolean.parseBoolean(split[1]);
@@ -348,6 +349,11 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("LastShootSound"))
 			{
 				lastShootSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			}
+			else if(split[0].equals("SuppressedShootSound"))
+			{
+				suppressedShootSound = split[1];
 				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
 			}
 			else if(split[0].equals("ReloadSound"))
@@ -919,6 +925,7 @@ public class GunType extends PaintableType implements IScope
 				{
 					if(gm == submode[i].ordinal())
 					{
+						FlansMod.log("Fire mode returned: " + gm);
 						return EnumFireMode.values()[gm];
 					}
 				}

@@ -1,7 +1,6 @@
 package com.flansmod.client.model;
 
 import com.flansmod.common.guns.*;
-import net.minecraft.item.Item;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -316,6 +315,7 @@ public class RenderGun implements IItemRenderer
 				}
 				default : break;
 			}
+			
 			renderGun(item, gunType, f, model, animations, reloadRotate, type);
 		}
 		GL11.glPopMatrix();
@@ -327,11 +327,11 @@ public class RenderGun implements IItemRenderer
 		//Make sure we actually have the renderEngine
 		if(renderEngine == null)
 			renderEngine = Minecraft.getMinecraft().renderEngine;
-
+		
 		//If we have no animation variables, use defaults
 		if(animations == null)
 			animations = GunAnimations.defaults;
-
+		
 		//Get all the attachments that we may need to render
 		AttachmentType scopeAttachment = type.getScope(item);
 		AttachmentType barrelAttachment = type.getBarrel(item);
@@ -341,7 +341,7 @@ public class RenderGun implements IItemRenderer
 		AttachmentType slideAttachment = type.getSlide(item);
 		AttachmentType pumpAttachment = type.getPump(item);
 		AttachmentType accessoryAttachment = type.getAccessory(item);
-
+		
 		ItemStack scopeItemStack = type.getScopeItemStack(item);
 		ItemStack barrelItemStack = type.getBarrelItemStack(item);
 		ItemStack stockItemStack = type.getStockItemStack(item);
@@ -428,17 +428,8 @@ public class RenderGun implements IItemRenderer
 				model.renderFlash(f, animations.flashInt);
 				GL11.glPopMatrix();
 			}
+			
 			//Render various shoot / reload animated parts
-			//Render the m1-garand case ejection
-			if(animations.isCaseFired)
-			{
-				GL11.glPushMatrix();
-				{
-					model.renderM1Casing(f, animations);
-				}
-				GL11.glPopMatrix();
-			}
-
 			//Render the slide
 			if(slideAttachment == null && !type.getSecondaryFire(item))
 			{
@@ -995,7 +986,7 @@ public class RenderGun implements IItemRenderer
 		if(grip != null && gun.getSecondaryFire(gunStack))
 			return grip.model.recoilDistance;
 		else
-			return gun.model.recoilDistance;
+			return gun.model.RecoilSlideDistance;
 	}
 
 	/** Get the recoil angle, based on ammo type to reload */
@@ -1004,6 +995,6 @@ public class RenderGun implements IItemRenderer
 		if(grip != null && gun.getSecondaryFire(gunStack))
 			return grip.model.recoilAngle;
 		else
-			return gun.model.recoilAngle;
+			return gun.model.RotateSlideDistance;
 	}
 }

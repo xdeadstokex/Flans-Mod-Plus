@@ -38,6 +38,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.flansmod.client.AimType;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.debug.EntityDebugDot;
 import com.flansmod.client.debug.EntityDebugVector;
@@ -108,6 +109,7 @@ public class ItemGun extends Item implements IPaintableItem
 	//public boolean sendPosToServer = false;
 
 	public IIcon[] icons;
+	public IIcon defaultIcon;
 
 	public ItemGun(GunType gun)
 	{
@@ -222,14 +224,12 @@ public class ItemGun extends Item implements IPaintableItem
 				if(bulletStack != null && bulletStack.getItem() instanceof ItemBullet)
 				{
 					BulletType bulletType = ((ItemBullet)bulletStack.getItem()).type;
-					//String line = bulletType.name + (bulletStack.getMaxDamage() == 1 ? "" : " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage());
 					String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
 					lines.add(line);
 				}
 			}
 
-			lines.add("");
-			lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
+			lines.add("%nHold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
 		}
 		else
 		{
@@ -312,8 +312,8 @@ public class ItemGun extends Item implements IPaintableItem
 				//Get whether mice are held
 				lastRightMouseHeld = rightMouseHeld;
 				lastLeftMouseHeld = leftMouseHeld;
-				rightMouseHeld = Mouse.isButtonDown(1);
-				leftMouseHeld = Mouse.isButtonDown(0);
+				rightMouseHeld = Mouse.isButtonDown(FlansModClient.fireButton.getButton());
+				leftMouseHeld = Mouse.isButtonDown(FlansModClient.aimButton.getButton());
 
 
 				boolean offHandFull = false;
@@ -400,50 +400,99 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 				}
 				IScope currentScope = type.getCurrentScope(itemstack);
-				if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(0) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
+				
+				if(FlansModClient.aimType == AimType.TOGGLE)
 				{
-					if(FlansModClient.currentScope == null)
+					if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null)
 					{
-						/*if(type.allowNightVision)
-							isNightVision = true;
-						if(type.allowSlow)
-							isSlow = true;*/
-						FlansModClient.currentScope = currentScope;
-						FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
-						FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
-						float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-						gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
-						FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
-						gameSettings.thirdPersonView = 0;
-						FlansModClient.originalFOV = gameSettings.fovSetting;
+						if(FlansModClient.currentScope == null)
+						{
+							/*if(type.allowNightVision)
+								isNightVision = true;
+							if(type.allowSlow)
+								isSlow = true;*/
+							FlansModClient.currentScope = currentScope;
+							FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
+							FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+							float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+							gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+							FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+							gameSettings.thirdPersonView = 0;
+							FlansModClient.originalFOV = gameSettings.fovSetting;
 
-						//Send ads spread packet to server
-						float spread = type.getSpread(itemstack);
-						if(type.getNumBullets(itemstack) == 1)
-							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.2F));
+							//Send ads spread packet to server
+							sendSpreadToServer(itemstack);
+						}
 						else
-							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, spread * 0.8F));
+						{
+							//if(type.allowNightVision)
+								//isNightVision = false;
+							FlansModClient.currentScope = null;
+							gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+							gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+							gameSettings.fovSetting = FlansModClient.originalFOV;
+
+							//Send default spread packet to server
+							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+						}
+						FlansModClient.scopeTime = 10;
+					}
+				}
+				else
+				{
+					if(!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && /*FlansModClient.scopeTime <= 0 &&*/ FMLClientHandler.instance().getClient().currentScreen == null)
+					{
+						if(FlansModClient.currentScope == null)
+						{
+							/*if(type.allowNightVision)
+								isNightVision = true;
+							if(type.allowSlow)
+								isSlow = true;*/
+							FlansModClient.currentScope = currentScope;
+							FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
+							FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+							float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+							gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+							FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+							gameSettings.thirdPersonView = 0;
+
+							//Send ads spread packet to server
+							sendSpreadToServer(itemstack);
+						}
+						FlansModClient.scopeTime = 10;
 					}
 					else
 					{
-						//if(type.allowNightVision)
-							//isNightVision = false;
-						FlansModClient.currentScope = null;
-						gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
-						gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
-						gameSettings.fovSetting = FlansModClient.originalFOV;
+						if(!Mouse.isButtonDown(FlansModClient.aimButton.getButton()))
+						{
+							if(FlansModClient.currentScope != null)
+							{
+								FlansModClient.currentScope = null;
+								gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+								gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+								gameSettings.fovSetting = FlansModClient.originalFOV;
 
-						//Send default spread packet to server
-						FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+								//Send default spread packet to server
+								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+							}
+						}
 					}
-					FlansModClient.scopeTime = 10;
 				}
+				
+				
 			}
 		}
 		if (soundDelay > 0)
 		{
 			soundDelay--;
 		}
+	}
+
+	public void sendSpreadToServer(ItemStack stack)
+	{
+		//Send ads spread packet to server
+		float f = type.numBullets == 1 ? 0.2F : 0.8F;
+		FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(stack, type.getSpread(stack) * f));
 	}
 
 	/** Client side shoot method for animations and delayers
@@ -556,6 +605,18 @@ public class ItemGun extends Item implements IPaintableItem
 
 	public void onUpdateServer(ItemStack itemstack, World world, Entity entity, int i, boolean flag)
 	{
+		if (itemstack.getTagCompound() == null) {
+			GunType gunType = this.type;
+			NBTTagCompound tags = new NBTTagCompound();
+			tags.setString("Paint", gunType.defaultPaintjob.iconName);
+			NBTTagList ammoTagsList = new NBTTagList();
+			for (int j = 0; j < gunType.getNumAmmoItemsInGun(itemstack); j++) {
+				ammoTagsList.appendTag(new NBTTagCompound());
+			}
+			tags.setTag("ammo", ammoTagsList);
+			itemstack.stackTagCompound = tags;
+		}
+		
 		if(entity instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP player = (EntityPlayerMP)entity;
@@ -1252,6 +1313,8 @@ public class ItemGun extends Item implements IPaintableItem
 				soundToPlay = grip.secondaryShootSound;
 			else if(lastBullet && gunType.lastShootSound != null)
 				soundToPlay = gunType.lastShootSound;
+			else if(silenced && gunType.suppressedShootSound != null)
+				soundToPlay = gunType.suppressedShootSound;
 			else if(gunType.shootSound != null)
 				soundToPlay = gunType.shootSound;
 
@@ -1498,6 +1561,7 @@ public class ItemGun extends Item implements IPaintableItem
     {
     	icons = new IIcon[type.paintjobs.size()];
     	
+    	defaultIcon = icon.registerIcon("flansmod:null");
         itemIcon = icon.registerIcon("FlansMod:" + type.iconPath);
     	for(int i = 0; i < type.paintjobs.size(); i++)
     	{
@@ -1509,7 +1573,13 @@ public class ItemGun extends Item implements IPaintableItem
     @SideOnly(Side.CLIENT)
     public IIcon getIconIndex(ItemStack stack)
     {
-        return icons[stack.getItemDamage()];
+    	if(icons != null)
+    	{
+    		return icons[stack.getItemDamage()];
+    	} else
+    	{
+    		return defaultIcon;
+    	}
     }
 
     @Override
