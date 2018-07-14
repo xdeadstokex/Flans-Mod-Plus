@@ -1130,7 +1130,10 @@ public class ItemGun extends Item implements IPaintableItem
 
 			//If no bullet stack was found, reload
 			if(bulletStack == null)
+				
 			{
+				if(gunType.clickSoundOnEmpty != null)
+					PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
 				if(reload(gunStack, gunType, world, entityplayer, false, left))
 				{
 					//Set player shoot delay to be the reload delay
