@@ -931,7 +931,6 @@ public class GunType extends PaintableType implements IScope
 				{
 					if(gm == submode[i].ordinal())
 					{
-						FlansMod.log("Fire mode returned: " + gm);
 						return EnumFireMode.values()[gm];
 					}
 				}
