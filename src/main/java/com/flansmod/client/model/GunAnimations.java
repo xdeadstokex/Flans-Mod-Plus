@@ -2,10 +2,13 @@ package com.flansmod.client.model;
 
 import java.util.Random;
 
+import com.flansmod.common.vector.Vector3f;
+
 public class GunAnimations 
 {
 	public static GunAnimations defaults = new GunAnimations();
 	
+    
 	/** (Purely aesthetic) gun animation variables */
 	public boolean isGunEmpty;
 	/** Recoil */
@@ -35,7 +38,13 @@ public class GunAnimations
 	public int timeUntilPullback = 0;
 	public float gunPullback = -1F, lastGunPullback = -1F;
 	public boolean isFired = false;
-
+    public int casingStage = 0;
+    public int lastCasingStage = 0;
+    
+    public Vector3f casingRandom = new Vector3f(0F, 0F, 0F);
+    
+    public boolean hasFired = false;
+    
 	/** Melee animations */
 	public int meleeAnimationProgress = 0, meleeAnimationLength = 0;
 	
@@ -48,7 +57,7 @@ public class GunAnimations
 	{
 		lastPumped = pumped;
 		lastGunPullback = gunPullback;
-		
+		lastCasingStage = casingStage;
 		if(timeUntilPump > 0)
 		{
 			timeUntilPump--;
@@ -75,8 +84,9 @@ public class GunAnimations
 			//Automatically reset hammer
 			hammerRotation *= 0.6F;
 		}
-
-		
+        if(hasFired ==  true) {    
+            casingStage += 1;
+        }
 		if(muzzleFlashTime > 0)
 			muzzleFlashTime--;
 		
@@ -143,7 +153,10 @@ public class GunAnimations
 		timeUntilPullback = hammerDelay;
 		hammerRotation = hammerAngle;
 		muzzleFlashTime = 2;
-		
+        
+        casingStage = 0;
+        hasFired = true;
+        
 		Random r = new Random();
 		int Low = -1;
 		int High = 3;
@@ -151,7 +164,11 @@ public class GunAnimations
 		if(result == -1) result = 0;
 		if(result == 3) result = 2;
 		
-		flashInt = result;
+        flashInt = result;
+        
+        casingRandom.x = ((r.nextFloat()*2)-1);
+        casingRandom.y = ((r.nextFloat()*2)-1);
+        casingRandom.z = ((r.nextFloat()*2)-1);
 	}
 		
 	public void doReload(int reloadTime, int pumpDelay, int pumpTime)
