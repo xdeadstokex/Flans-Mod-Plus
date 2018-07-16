@@ -1106,9 +1106,10 @@ public class ItemGun extends Item implements IPaintableItem
 			}
 		}
     }
-
+    boolean canClick = true;
 	public ItemStack tryToShoot(ItemStack gunStack, GunType gunType, World world, EntityPlayerMP entityplayer, boolean left)
 	{
+        
 		if(type.deployable)
 			return gunStack;
 		PlayerData data = PlayerHandler.getPlayerData(entityplayer);
@@ -1163,18 +1164,23 @@ public class ItemGun extends Item implements IPaintableItem
 					if(soundToPlay != null)
 						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
 				}
-				else if(gunType.clickSoundOnEmpty != null)
+				else if((gunType.clickSoundOnEmpty != null) && canClick)
 				{
+                    System.out.println("Playing sound");
 					PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
+                    canClick = false;
 				}
 
 			}
 			//A bullet stack was found, so try shooting with it
 			else if(bulletStack.getItem() instanceof ItemShootable)
 			{
+                
 				//Shoot
 				shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
-
+                
+                canClick = true;
+                
 				//Damage the bullet item
 				bulletStack.setItemDamage(bulletStack.getItemDamage() + 1);
 
