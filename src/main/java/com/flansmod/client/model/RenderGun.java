@@ -419,8 +419,17 @@ public class RenderGun implements IItemRenderer
 				model.renderDefaultGrip(f);
 			if(gadgetAttachment == null && !model.gadgetIsOnPump)
 				model.renderDefaultGadget(f);
-
-			if(animations.muzzleFlashTime> 0)
+			
+			
+			//Option to offset flash location with a barrel attachment (location + offset = new location)
+			if(animations.muzzleFlashTime> 0 && barrelAttachment != null)
+			{
+				GL11.glPushMatrix();
+				GL11.glTranslated(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
+				model.renderFlash(f, animations.flashInt);
+				GL11.glPopMatrix();
+			}
+			else if(animations.muzzleFlashTime> 0)
 			{
 				GL11.glPushMatrix();
 				GL11.glTranslated(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);

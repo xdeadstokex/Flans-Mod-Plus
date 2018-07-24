@@ -50,6 +50,7 @@ public class ModelGun extends ModelBase
 	//Muzzle flash models
 	public ModelRendererTurbo flashModel[][] = new ModelRendererTurbo[0][0];
 	public Vector3f muzzleFlashPoint = new Vector3f(0,0,0);
+	public Vector3f attachmentFlashOffset = new Vector3f(0,0,0);
 	public boolean hasFlash = false;
 
 	//Arms rendering
