@@ -398,10 +398,12 @@ public class RenderGun implements IItemRenderer
 			renderFirstPersonArm(mc.thePlayer, model, animations);
 		}
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
-
-		if(scopeAttachment != null)
-			GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset / 16F, 0F);
-
+        try {
+            if(scopeAttachment != null)
+                GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset / 16F, 0F);
+        } catch (NullPointerException e) {
+            //
+        }
 		//Render the gun and default attachment models
 		GL11.glPushMatrix();
 		{
