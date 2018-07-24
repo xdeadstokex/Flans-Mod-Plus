@@ -244,9 +244,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMBOTTOM_CLIP : case CUSTOMPISTOL_CLIP : case CUSTOMSHOTGUN : case CUSTOMEND_LOADED :
 							{
-								GL11.glRotatef(60F * reloadRotate, 0F, 0F, 1F);
-								GL11.glRotatef(30F * reloadRotate * flip, 1F, 0F, 0F);
-								GL11.glTranslatef(0.25F * reloadRotate, 0F, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case BACK_LOADED :
@@ -258,9 +259,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMBACK_LOADED :
 							{
-								GL11.glRotatef(-75F * reloadRotate, 0F, 0F, 1F);
-								GL11.glRotatef(-30F * reloadRotate * flip, 1F, 0F, 0F);
-								GL11.glTranslatef(0.5F * reloadRotate, 0F, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case BULLPUP :
@@ -272,9 +274,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMBULLPUP :
 							{
-								GL11.glRotatef(70F * reloadRotate, 0F, 0F, 1F);
-								GL11.glRotatef(10F * reloadRotate * flip, 1F, 0F, 0F);
-								GL11.glTranslatef(0.5F * reloadRotate, -0.2F * reloadRotate, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case RIFLE :
@@ -303,10 +306,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMRIFLE_TOP : case CUSTOMREVOLVER :
 							{
-								GL11.glRotatef(30F * reloadRotate, 0F, 0F, 1F);
-								GL11.glRotatef(10F * reloadRotate, 0F, 1F, 0F);
-								GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
-								GL11.glTranslatef(0.1F * reloadRotate, -0.2F * reloadRotate, -0.1F * reloadRotate);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case REVOLVER2 :
@@ -317,8 +320,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMREVOLVER2 :
 							{
-								GL11.glRotatef(20F * reloadRotate, 0F, 0F, 1F);
-								GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case ALT_PISTOL_CLIP :
@@ -329,8 +334,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMALT_PISTOL_CLIP :
 							{
-								GL11.glRotatef(60F * reloadRotate * flip, 0F, 1F, 0F);
-								GL11.glTranslatef(0.15F * reloadRotate, 0.25F * reloadRotate, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case STRIKER :
@@ -341,8 +348,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMSTRIKER :
 							{
-								GL11.glRotatef(-35F * reloadRotate * flip, 1F, 0F, 0F);
-								GL11.glTranslatef(0.2F * reloadRotate, 0F, -0.1F * reloadRotate);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case GENERIC :
@@ -354,9 +363,10 @@ public class RenderGun implements IItemRenderer
 							}
 							case CUSTOMGENERIC :
 							{
-								//Gun reloads partly or completely off-screen.
-								GL11.glRotatef(45F * reloadRotate, 0F, 0F, 1F);
-								GL11.glTranslatef(-0.2F * reloadRotate, -0.5F * reloadRotate, 0F);
+								GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+								GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+								GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+								GL11.glTranslatef(model.translateGun.x * reloadRotate,  model.translateGun.y * reloadRotate, model.translateGun.z * reloadRotate);
 								break;
 							}
 							case CUSTOM :
