@@ -469,8 +469,10 @@ public class RenderGun implements IItemRenderer
 		}
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 
-		if(scopeAttachment != null)
-			GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset / 16F, 0F);
+		//This allows you to offset your gun with a sight attached to properly align the aiming reticle
+		//Can be adjusted per scope and per gun
+		if(scopeAttachment != null && model.gunOffset != 0)
+			GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset + model.gunOffset / 16F, 0F);
 
 		//Render the gun and default attachment models
 		GL11.glPushMatrix();
@@ -521,6 +523,19 @@ public class RenderGun implements IItemRenderer
 				GL11.glPopMatrix();
 			}
 
+			//Render the alternate slide
+			if(slideAttachment == null && !type.getSecondaryFire(item))
+			{
+				GL11.glPushMatrix();
+				{
+					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.altgunSlideDistance, 0F, 0F);
+					model.renderaltSlide(f);
+					if(scopeAttachment == null && model.scopeIsOnSlide)
+						model.renderDefaultScope(f);
+				}
+				GL11.glPopMatrix();
+			}
+			
             //Render casing ejection (Willy + Gold Testing)
 			//Only render in first person
 			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
@@ -555,6 +570,18 @@ public class RenderGun implements IItemRenderer
 					model.renderDefaultScope(f);
 			}
 			GL11.glPopMatrix();
+			
+			//Render the alternate break action
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(model.altbarrelBreakPoint.x, model.altbarrelBreakPoint.y, model.altbarrelBreakPoint.z);
+				GL11.glRotatef(reloadRotate * -model.altbreakAngle, 0F, 0F, 1F);
+				GL11.glTranslatef(-model.altbarrelBreakPoint.x, -model.altbarrelBreakPoint.y, -model.altbarrelBreakPoint.z);
+				model.renderaltBreakAction(f);
+				if(scopeAttachment == null && model.scopeIsOnBreakAction)
+					model.renderDefaultScope(f);
+			}
+			GL11.glPopMatrix();
 
 			//Render the hammer
 			GL11.glPushMatrix();
@@ -566,6 +593,16 @@ public class RenderGun implements IItemRenderer
 			}
 			GL11.glPopMatrix();
 
+			//Render the alternate hammer
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(model.althammerSpinPoint.x, model.althammerSpinPoint.y, model.althammerSpinPoint.z);
+				GL11.glRotatef(-animations.althammerRotation, 0F, 0F, 1F);
+				GL11.glTranslatef(-model.althammerSpinPoint.x, -model.althammerSpinPoint.y, -model.althammerSpinPoint.z);
+				model.renderaltHammer(f);
+			}
+			GL11.glPopMatrix();
+			
 			//Render the pump-action handle
 			if(pumpAttachment == null)
 			{
@@ -573,6 +610,23 @@ public class RenderGun implements IItemRenderer
 				{
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 					model.renderPump(f);
+					if(gripAttachment == null && model.gripIsOnPump)
+						model.renderDefaultGrip(f);
+					if(gadgetAttachment == null && model.gadgetIsOnPump)
+						model.renderDefaultGadget(f);
+				}
+				GL11.glPopMatrix();
+			}
+			
+			//Render the alternate pump-action handle
+			if(pumpAttachment == null)
+			{
+				GL11.glPushMatrix();
+				{
+
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
+					float pumped = (animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing);
+					model.renderaltPump(f);
 					if(gripAttachment == null && model.gripIsOnPump)
 						model.renderDefaultGrip(f);
 					if(gadgetAttachment == null && model.gadgetIsOnPump)
@@ -1107,7 +1161,7 @@ public class RenderGun implements IItemRenderer
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
-        if(!anim.reloading)
+        if(!anim.reloading && model.handPump)
         {
         	//left hand pump action animation
 	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);

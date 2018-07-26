@@ -28,12 +28,17 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] revolverBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] revolver2BarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] breakActionModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] altbreakActionModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] slideModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] altslideModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] casingModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] pumpModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] chargeModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] altpumpModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] minigunBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] leverActionModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] hammerModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] althammerModel = new ModelRendererTurbo[0];
 	/** The point about which the minigun barrel rotates. Rotation is along the line of the gun through this point */
 	public Vector3f minigunBarrelOrigin = new Vector3f();
 
@@ -73,6 +78,7 @@ public class ModelGun extends ModelBase
 
 	//Various animation parameters
 	public float gunSlideDistance = 1F / 4F;
+	public float altgunSlideDistance = 1F / 4F;
 	public float RecoilSlideDistance = 2F / 16F;
 	public float RotateSlideDistance = -3F;
     
@@ -108,6 +114,7 @@ public class ModelGun extends ModelBase
 	public boolean gadgetIsOnPump = false;
 	/** The rotation point for the barrel break */
 	public Vector3f barrelBreakPoint = new Vector3f();
+	public Vector3f altbarrelBreakPoint = new Vector3f();
 	/** The amount the revolver barrel flips out by */
 	public float revolverFlipAngle = 15F;
 	/** The amount the revolver2 barrel flips out by */
@@ -118,17 +125,24 @@ public class ModelGun extends ModelBase
 	public Vector3f revolver2FlipPoint = new Vector3f();
 	/** The angle the gun is broken by for break actions */
 	public float breakAngle = 45F;
+	public float altbreakAngle = 45F;
 	/** If true, then the gun will perform a spinning reload animation */
 	public boolean spinningCocking = false;
 	/** The point, in model co-ordinates, about which the gun is spun */
 	public Vector3f spinPoint = new Vector3f();
 	/** The point where the hammer will pivot and spin from */
 	public Vector3f hammerSpinPoint = new Vector3f();
+	public Vector3f althammerSpinPoint = new Vector3f();
 	public float hammerAngle = 75F;
+	public float althammerAngle = 75F;
 	/** Single action cocking check */
 	public boolean isSingleAction = false;
 	/** If true, lock the slide when the last bullet is fired */
 	public boolean slideLockOnEmpty = false;
+	/** If true, move the hands with the pump action */
+	public boolean handPump = false;
+	/**If true, gun will translate when equipped with a sight attachment */
+	public float gunOffset = 0F;
 
 	/** Custom reload Parameters. If Enum.CUSTOM is set, these parameters can build an animation within the gun model classes */
 	public float rotateGunVertical = 0F;
@@ -201,15 +215,30 @@ public class ModelGun extends ModelBase
 	{
 		render(slideModel, f);
 	}
+	
+	public void renderaltSlide(float f)
+	{
+		render(altslideModel, f);
+	}
 
-  public void renderCasing(float f)
-  {
-    render(casingModel, f);
-  }
+	public void renderCasing(float f)
+	{
+		render(casingModel, f);
+	}
 
 	public void renderPump(float f)
 	{
 		render(pumpModel, f);
+	}
+	
+	public void renderaltPump(float f)
+	{
+		render(altpumpModel, f);
+	}
+	
+	public void renderCharge(float f)
+	{
+		render(chargeModel, f);
 	}
 
 	public void renderDefaultScope(float f)
@@ -261,12 +290,22 @@ public class ModelGun extends ModelBase
 	{
 		render(breakActionModel, f);
 	}
+	
+	public void renderaltBreakAction(float f)
+	{
+		render(altbreakActionModel, f);
+	}
 
 	public void renderHammer(float f)
 	{
 		render(hammerModel, f);
 	}
 
+	public void renderaltHammer(float f)
+	{
+		render(althammerModel, f);
+	}
+	
 	public void renderFlash (float f, int i)
 	{
 		if(hasFlash)
@@ -298,13 +337,18 @@ public class ModelGun extends ModelBase
 		flip(defaultGadgetModel);
 		flip(ammoModel);
 		flip(slideModel);
-    flip(casingModel);
+		flip(altslideModel);
+		flip(casingModel);
 		flip(pumpModel);
+		flip(altpumpModel);
+		flip(chargeModel);
 		flip(minigunBarrelModel);
 		flip(revolverBarrelModel);
 		flip(revolver2BarrelModel);
 		flip(breakActionModel);
+		flip(altbreakActionModel);
 		flip(hammerModel);
+		flip(althammerModel);
 	}
 
 	protected void flip(ModelRendererTurbo[] model)
@@ -319,21 +363,28 @@ public class ModelGun extends ModelBase
 	/** Translates the model */
 	public void translateAll(float x, float y, float z)
 	{
-		translate(gunModel, x, y, z);
-		translate(defaultBarrelModel, x, y, z);
-		translate(defaultScopeModel, x, y, z);
-		translate(defaultStockModel, x, y, z);
-		translate(defaultGripModel, x, y, z);
-		translate(defaultGadgetModel, x, y, z);
-		translate(ammoModel, x, y, z);
-		translate(slideModel, x, y, z);
-    translate(casingModel, x, y, z);
-		translate(pumpModel, x, y, z);
-		translate(minigunBarrelModel, x, y, z);
-		translate(revolverBarrelModel, x, y, z);
-		translate(revolver2BarrelModel, x, y, z);
-		translate(breakActionModel, x, y, z);
-		translate(hammerModel, x, y, z);
+    	{
+    		translate(gunModel, x, y, z);
+    		translate(defaultBarrelModel, x, y, z);
+    		translate(defaultScopeModel, x, y, z);
+    		translate(defaultStockModel, x, y, z);
+    		translate(defaultGripModel, x, y, z);
+    		translate(defaultGadgetModel, x, y, z);
+    		translate(ammoModel, x, y, z);
+    		translate(slideModel, x, y, z);
+    		translate(altslideModel, x, y, z);
+    		translate(casingModel, x, y, z);
+    		translate(pumpModel, x, y, z);
+    		translate(altpumpModel, x, y, z);
+    		translate(chargeModel, x, y, z);
+    		translate(minigunBarrelModel, x, y, z);
+    		translate(revolverBarrelModel, x, y, z);
+    		translate(revolver2BarrelModel, x, y, z);
+    		translate(breakActionModel, x, y, z);
+    		translate(altbreakActionModel, x, y, z);
+    		translate(hammerModel, x, y, z);
+    		translate(althammerModel, x, y, z);
+    	}
 	}
 
 	protected void translate(ModelRendererTurbo[] model, float x, float y, float z)
