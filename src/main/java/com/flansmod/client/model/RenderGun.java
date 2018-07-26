@@ -634,6 +634,17 @@ public class RenderGun implements IItemRenderer
 				}
 				GL11.glPopMatrix();
 			}
+			
+			//Render the charge handle
+			if(model.chargeHandleDistance != 0F)
+			{
+				GL11.glPushMatrix();
+				{
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing)) * model.chargeHandleDistance, 0F, 0F);
+					model.renderCharge(f);
+				}
+				GL11.glPopMatrix();
+			}
 
 			//Render the minigun barrels
 			if(type.mode == EnumFireMode.MINIGUN)
