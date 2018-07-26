@@ -18,9 +18,13 @@ public class GunAnimations
 	/** Delayed Reload Animations */
 	public int timeUntilPump = 0, timeToPumpFor = 0;
 	/** Delayed Reload Animations : -1, 1 = At rest, 0 = Mid Animation */
-	public float pumped = -1F, lastPumped = -1F;
+	public float pumped = 1F, lastPumped = -1F;
 	/** Delayed Reload Animations : Doing the delayed animation */
 	public boolean pumping = false;
+	/** Charge handle variables */
+	public int timeUntilCharge = 0, timeToChargeFor = 0;
+	public float charged = -1F, lastCharged = -1F;
+	public boolean charging = false;
 	
 	public boolean reloading = false;
 	public float reloadAnimationTime = 0;
@@ -35,6 +39,7 @@ public class GunAnimations
 	/** Hammer model mechanics */
 	/** If in single action, the model will play a modified animation and delay hammer reset */
 	public float hammerRotation = 0F;
+	public float althammerRotation = 0F;
 	public int timeUntilPullback = 0;
 	public float gunPullback = -1F, lastGunPullback = -1F;
 	public boolean isFired = false;
@@ -56,6 +61,7 @@ public class GunAnimations
 	public void update()
 	{
 		lastPumped = pumped;
+		lastCharged = charged;
 		lastGunPullback = gunPullback;
 		lastCasingStage = casingStage;
 		if(timeUntilPump > 0)
@@ -67,6 +73,18 @@ public class GunAnimations
 				pumping = true;	
 				lastPumped = pumped = -1F;
 			}
+			
+		}
+		if(timeUntilCharge > 0)
+		{
+			timeUntilCharge--;
+			if(timeUntilCharge == 0)
+			{
+				//Pump it!
+				charging = true;	
+				lastCharged = charged = -1F;
+			}
+			
 		}
 
 		if(timeUntilPullback > 0)
@@ -83,6 +101,7 @@ public class GunAnimations
 		{
 			//Automatically reset hammer
 			hammerRotation *= 0.6F;
+			althammerRotation *= 0.6F;
 		}
         if(hasFired ==  true) {    
             casingStage += 1;
@@ -95,6 +114,12 @@ public class GunAnimations
 			pumped += 2F / timeToPumpFor;
 			if(pumped >= 0.999F)
 				pumping = false;
+		}
+		if(charging)
+		{
+			charged += 2F / timeToChargeFor;
+			if(charged >= 0.999F)
+				charging = false;
 		}
 
 		if(isFired)
@@ -116,7 +141,7 @@ public class GunAnimations
 		if(gunSlide > 0 && !isGunEmpty)
 			gunSlide *= 0.5F;
 
-		//Recload
+		//Reload
 		lastReloadAnimationProgress = reloadAnimationProgress;
 		if(reloading)
 			reloadAnimationProgress += 1F / reloadAnimationTime;
@@ -143,7 +168,7 @@ public class GunAnimations
 		isGunEmpty = atLastBullet;
 	}
 	
-	public void doShoot(int pumpDelay, int pumpTime, int hammerDelay, float hammerAngle)
+	public void doShoot(int pumpDelay, int pumpTime, int hammerDelay, float hammerAngle, float althammerAngle)
 	{
 		minigunBarrelRotationSpeed += 2F;
 		lastGunSlide = gunSlide = 1F;
@@ -152,6 +177,7 @@ public class GunAnimations
 		timeToPumpFor = pumpTime;
 		timeUntilPullback = hammerDelay;
 		hammerRotation = hammerAngle;
+		althammerRotation = althammerAngle;
 		muzzleFlashTime = 2;
         
         casingStage = 0;
@@ -171,13 +197,15 @@ public class GunAnimations
         casingRandom.z = ((r.nextFloat()*2)-1);
 	}
 		
-	public void doReload(int reloadTime, int pumpDelay, int pumpTime)
+	public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime)
 	{
 		reloading = true;
 		lastReloadAnimationProgress = reloadAnimationProgress = 0F;
 		reloadAnimationTime = reloadTime;
 		timeUntilPump = pumpDelay;
 		timeToPumpFor = pumpTime;
+		timeUntilCharge = chargeDelay;
+		timeToChargeFor = chargeTime;
 	}
 	
 	public void doMelee(int meleeTime)
