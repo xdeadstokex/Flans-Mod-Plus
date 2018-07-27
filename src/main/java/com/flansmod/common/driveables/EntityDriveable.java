@@ -747,7 +747,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		
 		if(weaponType == EnumWeaponType.SHELL)
 			isRecoil = true;
-		
+		if(shootPoint.rootPos.part==null) return;
 		if(!isPartIntact(shootPoint.rootPos.part)) return;
 	
 		if(disabled) return;
@@ -2817,8 +2817,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
 	public boolean isPartIntact(EnumDriveablePart part)
 	{
-		DriveablePart thisPart = getDriveableData().parts.get(part);
-		return thisPart.maxHealth == 0 || thisPart.health > 0;
+        DriveablePart thisPart = getDriveableData().parts.get(part);
+        return thisPart.maxHealth == 0 || thisPart.health > 0;
 	}
 
 	public abstract boolean hasMouseControlMode();
