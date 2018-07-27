@@ -563,9 +563,10 @@ public class ItemGun extends Item implements IPaintableItem
 				int pumpTime = gunType.model == null ? 1 : gunType.model.pumpTime;
 				int hammerDelay = gunType.model == null ? 0 : gunType.model.hammerDelay;
 				float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
+				float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
 
 				animations.onGunEmpty(onLastBullet);
-				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle);
+				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle);
 				if(!player.isSneaking())
 				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
