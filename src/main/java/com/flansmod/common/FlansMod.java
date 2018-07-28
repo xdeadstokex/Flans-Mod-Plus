@@ -124,6 +124,7 @@ public class FlansMod
     public static boolean printDebugLog = true;
     public static boolean printStackTrace = false;
     public static int noticeSpawnKillTime = 10;
+    public static boolean hitCrossHairEnable = true;
     public static float hitCrossHairColor[] = new float[]{ 1.0F, 1.0F, 1.0F, 1.0F };
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = true;
@@ -588,7 +589,7 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        
+        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
         	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
@@ -617,7 +618,7 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        
+        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
         	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
