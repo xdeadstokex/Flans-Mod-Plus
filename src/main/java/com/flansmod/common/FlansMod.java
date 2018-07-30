@@ -115,7 +115,7 @@ public class FlansMod
 	//Core mod stuff
 	public static boolean DEBUG = false;
     public static Configuration configFile;
-	public static final String MODID = "flansmodultimate";
+	public static final String MODID = "flansmod";
 	public static final String VERSION = "@VERSION@";
 	@Instance(MODID)
 	public static FlansMod INSTANCE;
