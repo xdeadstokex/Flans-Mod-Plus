@@ -990,6 +990,11 @@ public class RenderGun implements IItemRenderer
 					else
 						model.renderAmmo(f);
 				}
+				//Renders fullammo model for 2nd half of reload animation
+				float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress + (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
+				reloadRotate = 1F;
+				if(effectiveReloadAnimationProgress > 0.5)
+					model.renderfullAmmo(f);
 			}
 			GL11.glPopMatrix();
 

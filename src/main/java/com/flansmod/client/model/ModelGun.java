@@ -25,6 +25,7 @@ public class ModelGun extends ModelBase
 
 	//Animated models follow.
 	public ModelRendererTurbo[] ammoModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[] fullammoModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] revolverBarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] revolver2BarrelModel = new ModelRendererTurbo[0];
 	public ModelRendererTurbo[] breakActionModel = new ModelRendererTurbo[0];
@@ -275,6 +276,11 @@ public class ModelGun extends ModelBase
 		render(ammoModel, f);
 	}
 
+	public void renderfullAmmo(float f)
+	{
+		render(fullammoModel, f);
+	}
+	
 	public void renderMinigunBarrel(float f)
 	{
 		render(minigunBarrelModel, f);
@@ -340,6 +346,7 @@ public class ModelGun extends ModelBase
 		flip(defaultGripModel);
 		flip(defaultGadgetModel);
 		flip(ammoModel);
+		flip(fullammoModel);
 		flip(slideModel);
 		flip(altslideModel);
 		flip(casingModel);
@@ -375,6 +382,7 @@ public class ModelGun extends ModelBase
     		translate(defaultGripModel, x, y, z);
     		translate(defaultGadgetModel, x, y, z);
     		translate(ammoModel, x, y, z);
+    		translate(fullammoModel, x, y, z);
     		translate(slideModel, x, y, z);
     		translate(altslideModel, x, y, z);
     		translate(casingModel, x, y, z);
