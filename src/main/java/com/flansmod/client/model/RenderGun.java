@@ -17,6 +17,7 @@ import net.minecraftforge.client.event.RenderHandEvent;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.paintjob.Paintjob;
@@ -537,7 +538,7 @@ public class RenderGun implements IItemRenderer
 			
             //Render casing ejection (Willy + Gold Testing)
 			//Only render in first person
-			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
+			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable == true)
 			{
                 GL11.glPushMatrix();
                 
