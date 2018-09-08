@@ -237,8 +237,8 @@ public class BlockGunBox extends Block
 	{
 		if(entityplayer.isSneaking())
 			return false;
-		//entityplayer.openGui(FlansMod.INSTANCE, 5, world, i, j, k);
-		entityplayer.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.BLUE + "CFR " + EnumChatFormatting.WHITE + "♦ Flans crafting is disabled."));
+		entityplayer.openGui(FlansMod.INSTANCE, 5, world, i, j, k);
+		//entityplayer.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.BLUE + "CFR " + EnumChatFormatting.WHITE + "♦ Flans crafting is disabled."));
 		return true;
 	}
 	
