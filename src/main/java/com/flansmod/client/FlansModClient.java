@@ -103,6 +103,7 @@ public class FlansModClient extends FlansMod
 	public static IScope currentScope = null;
 	/** The transition variable for zooming in / out with a smoother. 0 = unscoped, 1 = scoped */
 	public static float zoomProgress = 0F, lastZoomProgress = 0F;
+	public static float stanceProgress = 0F, lastStanceProgress = 0F;
 	/** The zoom level of the last scope used, for transitioning out of being scoped, even after the scope is forgotten */
 	public static float lastZoomLevel = 1F, lastFOVZoomLevel = 1F;
     
@@ -351,7 +352,16 @@ public class FlansModClient extends FlansMod
 		{
 			zoomProgress = 1F - (1F - zoomProgress) * 0.66F; 
 		}
-		
+		lastStanceProgress = stanceProgress;
+		if(!inPlane)
+		{
+			stanceProgress *= 0.66F;
+		}
+		else
+		{
+			stanceProgress = 1F - (1F - stanceProgress) * 0.66F; 
+		}
+		//System.out.println(zoomProgress);
 		if (minecraft.thePlayer.ridingEntity instanceof IControllable)
 		{
 			inPlane = true;
