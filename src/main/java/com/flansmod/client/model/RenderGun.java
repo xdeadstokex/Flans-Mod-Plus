@@ -173,6 +173,7 @@ public class RenderGun implements IItemRenderer
 				}
 				case EQUIPPED_FIRST_PERSON:
 				{
+					//System.out.println(FlansModClient.zoomProgress);
 					IScope scope = gunType.getCurrentScope(item);
 					if(FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay())
 					{
@@ -187,15 +188,41 @@ public class RenderGun implements IItemRenderer
 						GL11.glRotatef(-4F, 0F, 1F, 0F);
 						GL11.glTranslatef(0.15F, 0.2F, -0.6F);
 					}
+					else if(FlansModClient.zoomProgress + 0.1F > 0.9F && ItemGun.crouching == true && !animations.reloading)
+					{
+						GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
+						GL11.glRotatef(-5F, 0F, 1F, 0F);
+						GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
+						if(gunType.hasScopeOverlay)
+						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+						//forward, up, sideways
+						GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);		
+						//System.out.println(model.crouchZoom);
+					}
+					else if(FlansModClient.zoomProgress + 0.1F < 0.2F && ItemGun.sprinting && !animations.reloading && !ItemGun.shooting && model.fancyStance)
+					{
+						GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);					
+						// left/right on length == left/right on height == null == down/up
+						GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
+						GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
+						if(gunType.hasScopeOverlay)
+						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+						//forward, up, sideways
+						GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y, 0F + model.stanceTranslate.z);		
+						//System.out.println(model.crouchZoom);
+					}
 					else
 					{
 						GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
 						GL11.glRotatef(-5F, 0F, 1F, 0F);
 						GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
 						if(gunType.hasScopeOverlay)
-							GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
 						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
-						GL11.glTranslatef(0F, -0.03F * adsSwitch, 0F);
+						GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
+						//System.out.println(smoothing);
 					}
 
 					if(animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
