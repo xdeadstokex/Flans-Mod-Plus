@@ -148,6 +148,11 @@ public class ModelGun extends ModelBase
 	public boolean handPump = false;
 	/**If true, gun will translate when equipped with a sight attachment */
 	public float gunOffset = 0F;
+	public float crouchZoom = 0F;
+	public boolean fancyStance = false;
+	public Vector3f stanceTranslate = new Vector3f();
+	public Vector3f stanceRotate = new Vector3f();
+
 
 	/** Custom reload Parameters. If Enum.CUSTOM is set, these parameters can build an animation within the gun model classes */
 	public float rotateGunVertical = 0F;
@@ -159,6 +164,7 @@ public class ModelGun extends ModelBase
 	public float rotateClipHorizontal = 0F;
 	public float tiltClip = 0F;
 	public Vector3f translateClip = new Vector3f(0F, 0F, 0F);
+	
 
 	/** This offsets the render position for third person */
 	public Vector3f thirdPersonOffset = new Vector3f();
