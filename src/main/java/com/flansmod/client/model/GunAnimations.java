@@ -138,7 +138,9 @@ public class GunAnimations
 		lastGunSlide = gunSlide;
 		if(isGunEmpty)
 			lastGunSlide = gunSlide = 0.5F;
-		if(gunSlide > 0 && !isGunEmpty)
+		if(!isGunEmpty && gunSlide > 0.9)
+			gunSlide -= 0.1F;
+		else if(gunSlide > 0 && !isGunEmpty)
 			gunSlide *= 0.5F;
 
 		//Reload

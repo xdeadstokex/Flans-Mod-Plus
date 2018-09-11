@@ -1,7 +1,6 @@
 package com.flansmod.client.gui;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.client.renderer.RenderHelper;
@@ -86,26 +85,24 @@ public class GuiGunModTable extends GuiContainer
 			}
 
 			//Draw stats
-			fontRendererObj.drawString(gunStack.getDisplayName(), 207, 36, 0x404040);
+			if(gunStack.getDisplayName() != null)
+				fontRendererObj.drawString(gunStack.getDisplayName(), 207, 36, 0x404040);
 			fontRendererObj.drawString(gunType.description, 207, 46, 0x404040);
 
 			fontRendererObj.drawString("Damage", 181, 61, 0x404040);
 			fontRendererObj.drawString("Accuracy", 181, 73, 0x404040);
 			fontRendererObj.drawString("Recoil", 181, 85, 0x404040);
 			fontRendererObj.drawString("Reload", 181, 97, 0x404040);
-			fontRendererObj.drawString("Movement", 181, 109, 0x404040);
 
 
 			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getDamage(gunStack), 2)), 241, 62, 0x404040);
 			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getSpread(gunStack), 2)), 241, 74, 0x404040);
 			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getRecoilPitch(gunStack), 2)), 241, 86, 0x404040);
 			fontRendererObj.drawString(String.valueOf(roundFloat(reloadt / 20, 2)) + "s", 241, 98, 0x404040);
-			fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getMovementSpeed(gunStack), 2)), 241, 109, 0x404040);
 
 			//Draw attachment tooltips
 			if(hoveringOverModSlots != null)
 				drawHoveringText(Collections.singletonList(hoveringOverModSlots), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
-
 		}
     }
 	
@@ -158,7 +155,7 @@ public class GuiGunModTable extends GuiContainer
 			}
 
 			int[] stats = { Math.round(gunType.getDamage(gunStack)) * 4, Math.round(gunType.getSpread(gunStack)) * 4,
-					Math.round(gunType.getRecoilPitch(gunStack)) * 4, (reloadt / 20) * 8, Math.round(gunType.getMovementSpeed(gunStack)) };
+					Math.round(gunType.getRecoilPitch(gunStack)) * 4, (reloadt / 20) * 8};
 			displayGunValues(stats);
 
 			//For Paintjobs

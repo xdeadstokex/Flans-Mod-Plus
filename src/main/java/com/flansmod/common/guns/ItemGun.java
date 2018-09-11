@@ -282,27 +282,12 @@ public class ItemGun extends Item implements IPaintableItem
 				PacketPlaySound.sendSoundPacket(entity.posX, entity.posY, entity.posZ, type.idleSoundRange, entity.dimension, type.idleSound, false);
 				soundDelay = type.idleSoundLength;
 			}
-			
-			//If crouching, translate weapon model (zoom)
-			if(!player.isSneaking())
-			{
-				ItemGun.crouching = false;
-			}
-			else
-			{
-				ItemGun.crouching = true;
-			}
-			
-			//If running, reposition the gun
-			if (player.isSprinting())
-			{
-				ItemGun.sprinting = true;
-			}
 
-			else
-				ItemGun.sprinting = false;
-			
-			
+			//If crouching, translate weapon model (zoom)
+			crouching = player.isSneaking();
+			//If running, reposition the gun
+			sprinting = player.isSprinting();
+
 			//This code is not for deployables
 			if (type.deployable)
 				return;
@@ -543,7 +528,9 @@ public class ItemGun extends Item implements IPaintableItem
 			}
 		}
 
-		if(FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance)
+		if((FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance) ||
+				(FlansModClient.shootTime(left) <= 0 && !sprinting && gunType.model.fancyStance) ||
+				(FlansModClient.shootTime(left) <= 0 && !gunType.model.fancyStance))
 		{
 			boolean onLastBullet = false;
 			boolean hasAmmo = false;
@@ -621,167 +608,6 @@ public class ItemGun extends Item implements IPaintableItem
 					else data.burstRoundsRemainingRight = gunType.numBurstRounds;
 				}
 			}
-
-		}
-		else if(FlansModClient.shootTime(left) <= 0 && !sprinting && gunType.model.fancyStance)
-		{
-			boolean onLastBullet = false;
-			boolean hasAmmo = false;
-			for(int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++)
-			{
-				ItemStack bulletStack = getBulletItemStack(stack, i);
-				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
-				{
-					if(bulletStack.getMaxDamage() - bulletStack.getItemDamage() == 1 && gunType.model.slideLockOnEmpty)
-						onLastBullet = true;
-					hasAmmo = true;
-					break;
-				}
-			}
-			if(hasAmmo)
-			{
-				GunAnimations animations = null;
-				if(left)
-				{
-					if(FlansModClient.gunAnimationsLeft.containsKey(player))
-						animations = FlansModClient.gunAnimationsLeft.get(player);
-					else
-					{
-						animations = new GunAnimations();
-						FlansModClient.gunAnimationsLeft.put(player, animations);
-					}
-				}
-				else
-				{
-					if(FlansModClient.gunAnimationsRight.containsKey(player))
-						animations = FlansModClient.gunAnimationsRight.get(player);
-					else
-					{
-						animations = new GunAnimations();
-						FlansModClient.gunAnimationsRight.put(player, animations);
-					}
-				}
-				int pumpDelay = gunType.model == null ? 0 : gunType.model.pumpDelay;
-				int pumpTime = gunType.model == null ? 1 : gunType.model.pumpTime;
-				int hammerDelay = gunType.model == null ? 0 : gunType.model.hammerDelay;
-				float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
-				float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
-
-				animations.onGunEmpty(onLastBullet);
-				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle);
-				if(!player.isSneaking())
-				{
-					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
-					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack);
-				}
-				else
-				{
-					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack) - gunType.decreaseRecoilPitch;
-					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
-				}
-				if(left)
-					FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
-				else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
-				if(gunType.consumeGunUponUse)
-					return true;
-
-			}
-			if(gunType.getFireMode(stack) == EnumFireMode.BURST)
-			{
-				if(left)
-				{
-					if(data.burstRoundsRemainingLeft > 0)
-						data.burstRoundsRemainingLeft--;
-					else data.burstRoundsRemainingLeft = gunType.numBurstRounds;
-				}
-				else
-				{
-					if(data.burstRoundsRemainingRight > 0)
-						data.burstRoundsRemainingRight--;
-					else data.burstRoundsRemainingRight = gunType.numBurstRounds;
-				}
-			}
-
-		}
-		if(FlansModClient.shootTime(left) <= 0 && !gunType.model.fancyStance)
-		{
-			boolean onLastBullet = false;
-			boolean hasAmmo = false;
-			for(int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++)
-			{
-				ItemStack bulletStack = getBulletItemStack(stack, i);
-				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
-				{
-					if(bulletStack.getMaxDamage() - bulletStack.getItemDamage() == 1 && gunType.model.slideLockOnEmpty)
-						onLastBullet = true;
-					hasAmmo = true;
-					break;
-				}
-			}
-			if(hasAmmo)
-			{
-				GunAnimations animations = null;
-				if(left)
-				{
-					if(FlansModClient.gunAnimationsLeft.containsKey(player))
-						animations = FlansModClient.gunAnimationsLeft.get(player);
-					else
-					{
-						animations = new GunAnimations();
-						FlansModClient.gunAnimationsLeft.put(player, animations);
-					}
-				}
-				else
-				{
-					if(FlansModClient.gunAnimationsRight.containsKey(player))
-						animations = FlansModClient.gunAnimationsRight.get(player);
-					else
-					{
-						animations = new GunAnimations();
-						FlansModClient.gunAnimationsRight.put(player, animations);
-					}
-				}
-				int pumpDelay = gunType.model == null ? 0 : gunType.model.pumpDelay;
-				int pumpTime = gunType.model == null ? 1 : gunType.model.pumpTime;
-				int hammerDelay = gunType.model == null ? 0 : gunType.model.hammerDelay;
-				float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
-				float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
-
-				animations.onGunEmpty(onLastBullet);
-				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle);
-				if(!player.isSneaking())
-				{
-					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
-					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack);
-				}
-				else
-				{
-					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack) - gunType.decreaseRecoilPitch;
-					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
-				}
-				if(left)
-					FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
-				else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
-				if(gunType.consumeGunUponUse)
-					return true;
-
-			}
-			if(gunType.getFireMode(stack) == EnumFireMode.BURST)
-			{
-				if(left)
-				{
-					if(data.burstRoundsRemainingLeft > 0)
-						data.burstRoundsRemainingLeft--;
-					else data.burstRoundsRemainingLeft = gunType.numBurstRounds;
-				}
-				else
-				{
-					if(data.burstRoundsRemainingRight > 0)
-						data.burstRoundsRemainingRight--;
-					else data.burstRoundsRemainingRight = gunType.numBurstRounds;
-				}
-			}
-
 		}
 		return false;
 	}
@@ -1356,62 +1182,12 @@ public class ItemGun extends Item implements IPaintableItem
 
 			}
 			//A bullet stack was found, so try shooting with it
-			else if(bulletStack.getItem() instanceof ItemShootable && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance)
+			else if((bulletStack.getItem() instanceof ItemShootable && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance) ||
+					(bulletStack.getItem() instanceof ItemShootable && !sprinting && gunType.model.fancyStance) ||
+					(bulletStack.getItem() instanceof ItemShootable && !gunType.model.fancyStance))
 			{
-                
 				//Shoot
 				shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
-                
-                canClick = true;
-                
-				//Damage the bullet item
-				bulletStack.setItemDamage(bulletStack.getItemDamage() + 1);
-
-				//Update the stack in the gun
-				setBulletItemStack(gunStack, bulletStack, bulletID);
-
-				if(gunType.getFireMode(gunStack) == EnumFireMode.BURST)
-				{
-					if(left && data.burstRoundsRemainingLeft > 0)
-						data.burstRoundsRemainingLeft--;
-					if(!left && data.burstRoundsRemainingRight > 0)
-						data.burstRoundsRemainingRight--;
-				}
-
-				if(gunType.consumeGunUponUse)
-					return null;
-			}
-			else if(bulletStack.getItem() instanceof ItemShootable && !sprinting && gunType.model.fancyStance)
-			{
-                
-				//Shoot
-				shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
-                
-                canClick = true;
-                
-				//Damage the bullet item
-				bulletStack.setItemDamage(bulletStack.getItemDamage() + 1);
-
-				//Update the stack in the gun
-				setBulletItemStack(gunStack, bulletStack, bulletID);
-
-				if(gunType.getFireMode(gunStack) == EnumFireMode.BURST)
-				{
-					if(left && data.burstRoundsRemainingLeft > 0)
-						data.burstRoundsRemainingLeft--;
-					if(!left && data.burstRoundsRemainingRight > 0)
-						data.burstRoundsRemainingRight--;
-				}
-
-				if(gunType.consumeGunUponUse)
-					return null;
-			}
-			else if(bulletStack.getItem() instanceof ItemShootable && !gunType.model.fancyStance)
-			{
-                
-				//Shoot
-				shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
-                
                 canClick = true;
                 
 				//Damage the bullet item
