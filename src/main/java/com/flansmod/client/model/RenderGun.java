@@ -202,7 +202,7 @@ public class RenderGun implements IItemRenderer
 					}
 					else if(FlansModClient.zoomProgress + 0.1F < 0.2F && ItemGun.sprinting && !animations.reloading && !ItemGun.shooting && model.fancyStance)
 					{
-						GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);					
+						GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);
 						// left/right on length == left/right on height == null == down/up
 						GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
 						GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
@@ -496,6 +496,7 @@ public class RenderGun implements IItemRenderer
 			renderFirstPersonArm(mc.thePlayer, model, animations);
 		}
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
+
 		//This allows you to offset your gun with a sight attached to properly align the aiming reticle
 		//Can be adjusted per scope and per gun
 		if(scopeAttachment != null && model.gunOffset != 0)
@@ -565,7 +566,7 @@ public class RenderGun implements IItemRenderer
 			
             //Render casing ejection (Willy + Gold Testing)
 			//Only render in first person
-			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable == true)
+			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable)
 			{
                 GL11.glPushMatrix();
                 
