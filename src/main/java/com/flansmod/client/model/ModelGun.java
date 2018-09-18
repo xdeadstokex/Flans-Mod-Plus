@@ -73,6 +73,11 @@ public class ModelGun extends ModelBase
 	public Vector3f rightArmReloadRot = new Vector3f(0,0,0);
 	public Vector3f leftArmReloadPos = new Vector3f(0,0,0);
 	public Vector3f leftArmReloadRot = new Vector3f(0,0,0);
+	
+	public Vector3f rightArmChargePos = new Vector3f(0,0,0);
+	public Vector3f rightArmChargeRot = new Vector3f(0,0,0);
+	public Vector3f leftArmChargePos = new Vector3f(0,0,0);
+	public Vector3f leftArmChargeRot = new Vector3f(0,0,0);
 
 	public boolean rightHandAmmo = false;
 	public boolean leftHandAmmo = false;
@@ -146,6 +151,9 @@ public class ModelGun extends ModelBase
 	public boolean slideLockOnEmpty = false;
 	/** If true, move the hands with the pump action */
 	public boolean handPump = false;
+	/** If true, move the hands with the charge action */
+	public boolean handCharge = false;
+	public float chargeModifier = 8F;
 	/**If true, gun will translate when equipped with a sight attachment */
 	public float gunOffset = 0F;
 	public float crouchZoom = 0F;

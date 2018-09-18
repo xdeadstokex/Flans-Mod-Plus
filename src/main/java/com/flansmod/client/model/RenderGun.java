@@ -173,7 +173,6 @@ public class RenderGun implements IItemRenderer
 				}
 				case EQUIPPED_FIRST_PERSON:
 				{
-					//System.out.println(FlansModClient.zoomProgress);
 					IScope scope = gunType.getCurrentScope(item);
 					if(FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay())
 					{
@@ -198,7 +197,6 @@ public class RenderGun implements IItemRenderer
 						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 						//forward, up, sideways
 						GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);
-						//System.out.println(model.crouchZoom);
 					}
 					else if(FlansModClient.zoomProgress + 0.1F < 0.2F && ItemGun.sprinting && !animations.reloading && !ItemGun.shooting && model.fancyStance)
 					{
@@ -211,7 +209,6 @@ public class RenderGun implements IItemRenderer
 						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 						//forward, up, sideways
 						GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y, 0F + model.stanceTranslate.z);
-						//System.out.println(model.crouchZoom);
 					}
 					else
 					{
@@ -222,7 +219,6 @@ public class RenderGun implements IItemRenderer
 							GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
 						GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 						GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
-						//System.out.println(smoothing);
 					}
 
 					if(animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
@@ -538,12 +534,13 @@ public class RenderGun implements IItemRenderer
 			}
 
 			//Render various shoot / reload animated parts
-			//Render the slide
+			//Render the slide and charge action
 			if(slideAttachment == null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
 				{
 					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing)) * model.chargeHandleDistance, 0F, 0F);
 					model.renderSlide(f);
 					if(scopeAttachment == null && model.scopeIsOnSlide)
 						model.renderDefaultScope(f);
@@ -636,6 +633,7 @@ public class RenderGun implements IItemRenderer
 			{
 				GL11.glPushMatrix();
 				{
+					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 					model.renderPump(f);
 					if(gripAttachment == null && model.gripIsOnPump)
@@ -1208,11 +1206,12 @@ public class RenderGun implements IItemRenderer
         if(!anim.reloading && model.handPump)
         {
         	//left hand pump action animation
-	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
+	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 6), model.leftArmPos.y, model.leftArmPos.z);
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
         }
+        
 		else
 		{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
@@ -1220,6 +1219,7 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmReloadPos.x, model.leftArmReloadPos.y, model.leftArmReloadPos.z);
         }
+        
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
         modelBipedMain.bipedLeftArm.offsetY = 0F;
         if(!model.leftHandAmmo)
@@ -1260,13 +1260,23 @@ public class RenderGun implements IItemRenderer
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
-        if(!anim.reloading)
+        if(anim.charged < 0.9 && model.handCharge)
         {
+	        GL11.glRotatef(model.leftArmChargeRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.leftArmChargeRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.leftArmChargeRot.x, 1F, 0F, 0F);
+	        GL11.glTranslatef(-(model.leftArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier), (-(model.leftArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier)), model.leftArmChargePos.z);
+	        
+        }  
+        
+		else if(!anim.reloading)
+		{
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
         }
+        
 		else
 		{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
@@ -1274,6 +1284,7 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmReloadPos.x, model.leftArmReloadPos.y, model.leftArmReloadPos.z);
         }
+        
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
         modelBipedMain.bipedLeftArm.offsetY = 0F;
         if(model.leftHandAmmo)
