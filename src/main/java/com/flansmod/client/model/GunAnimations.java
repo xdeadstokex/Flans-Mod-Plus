@@ -36,6 +36,11 @@ public class GunAnimations
 	public int muzzleFlashTime = 0;
 	public int flashInt = 0;
 
+	/** Casing mechanics */
+	public int timeUntilCasing = 0;
+	public int casingStage = 0;
+	public int lastCasingStage = 0;
+
 	/** Hammer model mechanics */
 	/** If in single action, the model will play a modified animation and delay hammer reset */
 	public float hammerRotation = 0F;
@@ -43,12 +48,8 @@ public class GunAnimations
 	public int timeUntilPullback = 0;
 	public float gunPullback = -1F, lastGunPullback = -1F;
 	public boolean isFired = false;
-    public int casingStage = 0;
-    public int lastCasingStage = 0;
     
     public Vector3f casingRandom = new Vector3f(0F, 0F, 0F);
-    
-    public boolean hasFired = false;
     
 	/** Melee animations */
 	public int meleeAnimationProgress = 0, meleeAnimationLength = 0;
@@ -60,10 +61,13 @@ public class GunAnimations
 	
 	public void update()
 	{
+		//Assign values
 		lastPumped = pumped;
 		lastCharged = charged;
 		lastGunPullback = gunPullback;
 		lastCasingStage = casingStage;
+
+		//Time until pump-action
 		if(timeUntilPump > 0)
 		{
 			timeUntilPump--;
@@ -75,6 +79,8 @@ public class GunAnimations
 			}
 			
 		}
+
+		//Timer until pulling back the charge handle/bolt
 		if(timeUntilCharge > 0)
 		{
 			timeUntilCharge--;
@@ -87,6 +93,7 @@ public class GunAnimations
 			
 		}
 
+		//Time until hammer pullback
 		if(timeUntilPullback > 0)
 		{
 			timeUntilPullback--;
@@ -103,9 +110,19 @@ public class GunAnimations
 			hammerRotation *= 0.6F;
 			althammerRotation *= 0.6F;
 		}
-        if(hasFired ==  true) {    
-            casingStage += 1;
-        }
+
+		//Time until bullet casing ejection
+		if(timeUntilCasing > 0)
+		{
+			timeUntilCasing--;
+			if(timeUntilCasing == 0)
+				casingStage++;
+		}
+		else
+		{
+			casingStage++;
+		}
+
 		if(muzzleFlashTime > 0)
 			muzzleFlashTime--;
 		
@@ -138,7 +155,7 @@ public class GunAnimations
 		lastGunSlide = gunSlide;
 		if(isGunEmpty)
 			lastGunSlide = gunSlide = 0.5F;
-		if(!isGunEmpty && gunSlide > 0.9)
+		if(!isGunEmpty && gunSlide > 0.9)	//Add one extra frame to slide
 			gunSlide -= 0.1F;
 		else if(gunSlide > 0 && !isGunEmpty)
 			gunSlide *= 0.5F;
@@ -170,7 +187,7 @@ public class GunAnimations
 		isGunEmpty = atLastBullet;
 	}
 	
-	public void doShoot(int pumpDelay, int pumpTime, int hammerDelay, float hammerAngle, float althammerAngle)
+	public void doShoot(int pumpDelay, int pumpTime, int hammerDelay, float hammerAngle, float althammerAngle, int casingDelay)
 	{
 		minigunBarrelRotationSpeed += 2F;
 		lastGunSlide = gunSlide = 1F;
@@ -178,12 +195,10 @@ public class GunAnimations
 		timeUntilPump = pumpDelay;
 		timeToPumpFor = pumpTime;
 		timeUntilPullback = hammerDelay;
+		timeUntilCasing = casingDelay;
 		hammerRotation = hammerAngle;
 		althammerRotation = althammerAngle;
 		muzzleFlashTime = 2;
-        
-        casingStage = 0;
-        hasFired = true;
         
 		Random r = new Random();
 		int Low = -1;
@@ -191,12 +206,12 @@ public class GunAnimations
 		int result = r.nextInt(High-Low) + Low;
 		if(result == -1) result = 0;
 		if(result == 3) result = 2;
-		
         flashInt = result;
         
         casingRandom.x = ((r.nextFloat()*2)-1);
         casingRandom.y = ((r.nextFloat()*2)-1);
         casingRandom.z = ((r.nextFloat()*2)-1);
+		casingStage = 0;
 	}
 		
 	public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime)
