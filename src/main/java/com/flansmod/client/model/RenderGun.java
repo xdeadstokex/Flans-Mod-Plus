@@ -1188,7 +1188,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.rightArmPos.y, model.rightArmPos.z);
-	        //System.out.println("a");
         }  
 
         
@@ -1199,7 +1198,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
-	        //System.out.println("b");
         }
         
 		else
@@ -1208,7 +1206,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmReloadPos.x, model.rightArmReloadPos.y, model.rightArmReloadPos.z);
-	        //System.out.println("c");
         }
         GL11.glScalef(model.rightArmScale.x,model.rightArmScale.y,model.rightArmScale.z);
         modelBipedMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
@@ -1216,7 +1213,6 @@ public class RenderGun implements IItemRenderer
         if(!model.rightHandAmmo)
         {
         	modelBipedMain.bipedRightArm.render(0.0625F);
-        //System.out.println("1");
         }
         GL11.glPopMatrix();
 
@@ -1228,7 +1224,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
-	        //System.out.println("d");
         }        
 
         else if(!anim.reloading && !model.handPump)
@@ -1238,7 +1233,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
-	        //System.out.println("e");
         }
         
 		else
@@ -1247,7 +1241,6 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmReloadPos.x, model.leftArmReloadPos.y, model.leftArmReloadPos.z);
-	        //System.out.println("f");
         }
         
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
@@ -1255,7 +1248,6 @@ public class RenderGun implements IItemRenderer
         if(!model.leftHandAmmo)
         {
         	modelBipedMain.bipedLeftArm.render(0.0625F);
-        //System.out.println("2");
         }
         GL11.glPopMatrix();
     }
@@ -1271,15 +1263,16 @@ public class RenderGun implements IItemRenderer
         GL11.glColor3f(f, f, f);
         modelBipedMain.onGround = 0.0F;
         GL11.glPushMatrix();
-        if(anim.charged < 0.9 && model.handCharge && model.rightHandAmmo)
+      
+	//This moves the right hand if rightHandAmmo & handCharge are true (For slides)
+        if(anim.charged < 0.9 && model.handCharge && model.leftHandAmmo && anim.charged != -1.0F)
         {
 	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.rightArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.rightArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), model.rightArmChargePos.z);
-	        //System.out.println("g");
         }
-        
+        //This moves the right hand if rightHandAmmo & handBolt are true (For pumps/bolts)
         else if(anim.pumped < 0.9 && model.handBolt && model.rightHandAmmo)
         {
         	
@@ -1287,25 +1280,22 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef((model.rightArmChargePos.x + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.x), ((model.rightArmChargePos.y + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.y)), (-(model.rightArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
-	        //System.out.println("ba");
         }
-        
+        //This is the default state
 		else if(!anim.reloading)
 		{
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
-	        //System.out.println("h");
         }
-        
+        //This is the default reloading state
 		else
 		{
 	        GL11.glRotatef(model.rightArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmReloadPos.x, model.rightArmReloadPos.y, model.rightArmReloadPos.z);
-	        //System.out.println("i");
         }
         
         GL11.glScalef(model.rightArmScale.x,model.rightArmScale.y,model.rightArmScale.z);
@@ -1314,36 +1304,33 @@ public class RenderGun implements IItemRenderer
         if(model.rightHandAmmo)
         {
         	modelBipedMain.bipedRightArm.render(0.0625F);
-        //System.out.println("3");
         }
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
-        if(anim.charged < 0.9 && model.handCharge && model.leftHandAmmo)
+	//This moves the left hand if leftHandAmmo & handCharge are true (For slides)
+        if(anim.charged < 0.9 && model.handCharge && model.leftHandAmmo && anim.charged != -1.0F)
         {
 	        GL11.glRotatef(model.leftArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmChargeRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.leftArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.leftArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), (-(model.leftArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
-	        //System.out.println("j");
         }  
-        
+		//This is the default state
 		else if(!anim.reloading)
 		{
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
-	        //System.out.println("k");
         }
-        
+        	//This is the default reloading state
 		else
 		{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmReloadPos.x, model.leftArmReloadPos.y, model.leftArmReloadPos.z);
-	        //System.out.println("l");
         }
         
         GL11.glScalef(model.leftArmScale.x,model.leftArmScale.y,model.leftArmScale.z);
@@ -1351,7 +1338,6 @@ public class RenderGun implements IItemRenderer
         if(model.leftHandAmmo)
         {
         	modelBipedMain.bipedLeftArm.render(0.0625F);
-        //System.out.println("4");
         }
         GL11.glPopMatrix();
 
