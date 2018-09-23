@@ -14,7 +14,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
@@ -35,8 +34,8 @@ public class GunBoxType extends InfoType
 	public int nextGun = -1;
 	/** */
 	public InfoType[] guns;
-	public ShootableType[] bullets;
-	public ShootableType[] altBullets;
+	public InfoType[] bullets;
+	public InfoType[] altBullets;
 	public List<ItemStack>[] gunParts;
 	public List<ItemStack>[] bulletParts;
 	public List<ItemStack>[] altBulletParts;
@@ -67,8 +66,8 @@ public class GunBoxType extends InfoType
 			{
 				numGuns = Integer.parseInt(split[1]);
 				guns = new InfoType[numGuns];
-				bullets = new ShootableType[numGuns];
-				altBullets = new ShootableType[numGuns];
+				bullets = new InfoType[numGuns];
+				altBullets = new InfoType[numGuns];
 				gunParts = new List[numGuns];
 				bulletParts = new List[numGuns];
 				altBulletParts = new List[numGuns];
@@ -105,44 +104,28 @@ public class GunBoxType extends InfoType
 				nextGun++;
 				if (gunParts[nextGun] == null)
 					FlansMod.log("NumGuns was not found or was incorrect");
-				
+
 				guns[nextGun] = InfoType.getType(split[1]);
-				for (int i = 0; i < (split.length - 2) / 2; i++)
-				{
-					if (split[i * 2 + 3].contains("."))
-						gunParts[nextGun].add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
-					else
-						gunParts[nextGun].add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
-				}
-				
+				getRecipe(gunParts, split);
 			}
 			if (split[0].equals("AddAmmo"))
 			{
 				if (bulletParts[nextGun] == null)
 					FlansMod.log("NumGuns was not found or was incorrect");
-				bullets[nextGun] = ShootableType.getShootableType(split[1]);
-				for (int i = 0; i < (split.length - 2) / 2; i++)
-				{
-					if (split[i * 2 + 3].contains("."))
-						bulletParts[nextGun].add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
-					else
-						bulletParts[nextGun].add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
-				}
+
+				bullets[nextGun] = InfoType.getType(split[1]);
+				getRecipe(bulletParts, split);
 			}
 			if (split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo"))
 			{
 				if (altBulletParts[nextGun] == null)
 					FlansMod.log("NumGuns was not found or was incorrect");
-				altBullets[nextGun] = ShootableType.getShootableType(split[1]);
-				for (int i = 0; i < (split.length - 2) / 2; i++)
-				{
-					if (split[i * 2 + 3].contains("."))
-						altBulletParts[nextGun].add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
-					else
-						altBulletParts[nextGun].add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
-				}
+
+				altBullets[nextGun] = InfoType.getType(split[1]);
+				getRecipe(altBulletParts, split);
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			FlansMod.log("Reading gun box file failed : " + shortName);
 			e.printStackTrace();
@@ -162,6 +145,18 @@ public class GunBoxType extends InfoType
 				return type;
 		}
 		return null;
+	}
+
+	//Refactored get recipe method
+	public void getRecipe(List<ItemStack>[] parts, String[] split)
+	{
+		for (int i = 0; i < (split.length - 2) / 2; i++)
+		{
+			if (split[i * 2 + 3].contains("."))
+				parts[nextGun].add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
+			else
+				parts[nextGun].add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
+		}
 	}
 	
 	/** Reimported from old code */

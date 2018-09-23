@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.flansmod.common.guns.boxes.ContainerGunBox;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -146,7 +147,7 @@ public class CommonProxy
 		case 2: return new ContainerGunModTable(player.inventory, world);
 		case 3: return new ContainerDriveableMenu(player.inventory, world);
 		case 4: return new ContainerDriveableMenu(player.inventory, world, true, ((EntitySeat)player.ridingEntity).driveable);
-		case 5 : return null; //Gun box. No server side
+		case 5: return new ContainerGunBox(player.inventory, world);
 		//Plane inventory screens
 		case 6: return new ContainerDriveableInventory(player.inventory, world, ((EntitySeat)player.ridingEntity).driveable, 0);
 		case 7: return new ContainerDriveableInventory(player.inventory, world, ((EntitySeat)player.ridingEntity).driveable, 1);
