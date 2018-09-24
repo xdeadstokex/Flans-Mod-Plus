@@ -1181,27 +1181,41 @@ public class RenderGun implements IItemRenderer
         GL11.glColor3f(f, f, f);
         modelBipedMain.onGround = 0.0F;
         GL11.glPushMatrix();
+	//right hand pump action animation
         if(!anim.reloading && model.handPump)
         {
-        	//right hand pump action animation
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.rightArmPos.y, model.rightArmPos.z);
         }  
-
+        //This moves the right hand if leftHandAmmo & handCharge are true (For left hand reload with right hand charge)
+        else if(anim.charged < 0.9 && model.leftHandAmmo && model.rightHandCharge && anim.charged != -1.0F)
+        {
+	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
+	        GL11.glTranslatef(-(model.rightArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.rightArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), model.rightArmChargePos.z);
+        }
+        //This moves the right hand if leftHandAmmo & handBolt are true (For left hand reload with right hand bolt action)
+        else if(anim.pumped < 0.9 && model.rightHandBolt && model.leftHandAmmo)
+        {
+	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
+	        GL11.glTranslatef((model.rightArmChargePos.x + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.x), ((model.rightArmChargePos.y + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.y)), (-(model.rightArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
+        }
         
         else if(!anim.reloading && !model.handPump)
         {
-        	
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
         }
         
-		else
-		{
+	else
+	{
 	        GL11.glRotatef(model.rightArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
@@ -1217,26 +1231,39 @@ public class RenderGun implements IItemRenderer
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
+        //left hand pump action animation
         if(!anim.reloading && model.handPump)
         {
-        	//left hand pump action animation
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
         }        
-
+        //This moves the right hand if leftHandAmmo & handCharge are true (For left hand reload with right hand charge)
+        else if(anim.charged < 0.9 && model.rightHandCharge && model.leftHandAmmo && anim.charged != -1.0F)
+        {
+	        GL11.glRotatef(model.leftArmChargeRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.leftArmChargeRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.leftArmChargeRot.x, 1F, 0F, 0F);
+	        GL11.glTranslatef(-(model.leftArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.leftArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), model.leftArmChargePos.z);
+        }
+        //This moves the right hand if leftHandAmmo & handBolt are true (For left hand reload with right hand bolt action)
+        else if(anim.pumped < 0.9 && model.rightHandBolt && model.leftHandAmmo)
+        {
+	        GL11.glRotatef(model.leftArmChargeRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.leftArmChargeRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.leftArmChargeRot.x, 1F, 0F, 0F);
+	        GL11.glTranslatef((model.leftArmChargePos.x + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.x), ((model.leftArmChargePos.y + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.y)), (-(model.leftArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
+        }
         else if(!anim.reloading && !model.handPump)
         {
-        	
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
-        }
-        
-		else
-		{
+        }       
+	else
+	{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
@@ -1265,7 +1292,7 @@ public class RenderGun implements IItemRenderer
         GL11.glPushMatrix();
       
 	//This moves the right hand if rightHandAmmo & handCharge are true (For slides)
-        if(anim.charged < 0.9 && model.handCharge && model.leftHandAmmo && anim.charged != -1.0F)
+        if(anim.charged < 0.9 && model.rightHandCharge && model.rightHandAmmo && anim.charged != -1.0F)
         {
 	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
@@ -1273,25 +1300,24 @@ public class RenderGun implements IItemRenderer
 	        GL11.glTranslatef(-(model.rightArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.rightArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), model.rightArmChargePos.z);
         }
         //This moves the right hand if rightHandAmmo & handBolt are true (For pumps/bolts)
-        else if(anim.pumped < 0.9 && model.handBolt && model.rightHandAmmo)
+        else if(anim.pumped < 0.9 && model.rightHandBolt && model.rightHandAmmo)
         {
-        	
 	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef((model.rightArmChargePos.x + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.x), ((model.rightArmChargePos.y + Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.chargeModifier.y)), (-(model.rightArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
         }
         //This is the default state
-		else if(!anim.reloading)
-		{
+	else if(!anim.reloading)
+	{
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.rightArmPos.x, model.rightArmPos.y, model.rightArmPos.z);
         }
         //This is the default reloading state
-		else
-		{
+	else
+	{
 	        GL11.glRotatef(model.rightArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmReloadRot.x, 1F, 0F, 0F);
@@ -1304,29 +1330,32 @@ public class RenderGun implements IItemRenderer
         if(model.rightHandAmmo)
         {
         	modelBipedMain.bipedRightArm.render(0.0625F);
+
         }
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
+        //System.out.println(anim.charged);
 	//This moves the left hand if leftHandAmmo & handCharge are true (For slides)
-        if(anim.charged < 0.9 && model.handCharge && model.leftHandAmmo && anim.charged != -1.0F)
+        if(anim.charged < 0.9 && model.leftHandCharge && model.leftHandAmmo && anim.charged != -1.0F)
         {
 	        GL11.glRotatef(model.leftArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmChargeRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(-(model.leftArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.leftArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), (-(model.leftArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
-        }  
-		//This is the default state
-		else if(!anim.reloading)
-		{
+        } 
+
+	//This is the default state
+	else if(!anim.reloading)
+	{
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
 	        GL11.glTranslatef(model.leftArmPos.x, model.leftArmPos.y, model.leftArmPos.z);
         }
-        	//This is the default reloading state
-		else
-		{
+        //This is the default reloading state
+	else
+	{
 	        GL11.glRotatef(model.leftArmReloadRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmReloadRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmReloadRot.x, 1F, 0F, 0F);
