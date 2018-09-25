@@ -1195,7 +1195,7 @@ public class RenderGun implements IItemRenderer
 	        GL11.glRotatef(model.rightArmChargeRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmChargeRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmChargeRot.x, 1F, 0F, 0F);
-	        GL11.glTranslatef(-(model.rightArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.rightArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), model.rightArmChargePos.z);
+	        GL11.glTranslatef(-(model.rightArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.rightArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), (-(model.rightArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
         }
         //This moves the right hand if leftHandAmmo & handBolt are true (For left hand reload with right hand bolt action)
         else if(anim.pumped < 0.9 && model.rightHandBolt && model.leftHandAmmo)
