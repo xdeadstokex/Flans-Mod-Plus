@@ -107,7 +107,7 @@ public class ModelGun extends ModelBase
     
 	public EnumAnimationType animationType = EnumAnimationType.NONE;
 	public EnumMeleeAnimation meleeAnimation = EnumMeleeAnimation.DEFAULT;
-	public float tiltGunTime = 0.25F, unloadClipTime = 0.25F, loadClipTime = 0.25F, untiltGunTime = 0.25F;
+	public float tiltGunTime = 0.15F, unloadClipTime = 0.35F, loadClipTime = 0.35F, untiltGunTime = 0.15F;
 	/** If true, then the scope attachment will move with the top slide */
 	public boolean scopeIsOnSlide = false;
 	/** If true, then the scope attachment will move with the break action. Can be combined with the above */
