@@ -702,7 +702,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 				wheel.moveEntity(0F, (!onDeck)?-0.98F:0, 0F);	
 			}
 			
-			if((throttle >= 0.3 || throttle <= -0.3)){
+			if((throttle >= 1.1 || throttle <= -1.1)){
 				Vector3f motionVec = new Vector3f(0,0,0);
 				Vector3f targetVec = type.wheelPositions[wheel.ID].position;
 				targetVec = axes.findLocalVectorGlobally(targetVec);
