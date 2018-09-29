@@ -78,6 +78,11 @@ public class ModelGun extends ModelBase
 	public Vector3f rightArmChargeRot = new Vector3f(0,0,0);
 	public Vector3f leftArmChargePos = new Vector3f(0,0,0);
 	public Vector3f leftArmChargeRot = new Vector3f(0,0,0);
+	
+	public Vector3f stagedrightArmReloadPos = new Vector3f(0,0,0);
+	public Vector3f stagedrightArmReloadRot = new Vector3f(0,0,0);
+	public Vector3f stagedleftArmReloadPos = new Vector3f(0,0,0);
+	public Vector3f stagedleftArmReloadRot = new Vector3f(0,0,0);
 
 	public boolean rightHandAmmo = false;
 	public boolean leftHandAmmo = false;
@@ -175,9 +180,14 @@ public class ModelGun extends ModelBase
 	public Vector3f translateGun = new Vector3f(0F, 0F, 0F);
 	/* Ammo Model reload parameters */
 	public float rotateClipVertical = 0F;
+	public float stagedrotateClipVertical = 0F;
 	public float rotateClipHorizontal = 0F;
+	public float stagedrotateClipHorizontal = 0F;
 	public float tiltClip = 0F;
+	public float stagedtiltClip = 0F;
 	public Vector3f translateClip = new Vector3f(0F, 0F, 0F);
+	public Vector3f stagedtranslateClip = new Vector3f(0F, 0F, 0F);
+	public boolean stagedReload = false;
 	
 
 	/** This offsets the render position for third person */
