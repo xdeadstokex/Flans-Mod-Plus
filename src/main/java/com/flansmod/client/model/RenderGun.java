@@ -1200,12 +1200,12 @@ public class RenderGun implements IItemRenderer
         modelBipedMain.onGround = 0.0F;
         GL11.glPushMatrix();
         //right hand pump action animation
-        if(!anim.reloading && model.handPump)
+        if(!anim.reloading && model.righthandPump)
         {
+		GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.rightArmPos.y, model.rightArmPos.z);
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
-	        GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.rightArmPos.y, model.rightArmPos.z);
         }  
         //This moves the right hand if leftHandAmmo & handCharge are true (For left hand reload with right hand charge)
         else if(anim.charged < 0.9 && model.leftHandAmmo && model.rightHandCharge && anim.charged != -1.0F)
@@ -1250,12 +1250,12 @@ public class RenderGun implements IItemRenderer
 
         GL11.glPushMatrix();
         //left hand pump action animation
-        if(!anim.reloading && model.handPump)
+        if(!anim.reloading && model.lefthandPump)
         {
+		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
-	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);
-	        GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
+	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);	        
         }        
         //This moves the right hand if leftHandAmmo & handCharge are true (For left hand reload with right hand charge)
         else if(anim.charged < 0.9 && model.rightHandCharge && model.leftHandAmmo && anim.charged != -1.0F)
