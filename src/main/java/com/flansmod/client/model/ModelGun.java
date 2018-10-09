@@ -157,7 +157,8 @@ public class ModelGun extends ModelBase
 	/** If true, lock the slide when the last bullet is fired */
 	public boolean slideLockOnEmpty = false;
 	/** If true, move the hands with the pump action */
-	public boolean handPump = false;
+	public boolean lefthandPump = false;
+	public boolean righthandPump = false;
 	/** If true, move the hands with the charge action */
 	public boolean rightHandCharge = false;
 	public boolean leftHandCharge = false;
