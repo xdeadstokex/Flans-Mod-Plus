@@ -1365,6 +1365,14 @@ public class RenderGun implements IItemRenderer
 	        GL11.glTranslatef(-(model.leftArmChargePos.x - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.x), (-(model.leftArmChargePos.y - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.y)), (-(model.leftArmChargePos.z - Math.abs(anim.lastCharged + (anim.charged - anim.lastCharged) * smoothing) / model.chargeModifier.z)));
         } 
 
+        else if(!anim.reloading && model.lefthandPump)
+        {
+		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
+	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
+	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
+	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);	        
+        }   
+	
         //This is the default state
         else if(!anim.reloading)
 		{
