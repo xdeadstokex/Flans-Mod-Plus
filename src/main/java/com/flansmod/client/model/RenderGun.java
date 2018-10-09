@@ -1202,7 +1202,7 @@ public class RenderGun implements IItemRenderer
         //right hand pump action animation
         if(!anim.reloading && model.righthandPump)
         {
-		GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.rightArmPos.y, model.rightArmPos.z);
+		GL11.glTranslatef(-(model.rightArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.pumpModifier), model.rightArmPos.y, model.rightArmPos.z);
 	        GL11.glRotatef(model.rightArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.rightArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.rightArmRot.x, 1F, 0F, 0F);
@@ -1252,7 +1252,7 @@ public class RenderGun implements IItemRenderer
         //left hand pump action animation
         if(!anim.reloading && model.lefthandPump)
         {
-		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
+		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.PumpModifier), model.leftArmPos.y, model.leftArmPos.z);
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);	        
@@ -1367,7 +1367,7 @@ public class RenderGun implements IItemRenderer
 
         else if(!anim.reloading && model.lefthandPump)
         {
-		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / 4), model.leftArmPos.y, model.leftArmPos.z);
+		GL11.glTranslatef(-(model.leftArmPos.x - Math.abs(anim.lastPumped + (anim.pumped - anim.lastPumped) * smoothing) / model.pumpModifier), model.leftArmPos.y, model.leftArmPos.z);
 	        GL11.glRotatef(model.leftArmRot.y, 0F, 1F, 0F);
 	        GL11.glRotatef(model.leftArmRot.z, 0F, 0F, 1F);
 	        GL11.glRotatef(model.leftArmRot.x, 1F, 0F, 0F);	        
