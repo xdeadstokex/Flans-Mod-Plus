@@ -165,6 +165,7 @@ public class ModelGun extends ModelBase
 	/** If true, move the hands with the bolt action */
 	public boolean rightHandBolt = false;
 	public boolean leftHandBolt = false;
+	public float pumpModifier = 4F;
 	public Vector3f chargeModifier = new Vector3f(8F, 4F, 4F);
 	/**If true, gun will translate when equipped with a sight attachment */
 	public float gunOffset = 0F;
