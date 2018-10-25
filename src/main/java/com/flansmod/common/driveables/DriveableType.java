@@ -126,6 +126,7 @@ public class DriveableType extends PaintableType
 	//Movement variables
 	/** Generic movement modifiers, no longer repeated for plane and vehicle */
 	public float maxThrottle = 1F, maxNegativeThrottle = 0F;
+	public float ClutchBrake = 0F;
 	/** The origin of the tank turret */
 	public Vector3f turretOrigin = new Vector3f();
 	public Vector3f turretOriginOffset = new Vector3f();
@@ -323,6 +324,8 @@ public class DriveableType extends PaintableType
 				maxThrottle = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxNegativeThrottle"))
 				maxNegativeThrottle = Float.parseFloat(split[1]);
+			else if(split[0].equals("ClutchBrake"))
+				ClutchBrake = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxThrottleInWater"))
 				maxThrottleInWater = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxDepth"))

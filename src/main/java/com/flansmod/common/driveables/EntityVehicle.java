@@ -81,6 +81,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
     public float yawSpeed = 0;
     
     //Handling stuff
+    public int keyHeld = 0;
     public boolean leftTurnHeld = false;
     public boolean rightTurnHeld = false;
     public boolean allWheelsOnGround;
@@ -282,14 +283,20 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 			}
 			case 2 : //Left : Yaw the wheels left
 			{
+				if(throttle < 0.3F)
+					throttle += type.ClutchBrake;
 				wheelsYaw -= 1F;
 				leftTurnHeld = true;
+				keyHeld = 100;
 				return true;
 			}
 			case 3 : //Right : Yaw the wheels right
 			{
+				if(throttle < 0.3F)
+					throttle += type.ClutchBrake;
 				wheelsYaw += 1F;
-				leftTurnHeld = true;
+				rightTurnHeld = true;
+				keyHeld = 100;
 				return true;
 			}
 			case 4 : //Up : Brake
@@ -942,6 +949,15 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 		} if(animFrameRight < 0){
 			animFrameRight = type.animFrames;
 		}
+		
+		
+		if(throttle > 0)
+		{
+			throttle -= 0.0035;
+		}
+		else if(throttle < 0)
+			throttle += 0.0035;
+		
 		
 		//if(seats[0].riddenByEntity == null) throttle = 1F;
 		
