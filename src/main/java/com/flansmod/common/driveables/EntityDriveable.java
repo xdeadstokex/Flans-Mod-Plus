@@ -1457,6 +1457,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 			shootDelayPrimary--;
 		if(shootDelaySecondary > 0)
 			shootDelaySecondary--;
+		if(getDriveableType().reloadSoundTick != 15214541 && shootDelayPrimary == getDriveableType().reloadSoundTick)
+		{
+		   PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootReloadSound, false);
+		}
 // on first update
 		if(this.ticksExisted == 1)
 		{

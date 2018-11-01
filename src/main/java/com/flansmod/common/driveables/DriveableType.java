@@ -59,7 +59,7 @@ public class DriveableType extends PaintableType
 	public boolean dropHarvest = false;
 	public Vector3f harvestBoxSize = new Vector3f(0,0,0);
 	public Vector3f harvestBoxPos = new Vector3f(0,0,0);
-
+	public int reloadSoundTick = 15214541;
 	public float fallDamageFactor = 1.0F;
 
 	//Weapon variables
@@ -72,7 +72,7 @@ public class DriveableType extends PaintableType
 	/** Firing modes for primary and secondary guns. Minigun also an option */
 	public EnumFireMode modePrimary = EnumFireMode.FULLAUTO, modeSecondary = EnumFireMode.FULLAUTO;
 	/** Sounds */
-	public String shootSoundPrimary, shootSoundSecondary;
+	public String shootSoundPrimary, shootSoundSecondary, shootReloadSound;
 	/** Positions of primary and secondary weapons */
 	public ArrayList<ShootPoint> shootPointsPrimary = new ArrayList<ShootPoint>(), shootPointsSecondary = new ArrayList<ShootPoint>();
 	/** Pilot guns also have their own seperate array so ammo handling can be done */
@@ -314,7 +314,8 @@ public class DriveableType extends PaintableType
 			
 			if(FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
 				model = FlansMod.proxy.loadModel(split[1], shortName, ModelDriveable.class);
-
+		    else if(split[0].equals("VehicleGunReloadTick"))
+                reloadSoundTick = Integer.parseInt(split[1]);
 			else if(split[0].equals("Texture"))
 				texture = split[1];
 
@@ -838,10 +839,14 @@ public class DriveableType extends PaintableType
             }
 			else if(split[0].equals("ShootMainSound") || split[0].equals("ShootSoundPrimary") || split[0].equals("ShellSound") || split[0].equals("BombSound"))
 			{
-				
 				shootSoundPrimary = split[1];
 				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
 			}
+            else if(split[0].equals("ShootReloadSound"))
+            {
+                shootReloadSound = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }
 			else if(split[0].equals("ShootSecondarySound") || split[0].equals("ShootSoundSecondary"))
 			{
 				shootSoundSecondary = split[1];
