@@ -94,6 +94,8 @@ public class DriveableType extends PaintableType
 	/** Automatic counter used to setup ammo inventory for gunners */
 	public int numPassengerGunners = 0;
 
+	public float vehicleGunModelScale = 1f;
+	
 	public class ShootParticle
 	{
 		public ShootParticle(String s, float x1, float y1, float z1)
@@ -126,6 +128,7 @@ public class DriveableType extends PaintableType
 	//Movement variables
 	/** Generic movement modifiers, no longer repeated for plane and vehicle */
 	public float maxThrottle = 1F, maxNegativeThrottle = 0F;
+	public float ClutchBrake = 0F;
 	/** The origin of the tank turret */
 	public Vector3f turretOrigin = new Vector3f();
 	public Vector3f turretOriginOffset = new Vector3f();
@@ -305,7 +308,10 @@ public class DriveableType extends PaintableType
 	{
 		super.read(split, file);
 		try
-		{
+		{ 
+			if(split[0].equals("VehicleGunModelScale"))
+			     vehicleGunModelScale = Float.parseFloat(split[1]);
+			
 			if(FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
 				model = FlansMod.proxy.loadModel(split[1], shortName, ModelDriveable.class);
 
@@ -323,6 +329,8 @@ public class DriveableType extends PaintableType
 				maxThrottle = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxNegativeThrottle"))
 				maxNegativeThrottle = Float.parseFloat(split[1]);
+			else if(split[0].equals("ClutchBrake"))
+				ClutchBrake = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxThrottleInWater"))
 				maxThrottleInWater = Float.parseFloat(split[1]);
 			else if(split[0].equals("MaxDepth"))

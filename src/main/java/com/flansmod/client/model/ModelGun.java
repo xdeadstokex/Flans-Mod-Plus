@@ -78,6 +78,11 @@ public class ModelGun extends ModelBase
 	public Vector3f rightArmChargeRot = new Vector3f(0,0,0);
 	public Vector3f leftArmChargePos = new Vector3f(0,0,0);
 	public Vector3f leftArmChargeRot = new Vector3f(0,0,0);
+	
+	public Vector3f stagedrightArmReloadPos = new Vector3f(0,0,0);
+	public Vector3f stagedrightArmReloadRot = new Vector3f(0,0,0);
+	public Vector3f stagedleftArmReloadPos = new Vector3f(0,0,0);
+	public Vector3f stagedleftArmReloadRot = new Vector3f(0,0,0);
 
 	public boolean rightHandAmmo = false;
 	public boolean leftHandAmmo = false;
@@ -107,7 +112,7 @@ public class ModelGun extends ModelBase
     
 	public EnumAnimationType animationType = EnumAnimationType.NONE;
 	public EnumMeleeAnimation meleeAnimation = EnumMeleeAnimation.DEFAULT;
-	public float tiltGunTime = 0.25F, unloadClipTime = 0.25F, loadClipTime = 0.25F, untiltGunTime = 0.25F;
+	public float tiltGunTime = 0.15F, unloadClipTime = 0.35F, loadClipTime = 0.35F, untiltGunTime = 0.15F;
 	/** If true, then the scope attachment will move with the top slide */
 	public boolean scopeIsOnSlide = false;
 	/** If true, then the scope attachment will move with the break action. Can be combined with the above */
@@ -152,11 +157,15 @@ public class ModelGun extends ModelBase
 	/** If true, lock the slide when the last bullet is fired */
 	public boolean slideLockOnEmpty = false;
 	/** If true, move the hands with the pump action */
-	public boolean handPump = false;
+	public boolean lefthandPump = false;
+	public boolean righthandPump = false;
 	/** If true, move the hands with the charge action */
-	public boolean handCharge = false;
+	public boolean rightHandCharge = false;
+	public boolean leftHandCharge = false;
 	/** If true, move the hands with the bolt action */
-	public boolean handBolt = false;
+	public boolean rightHandBolt = false;
+	public boolean leftHandBolt = false;
+	public float pumpModifier = 4F;
 	public Vector3f chargeModifier = new Vector3f(8F, 4F, 4F);
 	/**If true, gun will translate when equipped with a sight attachment */
 	public float gunOffset = 0F;
@@ -173,9 +182,14 @@ public class ModelGun extends ModelBase
 	public Vector3f translateGun = new Vector3f(0F, 0F, 0F);
 	/* Ammo Model reload parameters */
 	public float rotateClipVertical = 0F;
+	public float stagedrotateClipVertical = 0F;
 	public float rotateClipHorizontal = 0F;
+	public float stagedrotateClipHorizontal = 0F;
 	public float tiltClip = 0F;
+	public float stagedtiltClip = 0F;
 	public Vector3f translateClip = new Vector3f(0F, 0F, 0F);
+	public Vector3f stagedtranslateClip = new Vector3f(0F, 0F, 0F);
+	public boolean stagedReload = false;
 	
 
 	/** This offsets the render position for third person */

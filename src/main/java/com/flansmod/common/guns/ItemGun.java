@@ -528,9 +528,8 @@ public class ItemGun extends Item implements IPaintableItem
 			}
 		}
 
-		if((FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance) ||
-				(FlansModClient.shootTime(left) <= 0 && !sprinting && gunType.model.fancyStance) ||
-				(FlansModClient.shootTime(left) <= 0 && !gunType.model.fancyStance))
+		if((FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F) ||
+				(FlansModClient.shootTime(left) <= 0 && !sprinting))
 		{
 			boolean onLastBullet = false;
 			boolean hasAmmo = false;
@@ -1183,9 +1182,9 @@ public class ItemGun extends Item implements IPaintableItem
 
 			}
 			//A bullet stack was found, so try shooting with it
-			else if((bulletStack.getItem() instanceof ItemShootable && sprinting && FlansModClient.zoomProgress > 0.5F && gunType.model.fancyStance) ||
-					(bulletStack.getItem() instanceof ItemShootable && !sprinting && gunType.model.fancyStance) ||
-					(bulletStack.getItem() instanceof ItemShootable && !gunType.model.fancyStance))
+			else if((bulletStack.getItem() instanceof ItemShootable && sprinting && FlansModClient.zoomProgress > 0.5F) ||
+					(bulletStack.getItem() instanceof ItemShootable && !sprinting))
+					
 			{
 				//Shoot
 				shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
