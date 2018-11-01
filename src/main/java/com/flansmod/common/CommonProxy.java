@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.flansmod.common.guns.boxes.ContainerGunBox;
+import com.flansmod.common.types.InfoType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -114,7 +115,7 @@ public class CommonProxy
 		return false;
 	}
 	
-	public void buyGun(GunBoxType type, int gun)
+	public void buyGun(GunBoxType type, InfoType gun)
 	{
 	}
 

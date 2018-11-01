@@ -33,13 +33,26 @@ public class GunBoxType extends InfoType
 	public int numGuns;
 	public int nextGun = -1;
 	/** */
-	public InfoType[] guns;
-	public InfoType[] bullets;
-	public InfoType[] altBullets;
-	public List<ItemStack>[] gunParts;
-	public List<ItemStack>[] bulletParts;
-	public List<ItemStack>[] altBulletParts;
-	
+//	public InfoType[] guns;
+//	public InfoType[] bullets;
+//	public InfoType[] altBullets;
+//	public List<ItemStack>[] gunParts;
+//	public List<ItemStack>[] bulletParts;
+//	public List<ItemStack>[] altBulletParts;
+
+	public GunBoxEntry[] gunEntries;
+	public List<GunPage> gunPages = new ArrayList<GunPage>();
+	public GunPage currentPage;
+
+	/** Custom GUI variables. Use an unsigned hex code for colors.*/
+	public String guiTexturePath;
+	public String gunBoxTextColor = "404040";
+	public String itemListTextColor = "404040";
+	public String itemTextColor= "404040";
+	public String pageTextColor = "FFFFFF";
+	public String buttonTextColor = "FFFFFF";
+	public String buttonTextHoverColor = "FFFFA0";
+
 	private static int lastIconIndex = 2;
 	public static HashMap<String, GunBoxType> gunBoxMap = new HashMap<String, GunBoxType>();
 	
@@ -65,18 +78,18 @@ public class GunBoxType extends InfoType
 			if (split[0].equals("NumGuns"))
 			{
 				numGuns = Integer.parseInt(split[1]);
-				guns = new InfoType[numGuns];
-				bullets = new InfoType[numGuns];
-				altBullets = new InfoType[numGuns];
-				gunParts = new List[numGuns];
-				bulletParts = new List[numGuns];
-				altBulletParts = new List[numGuns];
-				for (int i = 0; i < numGuns; i++)
+
+				if(numGuns - 8 >= 0)
 				{
-					gunParts[i] = new ArrayList<ItemStack>();
-					bulletParts[i] = new ArrayList<ItemStack>();
-					altBulletParts[i] = new ArrayList<ItemStack>();
+					gunEntries = new GunBoxEntry[8];
+					numGuns -= 8;
 				}
+				else
+				{
+					gunEntries = new GunBoxEntry[numGuns];
+				}
+
+				currentPage = new GunPage("default");
 			}
 		}
 	}
@@ -84,6 +97,10 @@ public class GunBoxType extends InfoType
 	@Override
 	public void postRead(TypeFile file)
 	{
+		//Add any remaining gun entries to the pagelist if EOF.
+		currentPage.addGunList(gunEntries);
+		gunPages.add(currentPage);
+
 		gunBoxMap.put(this.shortName, this);
 	}
 
@@ -92,43 +109,78 @@ public class GunBoxType extends InfoType
 	{
 		super.read(split, file);
 		try
-		{		
+		{
 			if (split[0].equals("TopTexture"))
 				topTexturePath = split[1];
 			if (split[0].equals("BottomTexture"))
 				bottomTexturePath = split[1];
 			if (split[0].equals("SideTexture"))
 				sideTexturePath = split[1];
+			if (split[0].equals("Page") || split[0].equals("SetPage"))
+			{
+				//If empty, assign a new page. If not, add the current page to list and start next one.
+				String pageName = split[1];
+				iteratePage(pageName);
+			}
 			if (split[0].equals("AddGun"))
 			{
 				nextGun++;
-				if (gunParts[nextGun] == null)
-					FlansMod.log("NumGuns was not found or was incorrect");
-
-				guns[nextGun] = InfoType.getType(split[1]);
-				getRecipe(gunParts, split);
+				if(nextGun > gunEntries.length - 1)
+				{
+					currentPage.addGunList(gunEntries);
+					iteratePage("default " + (gunPages.size() + 2));
+				}
+				gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split));
 			}
-			if (split[0].equals("AddAmmo"))
-			{
-				if (bulletParts[nextGun] == null)
-					FlansMod.log("NumGuns was not found or was incorrect");
+			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo"))
+				gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
 
-				bullets[nextGun] = InfoType.getType(split[1]);
-				getRecipe(bulletParts, split);
-			}
-			if (split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo"))
-			{
-				if (altBulletParts[nextGun] == null)
-					FlansMod.log("NumGuns was not found or was incorrect");
+			//GunBox gui customisation
+			if(split[0].equals("GuiTexture"))
+				guiTexturePath = split[1];
+			if(split[0].equals("GunBoxNameColor"))
+				gunBoxTextColor = split[1];
+			if(split[0].equals("PageTextColor"))
+				pageTextColor = split[1];
+			if(split[0].equals("ListTextColor"))
+				itemListTextColor = split[1];
+			if(split[0].equals("ItemTextColor"))
+				itemTextColor = split[1];
+			if(split[0].equals("ButtonTextColor"))
+				buttonTextColor = split[1];
+			if(split[0].equals("ButtonTextHighlight"))
+				buttonTextHoverColor = split[1];
 
-				altBullets[nextGun] = InfoType.getType(split[1]);
-				getRecipe(altBulletParts, split);
-			}
 		}
 		catch (Exception e)
 		{
 			FlansMod.log("Reading gun box file failed : " + shortName);
 			e.printStackTrace();
+		}
+	}
+
+	public void iteratePage(String s)
+	{
+		//Rename if on default
+		if(currentPage.isPageEmpty())
+		{
+			currentPage.setPageName(s);
+		}
+		else
+		{
+			//Add current to the pages and setup a new current
+			gunPages.add(currentPage);
+			if(numGuns - 8 >= 0)
+			{
+				gunEntries = new GunBoxEntry[8];
+				numGuns -= 8;
+			}
+			else
+			{
+				gunEntries = new GunBoxEntry[numGuns];
+			}
+			nextGun = 0;
+			currentPage = new GunPage(s);
 		}
 	}
 
@@ -147,16 +199,20 @@ public class GunBoxType extends InfoType
 		return null;
 	}
 
-	//Refactored get recipe method
-	public void getRecipe(List<ItemStack>[] parts, String[] split)
+	//Gunbox Entry method
+	public List<ItemStack> getRecipe(String[] split)
 	{
+		List<ItemStack> recipe = new ArrayList<ItemStack>();
+
 		for (int i = 0; i < (split.length - 2) / 2; i++)
 		{
 			if (split[i * 2 + 3].contains("."))
-				parts[nextGun].add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
+				recipe.add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
 			else
-				parts[nextGun].add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
+				recipe.add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
 		}
+
+		return recipe;
 	}
 	
 	/** Reimported from old code */
@@ -246,7 +302,8 @@ public class GunBoxType extends InfoType
 						recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2], 0);
 				}
 				GameRegistry.addRecipe(new ItemStack(block, recipeOutput, 0), recipe);
-			} else
+			}
+			else
 			{
 				recipe = new Object[recipeLine.length - 1];
 				for (int i = 0; i < (recipeLine.length - 1); i++)
@@ -258,7 +315,8 @@ public class GunBoxType extends InfoType
 				}
 				GameRegistry.addShapelessRecipe(new ItemStack(block, recipeOutput, 0), recipe);
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			if(recipe!=null)
 			{

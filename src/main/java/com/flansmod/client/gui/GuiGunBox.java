@@ -1,6 +1,8 @@
 package com.flansmod.client.gui;
 
 import com.flansmod.common.guns.boxes.ContainerGunBox;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
+import com.flansmod.common.guns.boxes.GunPage;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
@@ -8,9 +10,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -25,71 +24,99 @@ import java.util.List;
 
 public class GuiGunBox extends GuiContainer
 {
-	private static final ResourceLocation texture = new ResourceLocation("flansmod", "gui/weaponBoxDefault.png");
+	private ResourceLocation texture = new ResourceLocation("flansmod", "gui/weaponBoxDefault.png");
 	private static RenderItem itemRenderer = new RenderItem();
 	private InventoryPlayer inventory;
 	private Minecraft mc;
+	private GunPage currentPage;
 	private GunBoxType type;
-	private GuiButton craft;
 	private String recipeTooltip = null;
 	private int mouseX, mouseY;
+	private boolean tabToAmmo = false;
+
+	//Selection and hover checks
 	private int hoverOver = -1;
 	private int selectedItem = -1;
 	private int selectedAmmoitem = -1;
-	private boolean tabToAmmo = false;
-	
+	private int pageIndex = 0;
+	private boolean craftHighlight = false;
+	private boolean nextHighlight = false;
+	private boolean backHighlight = false;
+
+
 	public GuiGunBox(InventoryPlayer playerinventory, GunBoxType type, World w)
 	{
 		super(new ContainerGunBox(playerinventory, w));
-		inventory = playerinventory;
 		mc = FMLClientHandler.instance().getClient();
 		this.type = type;
+		inventory = playerinventory;
 
 		xSize = 273;
 		ySize = 233;
-	}
 
-	@Override
-	public void initGui()
-	{
-		super.initGui();
-
-		int xOrigin = (width - xSize) / 2;
-		int yOrigin = (height - ySize) / 2;
-
-		craft = new GuiButton(0, xOrigin + 126, yOrigin + 110, 64, 20, "Craft");
-		craft.visible = false;
-		buttonList.add(craft);
+		//Set to the first gun page
+		currentPage = type.gunPages.get(pageIndex);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y)
 	{
-		//Draw titles
-		fontRendererObj.drawString(type.name, 7, 6, 0x404040);
+		GunBoxEntry[] entries = currentPage.gunList;
 
-		for(int i = 0; i < type.guns.length && i < 8; i++)
-			if(type.guns[i] != null)
-				fontRendererObj.drawString(type.guns[i].name, 19, 45 + (12 * i) ,0x404040);
+		//Draw titles
+		fontRendererObj.drawString(type.name, 7, 6, hexColor(type.gunBoxTextColor));
+		fontRendererObj.drawStringWithShadow(currentPage.pageName, (29 + 33) - (fontRendererObj.getStringWidth(currentPage.pageName) / 2), 26, hexColor(type.pageTextColor));
+
+		//List gun item entries
+		for(int i = 0; i < entries.length && i < 8; i++)
+		{
+			if(entries[i] != null)
+				fontRendererObj.drawString(entries[i].type.name, 19, 46 + (i * 12), hexColor(type.itemListTextColor));
+		}
 
 		//If a weapon has been selected from the list
 		if(selectedItem != -1)
 		{
-			drawSlotInventory(new ItemStack(type.guns[selectedItem].getItem()), 127, 26);
-			if(type.bullets[selectedItem] != null)
-				drawSlotInventory(new ItemStack(type.bullets[selectedItem].getItem()), 155, 26);
+			GunBoxEntry entry = entries[selectedItem];
+
+			//Draw gun and ammo items
+			drawSlotInventory(new ItemStack(entry.type.getItem()), 127, 26);
+			if(!entry.isAmmoNullOrEmpty())
+			{
+				for(int i = 0; i < entry.ammoEntryList.size(); i++)
+					drawSlotInventory(new ItemStack(entry.ammoEntryList.get(i).type.getItem()), 155 + (i * 22), 26);
+			}
 
 			if(!tabToAmmo)
 			{
-				fontRendererObj.drawString(type.guns[selectedItem].name, 127, 52, 0x404040);
-				drawRecipe(type.gunParts);
+				fontRendererObj.drawString(entry.type.name, 127, 52, hexColor(type.itemTextColor));
+				drawRecipe(entry.requiredParts);
 			}
-			else if(type.bullets[selectedItem] != null)
+			else if(!entry.isAmmoNullOrEmpty())
 			{
-				fontRendererObj.drawString(type.bullets[selectedItem].name, 127, 52, 0x404040);
-				drawRecipe(type.bulletParts);
+				fontRendererObj.drawString(entry.ammoEntryList.get(selectedAmmoitem).type.name, 127, 52, hexColor(type.itemTextColor));
+				drawRecipe(entry.ammoEntryList.get(selectedAmmoitem).requiredParts);
 			}
+
+			//Draw bootleg craft button text
+			if(craftHighlight)
+				fontRendererObj.drawStringWithShadow("Craft", (126 + 32) - (fontRendererObj.getStringWidth("Craft") / 2), 117, hexColor(type.buttonTextHoverColor));
+			else
+				fontRendererObj.drawStringWithShadow("Craft", (126 + 32) - (fontRendererObj.getStringWidth("Craft") / 2), 117, hexColor(type.buttonTextColor));
+
 		}
+
+		//Draw bootleg page button text
+		if(nextHighlight)
+			fontRendererObj.drawStringWithShadow(">", (97 + 10) - (fontRendererObj.getStringWidth(">") / 2), 26, hexColor(type.buttonTextHoverColor));
+		else
+			fontRendererObj.drawStringWithShadow(">", (97 + 10) - (fontRendererObj.getStringWidth(">") / 2), 26, hexColor(type.buttonTextColor));
+
+		if(backHighlight)
+			fontRendererObj.drawStringWithShadow("<", (7 + 10) - (fontRendererObj.getStringWidth("<") / 2), 26, hexColor(type.buttonTextHoverColor));
+		else
+			fontRendererObj.drawStringWithShadow("<", (7 + 10) - (fontRendererObj.getStringWidth("<") / 2), 26, hexColor(type.buttonTextColor));
+
 
 		//Draw tooltips
 		if(recipeTooltip != null)
@@ -104,6 +131,8 @@ public class GuiGunBox extends GuiContainer
 		int xOrigin = (width - xSize) / 2;
 		int yOrigin = (height - ySize) / 2;
 
+		if(type.guiTexturePath != null)
+			texture = new ResourceLocation("flansmod", type.guiTexturePath + ".png");
 		mc.renderEngine.bindTexture(texture);
 		drawTexturedModalRect(xOrigin, yOrigin, 0, 0, xSize, ySize);
 
@@ -112,8 +141,11 @@ public class GuiGunBox extends GuiContainer
 			drawTexturedModalRect(xOrigin + 8, yOrigin + 43 + (hoverOver * 12), 383, 5, 108, 12);
 		}
 
+		//Draw main weapon/ammo window
 		if(selectedItem != -1)
 		{
+			GunBoxEntry entry = currentPage.gunList[selectedItem];
+
 			drawTexturedModalRect(xOrigin + 8, yOrigin + 43 + (selectedItem * 12), 275, 5, 108, 12);
 			drawTexturedModalRect(xOrigin + 121, yOrigin + 20, 275, 207, 144, 25);
 			if(!tabToAmmo)
@@ -125,10 +157,34 @@ public class GuiGunBox extends GuiContainer
 			{
 				drawTexturedModalRect(xOrigin + 121, yOrigin + 45, 275, 112, 144, 95);
 			}
+
+			//Draw inv slots per each ammo entry
+			if(!entry.isAmmoNullOrEmpty())
+			{
+				for(int k = 0; k < entry.ammoEntryList.size(); k++)
+					drawTexturedModalRect(xOrigin + 154 + (k * 22), yOrigin + 25, 435, 17, 18, 18);
+			}
+
+			//Draw bootleg craft button
+			if(craftHighlight)
+				drawTexturedModalRect(xOrigin + 126, yOrigin + 111, 419, 85, 64, 20);
+			else
+				drawTexturedModalRect(xOrigin + 126, yOrigin + 111, 419, 65, 64, 20);
 		}
 
 		if(tabToAmmo && selectedAmmoitem != -1)
-			drawTexturedModalRect(xOrigin + 155, yOrigin + 26, 419, 17, 16, 16);
+			drawTexturedModalRect(xOrigin + 155 + (selectedAmmoitem * 22), yOrigin + 26, 419, 17, 16, 16);
+
+		//Draw bootleg page buttons
+		if(nextHighlight)
+			drawTexturedModalRect(xOrigin + 97, yOrigin + 20, 439, 105, 20, 20);
+		else
+			drawTexturedModalRect(xOrigin + 97, yOrigin + 20, 419, 105, 20, 20);
+
+		if(backHighlight)
+			drawTexturedModalRect(xOrigin + 7, yOrigin + 20, 439, 105, 20, 20);
+		else
+			drawTexturedModalRect(xOrigin + 7, yOrigin + 20, 419, 105, 20, 20);
 
 	}
 
@@ -160,37 +216,36 @@ public class GuiGunBox extends GuiContainer
 		//Hover over gun lists
 		hoverOver = -1;
 		int sectionX = 8;
-		for(int i = 0; i < type.guns.length && i < 8; i++)
+		for(int i = 0; i < currentPage.gunList.length && i < 8; i++)
 		{
 			int sectionY = 43 + (i * 12);
 			if(mouseXInGUI >= sectionX && mouseXInGUI < sectionX + 108 && mouseYInGUI >= sectionY && mouseYInGUI < sectionY + 12)
-			{
 				hoverOver = i;
-			}
 		}
+
+		//Hover over craft button
+		craftHighlight = (mouseXInGUI >= 126 && mouseXInGUI < 189 && mouseYInGUI >= 111 && mouseYInGUI < 130);
+
+		//Hover over page buttons
+		nextHighlight = (mouseXInGUI >= 97 && mouseXInGUI < 116 && mouseYInGUI >= 20 && mouseYInGUI < 39);
+		backHighlight = (mouseXInGUI >= 7 && mouseXInGUI < 26 && mouseYInGUI >= 20 && mouseYInGUI < 39);
 
 		//Hover for recipe tooltips
 		recipeTooltip = null;
-		for(int i = 0; i < 8; i++)
+		if(selectedItem != -1)
 		{
-			int itemX = 127 + (i * 19);
-			int itemY = 68;
-			if(i >= 4)
-				itemY = 87;
+			GunBoxEntry entry = currentPage.gunList[selectedItem];
+			int count = (!tabToAmmo) ? entry.requiredParts.size() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.size();
 
-			if(selectedItem != -1 && mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
+			for(int i = 0; i < count; i++)
 			{
-				try
-				{
-					if(tabToAmmo && type.bulletParts[selectedItem].get(i) != null)
-						recipeTooltip = type.bulletParts[selectedItem].get(i).getDisplayName();
-					else if(!tabToAmmo && type.gunParts[selectedItem].get(i) != null)
-						recipeTooltip = type.gunParts[selectedItem].get(i).getDisplayName();
-				}
-				catch (IndexOutOfBoundsException ex)
-				{
-					//Temporary catch fix because I can't think of anything else
-				}
+				int itemX = 127 + (i * 19);
+				int itemY = 68;
+				if (i >= 4)
+					itemY = 87;
+
+				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
+					recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
 			}
 		}
 	}
@@ -208,27 +263,72 @@ public class GuiGunBox extends GuiContainer
 		if (button == 0 || button == 1)
 		{
 			//If an item is selected in the list
-			if(hoverOver != -1 && hoverOver < type.guns.length)
+			if(hoverOver != -1 && hoverOver < currentPage.gunList.length)
 			{
 				selectedItem = hoverOver;
-				craft.visible = true;
-				if(type.bullets[selectedItem] != null)
-					selectedAmmoitem = selectedItem;
-				else
-					selectedAmmoitem = -1;
+				selectedAmmoitem = -1;
+				tabToAmmo = false;
 			}
-
-			//Switch to ammo tab
-			if(m >= 149 && m <= 264 && n >= 20 && n <= 44)
-				tabToAmmo = true;
 
 			//Switch to weapon tab
 			if(m >= 121 && m <= 148 && n >= 20 && n <= 44)
 				tabToAmmo = false;
+
+			//Go to previous page
+			if(backHighlight)
+			{
+				if(pageIndex == 0)
+					pageIndex = type.gunPages.size() - 1;
+				else
+					pageIndex--;
+				resetAndSwapPages();
+			}
+
+			//Go to next page
+			if(nextHighlight)
+			{
+				if(pageIndex == type.gunPages.size() - 1)
+					pageIndex = 0;
+				else
+					pageIndex++;
+				resetAndSwapPages();
+			}
+
+			//Switch through the ammo item tabs
+			if(selectedItem != -1 && !currentPage.gunList[selectedItem].isAmmoNullOrEmpty())
+			{
+				for(int i = 0; i < currentPage.gunList[selectedItem].ammoEntryList.size(); i++)
+				{
+					if(m >= 152 + (i * 22) && m <= 173 + (i * 22) && n >= 23 && n <= 44)
+					{
+						tabToAmmo = true;
+						selectedAmmoitem = i;
+					}
+				}
+			}
+
+			//Buy item
+			if(craftHighlight)
+			{
+				//If gun is selected
+				if(selectedItem != -1 && !tabToAmmo)
+					type.block.buyGun(currentPage.gunList[selectedItem].type, inventory, type);
+
+				if(tabToAmmo && selectedAmmoitem != -1)
+					type.block.buyGun(currentPage.gunList[selectedItem].ammoEntryList.get(selectedAmmoitem).type, inventory, type);
+			}
 		}
 
 		if(button != 0)
 			return;
+	}
+
+	private void resetAndSwapPages()
+	{
+		selectedItem = -1;
+		selectedAmmoitem = -1;
+		tabToAmmo = false;
+		currentPage = type.gunPages.get(pageIndex);
 	}
 
 	private void drawSlotInventory(ItemStack itemstack, int i, int j)
@@ -242,197 +342,24 @@ public class GuiGunBox extends GuiContainer
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 
-	private void drawRecipe(List<ItemStack>[] parts)
+	private void drawRecipe(List<ItemStack> parts)
 	{
-		int count = parts[selectedItem].size();
-		for(int i = 0; i < count; i++)
+		int i = 0;
+		for(ItemStack stack : parts)
 		{
 			if(i < 4)
-				drawSlotInventory(parts[selectedItem].get(i), 127 + (i * 19), 68);
+				drawSlotInventory(stack, 127 + (i * 19), 68);
 			else
-				drawSlotInventory(parts[selectedItem].get(i), 127 + ((i - 4) * 19), 87);
+				drawSlotInventory(stack, 127 + ((i - 4) * 19), 87);
+			i++;
 		}
 	}
 
-//	@Override
-//	public void drawScreen(int i, int j, float f)
-//	{
-//		ScaledResolution scaledresolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-//		int k = scaledresolution.getScaledWidth();
-//		int l = scaledresolution.getScaledHeight();
-//		FontRenderer fontrenderer = mc.fontRenderer;
-//		drawDefaultBackground();
-//		GL11.glEnable(3042 /*GL_BLEND*/);
-//		mc.renderEngine.bindTexture(texture);
-//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-//		int m = guiOriginX = k / 2 - 88;
-//		int n = guiOriginY = l / 2 - 102;
-//		drawTexturedModalRect(m, n, 0, 0, 176, 204);
-//
-//		//No idea why this works, but it makes the text bind its texture correctly
-//		//mc.renderEngine.bindTexture("/terrain.png");
-//		//TODO : Investigate
-//
-//		drawCenteredString(fontRendererObj, type.name, k / 2, n + 5, 0xffffff);
-//		mc.renderEngine.bindTexture(texture);
-//
-//		// Draw the gun slots in the second gun panel if there is a second gun
-//		// on this page
-//		if (type.numGuns > page * 2 + 1 && type.guns[page * 2] != null && type.guns[page * 2 + 1] != null)
-//			drawTexturedModalRect(m + 89, n + 18, 5, 18, 82, 90);
-//		// Grey out buttons when they are unavaliable
-//		if (page == 0)
-//			drawTexturedModalRect(m + 77, n + 109, 176, 0, 10, 10);
-//		if (type.numGuns <= page * 2 + 2)
-//			drawTexturedModalRect(m + 89, n + 109, 186, 0, 10, 10);
-//
-//		RenderHelper.enableGUIStandardItemLighting();
-//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-//		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-//		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-//
-//		// Fill the gun panels with guns
-//		drawRecipe(fontrenderer, m, n, page * 2, 0);
-//		if (type.numGuns > page * 2 + 1)
-//			drawRecipe(fontrenderer, m, n, page * 2 + 1, 1);
-//		// Draw the inventory slots (not real slots)
-//		for (int row = 0; row < 3; row++)
-//		{
-//			for (int col = 0; col < 9; col++)
-//			{
-//				drawSlotInventory(inventory.getStackInSlot(col + (row + 1) * 9), m + 8 + col * 18, n + 122 + row * 18);
-//			}
-//		}
-//		for (int col = 0; col < 9; col++)
-//		{
-//			drawSlotInventory(inventory.getStackInSlot(col), m + 8 + col * 18, n + 180);
-//		}
-//
-//		GL11.glDisable(3042 /*GL_BLEND*/);
-//	}
-//
-//	private void drawRecipe(FontRenderer fontrenderer, int m, int n, int q, int offset)
-//	{
-//		m += offset * 84;
-//		if (type.guns[q] != null)
-//		{
-//			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-//			//fontRenderer.drawString(type.guns[q].name, m + 9, n + 22, 0xffffffff);
-//			drawSlotInventory(new ItemStack(type.guns[q].getItem()), m + 9, n + 44);
-//			if(type.bullets[q] != null)
-//				drawSlotInventory(new ItemStack(type.bullets[q].getItem()), m + 9, n + 66);
-//			if(type.altBullets[q] != null)
-//				drawSlotInventory(new ItemStack(type.altBullets[q].getItem()), m + 9, n + 88);
-//			int numParts = type.gunParts[q].size();
-//			int startPart = 0;
-//			if (numParts >= 4)
-//			{
-//				startPart = (scroll / 40) % (numParts - 2);
-//			}
-//			for (int p = 0; p < (numParts < 3 ? numParts : 3); p++)
-//			{
-//				drawSlotInventory(type.gunParts[q].get(startPart + p), m + 30 + p * 19, n + 44);
-//			}
-//			if(type.bullets[q] != null)
-//			{
-//				numParts = type.bulletParts[q].size();
-//				startPart = 0;
-//				if (numParts >= 4)
-//				{
-//					startPart = (scroll / 40) % (numParts - 2);
-//				}
-//				for (int p = 0; p < (numParts < 3 ? numParts : 3); p++)
-//				{
-//					drawSlotInventory(type.bulletParts[q].get(startPart + p), m + 30 + p * 19, n + 66);
-//				}
-//			}
-//			if(type.altBullets[q] != null)
-//			{
-//				numParts = type.altBulletParts[q].size();
-//				startPart = 0;
-//				if (numParts >= 4)
-//				{
-//					startPart = (scroll / 40) % (numParts - 2);
-//				}
-//				for (int p = 0; p < (numParts < 3 ? numParts : 3); p++)
-//				{
-//					drawSlotInventory(type.altBulletParts[q].get(startPart + p), m + 30 + p * 19, n + 88);
-//				}
-//			}
-//			RenderHelper.disableStandardItemLighting();
-//			String name = type.guns[q].name;
-//			if (name.length() > 12)
-//			{
-//				int nextSpace = name.indexOf(" ", 10);
-//				if (nextSpace != -1)
-//				{
-//					drawCenteredString(fontrenderer, name.substring(0, nextSpace), m + 46, n + 22, 0xffffff);
-//					drawCenteredString(fontrenderer, name.substring(nextSpace + 1, name.length()), m + 46, n + 32, 0xffffff);
-//				} else
-//					drawCenteredString(fontrenderer, name, m + 46, n + 25, 0xffffff);
-//			} else
-//				drawCenteredString(fontrenderer, name, m + 46, n + 25, 0xffffff);
-//			RenderHelper.enableGUIStandardItemLighting();
-//
-//		}
-//	}
-//
-
-//	@Override
-//	protected void mouseClicked(int i, int j, int k)
-//	{
-//		super.mouseClicked(i, j, k);
-//		int m = i - guiOriginX;
-//		int n = j - guiOriginY;
-//		if (k == 0 || k == 1)
-//		{
-//			// Back button
-//			if (m > 77 && m < 87 && n > 109 && n < 119)
-//			{
-//				if (page > 0)
-//					page--;
-//			}
-//
-//			// Forwards button
-//			if (m > 89 && m < 99 && n > 109 && n < 119)
-//			{
-//				if (type.numGuns > page * 2 + 2)
-//					page++;
-//			}
-//
-//			// Gun 1
-//			if (type.guns[page * 2] != null && m > 7 && m < 27 && n > 42 && n < 62)
-//			{
-//				type.block.buyGun(page * 2, inventory, type);
-//			}
-//			// Ammo 1
-//			if (type.bullets[page * 2] != null && m > 7 && m < 27 && n > 64 && n < 84)
-//			{
-//				type.block.buyAmmo(page * 2, inventory, type);
-//			}
-//			// Alt Ammo 1
-//			if (type.altBullets[page * 2] != null && m > 7 && m < 27 && n > 86 && n < 106)
-//			{
-//				type.block.buyAltAmmo(page * 2, inventory, type);
-//			}
-//
-//			// Gun 2
-//			if (page * 2 + 1 < type.numGuns && type.guns[page * 2 + 1] != null && m > 91 && m < 111 && n > 42 && n < 62)
-//			{
-//				type.block.buyGun(page * 2 + 1, inventory, type);
-//			}
-//			// Ammo 2
-//			if (page * 2 + 1 < type.numGuns && type.bullets[page * 2 + 1] != null && m > 91 && m < 111 && n > 64 && n < 84)
-//			{
-//				type.block.buyAmmo(page * 2 + 1, inventory, type);
-//			}
-//			// Alt Ammo 2
-//			if (page * 2 + 1 < type.numGuns && type.altBullets[page * 2 + 1] != null && m > 91 && m < 111 && n > 86 && n < 106)
-//			{
-//				type.block.buyAltAmmo(page * 2 + 1, inventory, type);
-//			}
-//		}
-//	}
+	//Format hex string to int
+	private int hexColor(String color)
+	{
+		return Integer.parseInt(color, 16);
+	}
 
 	@Override
 	protected void keyTyped(char c, int i)

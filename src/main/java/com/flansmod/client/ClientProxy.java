@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.flansmod.common.types.InfoType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -378,16 +379,9 @@ public class ClientProxy extends CommonProxy
 	
 	/* Gun and armour box crafting methods */
 	@Override
-	public void buyGun(GunBoxType type, int gun)
+	public void buyGun(GunBoxType type, InfoType gun)
 	{
-		FlansMod.getPacketHandler().sendToServer(new PacketBuyWeapon(type, 0, gun));
-		FlansModClient.shootTimeLeft = FlansModClient.shootTimeRight = 10;
-	}
-
-	@Override
-	public void buyAmmo(GunBoxType box, int ammo, int type)
-	{
-		FlansMod.getPacketHandler().sendToServer(new PacketBuyWeapon(box, type, ammo));
+		FlansMod.getPacketHandler().sendToServer(new PacketBuyWeapon(type, gun));
 		FlansModClient.shootTimeLeft = FlansModClient.shootTimeRight = 10;
 	}
 	
