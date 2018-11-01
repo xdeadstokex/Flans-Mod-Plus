@@ -518,17 +518,13 @@ public class RenderGun implements IItemRenderer
 			
 			
 			//Option to offset flash location with a barrel attachment (location + offset = new location)
-			if(animations.muzzleFlashTime> 0 && barrelAttachment != null)
+			if(animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
-				GL11.glTranslated(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
-				model.renderFlash(f, animations.flashInt);
-				GL11.glPopMatrix();
-			}
-			else if(animations.muzzleFlashTime> 0)
-			{
-				GL11.glPushMatrix();
-				GL11.glTranslated(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
+				if(barrelAttachment != null)
+					GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
+				else
+					GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
 				model.renderFlash(f, animations.flashInt);
 				GL11.glPopMatrix();
 			}
@@ -563,14 +559,13 @@ public class RenderGun implements IItemRenderer
 			
             //Render casing ejection (Willy + Gold Testing)
 			//Only render in first person
-			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable)
+			if(rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && !type.getSecondaryFire(item))
 			{
                 GL11.glPushMatrix();
                 
                 float casingProg = (float) (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing)/model.casingAnimTime;
-                if (casingProg >= 1) {
+                if (casingProg >= 1)
                     casingProg = 0;
-                }
                 float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
                 float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
                 float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);

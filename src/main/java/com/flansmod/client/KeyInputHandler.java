@@ -124,11 +124,6 @@ public class KeyInputHandler
 			FlansMod.getPacketHandler().sendToServer(new PacketGunMode(2));
 			return;
 		}
-		/*if(selectorKey.isPressed())
-		{
-			FlansMod.getPacketHandler().sendToServer(new PacketFireMode());
-			return;
-		}*/
 		if(debugKey.isPressed())
 		{
 			if(FlansMod.DEBUG)

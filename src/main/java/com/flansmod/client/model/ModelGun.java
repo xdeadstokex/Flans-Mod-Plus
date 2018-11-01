@@ -392,6 +392,8 @@ public class ModelGun extends ModelBase
 		flip(altbreakActionModel);
 		flip(hammerModel);
 		flip(althammerModel);
+		for(ModelRendererTurbo[] model : flashModel)
+			flip(model);
 	}
 
 	protected void flip(ModelRendererTurbo[] model)
@@ -428,6 +430,8 @@ public class ModelGun extends ModelBase
     		translate(altbreakActionModel, x, y, z);
     		translate(hammerModel, x, y, z);
     		translate(althammerModel, x, y, z);
+			for(ModelRendererTurbo[] model : flashModel)
+				translate(model, x, y, z);
     	}
 	}
 

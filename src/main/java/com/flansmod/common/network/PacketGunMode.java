@@ -9,7 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -57,7 +56,6 @@ public class PacketGunMode extends PacketBase
 	public void handleServerSide(EntityPlayerMP playerEntity) 
 	{
 		ItemStack itemStack = playerEntity.inventory.getCurrentItem();
-				System.out.println(handle);
 		if(handle == 1)
 		{
 			if(itemStack != null && itemStack.getItem() instanceof ItemGun)
