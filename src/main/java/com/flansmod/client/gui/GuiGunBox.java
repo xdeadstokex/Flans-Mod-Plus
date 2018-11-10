@@ -242,7 +242,10 @@ public class GuiGunBox extends GuiContainer
 				int itemX = 127 + (i * 19);
 				int itemY = 68;
 				if (i >= 4)
+				{
+					itemX = 127;
 					itemY = 87;
+				}
 
 				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
 					recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
@@ -275,7 +278,7 @@ public class GuiGunBox extends GuiContainer
 				tabToAmmo = false;
 
 			//Go to previous page
-			if(backHighlight)
+			if(backHighlight && type.gunPages.size() > 1)
 			{
 				if(pageIndex == 0)
 					pageIndex = type.gunPages.size() - 1;
@@ -285,7 +288,7 @@ public class GuiGunBox extends GuiContainer
 			}
 
 			//Go to next page
-			if(nextHighlight)
+			if(nextHighlight && type.gunPages.size() > 1)
 			{
 				if(pageIndex == type.gunPages.size() - 1)
 					pageIndex = 0;

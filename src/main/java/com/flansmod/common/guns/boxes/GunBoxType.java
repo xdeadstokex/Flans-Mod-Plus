@@ -1,6 +1,7 @@
 package com.flansmod.common.guns.boxes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,13 +33,6 @@ public class GunBoxType extends InfoType
 	public IIcon bottom;
 	public int numGuns;
 	public int nextGun = -1;
-	/** */
-//	public InfoType[] guns;
-//	public InfoType[] bullets;
-//	public InfoType[] altBullets;
-//	public List<ItemStack>[] gunParts;
-//	public List<ItemStack>[] bulletParts;
-//	public List<ItemStack>[] altBulletParts;
 
 	public GunBoxEntry[] gunEntries;
 	public List<GunPage> gunPages = new ArrayList<GunPage>();
@@ -120,7 +114,17 @@ public class GunBoxType extends InfoType
 			{
 				//If empty, assign a new page. If not, add the current page to list and start next one.
 				String pageName = split[1];
-				iteratePage(pageName);
+				if(gunEntries[0] != null)
+				{
+					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
+					numGuns += (8 - (nextGun + 1));
+					iteratePage(pageName);
+				}
+				else
+				{
+					currentPage.setPageName(pageName);
+				}
+
 			}
 			if (split[0].equals("AddGun"))
 			{
@@ -129,6 +133,7 @@ public class GunBoxType extends InfoType
 				{
 					currentPage.addGunList(gunEntries);
 					iteratePage("default " + (gunPages.size() + 2));
+					nextGun++;
 				}
 				gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split));
 			}
@@ -161,27 +166,19 @@ public class GunBoxType extends InfoType
 
 	public void iteratePage(String s)
 	{
-		//Rename if on default
-		if(currentPage.isPageEmpty())
+		//Add current to the pages and setup a new current
+		gunPages.add(currentPage);
+		if(numGuns - 8 >= 0)
 		{
-			currentPage.setPageName(s);
+			gunEntries = new GunBoxEntry[8];
+			numGuns -= 8;
 		}
 		else
 		{
-			//Add current to the pages and setup a new current
-			gunPages.add(currentPage);
-			if(numGuns - 8 >= 0)
-			{
-				gunEntries = new GunBoxEntry[8];
-				numGuns -= 8;
-			}
-			else
-			{
-				gunEntries = new GunBoxEntry[numGuns];
-			}
-			nextGun = 0;
-			currentPage = new GunPage(s);
+			gunEntries = new GunBoxEntry[numGuns];
 		}
+		nextGun = -1;
+		currentPage = new GunPage(s);
 	}
 
 	public static GunBoxType getBox(String s)
