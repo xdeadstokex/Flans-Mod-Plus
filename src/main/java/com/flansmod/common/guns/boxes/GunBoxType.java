@@ -31,7 +31,6 @@ public class GunBoxType extends InfoType
 	public IIcon side;
 	@SideOnly(Side.CLIENT)
 	public IIcon bottom;
-	public int numGuns;
 	public int nextGun = -1;
 
 	public GunBoxEntry[] gunEntries;
@@ -58,41 +57,15 @@ public class GunBoxType extends InfoType
 	@Override
 	public void preRead(TypeFile file)
 	{
-		//Make sure NumGuns is read before anything else
-		for(String line : file.lines)
-		{
-			if(line == null)
-				break;
-			if(line.startsWith("//"))
-				continue;
-			String[] split = line.split(" ");
-			if(split.length < 2)
-				continue;
-			
-			if (split[0].equals("NumGuns"))
-			{
-				numGuns = Integer.parseInt(split[1]);
-
-				if(numGuns - 8 >= 0)
-				{
-					gunEntries = new GunBoxEntry[8];
-					numGuns -= 8;
-				}
-				else
-				{
-					gunEntries = new GunBoxEntry[numGuns];
-				}
-
-				currentPage = new GunPage("default");
-			}
-		}
+		gunEntries = new GunBoxEntry[8];
+		currentPage = new GunPage("default");
 	}
 	
 	@Override
 	public void postRead(TypeFile file)
 	{
 		//Add any remaining gun entries to the pagelist if EOF.
-		currentPage.addGunList(gunEntries);
+		currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 		gunPages.add(currentPage);
 
 		gunBoxMap.put(this.shortName, this);
@@ -117,7 +90,6 @@ public class GunBoxType extends InfoType
 				if(gunEntries[0] != null)
 				{
 					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
-					numGuns += (8 - (nextGun + 1));
 					iteratePage(pageName);
 				}
 				else
@@ -131,7 +103,7 @@ public class GunBoxType extends InfoType
 				nextGun++;
 				if(nextGun > gunEntries.length - 1)
 				{
-					currentPage.addGunList(gunEntries);
+					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
 					iteratePage("default " + (gunPages.size() + 2));
 					nextGun++;
 				}
@@ -168,15 +140,7 @@ public class GunBoxType extends InfoType
 	{
 		//Add current to the pages and setup a new current
 		gunPages.add(currentPage);
-		if(numGuns - 8 >= 0)
-		{
-			gunEntries = new GunBoxEntry[8];
-			numGuns -= 8;
-		}
-		else
-		{
-			gunEntries = new GunBoxEntry[numGuns];
-		}
+		gunEntries = new GunBoxEntry[8];
 		nextGun = -1;
 		currentPage = new GunPage(s);
 	}
