@@ -104,6 +104,7 @@ public class ModelGun extends ModelBase
 	public Vector3f casingAttachPoint = new Vector3f();
 
     // Charge handle distance/delay/time
+	public int casingDelay = 0;
     public float chargeHandleDistance = 0F;
     public int chargeDelay = 0, chargeDelayAfterReload = 0, chargeTime = 1;
 
