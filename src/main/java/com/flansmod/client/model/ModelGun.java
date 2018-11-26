@@ -102,6 +102,7 @@ public class ModelGun extends ModelBase
     //  Rotation of the casing, 180° is the total rotation. If you do not understand rotation vectors, like me, just use the standard value here.
     public Vector3f casingRotateVector = new Vector3f(0.1F, 1F, 0.1F);
 	public Vector3f casingAttachPoint = new Vector3f();
+	public float caseScale = 1F;
 
     // Charge handle distance/delay/time
 	public int casingDelay = 0;
