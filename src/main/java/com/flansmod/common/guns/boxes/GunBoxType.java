@@ -85,8 +85,8 @@ public class GunBoxType extends InfoType
 				sideTexturePath = split[1];
 			if (split[0].equals("Page") || split[0].equals("SetPage"))
 			{
-				//If empty, assign a new page. If not, add the current page to list and start next one.
-				String pageName = split[1];
+				//If empty, rename the page. If not, add the current page to list and start next one.
+				String pageName = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 				if(gunEntries[0] != null)
 				{
 					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));

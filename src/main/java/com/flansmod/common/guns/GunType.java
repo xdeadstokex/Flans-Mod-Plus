@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import com.flansmod.client.model.ModelAttachment;
+import com.flansmod.client.model.ModelCasing;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
@@ -194,6 +196,10 @@ public class GunType extends PaintableType implements IScope
 	public ModelGun model;
 	/** For making detailed models and scaling down */
 	public float modelScale = 1F;
+	/** For adding a bullet casing model to render */
+	public ModelCasing casingModel;
+	/** Set a bullet casing texture */
+	public String casingTexture;
 
 	//Attachment settings
 	/** If this is true, then all attachments are allowed. Otherwise the list is checked */
@@ -449,13 +455,13 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("Deployable"))
 				deployable = split[1].equals("True");
 			else if(FMLCommonHandler.instance().getSide().isClient() && deployable && split[0].equals("DeployedModel"))
-			{
 				deployableModel = FlansMod.proxy.loadModel(split[1], shortName, ModelMG.class);
-			}
 			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("Model")))
-			{
 				model = FlansMod.proxy.loadModel(split[1], shortName, ModelGun.class);
-			}
+			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("CasingModel")))
+				casingModel = FlansMod.proxy.loadModel(split[1], shortName, ModelCasing.class);
+			else if(split[0].equals("CasingTexture"))
+				casingTexture = split[1];
 			else if(split[0].equals("ModelScale"))
 				modelScale = Float.parseFloat(split[1]);
 			else if(split[0].equals("Texture"))

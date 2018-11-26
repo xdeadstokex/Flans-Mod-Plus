@@ -5,6 +5,7 @@ import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.guns.boxes.GunPage;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -71,7 +72,15 @@ public class GuiGunBox extends GuiContainer
 		for(int i = 0; i < entries.length && i < 8; i++)
 		{
 			if(entries[i] != null)
-				fontRendererObj.drawString(entries[i].type.name, 19, 46 + (i * 12), hexColor(type.itemListTextColor));
+			{
+				String label = entries[i].type.name;
+
+				//Truncate is name is greater than the boundary
+				if(fontRendererObj.getStringWidth(label) > 97)
+					label = label.substring(0, Math.min(label.length(), 15)) + "...";
+
+				fontRendererObj.drawString(label, 19, 46 + (i * 12), hexColor(type.itemListTextColor));
+			}
 		}
 
 		//If a weapon has been selected from the list

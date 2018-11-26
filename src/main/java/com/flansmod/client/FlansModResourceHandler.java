@@ -39,17 +39,24 @@ public class FlansModResourceHandler
 		iconMap.put(infoType, resLoc);
 		return resLoc;
 	}	
-	
+
+	/** Get texture from an InfoType object */
 	public static ResourceLocation getTexture(InfoType infoType)
 	{
-		if(textureMap.containsKey(infoType))
+		return getTexture(infoType, infoType.texture);
+	}
+
+	/** Target a non-InfoType texture onto an InfoType object */
+	public static ResourceLocation getTexture(InfoType targetType, String textureName)
+	{
+		if(textureMap.containsKey(targetType))
 		{
-			return textureMap.get(infoType);
+			return textureMap.get(targetType);
 		}
-		ResourceLocation resLoc = new ResourceLocation("flansmod", "skins/" + infoType.texture + ".png");
-		if(infoType.texture != null)
+		ResourceLocation resLoc = new ResourceLocation("flansmod", "skins/" + textureName + ".png");
+		if(targetType.texture != null)
 		{
-			textureMap.put(infoType, resLoc);
+			textureMap.put(targetType, resLoc);
 			return resLoc;
 		}
 		else return null;

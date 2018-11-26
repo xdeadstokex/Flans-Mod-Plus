@@ -32,7 +32,6 @@ public class ModelGun extends ModelBase
 	public ModelRendererTurbo[] altbreakActionModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] slideModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] altslideModel = new ModelRendererTurbo[0];
-	public ModelRendererTurbo[] casingModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] pumpModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] chargeModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] altpumpModel = new ModelRendererTurbo[0];
@@ -93,18 +92,12 @@ public class ModelGun extends ModelBase
 	public float RecoilSlideDistance = 2F / 16F;
 	public float RotateSlideDistance = -3F;
     
-    //  Used for casing ejection animation
-    //  Total distance to translate
-    public Vector3f casingAnimDistance = new Vector3f(0, 0, 16);
-    //  Total range in variance for random motion
-    public Vector3f casingAnimSpread = new Vector3f(2, 4, 4);
-    //  Number of ticks (I guess?) to complete movement 
-    public int casingAnimTime = 20;
-    //  Rotation of the casing, 180° is the total rotation. If you do not understand rotation vectors, like me, just use the standard value here.
-    public Vector3f casingRotateVector = new Vector3f(0.1F, 1F, 0.1F);
+    // Used for casing ejection.
 	// Time until casing is ejected
 	public int casingDelay = 0;
-    
+    public int casingAnimTime = 20;
+	public Vector3f casingAttachPoint = new Vector3f();
+
     // Charge handle distance/delay/time
     public float chargeHandleDistance = 0F;
     public int chargeDelay = 0, chargeDelayAfterReload = 0, chargeTime = 1;
@@ -258,11 +251,6 @@ public class ModelGun extends ModelBase
 		render(altslideModel, f);
 	}
 
-	public void renderCasing(float f)
-	{
-		render(casingModel, f);
-	}
-
 	public void renderPump(float f)
 	{
 		render(pumpModel, f);
@@ -381,7 +369,6 @@ public class ModelGun extends ModelBase
 		flip(fullammoModel);
 		flip(slideModel);
 		flip(altslideModel);
-		flip(casingModel);
 		flip(pumpModel);
 		flip(altpumpModel);
 		flip(chargeModel);
@@ -419,7 +406,6 @@ public class ModelGun extends ModelBase
     		translate(fullammoModel, x, y, z);
     		translate(slideModel, x, y, z);
     		translate(altslideModel, x, y, z);
-    		translate(casingModel, x, y, z);
     		translate(pumpModel, x, y, z);
     		translate(altpumpModel, x, y, z);
     		translate(chargeModel, x, y, z);
