@@ -567,12 +567,12 @@ public class RenderGun implements IItemRenderer
 					float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing)/model.casingAnimTime;
 					if (casingProg >= 1)
 						casingProg = 0;
-					float moveX = casing.casingAnimDistance.x + (animations.casingRandom.x * casing.casingAnimSpread.x);
-					float moveY = casing.casingAnimDistance.y + (animations.casingRandom.y * casing.casingAnimSpread.y);
-					float moveZ = casing.casingAnimDistance.z + (animations.casingRandom.z * casing.casingAnimSpread.z);
+					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
+					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
+					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
 
 					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY),  model.casingAttachPoint.z + (casingProg * moveZ));
-					GL11.glRotatef(casingProg*180, casing.casingRotateVector.x, casing.casingRotateVector.y, casing.casingRotateVector.z);
+					GL11.glRotatef(casingProg*180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
 					renderEngine.bindTexture(FlansModResourceHandler.getTexture(type, type.casingTexture));
 					casing.renderCasing(f);
 				}
