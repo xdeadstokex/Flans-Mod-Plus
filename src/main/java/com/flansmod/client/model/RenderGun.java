@@ -552,21 +552,26 @@ public class RenderGun implements IItemRenderer {
 
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			if (animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item))
+			if (animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item) && type.casingModel != null)
 			{
 				GL11.glPushMatrix();
+				ModelFlash flash = type.flashModel;
+				GL11.glScalef(model.flashScale, model.flashScale, model.flashScale);
 				{
 					if (barrelAttachment != null)
 						GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
 					else
+					{
 						GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
-					model.renderFlash(f, animations.flashInt);
+					}
+					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.flashTexture));
+					flash.renderFlash(f);
 				}
 				GL11.glPopMatrix();
 			}
 
-			// Render casing ejection (Willy + Gold Testing)
-			// Only render in first person
+			// Render casing ejection
+			// Only renders in first person
 			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
 			{
 				ModelCasing casing = type.casingModel;
@@ -578,8 +583,8 @@ public class RenderGun implements IItemRenderer {
 					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
 					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
 					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
-					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
 					GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
+					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
 					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
 					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
 					casing.renderCasing(f);

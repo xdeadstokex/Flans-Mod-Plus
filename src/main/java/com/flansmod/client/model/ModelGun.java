@@ -106,6 +106,7 @@ public class ModelGun extends ModelBase
 	public int casingDelay = 0;
 	// Scale the bullet casing separately from gun
 	public float caseScale = 1F;
+	public float flashScale = 1F;
 
     // Charge handle distance/delay/time
     public float chargeHandleDistance = 0F;
