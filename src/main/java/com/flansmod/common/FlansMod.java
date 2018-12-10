@@ -126,6 +126,7 @@ public class FlansMod
     public static int noticeSpawnKillTime = 10;
     public static boolean casingEnable = true;
     public static boolean hitCrossHairEnable = true;
+	public static boolean bulletGuiEnable = true;
     public static float hitCrossHairColor[] = new float[]{ 1.0F, 1.0F, 1.0F, 1.0F };
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = true;
@@ -590,7 +591,8 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "");
+        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
+		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
@@ -620,8 +622,9 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "");
-        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
+        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
+		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
+		hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
         	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };

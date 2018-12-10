@@ -153,7 +153,7 @@ public class TickHandlerClient
 			}
 		}
 
-	    if(!event.isCancelable() && event.type == ElementType.HOTBAR)
+	    if(!event.isCancelable() && event.type == ElementType.HOTBAR && FlansMod.bulletGuiEnable)
 	    {
 			//Player ammo overlay
 			if(mc.thePlayer != null)

@@ -482,15 +482,21 @@ public class RenderGun implements IItemRenderer {
 
 		ItemStack[] bulletStacks = new ItemStack[type.getNumAmmoItemsInGun(item)];
 		boolean empty = true;
-		for (int i = 0; i < type.getNumAmmoItemsInGun(item); i++) {
+		int numRounds = 0;
+		for (int i = 0; i < type.getNumAmmoItemsInGun(item); i++)
+		{
 			bulletStacks[i] = ((ItemGun) item.getItem()).getBulletItemStack(item, i);
 			if (bulletStacks[i] != null && bulletStacks[i].getItem() instanceof ItemShootable
 					&& bulletStacks[i].getItemDamage() < bulletStacks[i].getMaxDamage())
+			{
 				empty = false;
+				numRounds += bulletStacks[i].getMaxDamage() - bulletStacks[i].getItemDamage();
+			}
 		}
 
 		// Sanity check for empty guns
-		if (model.slideLockOnEmpty) {
+		if (model.slideLockOnEmpty)
+		{
 			if (empty)
 				animations.onGunEmpty(true);
 			else if (!empty && !animations.reloading)
@@ -498,7 +504,8 @@ public class RenderGun implements IItemRenderer {
 		}
 
 		// Load texture
-		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms) {
+		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms)
+		{
 			Minecraft mc = Minecraft.getMinecraft();
 			renderFirstPersonArm(mc.thePlayer, model, animations);
 		}
@@ -528,32 +535,66 @@ public class RenderGun implements IItemRenderer {
 			if (gadgetAttachment == null && !model.gadgetIsOnPump)
 				model.renderDefaultGadget(f);
 
+			//Render the bullet counter
+			GL11.glPushMatrix();
+			{
+				if(model.isBulletCounterActive)
+					model.renderBulletCounter(f, numRounds);
+			}
+			GL11.glPopMatrix();
+
+			GL11.glPushMatrix();
+			{
+				if(model.isAdvBulletCounterActive)
+					model.renderAdvBulletCounter(f, numRounds, model.countOnRightHandSide);
+			}
+			GL11.glPopMatrix();
+
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			if (animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item)) {
+			if (animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item))
+			{
 				GL11.glPushMatrix();
-				if (barrelAttachment != null)
-					GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x,
-							model.muzzleFlashPoint.y + model.attachmentFlashOffset.y,
-							model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
-				else
-					GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
-				model.renderFlash(f, animations.flashInt);
+				{
+					if (barrelAttachment != null)
+						GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
+					else
+						GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
+					model.renderFlash(f, animations.flashInt);
+				}
+				GL11.glPopMatrix();
+			}
+
+			// Render casing ejection (Willy + Gold Testing)
+			// Only render in first person
+			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
+			{
+				ModelCasing casing = type.casingModel;
+				GL11.glPushMatrix();
+				{
+					float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
+					if (casingProg >= 1)
+						casingProg = 0;
+					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
+					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
+					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
+					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
+					GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
+					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
+					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
+					casing.renderCasing(f);
+				}
 				GL11.glPopMatrix();
 			}
 
 			// Render various shoot / reload animated parts
 			// Render the slide and charge action
-			if (slideAttachment == null && !type.getSecondaryFire(item)) {
+			if (slideAttachment == null && !type.getSecondaryFire(item))
+			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(
-							-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing)
-									* model.gunSlideDistance,
-							0F, 0F);
-					GL11.glTranslatef(-(1 - Math
-							.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing))
-							* model.chargeHandleDistance, 0F, 0F);
+					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing)) * model.chargeHandleDistance, 0F, 0F);
 					model.renderSlide(f);
 					if (scopeAttachment == null && model.scopeIsOnSlide)
 						model.renderDefaultScope(f);
@@ -572,34 +613,6 @@ public class RenderGun implements IItemRenderer {
 					model.renderaltSlide(f);
 					// if(scopeAttachment == null && model.scopeIsOnSlide)
 					// model.renderDefaultScope(f);
-				}
-				GL11.glPopMatrix();
-			}
-
-			// Render casing ejection (Willy + Gold Testing)
-			// Only render in first person
-			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null
-					&& !type.getSecondaryFire(item)) {
-				ModelCasing casing = type.casingModel;
-				GL11.glPushMatrix();
-				{
-					float casingProg = (animations.lastCasingStage
-							+ (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
-					if (casingProg >= 1)
-						casingProg = 0;
-					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
-					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
-					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
-					GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
-				
-					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX),
-							model.casingAttachPoint.y + (casingProg * moveY),
-							model.casingAttachPoint.z + (casingProg * moveZ));
-					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y,
-							model.casingRotateVector.z);
-					renderEngine.bindTexture(FlansModResourceHandler.getTexture(type, type.casingTexture));
-					casing.renderCasing(f);
-					//GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
 				}
 				GL11.glPopMatrix();
 			}

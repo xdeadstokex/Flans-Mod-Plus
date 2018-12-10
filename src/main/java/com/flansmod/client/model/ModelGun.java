@@ -99,15 +99,33 @@ public class ModelGun extends ModelBase
     public Vector3f casingAnimSpread = new Vector3f(2, 4, 4);
     //  Number of ticks (I guess?) to complete movement 
     public int casingAnimTime = 20;
-    //  Rotation of the casing, 180° is the total rotation. If you do not understand rotation vectors, like me, just use the standard value here.
+    //  Rotation of the casing, 180 is the total rotation. If you do not understand rotation vectors, like me, just use the standard value here.
     public Vector3f casingRotateVector = new Vector3f(0.1F, 1F, 0.1F);
 	public Vector3f casingAttachPoint = new Vector3f();
+	// Time before the casing is ejected from gun
+	public int casingDelay = 0;
+	// Scale the bullet casing separately from gun
 	public float caseScale = 1F;
 
     // Charge handle distance/delay/time
-	public int casingDelay = 0;
     public float chargeHandleDistance = 0F;
     public int chargeDelay = 0, chargeDelayAfterReload = 0, chargeTime = 1;
+
+	/**
+	 * Bullet Counter Models. Can be used to display bullet count in-game interface.
+	 * Each part is represented by number of rounds remaining per magazine.
+	 *
+	 * - Simple counter will loop through each part. Allows flexibility for bullet counter UI design.
+	 *
+	 * - Adv counter used for counting mags of more than 10, to reduce texture parts. Divides count into digits.
+	 *	 Less flexibility as it requires 10 textures parts at maximum (numbers 0-9).
+	 */
+	public ModelRendererTurbo[] bulletCounterModel = new ModelRendererTurbo[0];
+	public ModelRendererTurbo[][] advBulletCounterModel = new ModelRendererTurbo[0][0];
+	/** For Adv Bullet Counter. Reads in numbers from left hand side when false */
+	public boolean countOnRightHandSide = false;
+	/** Toggle the counters active. Saves render performance. */
+	public boolean isBulletCounterActive, isAdvBulletCounterActive = false;
 
     
 	public EnumAnimationType animationType = EnumAnimationType.NONE;
@@ -354,9 +372,51 @@ public class ModelGun extends ModelBase
 		}
 	}
 
+	public void renderBulletCounter(float f, int k)
+	{
+		for(int i = 0; i < bulletCounterModel.length; i++)
+		{
+			if(i == k)
+			{
+				glowOn();
+				bulletCounterModel[i].render(f);
+				glowOff();
+			}
+		}
+	}
+
+	public void renderAdvBulletCounter(float f, int k, boolean rhs)
+	{
+		//Divide the ammo count into array of ints
+		char[] count = String.valueOf(k).toCharArray();
+		int[] digits = new int[count.length];
+
+		for(int i = 0; i < count.length ; i++)
+		{
+			if(!rhs)
+				digits[i] = count[i] - 48;						//read digits left hand side
+			else
+				digits[digits.length - 1 - i] = count[i] - 48;	//read digits right hand side
+		}
+
+		//Loop though the array, and manage ammo count render.
+		for(int i = 0; i < digits.length ; i++)
+		{
+			for(int j = 0; j < advBulletCounterModel[i].length; j++)
+			{
+				if (digits[i] == j)
+				{
+					glowOn();
+					advBulletCounterModel[i][j].render(f);
+					glowOff();
+				}
+			}
+		}
+	}
+
 
 	/** For renderering models simply */
-	private void render(ModelRendererTurbo[] models, float f)
+	protected void render(ModelRendererTurbo[] models, float f)
 	{
 		for(ModelRendererTurbo model : models)
 			if(model != null)
@@ -386,6 +446,9 @@ public class ModelGun extends ModelBase
 		flip(altbreakActionModel);
 		flip(hammerModel);
 		flip(althammerModel);
+		flip(bulletCounterModel);
+		for(ModelRendererTurbo[] mod : advBulletCounterModel)
+			flip(mod);
 		for(ModelRendererTurbo[] model : flashModel)
 			flip(model);
 	}
@@ -423,6 +486,9 @@ public class ModelGun extends ModelBase
     		translate(altbreakActionModel, x, y, z);
     		translate(hammerModel, x, y, z);
     		translate(althammerModel, x, y, z);
+			translate(bulletCounterModel, x, y, z);
+			for(ModelRendererTurbo[] mod : advBulletCounterModel)
+				translate(mod, x, y, z);
 			for(ModelRendererTurbo[] model : flashModel)
 				translate(model, x, y, z);
     	}
