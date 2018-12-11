@@ -53,7 +53,6 @@ public class ModelGun extends ModelBase
 	public Vector3f accessoryAttachPoint = new Vector3f();
 
 	//Muzzle flash models
-	public ModelRendererTurbo flashModel[][] = new ModelRendererTurbo[0][0];
 	public Vector3f muzzleFlashPoint = new Vector3f(0,0,0);
 	public Vector3f attachmentFlashOffset = new Vector3f(0,0,0);
 	public boolean hasFlash = false;
@@ -361,17 +360,6 @@ public class ModelGun extends ModelBase
 	{
 		render(althammerModel, f);
 	}
-	
-	public void renderFlash (float f, int i)
-	{
-		if(hasFlash)
-		{
-			glowOn();
-			if(flashModel[i] != null)
-			render(flashModel[i], f);
-			glowOff();
-		}
-	}
 
 	public void renderBulletCounter(float f, int k)
 	{
@@ -450,8 +438,6 @@ public class ModelGun extends ModelBase
 		flip(bulletCounterModel);
 		for(ModelRendererTurbo[] mod : advBulletCounterModel)
 			flip(mod);
-		for(ModelRendererTurbo[] model : flashModel)
-			flip(model);
 	}
 
 	protected void flip(ModelRendererTurbo[] model)
@@ -490,8 +476,6 @@ public class ModelGun extends ModelBase
 			translate(bulletCounterModel, x, y, z);
 			for(ModelRendererTurbo[] mod : advBulletCounterModel)
 				translate(mod, x, y, z);
-			for(ModelRendererTurbo[] model : flashModel)
-				translate(model, x, y, z);
     	}
 	}
 

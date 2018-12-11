@@ -552,7 +552,7 @@ public class RenderGun implements IItemRenderer {
 
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			if (animations.muzzleFlashTime > 0 && !type.getSecondaryFire(item) && type.casingModel != null)
+			if (animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
 				ModelFlash flash = type.flashModel;
@@ -561,11 +561,12 @@ public class RenderGun implements IItemRenderer {
 					if (barrelAttachment != null)
 						GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
 					else
-					{
 						GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
-					}
+
 					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.flashTexture));
-					flash.renderFlash(f);
+					ModelGun.glowOn();
+					flash.renderFlash(f, animations.flashInt);
+					ModelGun.glowOff();
 				}
 				GL11.glPopMatrix();
 			}
