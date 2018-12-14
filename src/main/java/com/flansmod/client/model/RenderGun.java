@@ -252,7 +252,7 @@ public class RenderGun implements IItemRenderer {
 								- (model.tiltGunTime + model.unloadClipTime + model.loadClipTime))
 								/ model.untiltGunTime;
 
-					// Rotate the gun dependent on the animation type
+					// Rotate/translate the GUN dependent on the animation type
 					switch (anim) {
 					case BOTTOM_CLIP:
 					case PISTOL_CLIP:
@@ -573,25 +573,7 @@ public class RenderGun implements IItemRenderer {
 
 			// Render casing ejection
 			// Only renders in first person
-			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
-			{
-				ModelCasing casing = type.casingModel;
-				GL11.glPushMatrix();
-				{
-					float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
-					if (casingProg >= 1)
-						casingProg = 0;
-					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
-					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
-					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
-					GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
-					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
-					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
-					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
-					casing.renderCasing(f);
-				}
-				GL11.glPopMatrix();
-			}
+
 
 			// Render various shoot / reload animated parts
 			// Render the slide and charge action
@@ -799,7 +781,7 @@ public class RenderGun implements IItemRenderer {
 					float loadOnlyClipPosition = Math.max(0F, Math.min(1F,
 							1F - ((effectiveReloadAnimationProgress - tiltGunTime) / (unloadClipTime + loadClipTime))));
 
-					// Rotate the gun dependent on the animation type
+					// Rotate/translate the AMMO dependent on the animation type
 					switch (anim) {
 					case BREAK_ACTION: {
 						GL11.glTranslatef(model.barrelBreakPoint.x, model.barrelBreakPoint.y, model.barrelBreakPoint.z);
@@ -946,10 +928,12 @@ public class RenderGun implements IItemRenderer {
 						int bulletNum = MathHelper.floor_float(thing);
 						float bulletProgress = thing - bulletNum;
 
-						GL11.glRotatef(bulletProgress * 15F, 0F, 1F, 0F);
-						GL11.glRotatef(bulletProgress * 15F, 0F, 0F, 1F);
-						GL11.glTranslatef(bulletProgress * -1F * 1 / type.modelScale, 0F,
-								bulletProgress * 0.5F * 1 / type.modelScale);
+						GL11.glRotatef(bulletProgress * model.rotateClipVertical, 0F, 1F, 0F);
+						GL11.glRotatef(bulletProgress * model.rotateClipHorizontal, 0F, 0F, 1F);
+						GL11.glRotatef(bulletProgress * model.tiltClip, 1F, 0F, 0F);
+						GL11.glTranslatef(bulletProgress * model.translateClip.x / type.modelScale,
+								bulletProgress * model.translateClip.y / type.modelScale, bulletProgress * model.translateClip.z / type.modelScale);
+
 
 						break;
 					}
@@ -1214,6 +1198,26 @@ public class RenderGun implements IItemRenderer {
 
 		// Release
 		GL11.glPopMatrix();
+		
+		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
+		{
+			ModelCasing casing = type.casingModel;
+			GL11.glPushMatrix();
+			{
+				float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
+				if (casingProg >= 1)
+					casingProg = 0;
+				float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
+				float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
+				float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
+				GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
+				GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
+				GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
+				renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
+				casing.renderCasing(f);
+			}
+			GL11.glPopMatrix();
+		}
 	}
 
 	/** Clean up some redundant code */
