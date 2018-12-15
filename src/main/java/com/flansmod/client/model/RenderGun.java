@@ -13,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.event.RenderHandEvent;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
@@ -23,7 +22,6 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.vector.Vector3f;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 
 public class RenderGun implements IItemRenderer {
@@ -163,7 +161,8 @@ public class RenderGun implements IItemRenderer {
 				 */
 				break;
 			}
-			case EQUIPPED_FIRST_PERSON: {
+			case EQUIPPED_FIRST_PERSON:
+			{
 				IScope scope = gunType.getCurrentScope(item);
 				if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay()) {
 					GL11.glPopMatrix();
@@ -415,8 +414,8 @@ public class RenderGun implements IItemRenderer {
 	 * Gun render method, seperated from transforms so that mecha renderer may also
 	 * call this
 	 */
-	public void renderGun(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations,
-			float reloadRotate, ItemRenderType rtype) {
+	public void renderGun(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations, float reloadRotate, ItemRenderType rtype)
+	{
 		// Make sure we actually have the renderEngine
 		if (renderEngine == null)
 			renderEngine = Minecraft.getMinecraft().renderEngine;
@@ -444,39 +443,31 @@ public class RenderGun implements IItemRenderer {
 		ItemStack pumpItemStack = type.getPumpItemStack(item);
 		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
 
+		// Gun recoil
+		if(model.isRecoilStrong)
+			animations.recoilAmount = 1F;
+		else
+			animations.recoilAmount = 0.33F;
+
 		GL11.glPushMatrix();
-		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
+		{
 			GL11.glTranslatef(0F, 0, 0);
 
-			// Gun recoil
-			GL11.glTranslatef(
-					-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing)
-							* getRecoilDistance(gripAttachment, type, item),
-					0F, 0F);
-			GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing)
-					* getRecoilAngle(gripAttachment, type, item), 0F, 0F, 1F);
+			GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilDistance(gripAttachment, type, item), 0F, 0F);
+			GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilAngle(gripAttachment, type, item), 0F, 0F, 1F);
 
 			// Do not move gun when there's a pump in the reload
-			if (model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading) {
-				GL11.glRotatef(
-						-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing))
-								* -5F,
-						0F, 1F, 0F);
-				GL11.glRotatef(
-						-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing))
-								* 5F,
-						1F, 0F, 0F);
+			if (model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
+			{
+				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * -5F, 0F, 1F, 0F);
+				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * 5F, 1F, 0F, 0F);
 			}
 
-			if (model.isSingleAction) {
-				GL11.glRotatef(
-						-(1 - Math.abs(animations.lastGunPullback
-								+ (animations.gunPullback - animations.lastGunPullback) * smoothing)) * -5F,
-						0F, 0F, 1F);
-				GL11.glRotatef(
-						-(1 - Math.abs(animations.lastGunPullback
-								+ (animations.gunPullback - animations.lastGunPullback) * smoothing)) * 2.5F,
-						1F, 0F, 0F);
+			if (model.isSingleAction)
+			{
+				GL11.glRotatef(-(1 - Math.abs(animations.lastGunPullback + (animations.gunPullback - animations.lastGunPullback) * smoothing)) * -5F, 0F, 0F, 1F);
+				GL11.glRotatef(-(1 - Math.abs(animations.lastGunPullback + (animations.gunPullback - animations.lastGunPullback) * smoothing)) * 2.5F, 1F, 0F, 0F);
 			}
 		}
 
@@ -1086,6 +1077,26 @@ public class RenderGun implements IItemRenderer {
 					renderAttachmentAmmo(f, gripAttachment, gripItemStack, model, type);
 			}
 			GL11.glPopMatrix();
+
+			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
+			{
+				ModelCasing casing = type.casingModel;
+				GL11.glPushMatrix();
+				{
+					float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
+					if (casingProg >= 1)
+						casingProg = 0;
+					float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
+					float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
+					float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
+					GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
+					GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
+					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
+					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
+					casing.renderCasing(f);
+				}
+				GL11.glPopMatrix();
+			}
 		}
 		GL11.glPopMatrix();
 
@@ -1198,26 +1209,6 @@ public class RenderGun implements IItemRenderer {
 
 		// Release
 		GL11.glPopMatrix();
-		
-		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
-		{
-			ModelCasing casing = type.casingModel;
-			GL11.glPushMatrix();
-			{
-				float casingProg = (animations.lastCasingStage + (animations.casingStage - animations.lastCasingStage) * smoothing) / model.casingAnimTime;
-				if (casingProg >= 1)
-					casingProg = 0;
-				float moveX = model.casingAnimDistance.x + (animations.casingRandom.x * model.casingAnimSpread.x);
-				float moveY = model.casingAnimDistance.y + (animations.casingRandom.y * model.casingAnimSpread.y);
-				float moveZ = model.casingAnimDistance.z + (animations.casingRandom.z * model.casingAnimSpread.z);
-				GL11.glScalef(model.caseScale, model.caseScale, model.caseScale);
-				GL11.glTranslatef(model.casingAttachPoint.x + (casingProg * moveX), model.casingAttachPoint.y + (casingProg * moveY), model.casingAttachPoint.z + (casingProg * moveZ));
-				GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
-				renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
-				casing.renderCasing(f);
-			}
-			GL11.glPopMatrix();
-		}
 	}
 
 	/** Clean up some redundant code */

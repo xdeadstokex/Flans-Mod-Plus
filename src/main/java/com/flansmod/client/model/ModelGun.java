@@ -85,13 +85,14 @@ public class ModelGun extends ModelBase
 	public boolean rightHandAmmo = false;
 	public boolean leftHandAmmo = false;
 
-	//Various animation parameters
+	/** Recoil and slide based parameters */
 	public float gunSlideDistance = 1F / 4F;
 	public float altgunSlideDistance = 1F / 4F;
 	public float RecoilSlideDistance = 2F / 16F;
 	public float RotateSlideDistance = -3F;
-    
-    // Used for casing ejection.
+	public boolean isRecoilStrong = false;
+
+	/** Casing and muzzle flash parameters */
     //  Total distance to translate
     public Vector3f casingAnimDistance = new Vector3f(0, 0, 16);
     //  Total range in variance for random motion
