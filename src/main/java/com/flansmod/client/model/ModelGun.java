@@ -90,7 +90,8 @@ public class ModelGun extends ModelBase
 	public float altgunSlideDistance = 1F / 4F;
 	public float RecoilSlideDistance = 2F / 16F;
 	public float RotateSlideDistance = -3F;
-	public boolean isRecoilStrong = false;
+	/** Select an amount of recoil per shot, between 0 and 1 */
+	public float recoilAmount = 0.33F;
 
 	/** Casing and muzzle flash parameters */
     //  Total distance to translate

@@ -444,10 +444,7 @@ public class RenderGun implements IItemRenderer {
 		ItemStack accessoryItemStack = type.getAccessoryItemStack(item);
 
 		// Gun recoil
-		if(model.isRecoilStrong)
-			animations.recoilAmount = 1F;
-		else
-			animations.recoilAmount = 0.33F;
+		animations.recoilAmount = model.recoilAmount;
 
 		GL11.glPushMatrix();
 		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON)
