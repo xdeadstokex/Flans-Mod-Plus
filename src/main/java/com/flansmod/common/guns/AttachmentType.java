@@ -32,6 +32,8 @@ public class AttachmentType extends PaintableType implements IScope
 	public float flashlightRange = 10F;
 	/** Flashlight strength between 0 and 15 */
 	public int flashlightStrength = 12;
+	/** If true, disable the muzzle flash model */
+	public boolean disableMuzzleFlash = false;
 	
 	//Gun behaviour modifiers
 	/** These stack between attachments and apply themselves to the gun's default spread */
@@ -125,6 +127,8 @@ public class AttachmentType extends PaintableType implements IScope
 			
 			else if(split[0].equals("Silencer"))
 				silencer = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("MuzzleFlash"))
+				disableMuzzleFlash = Boolean.parseBoolean(split[1].toLowerCase());
 			
 			//Flashlight settings
 			else if(split[0].equals("Flashlight"))

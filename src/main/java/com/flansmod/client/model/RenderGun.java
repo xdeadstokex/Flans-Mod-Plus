@@ -540,27 +540,30 @@ public class RenderGun implements IItemRenderer {
 
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			if (animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
+			boolean isFlashEnabled = !(barrelAttachment != null && !barrelAttachment.disableMuzzleFlash);
+			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
 				ModelFlash flash = type.flashModel;
 				GL11.glScalef(model.flashScale, model.flashScale, model.flashScale);
 				{
 					if (barrelAttachment != null)
-						GL11.glTranslatef(model.muzzleFlashPoint.x + model.attachmentFlashOffset.x, model.muzzleFlashPoint.y + model.attachmentFlashOffset.y, model.muzzleFlashPoint.z + model.attachmentFlashOffset.z);
+						GL11.glTranslatef(model.muzzleFlashPoint.x + barrelAttachment.model.attachmentFlashOffset.x,
+										  model.muzzleFlashPoint.y + barrelAttachment.model.attachmentFlashOffset.y,
+										  model.muzzleFlashPoint.z + barrelAttachment.model.attachmentFlashOffset.z);
 					else
-						GL11.glTranslatef(model.muzzleFlashPoint.x, model.muzzleFlashPoint.y, model.muzzleFlashPoint.z);
+						GL11.glTranslatef(model.muzzleFlashPoint.x + model.defaultBarrelFlashPoint.x,
+										  model.muzzleFlashPoint.y + model.defaultBarrelFlashPoint.y,
+										  model.muzzleFlashPoint.z + model.defaultBarrelFlashPoint.z);
 
 					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.flashTexture));
 					ModelGun.glowOn();
 					flash.renderFlash(f, animations.flashInt);
 					ModelGun.glowOff();
+					renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 				}
 				GL11.glPopMatrix();
 			}
-
-			// Render casing ejection
-			// Only renders in first person
 
 
 			// Render various shoot / reload animated parts
@@ -579,7 +582,8 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Render the alternate slide
-			if (slideAttachment == null && !type.getSecondaryFire(item)) {
+			if (slideAttachment == null && !type.getSecondaryFire(item))
+			{
 				GL11.glPushMatrix();
 				{
 					GL11.glTranslatef(
@@ -608,11 +612,9 @@ public class RenderGun implements IItemRenderer {
 			// Render the alternate break action
 			GL11.glPushMatrix();
 			{
-				GL11.glTranslatef(model.altbarrelBreakPoint.x, model.altbarrelBreakPoint.y,
-						model.altbarrelBreakPoint.z);
+				GL11.glTranslatef(model.altbarrelBreakPoint.x, model.altbarrelBreakPoint.y, model.altbarrelBreakPoint.z);
 				GL11.glRotatef(reloadRotate * -model.altbreakAngle, 0F, 0F, 1F);
-				GL11.glTranslatef(-model.altbarrelBreakPoint.x, -model.altbarrelBreakPoint.y,
-						-model.altbarrelBreakPoint.z);
+				GL11.glTranslatef(-model.altbarrelBreakPoint.x, -model.altbarrelBreakPoint.y, -model.altbarrelBreakPoint.z);
 				model.renderaltBreakAction(f);
 				// if(scopeAttachment == null && model.scopeIsOnBreakAction)
 				// model.renderDefaultScope(f);
@@ -634,23 +636,18 @@ public class RenderGun implements IItemRenderer {
 			{
 				GL11.glTranslatef(model.althammerSpinPoint.x, model.althammerSpinPoint.y, model.althammerSpinPoint.z);
 				GL11.glRotatef(-animations.althammerRotation, 0F, 0F, 1F);
-				GL11.glTranslatef(-model.althammerSpinPoint.x, -model.althammerSpinPoint.y,
-						-model.althammerSpinPoint.z);
+				GL11.glTranslatef(-model.althammerSpinPoint.x, -model.althammerSpinPoint.y, -model.althammerSpinPoint.z);
 				model.renderaltHammer(f);
 			}
 			GL11.glPopMatrix();
 
 			// Render the pump-action handle
-			if (pumpAttachment == null) {
+			if (pumpAttachment == null)
+			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(
-							-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing)
-									* model.gunSlideDistance,
-							0F, 0F);
-					GL11.glTranslatef(-(1
-							- Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing))
-							* model.pumpHandleDistance, 0F, 0F);
+					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 					model.renderPump(f);
 					if (gripAttachment == null && model.gripIsOnPump)
 						model.renderDefaultGrip(f);
@@ -661,13 +658,12 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Render the alternate pump-action handle
-			if (pumpAttachment == null) {
+			if (pumpAttachment == null)
+			{
 				GL11.glPushMatrix();
 				{
 
-					GL11.glTranslatef(-(1
-							- Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing))
-							* model.pumpHandleDistance, 0F, 0F);
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 					float pumped = (animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing);
 					model.renderaltPump(f);
 					if (gripAttachment == null && model.gripIsOnPump)
@@ -679,25 +675,23 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Render the charge handle
-			if (model.chargeHandleDistance != 0F) {
+			if (model.chargeHandleDistance != 0F)
+			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(-(1 - Math
-							.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing))
-							* model.chargeHandleDistance, 0F, 0F);
+					GL11.glTranslatef(-(1 - Math.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing)) * model.chargeHandleDistance, 0F, 0F);
 					model.renderCharge(f);
 				}
 				GL11.glPopMatrix();
 			}
 
 			// Render the minigun barrels
-			if (type.mode == EnumFireMode.MINIGUN) {
+			if (type.mode == EnumFireMode.MINIGUN)
+			{
 				GL11.glPushMatrix();
-				GL11.glTranslatef(model.minigunBarrelOrigin.x, model.minigunBarrelOrigin.y,
-						model.minigunBarrelOrigin.z);
+				GL11.glTranslatef(model.minigunBarrelOrigin.x, model.minigunBarrelOrigin.y, model.minigunBarrelOrigin.z);
 				GL11.glRotatef(animations.minigunBarrelRotation, 1F, 0F, 0F);
-				GL11.glTranslatef(-model.minigunBarrelOrigin.x, -model.minigunBarrelOrigin.y,
-						-model.minigunBarrelOrigin.z);
+				GL11.glTranslatef(-model.minigunBarrelOrigin.x, -model.minigunBarrelOrigin.y, -model.minigunBarrelOrigin.z);
 				model.renderMinigunBarrel(f);
 				GL11.glPopMatrix();
 			}
@@ -733,9 +727,9 @@ public class RenderGun implements IItemRenderer {
 				if (gripAttachment != null && type.getSecondaryFire(item))
 					anim = gripAttachment.model.secondaryAnimType;
 
-				float tiltGunTime = model.tiltGunTime, unloadClipTime = model.unloadClipTime,
-						loadClipTime = model.loadClipTime;
-				if (gripAttachment != null && type.getSecondaryFire(item)) {
+				float tiltGunTime = model.tiltGunTime, unloadClipTime = model.unloadClipTime, loadClipTime = model.loadClipTime;
+				if (gripAttachment != null && type.getSecondaryFire(item))
+				{
 					tiltGunTime = gripAttachment.model.tiltGunTime;
 					unloadClipTime = gripAttachment.model.unloadClipTime;
 					loadClipTime = gripAttachment.model.loadClipTime;
@@ -1047,8 +1041,7 @@ public class RenderGun implements IItemRenderer {
 					Minecraft mc = Minecraft.getMinecraft();
 					renderAnimArm(mc.thePlayer, model, type, animations);
 				}
-				renderEngine.bindTexture(
-						FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
+				renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 
 				if (shouldRender) {
 					if (gripAttachment != null && type.getSecondaryFire(item))
@@ -1075,6 +1068,7 @@ public class RenderGun implements IItemRenderer {
 			}
 			GL11.glPopMatrix();
 
+			//Render casing ejection
 			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
 			{
 				ModelCasing casing = type.casingModel;
@@ -1091,6 +1085,7 @@ public class RenderGun implements IItemRenderer {
 					GL11.glRotatef(casingProg * 180, model.casingRotateVector.x, model.casingRotateVector.y, model.casingRotateVector.z);
 					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.casingTexture));
 					casing.renderCasing(f);
+					renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(type.getPaintjob(item.getItemDamage())));
 				}
 				GL11.glPopMatrix();
 			}

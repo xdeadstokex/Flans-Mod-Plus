@@ -53,8 +53,8 @@ public class ModelGun extends ModelBase
 	public Vector3f accessoryAttachPoint = new Vector3f();
 
 	//Muzzle flash models
+	public Vector3f defaultBarrelFlashPoint = new Vector3f(0,0,0);
 	public Vector3f muzzleFlashPoint = new Vector3f(0,0,0);
-	public Vector3f attachmentFlashOffset = new Vector3f(0,0,0);
 	public boolean hasFlash = false;
 
 	//Arms rendering
