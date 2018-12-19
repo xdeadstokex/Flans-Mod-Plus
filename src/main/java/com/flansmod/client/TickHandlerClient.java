@@ -361,6 +361,9 @@ public class TickHandlerClient
 			}
 			if(tickcount > 0 && FlansMod.hitCrossHairEnable == true)
 			{
+				ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+				ItemGun gunItem = (ItemGun)stack.getItem();
+				GunType gunType = gunItem.type;
 				FlansModClient.minecraft.entityRenderer.setupOverlayRendering();
 				GL11.glEnable(3042 /* GL_BLEND */);
 				GL11.glDisable(2929 /* GL_DEPTH_TEST */);
@@ -372,9 +375,17 @@ public class TickHandlerClient
 						FlansMod.hitCrossHairColor[3],
 						FlansMod.hitCrossHairColor[0] * (float)tickcount / 20);
 				GL11.glDisable(3008 /* GL_ALPHA_TEST */);
-
-				mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/CrossHair.png"));
-
+				//Custom hit marker GUI if set in gun config
+				if(gunType.hitTexture != null)
+				{
+					mc.renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(gunType.hitTexture));
+				}
+				//Default hit marker GUI
+				else
+				{
+					mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/CrossHair.png"));
+				}
+				
 				tessellator.startDrawingQuads();
 				tessellator.addVertexWithUV(i / 2 - 2 * j, j, -90D, 0.0D, 1.0D);
 				tessellator.addVertexWithUV(i / 2 + 2 * j, j, -90D, 1.0D, 1.0D);
