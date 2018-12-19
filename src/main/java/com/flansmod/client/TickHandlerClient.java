@@ -381,6 +381,10 @@ public class TickHandlerClient
 					mc.renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(gunType.hitTexture));
 				}
 				//Default hit marker GUI
+				else if (FlansMod.hdHitCrosshair == true)
+				{
+					mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/HDCrossHair.png"));
+				}
 				else
 				{
 					mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/CrossHair.png"));
