@@ -205,6 +205,8 @@ public class GunType extends PaintableType implements IScope
 	public String casingTexture;
 	/** Set a muzzle flash texture */
 	public String flashTexture;
+	/** Set a hit marker texture */
+	public String hitTexture;
 
 	//Attachment settings
 	/** If this is true, then all attachments are allowed. Otherwise the list is checked */
@@ -475,6 +477,8 @@ public class GunType extends PaintableType implements IScope
 				modelScale = Float.parseFloat(split[1]);
 			else if(split[0].equals("Texture"))
 				texture = split[1];
+			else if(split[0].equals("HitTexture"))
+				hitTexture = split[1];
 			else if(split[0].equals("DeployedTexture"))
 				deployableTexture = split[1];
 			else if(split[0].equals("StandBackDistance"))
