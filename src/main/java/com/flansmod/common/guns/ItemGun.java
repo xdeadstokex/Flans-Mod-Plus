@@ -208,6 +208,9 @@ public class ItemGun extends Item implements IPaintableItem
 	{
 		KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
 
+		if( !type.getPaintjob(stack.getItemDamage()).displayName.equals("default") )
+			lines.add("\u00a7b\u00a7o" + type.getPaintjob(stack.getItemDamage()).displayName);
+
 		if(!type.packName.isEmpty())
 		{
 			lines.add("\u00a7o" + type.packName);

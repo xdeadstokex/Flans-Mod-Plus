@@ -233,13 +233,16 @@ public class ModelGun extends ModelBase
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
 
         GL11.glEnable(GL11.GL_BLEND);
-        //GL11.glDisable(GL11.GL_ALPHA_TEST);
+		//GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
-        try {
+        try
+		{
         	lightmapLastX = OpenGlHelper.lastBrightnessX;
         	lightmapLastY = OpenGlHelper.lastBrightnessY;
-        } catch(NoSuchFieldError e) {
+        }
+		catch(NoSuchFieldError e)
+		{
         	optifineBreak = true;
         }
 

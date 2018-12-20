@@ -19,6 +19,8 @@ public abstract class PaintableType extends InfoType
 	public Paintjob defaultPaintjob;	
 	/** Assigns IDs to paintjobs */
 	private int nextPaintjobID = 1;
+	/** Add a friendly paintjob name */
+	private String paintjobName;
 	
 	public PaintableType(TypeFile file)
 	{
@@ -35,7 +37,7 @@ public abstract class PaintableType extends InfoType
 	public void postRead(TypeFile file)
 	{		
 		//After all lines have been read, set up the default paintjob
-		defaultPaintjob = new Paintjob(0, iconPath, texture, new ItemStack[0]);
+		defaultPaintjob = new Paintjob(0, "default", iconPath, texture, new ItemStack[0]);
 		//Move to a new list to ensure that the default paintjob is always first
 		ArrayList<Paintjob> newPaintjobList = new ArrayList<Paintjob>();
 		newPaintjobList.add(defaultPaintjob);
@@ -52,16 +54,17 @@ public abstract class PaintableType extends InfoType
 			//Paintjobs
 			if(split[0].toLowerCase().equals("paintjob"))
 			{
-				ItemStack[] dyeStacks = new ItemStack[(split.length - 3) / 2];
-				for(int i = 0; i < (split.length - 3) / 2; i++)
-					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), getDyeDamageValue(split[i * 2 + 3]));
+				ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
+				for(int i = 0; i < (split.length - 4) / 2; i++)
+					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
+
 				//if(split[1].contains("_"))
 				//{
 				//	String[] splat = split[1].split("_");
 				//	if(splat[0].equals(iconPath))
 				//		split[1] = splat[1];
 				//}
-				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks));
+				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks));
 			}
 		} 
 		catch (Exception e)
