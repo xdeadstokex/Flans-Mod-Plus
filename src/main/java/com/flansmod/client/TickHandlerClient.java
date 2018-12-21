@@ -352,14 +352,15 @@ public class TickHandlerClient
 					}
 				}
 			}
-
 			//RenderHitCrossHair
 			if(EntityBullet.hitCrossHair)
 			{
 				tickcount = 20;
 				EntityBullet.hitCrossHair = false;
 			}
-			if(tickcount > 0 && FlansMod.hitCrossHairEnable == true)
+			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			ItemStack currentHeldItem = player.getCurrentEquippedItem();
+			if(tickcount > 0 && FlansMod.hitCrossHairEnable == true && currentHeldItem != null && currentHeldItem.getItem() instanceof ItemGun)
 			{
 				ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
 				ItemGun gunItem = (ItemGun)stack.getItem();
