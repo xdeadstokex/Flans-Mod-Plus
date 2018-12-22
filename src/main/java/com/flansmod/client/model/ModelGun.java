@@ -145,6 +145,8 @@ public class ModelGun extends ModelBase
 	public float pumpHandleDistance = 4F / 16F;
 	/** For end loaded projectiles */
 	public float endLoadedAmmoDistance = 1F;
+	/** For break action projectiles */
+	public float breakActionAmmoDistance = 1F;
 	/** If true, then the grip attachment will move with the shotgun pump */
 	public boolean gripIsOnPump = false;
 	/** If true, then the gadget attachment will move with the shotgun pump */
