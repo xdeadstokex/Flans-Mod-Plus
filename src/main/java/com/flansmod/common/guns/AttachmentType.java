@@ -127,7 +127,7 @@ public class AttachmentType extends PaintableType implements IScope
 			
 			else if(split[0].equals("Silencer"))
 				silencer = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("MuzzleFlash"))
+			else if(split[0].equals("DisableMuzzleFlash") || split[0].equals("DisableFlash"))
 				disableMuzzleFlash = Boolean.parseBoolean(split[1].toLowerCase());
 			
 			//Flashlight settings

@@ -540,7 +540,10 @@ public class RenderGun implements IItemRenderer {
 
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			boolean isFlashEnabled = !(barrelAttachment != null && !barrelAttachment.disableMuzzleFlash);
+			boolean isFlashEnabled = true;
+			if (barrelAttachment != null && barrelAttachment.disableMuzzleFlash)
+				isFlashEnabled = false;
+
 			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
