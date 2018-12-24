@@ -208,19 +208,13 @@ public class RenderGun implements IItemRenderer {
 					GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
 				}
 
-				if (animations.meleeAnimationProgress > 0
-						&& animations.meleeAnimationProgress < gunType.meleePath.size()) {
+				if (animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
+				{
 					Vector3f meleePos = gunType.meleePath.get(animations.meleeAnimationProgress);
-					Vector3f nextMeleePos = animations.meleeAnimationProgress + 1 < gunType.meleePath.size()
-							? gunType.meleePath.get(animations.meleeAnimationProgress + 1)
-							: new Vector3f();
-					GL11.glTranslatef(meleePos.x + (nextMeleePos.x - meleePos.x) * smoothing,
-							meleePos.y + (nextMeleePos.y - meleePos.y) * smoothing,
-							meleePos.z + (nextMeleePos.z - meleePos.z) * smoothing);
+					Vector3f nextMeleePos = animations.meleeAnimationProgress + 1 < gunType.meleePath.size() ? gunType.meleePath.get(animations.meleeAnimationProgress + 1) : new Vector3f();
+					GL11.glTranslatef(meleePos.x + (nextMeleePos.x - meleePos.x) * smoothing, meleePos.y + (nextMeleePos.y - meleePos.y) * smoothing, meleePos.z + (nextMeleePos.z - meleePos.z) * smoothing);
 					Vector3f meleeAngles = gunType.meleePathAngles.get(animations.meleeAnimationProgress);
-					Vector3f nextMeleeAngles = animations.meleeAnimationProgress + 1 < gunType.meleePathAngles.size()
-							? gunType.meleePathAngles.get(animations.meleeAnimationProgress + 1)
-							: new Vector3f();
+					Vector3f nextMeleeAngles = animations.meleeAnimationProgress + 1 < gunType.meleePathAngles.size() ? gunType.meleePathAngles.get(animations.meleeAnimationProgress + 1) : new Vector3f();
 					GL11.glRotatef(meleeAngles.y + (nextMeleeAngles.y - meleeAngles.y) * smoothing, 0F, 1F, 0F);
 					GL11.glRotatef(meleeAngles.z + (nextMeleeAngles.z - meleeAngles.z) * smoothing, 0F, 0F, 1F);
 					GL11.glRotatef(meleeAngles.x + (nextMeleeAngles.x - meleeAngles.x) * smoothing, 1F, 0F, 0F);
@@ -940,7 +934,7 @@ public class RenderGun implements IItemRenderer {
 				if (shouldRender)
 				{
 					if (gripAttachment != null && type.getSecondaryFire(item))
-						renderAttachmentAmmo(f, gripAttachment, gripItemStack, model, type);
+						renderAttachmentAmmo(f, gripAttachment, model, gripAttachment.getPaintjob(gripItemStack.getItemDamage()), type.getPaintjob(item.getItemDamage()));
 					else
 						model.renderAmmo(f);
 				}
@@ -958,7 +952,7 @@ public class RenderGun implements IItemRenderer {
 				if (type.getSecondaryFire(item))
 					model.renderAmmo(f);
 				else if (gripAttachment != null && !type.getSecondaryFire(item))
-					renderAttachmentAmmo(f, gripAttachment, gripItemStack, model, type);
+					renderAttachmentAmmo(f, gripAttachment, model, gripAttachment.getPaintjob(gripItemStack.getItemDamage()), type.getPaintjob(item.getItemDamage()));
 			}
 			GL11.glPopMatrix();
 
@@ -1111,14 +1105,25 @@ public class RenderGun implements IItemRenderer {
 	}
 
 	/** Load the attachment ammo model plus its texture */
-	private void renderAttachmentAmmo(float f, AttachmentType grip, ItemStack gripStack, ModelGun model, GunType type)
+	private void renderAttachmentAmmo(float f, AttachmentType grip, ModelGun model, Paintjob ammo, Paintjob otherAmmo)
 	{
-		Paintjob paintjob = grip.getPaintjob(gripStack.getItemDamage());
-		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
+		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(ammo));
 		GL11.glTranslatef(model.gripAttachPoint.x, model.gripAttachPoint.y, model.gripAttachPoint.z);
 		grip.model.renderAttachmentAmmo(f);
-		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(paintjob));
+		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(otherAmmo));
 	}
+
+	/** Load the corresponding casing model and texture */
+//	private void renderCasingModel(float f, AttachmentType grip, GunType gun, ItemStack gunStack)
+//	{
+
+//	}
+
+	/** Load the corresponding flash model and texture */
+//	private void renderFlashModel()
+//	{
+//
+//	}
 
 	private void renderFirstPersonArm(EntityPlayer player, ModelGun model, GunAnimations anim) {
 		Minecraft mc = Minecraft.getMinecraft();
