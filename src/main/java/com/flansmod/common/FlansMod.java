@@ -124,6 +124,7 @@ public class FlansMod
     public static boolean printDebugLog = true;
     public static boolean printStackTrace = false;
     public static int noticeSpawnKillTime = 10;
+    public static boolean armsEnable = true;
     public static boolean casingEnable = true;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
@@ -592,6 +593,7 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
+        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
 		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
@@ -624,6 +626,7 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
+        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
 		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
 		hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
