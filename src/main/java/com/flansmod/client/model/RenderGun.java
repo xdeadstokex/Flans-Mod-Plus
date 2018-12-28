@@ -486,7 +486,7 @@ public class RenderGun implements IItemRenderer {
 		}
 
 		// Load texture
-		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms)
+		if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms && FlansMod.armsEnable)
 		{
 			Minecraft mc = Minecraft.getMinecraft();
 			renderFirstPersonArm(mc.thePlayer, model, animations);
@@ -924,7 +924,7 @@ public class RenderGun implements IItemRenderer {
 					}
 				}
 
-				if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms)
+				if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && model.hasArms && FlansMod.armsEnable)
 				{
 					Minecraft mc = Minecraft.getMinecraft();
 					renderAnimArm(mc.thePlayer, model, type, animations);
