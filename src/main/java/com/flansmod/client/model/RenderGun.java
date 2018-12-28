@@ -1,6 +1,9 @@
 package com.flansmod.client.model;
 
 import com.flansmod.common.guns.*;
+
+import java.util.Random;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -410,6 +413,11 @@ public class RenderGun implements IItemRenderer {
 	 */
 	public void renderGun(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations, float reloadRotate, ItemRenderType rtype)
 	{
+        float min = -1.5f;
+        float max = 1.5f;
+        float randomNum = new Random().nextFloat();
+        float result = min + (randomNum * (max - min));
+		
 		// Make sure we actually have the renderEngine
 		if (renderEngine == null)
 			renderEngine = Minecraft.getMinecraft().renderEngine;
@@ -447,8 +455,10 @@ public class RenderGun implements IItemRenderer {
 
 			GL11.glTranslatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilDistance(gripAttachment, type, item), 0F, 0F);
 			GL11.glRotatef(-(animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * getRecoilAngle(gripAttachment, type, item), 0F, 0F, 1F);
-
-			// Do not move gun when there's a pump in the reload
+            GL11.glRotatef((float) ((-animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * result * smoothing * model.ShakeDistance), (float) 0.0f, (float) 1.0f, (float) 0.0f);
+            GL11.glRotatef((float) ((-animations.lastGunRecoil + (animations.gunRecoil - animations.lastGunRecoil) * smoothing) * result * smoothing * model.ShakeDistance), (float) 1.0f, (float) 0.0f, (float) 0.0f);
+			
+            // Do not move gun when there's a pump in the reload
 			if (model.animationType == EnumAnimationType.SHOTGUN && !animations.reloading)
 			{
 				GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * -5F, 0F, 1F, 0F);
