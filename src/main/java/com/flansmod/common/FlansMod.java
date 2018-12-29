@@ -126,7 +126,7 @@ public class FlansMod
     public static int noticeSpawnKillTime = 10;
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
-    public static boolean crosshairEnable = true;
+    public static boolean crosshairEnable = false;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
 	public static boolean bulletGuiEnable = true;
