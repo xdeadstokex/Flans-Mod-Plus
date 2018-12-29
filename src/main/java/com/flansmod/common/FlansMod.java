@@ -50,6 +50,7 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketHandler;
+import com.flansmod.common.network.PlayerLoginEventListener;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
@@ -93,7 +94,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -313,6 +313,7 @@ public class FlansMod
         FMLCommonHandler.instance().bus().register(INSTANCE);
         //Starting the EventListener
         new PlayerDeathEventListener();
+        new PlayerLoginEventListener();
 		log("Loading complete.");
 	}
 
