@@ -315,6 +315,8 @@ public class GunType extends PaintableType implements IScope
 			
 			else if(split[0].equals("ConsumeGunOnUse"))
 				consumeGunUponUse = Boolean.parseBoolean(split[1]);
+			else if(split[0].equals("ShowCrosshair"))
+				showCrosshair = Boolean.parseBoolean(split[1]);
 			else if(split[0].equals("DropItemOnShoot"))
 				dropItemOnShoot = split[1];
 			else if(split[0].equals("NumBurstRounds"))
