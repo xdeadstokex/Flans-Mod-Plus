@@ -1,6 +1,7 @@
-package com.flansmod.common.network;
+package com.flansmod.common.eventhandlers;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.network.PacketModConfig;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod.EventHandler;
