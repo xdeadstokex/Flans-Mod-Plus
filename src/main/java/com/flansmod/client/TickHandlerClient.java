@@ -95,14 +95,24 @@ public class TickHandlerClient
 	public void eventHandler(RenderGameOverlayEvent event)
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-
-		//Remove crosshairs if looking down the sights of a gun
-		if(event.type == ElementType.CROSSHAIRS && mc.thePlayer != null && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemGun)
+		//If main config is set to false, blanket disable crosshairs (client synced)
+		if(!FlansMod.crosshairEnable)
 		{
-			if(!((ItemGun)mc.thePlayer.getHeldItem().getItem()).type.showCrosshair || FlansModClient.currentScope != null) {
-				   event.setCanceled(true);
-				   return;
+			event.setCanceled(true);
+			return;
+		}
+		//Otherwise, fall back to weapon config settings (default false)
+		else
+		{
+			//Remove crosshairs if looking down the sights of a gun
+			if(event.type == ElementType.CROSSHAIRS && mc.thePlayer != null && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemGun)
+			{
+				if(!((ItemGun)mc.thePlayer.getHeldItem().getItem()).type.showCrosshair || FlansModClient.currentScope != null) 
+				{
+					event.setCanceled(true);
+					return;
 				}
+			}
 		}
 
 		ScaledResolution scaledresolution = new ScaledResolution(FlansModClient.minecraft, FlansModClient.minecraft.displayWidth, FlansModClient.minecraft.displayHeight);
