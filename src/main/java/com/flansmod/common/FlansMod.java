@@ -126,6 +126,7 @@ public class FlansMod
     public static int noticeSpawnKillTime = 10;
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
+    public static boolean crosshairEnable = true;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
 	public static boolean bulletGuiEnable = true;
@@ -596,6 +597,7 @@ public class FlansMod
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
+        crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
 		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
@@ -629,6 +631,7 @@ public class FlansMod
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
+        crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
 		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
 		hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
 		hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
