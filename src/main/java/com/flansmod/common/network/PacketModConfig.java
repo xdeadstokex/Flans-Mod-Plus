@@ -18,11 +18,13 @@ public class PacketModConfig extends PacketBase
 	
 	public boolean hitCrossHairEnable;
 	public boolean bulletGuiEnable;
+	public boolean crosshairEnable;
 	
 	public PacketModConfig()
 	{
 		hitCrossHairEnable = FlansMod.hitCrossHairEnable;
 		bulletGuiEnable = FlansMod.bulletGuiEnable;
+		crosshairEnable = FlansMod.crosshairEnable;
 	}
 	
 	@Override
@@ -30,6 +32,7 @@ public class PacketModConfig extends PacketBase
 	{
 		data.writeBoolean(hitCrossHairEnable);
 		data.writeBoolean(bulletGuiEnable);
+		data.writeBoolean(crosshairEnable);
 	}
 
 	@Override
@@ -37,6 +40,7 @@ public class PacketModConfig extends PacketBase
 	{
 		hitCrossHairEnable = data.readBoolean();
 		bulletGuiEnable = data.readBoolean();
+		crosshairEnable = data.readBoolean();
 	}
 
 	@Override
@@ -51,6 +55,7 @@ public class PacketModConfig extends PacketBase
 	{
 		FlansMod.hitCrossHairEnable = hitCrossHairEnable;
 		FlansMod.bulletGuiEnable = bulletGuiEnable;
-		FlansMod.log("Received config");
+		FlansMod.crosshairEnable = crosshairEnable;
+		FlansMod.log("Config synced successfully");
 	}
 }
