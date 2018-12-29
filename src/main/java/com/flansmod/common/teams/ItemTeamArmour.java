@@ -63,6 +63,7 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 	@Override
 	public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot)
 	{
+		//TODO; Add armor durability option
 		//Do nothing to the armour. It should not break as that would leave the player's team ambiguous
 	}
 
@@ -88,7 +89,11 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 		if(type.invisible)
 			lines.add("\u00a72+Invisiblity");
 		if(type.negateFallDamage)
-			lines.add("\u00a72+Negates Fall Damage");
+			lines.add("\u00a72+Negates Fire Damage");
+		if(type.fireResistance)
+			lines.add("\u00a72+Fire Resistance");
+		if(type.waterBreathing)
+			lines.add("\u00a72+Water Breathing");
 	}
 
     @Override
@@ -145,6 +150,10 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 			player.addPotionEffect(new PotionEffect(Potion.jump.id, 250, (int)((type.jumpModifier - 1F) * 2F), true));
 		if(type.negateFallDamage)
 			player.fallDistance = 0F;
+		if(type.fireResistance && FlansMod.ticker % 25 == 0)
+			player.addPotionEffect(new PotionEffect(Potion.fireResistance.id, 250));
+		if(type.waterBreathing && FlansMod.ticker % 25 == 0)
+			player.addPotionEffect(new PotionEffect(Potion.waterBreathing.id, 250));
 		if(type.onWaterWalking)
 		{
 			if(player.isInWater())

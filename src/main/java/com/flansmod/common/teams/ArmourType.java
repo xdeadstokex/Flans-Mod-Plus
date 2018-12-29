@@ -32,9 +32,13 @@ public class ArmourType extends InfoType
 	public String overlay = null;
 	/** If true, then smoke effects from grenades will have no effect on players wearing this */
 	public boolean smokeProtection = false;
-	/** If ture, the player will not receive fall damage */
+	/** If true, the player will not receive fall damage */
 	public boolean negateFallDamage = false;
-
+	/** If true, the player will not receive fire damage */
+	public boolean fireResistance = false;
+	/** If true, the player can breath under water */
+	public boolean waterBreathing = false;
+	/** If true, the player can walk on water */
 	public boolean onWaterWalking = false;
 	
 	public int durability = 0;
@@ -96,6 +100,10 @@ public class ArmourType extends InfoType
 				invisible = Boolean.parseBoolean(split[1]);
 			if(split[0].equals("NegateFallDamage"))
 				negateFallDamage = Boolean.parseBoolean(split[1]);
+			if(split[0].equals("FireResistance"))
+				fireResistance = Boolean.parseBoolean(split[1]);
+			if(split[0].equals("WaterBreathing"))
+				waterBreathing = Boolean.parseBoolean(split[1]);
 			if(split[0].equals("Overlay"))
 				overlay = split[1];
 
