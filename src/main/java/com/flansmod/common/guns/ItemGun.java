@@ -740,16 +740,14 @@ public class ItemGun extends Item implements IPaintableItem
 			if(data == null)
 				return;
 
-			//If enabled slowness 1 will be applied when gunCarryLimit is met, increasing by 1 level for each additional gun
+			//If enabled a speed nerf will be applied for each gun after gunCarryLimt starting at 0.6 and decreasing by 0.1 for each additional
 			if(FlansMod.gunCarryLimitEnable)
 			{
 				int gunCount = 0;
-				boolean slowed = false;
 				for (int slot = 0; slot < 9; slot++)
 				{
 					ItemStack itemInSlot = player.inventory.getStackInSlot(slot);
 					ItemStack current = player.inventory.getCurrentItem();
-					
 					if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
 					{
 						gunCount++;
@@ -759,10 +757,12 @@ public class ItemGun extends Item implements IPaintableItem
 				{
 					float walkSpeed = MathUtils.clampf((float) (0.1 - (0.04f + (0.010f * (gunCount - FlansMod.gunCarryLimit)))), 0.01f, 0.1f);
 					player.capabilities.setPlayerWalkSpeed(walkSpeed);
+					player.jumpMovementFactor = 0.002F;
 				}
 				else
 				{
 					player.capabilities.setPlayerWalkSpeed(0.1F);
+					player.jumpMovementFactor = 0.02F; //(default)
 				}
 
 			}
@@ -830,63 +830,25 @@ public class ItemGun extends Item implements IPaintableItem
 				}
 			}
 
-
-
-			/*if(player.getCurrentEquippedItem() == null)
-				isNightVision = false;
-
-			if(player.getCurrentEquippedItem() != null)
-			{
-				if(!(player.getCurrentEquippedItem().getItem() instanceof ItemGun))
-					isNightVision = false;
-
-				ItemGun itemGun;
-				if(player.getCurrentEquippedItem().getItem() instanceof ItemGun)
-				{
-					itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
-					if(!itemGun.isNightVision)
-						isNightVision = false;
-				}
-			}*/
-
-			if(player.getCurrentEquippedItem() != null)
-			{
-				if(player.getCurrentEquippedItem().getItem() instanceof ItemGun)
+			//TODO; Add scope attachment override to enable NV for add-on NV scopes
+				//If player is holding gun, apply modifiers below
+				if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun)
 				{
 					ItemGun itemGun;
 					itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
-					if(itemGun.type.allowNightVision)
+					//Apply night vision while scoped if AllowNightVision = True
+					if(itemGun.type.allowNightVision && FlansModClient.currentScope != null)
 					{
-						/*Minecraft mc;
-						mc =  Minecraft.getMinecraft();
-						mc.entityRenderer.activateNextShader();*/
-						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, 2, 0));
+						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
 					}
+					//Apply a penalty to jumpMovement equal to the moveSpeed penalty (0.5 moveSpeed = 0.5 jumpDistance)
+					if(itemGun.type.moveSpeedModifier != 1F)
+					{
+						player.jumpMovementFactor = 0.0F;
+					}
+					else
+						player.jumpMovementFactor = 0.02F;
 				}
-			}
-
-			/*if(player.getCurrentEquippedItem() == null)
-				isSlow = false;
-
-			if(player.getCurrentEquippedItem() != null)
-			{
-				if(!(player.getCurrentEquippedItem().getItem() instanceof ItemGun))
-					isSlow = false;
-
-				ItemGun itemGun;
-				if(player.getCurrentEquippedItem().getItem() instanceof ItemGun)
-				{
-					itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
-					if(!itemGun.isSlow)
-						isSlow = false;
-				}
-			}
-
-			if(isSlow)
-			{
-				player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, type.slowLevel));
-			}*/
-
 
 			//if(data.lastMeleePositions == null || data.lastMeleePositions.length != type.meleeDamagePoints.size())
 			//{

@@ -206,9 +206,8 @@ public class FlansModExplosion extends Explosion
                 }
             }
         }
-        explosionSize = f;
-        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(worldObj, this, new ArrayList(), this.explosionSize);
-//         net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, this);
+        	explosionSize = f;
+          //net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, this);
     }
 
 	public void spawnParticle(int numSmoke, int numDebris)
