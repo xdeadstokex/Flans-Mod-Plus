@@ -42,6 +42,7 @@ import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.utils.MathUtils;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -744,9 +745,9 @@ public class ItemGun extends Item implements IPaintableItem
 			{
 				int gunCount = 0;
 				boolean slowed = false;
-				for (int k = 0; k < 9; k++)
+				for (int slot = 0; slot < 9; slot++)
 				{
-					ItemStack itemInSlot = player.inventory.getStackInSlot(k);
+					ItemStack itemInSlot = player.inventory.getStackInSlot(slot);
 					ItemStack current = player.inventory.getCurrentItem();
 					
 					if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
@@ -754,10 +755,16 @@ public class ItemGun extends Item implements IPaintableItem
 						gunCount++;
 					}
 				}
-				if(gunCount >= FlansMod.gunCarryLimit && gunCount <= FlansMod.gunCarryLimit + 4)
-				    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, -1, gunCount - FlansMod.gunCarryLimit));
-				else if(gunCount > FlansMod.gunCarryLimit + 4)
-				    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, -1, 4));
+				if(gunCount > FlansMod.gunCarryLimit)
+				{
+					float walkSpeed = MathUtils.clampf((float) (0.1 - (0.04f + (0.010f * (gunCount - FlansMod.gunCarryLimit)))), 0.01f, 0.1f);
+					player.capabilities.setPlayerWalkSpeed(walkSpeed);
+				}
+				else
+				{
+					player.capabilities.setPlayerWalkSpeed(0.1F);
+				}
+
 			}
 
 			if(!type.canSetPosition)
