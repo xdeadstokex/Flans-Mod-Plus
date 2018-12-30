@@ -4,6 +4,51 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import com.flansmod.client.AimType;
+import com.flansmod.client.FlansModClient;
+import com.flansmod.client.debug.EntityDebugDot;
+import com.flansmod.client.debug.EntityDebugVector;
+import com.flansmod.client.model.GunAnimations;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.RotatedAxes;
+import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EntityPlane;
+import com.flansmod.common.driveables.EntitySeat;
+import com.flansmod.common.driveables.EntityVehicle;
+import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.guns.raytracing.BulletHit;
+import com.flansmod.common.guns.raytracing.EntityHit;
+import com.flansmod.common.guns.raytracing.EnumHitboxType;
+import com.flansmod.common.guns.raytracing.PlayerBulletHit;
+import com.flansmod.common.guns.raytracing.PlayerHitbox;
+import com.flansmod.common.guns.raytracing.PlayerSnapshot;
+import com.flansmod.common.network.PacketGunFire;
+import com.flansmod.common.network.PacketGunRecoil;
+import com.flansmod.common.network.PacketGunSpread;
+import com.flansmod.common.network.PacketPlaySound;
+import com.flansmod.common.network.PacketReload;
+import com.flansmod.common.network.PacketSelectOffHandGun;
+import com.flansmod.common.paintjob.IPaintableItem;
+import com.flansmod.common.paintjob.PaintableType;
+import com.flansmod.common.paintjob.Paintjob;
+import com.flansmod.common.teams.EntityFlag;
+import com.flansmod.common.teams.EntityFlagpole;
+import com.flansmod.common.teams.EntityGunItem;
+import com.flansmod.common.teams.Team;
+import com.flansmod.common.types.InfoType;
+import com.flansmod.common.vector.Vector3f;
+import com.google.common.collect.Multimap;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -34,51 +79,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
-import com.flansmod.client.AimType;
-import com.flansmod.client.FlansModClient;
-import com.flansmod.client.debug.EntityDebugDot;
-import com.flansmod.client.debug.EntityDebugVector;
-import com.flansmod.client.model.GunAnimations;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
-import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.guns.raytracing.BulletHit;
-import com.flansmod.common.guns.raytracing.EntityHit;
-import com.flansmod.common.guns.raytracing.EnumHitboxType;
-import com.flansmod.common.guns.raytracing.PlayerBulletHit;
-import com.flansmod.common.guns.raytracing.PlayerHitbox;
-import com.flansmod.common.guns.raytracing.PlayerSnapshot;
-import com.flansmod.common.network.PacketGunFire;
-import com.flansmod.common.network.PacketGunSpread;
-import com.flansmod.common.network.PacketPlaySound;
-import com.flansmod.common.network.PacketReload;
-import com.flansmod.common.network.PacketSelectOffHandGun;
-import com.flansmod.common.paintjob.IPaintableItem;
-import com.flansmod.common.paintjob.PaintableType;
-import com.flansmod.common.paintjob.Paintjob;
-import com.flansmod.common.teams.EntityFlag;
-import com.flansmod.common.teams.EntityFlagpole;
-import com.flansmod.common.teams.EntityGunItem;
-import com.flansmod.common.teams.Team;
-import com.flansmod.common.types.InfoType;
-import com.flansmod.common.vector.Vector3f;
-import com.google.common.collect.Multimap;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemGun extends Item implements IPaintableItem
 {
@@ -579,7 +579,9 @@ public class ItemGun extends Item implements IPaintableItem
 
 				animations.onGunEmpty(onLastBullet);
 				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
-				if(!player.isSneaking())
+				
+				//Old client side recoil, moved to PacketGunRecoil
+				/*if(!player.isSneaking())
 				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack);
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack);
@@ -588,7 +590,7 @@ public class ItemGun extends Item implements IPaintableItem
 				{
 					FlansModClient.playerRecoilPitch += gunType.getRecoilPitch(stack) - gunType.decreaseRecoilPitch;
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
-				}
+				}*/
 				if(left)
 					FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
 				else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
@@ -738,19 +740,27 @@ public class ItemGun extends Item implements IPaintableItem
 				return;
 
 			//player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, 1));
+			// 0 = slowness 1, 1 = slowness 2, 2 = slowness 3 etc
 			if(type.activateSlowInInventoryLevel != -1)
+				//System.out.println(type.activateSlowInInventoryLevel);
 			{
+				int gunCount = 0;
 				for (int k = 0; k < 9; k++)
 				{
 					ItemStack itemInSlot = player.inventory.getStackInSlot(k);
-					ItemGun itemGunSlot;
-					//if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
-					if(itemInSlot != null && itemInSlot.getItem().equals(this))
+					ItemStack current = player.inventory.getCurrentItem();
+					
+					if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
 					{
-						itemGunSlot = (ItemGun)itemInSlot.getItem();
-						player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, itemGunSlot.type.activateSlowInInventoryLevel));
-						break;
+						gunCount++;
+						//player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, FlansMod.gunLimit));
+						//break;
 					}
+				}
+				//System.out.println(gunCount);
+				if(gunCount >= FlansMod.gunCarryLimit)
+				{
+					player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, FlansMod.gunCarryPenalty));
 				}
 			}
 
@@ -1310,7 +1320,7 @@ public class ItemGun extends Item implements IPaintableItem
 	
 
 	/** Method for shooting to avoid repeated code */
-	private void shoot(ItemStack stack, GunType gunType, World world, ItemStack bulletStack, EntityPlayer entityplayer, boolean left)
+	private void shoot(ItemStack stack, GunType gunType, World world, ItemStack bulletStack, EntityPlayer entityPlayer, boolean left)
 	{
 		//flash(entityplayer);
 		ShootableType bullet = ((ItemShootable)bulletStack.getItem()).type;
@@ -1342,7 +1352,7 @@ public class ItemGun extends Item implements IPaintableItem
 				soundToPlay = gunType.shootSound;
 
 			if(soundToPlay != null)
-				PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.gunSoundRange, entityplayer.dimension, soundToPlay, gunType.distortSound, silenced);
+				PacketPlaySound.sendSoundPacket(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, type.gunSoundRange, entityPlayer.dimension, soundToPlay, gunType.distortSound, silenced);
 			soundDelay = gunType.shootSoundLength;
 		}
 		if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable)
@@ -1377,11 +1387,11 @@ public class ItemGun extends Item implements IPaintableItem
 				float result = gunType.getSpread(stack);
 
 				//If crouch/sneak, then lower spread by 10%
-				if(entityplayer.isSneaking())
+				if(entityPlayer.isSneaking())
 					result = result * 0.9F;
 
 				//If running, then increase spread by 75%
-				if (entityplayer.isSprinting())
+				if (entityPlayer.isSprinting())
 					result = result * 1.75F;
 
 				spread = result;
@@ -1391,8 +1401,8 @@ public class ItemGun extends Item implements IPaintableItem
 			{
 				world.spawnEntityInWorld(itemShootable.getEntity(
 						world,
-						entityplayer,
-						(entityplayer.isSneaking() ? 0.7F : 1F) * spread,
+						entityPlayer,
+						(entityPlayer.isSneaking() ? 0.7F : 1F) * spread,
 						gunType.getDamage(stack),
 						gunType.getBulletSpeed(stack),
 						numBullets > 1,
@@ -1400,16 +1410,18 @@ public class ItemGun extends Item implements IPaintableItem
 						gunType));
 			}
 
+			FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack), gunType.getRecoilYaw(stack), gunType.decreaseRecoilPitch, gunType.decreaseRecoilYaw), (EntityPlayerMP) entityPlayer);
+			
 			// Drop item on shooting if bullet requires it
-			if(bullet.dropItemOnShoot != null && !entityplayer.capabilities.isCreativeMode)
-				dropItem(world, entityplayer, bullet.dropItemOnShoot);
+			if(bullet.dropItemOnShoot != null && !entityPlayer.capabilities.isCreativeMode)
+				dropItem(world, entityPlayer, bullet.dropItemOnShoot);
 			// Drop item on shooting if gun requires it
 			if(gunType.dropItemOnShoot != null)// && !entityplayer.capabilities.isCreativeMode)
-				dropItem(world, entityplayer, gunType.dropItemOnShoot);
+				dropItem(world, entityPlayer, gunType.dropItemOnShoot);
 		}
 		if(left)
-			PlayerHandler.getPlayerData(entityplayer).shootTimeLeft = gunType.getShootDelay(stack);
-		else PlayerHandler.getPlayerData(entityplayer).shootTimeRight = gunType.getShootDelay(stack);
+			PlayerHandler.getPlayerData(entityPlayer).shootTimeLeft = gunType.getShootDelay(stack);
+		else PlayerHandler.getPlayerData(entityPlayer).shootTimeRight = gunType.getShootDelay(stack);
 		if(gunType.knockback > 0)
 		{
 			//TODO : Apply knockback
