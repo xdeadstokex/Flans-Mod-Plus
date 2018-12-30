@@ -50,7 +50,7 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketHandler;
-import com.flansmod.common.network.PlayerLoginEventListener;
+import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
@@ -124,6 +124,9 @@ public class FlansMod
     public static boolean printDebugLog = true;
     public static boolean printStackTrace = false;
     public static int noticeSpawnKillTime = 10;
+    public static boolean gunCarryLimitEnable = false;
+    public static int gunCarryLimit = 3;
+    public static int armorDurability = 1;
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
@@ -595,6 +598,8 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
+        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+        gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
@@ -629,6 +634,8 @@ public class FlansMod
 
         TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
+        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+        gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
