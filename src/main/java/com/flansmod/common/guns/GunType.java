@@ -228,8 +228,6 @@ public class GunType extends PaintableType implements IScope
 	//Modifiers
 	/** Speeds up or slows down player movement when this item is held */
 	public float moveSpeedModifier = 1F;
-	/** Speeds slows down player movement when this item is in Inventory */
-	public int activateSlowInInventoryLevel = -1;
 	/** Gives knockback resistance to the player */
 	public float knockbackModifier = 0F;
 
@@ -536,8 +534,6 @@ public class GunType extends PaintableType implements IScope
 			//Player modifiers
 			else if(split[0].equals("MoveSpeedModifier") || split[0].equals("Slowness"))
 				moveSpeedModifier = Float.parseFloat(split[1]);
-			else if(split[0].equals("ActivateSlowInInventoryLevel"))
-				activateSlowInInventoryLevel = Integer.parseInt(split[1]);
 			else if(split[0].equals("KnockbackReduction") || split[0].equals("KnockbackModifier"))
 				knockbackModifier = Float.parseFloat(split[1]);
 

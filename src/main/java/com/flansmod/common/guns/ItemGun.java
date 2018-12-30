@@ -739,12 +739,11 @@ public class ItemGun extends Item implements IPaintableItem
 			if(data == null)
 				return;
 
-			//player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, 1));
-			// 0 = slowness 1, 1 = slowness 2, 2 = slowness 3 etc
-			if(type.activateSlowInInventoryLevel != -1)
-				//System.out.println(type.activateSlowInInventoryLevel);
+			//If enabled slowness 1 will be applied when gunCarryLimit is met, increasing by 1 level for each additional gun
+			if(FlansMod.gunCarryLimitEnable)
 			{
 				int gunCount = 0;
+				boolean slowed = false;
 				for (int k = 0; k < 9; k++)
 				{
 					ItemStack itemInSlot = player.inventory.getStackInSlot(k);
@@ -753,15 +752,12 @@ public class ItemGun extends Item implements IPaintableItem
 					if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
 					{
 						gunCount++;
-						//player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, FlansMod.gunLimit));
-						//break;
 					}
 				}
-				//System.out.println(gunCount);
-				if(gunCount >= FlansMod.gunCarryLimit)
-				{
-					player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 2, FlansMod.gunCarryPenalty));
-				}
+				if(gunCount >= FlansMod.gunCarryLimit && gunCount <= FlansMod.gunCarryLimit + 4)
+				    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, -1, gunCount - FlansMod.gunCarryLimit));
+				else if(gunCount > FlansMod.gunCarryLimit + 4)
+				    player.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, -1, 4));
 			}
 
 			if(!type.canSetPosition)
