@@ -30,6 +30,7 @@ import com.flansmod.common.guns.raytracing.PlayerSnapshot;
 import com.flansmod.common.network.PacketGunFire;
 import com.flansmod.common.network.PacketGunRecoil;
 import com.flansmod.common.network.PacketGunSpread;
+import com.flansmod.common.network.PacketGunState;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
@@ -42,7 +43,6 @@ import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.utils.MathUtils;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -433,6 +433,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 							//Send ads spread packet to server
 							sendSpreadToServer(itemstack);
+							FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
 						}
 						else
 						{
@@ -445,6 +446,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 							//Send default spread packet to server
 							FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+							FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
 						}
 						FlansModClient.scopeTime = 10;
 					}
@@ -469,6 +471,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 							//Send ads spread packet to server
 							sendSpreadToServer(itemstack);
+							FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
 						}
 						FlansModClient.scopeTime = 10;
 					}
@@ -485,6 +488,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 								//Send default spread packet to server
 								FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+								FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
 							}
 						}
 					}
@@ -740,6 +744,7 @@ public class ItemGun extends Item implements IPaintableItem
 			if(data == null)
 				return;
 
+			/*
 			//If enabled a speed nerf will be applied for each gun after gunCarryLimt starting at 0.6 and decreasing by 0.1 for each additional
 			if(FlansMod.gunCarryLimitEnable)
 			{
@@ -763,9 +768,15 @@ public class ItemGun extends Item implements IPaintableItem
 				{
 					player.capabilities.setPlayerWalkSpeed(0.1F);
 					player.jumpMovementFactor = 0.02F; //(default)
+					SharedMonsterAttributes.movementSpeed.
+					player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).applyModifier(new AttributeModifier(UUID.fromString("91AEAA56-376B-4498-935B-2F7F68070635", "generic.movementSpeed", 4.0D, 0));
+
+
 				}
+				
 
 			}
+			*/
 
 			if(!type.canSetPosition)
 				this.impactX = this.impactY = this.impactZ = 0;
@@ -829,7 +840,7 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 				}
 			}
-
+			/*
 			//TODO; Add scope attachment override to enable NV for add-on NV scopes
 				//If player is holding gun, apply modifiers below
 				if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun)
@@ -841,6 +852,15 @@ public class ItemGun extends Item implements IPaintableItem
 					{
 						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
 					}
+					AttachmentType scope = itemGun.type.getScope(itemstack);
+					//IScope scope = itemGun.type.getCurrentScope(itemstack);
+					//System.out.println(scope);
+					//Apply night vision while scoped if attachment.hasNightVision = True
+					if(scope != null && scope.hasNightVision && FlansModClient.currentScope != null)
+					{
+						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
+						//System.out.println("1");
+					}
 					//Apply a penalty to jumpMovement equal to the moveSpeed penalty (0.5 moveSpeed = 0.5 jumpDistance)
 					if(itemGun.type.moveSpeedModifier != 1F)
 					{
@@ -849,6 +869,9 @@ public class ItemGun extends Item implements IPaintableItem
 					else
 						player.jumpMovementFactor = 0.02F;
 				}
+				*/
+				
+				
 
 			//if(data.lastMeleePositions == null || data.lastMeleePositions.length != type.meleeDamagePoints.size())
 			//{
