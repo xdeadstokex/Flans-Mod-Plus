@@ -33,6 +33,8 @@ import com.flansmod.common.driveables.mechas.ItemMechaAddon;
 import com.flansmod.common.driveables.mechas.MechaItemType;
 import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
+import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
+import com.flansmod.common.eventhandlers.ServerTickEvent;
 import com.flansmod.common.guns.AAGunType;
 import com.flansmod.common.guns.AttachmentType;
 import com.flansmod.common.guns.BulletType;
@@ -50,7 +52,6 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketHandler;
-import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
@@ -318,6 +319,7 @@ public class FlansMod
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
+        new ServerTickEvent();
 		log("Loading complete.");
 	}
 

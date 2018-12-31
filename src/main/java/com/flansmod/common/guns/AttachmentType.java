@@ -90,6 +90,8 @@ public class AttachmentType extends PaintableType implements IScope
 	public String zoomOverlay;
 	/** Whether to overlay a texture or not */
 	public boolean hasScopeOverlay = false;
+	/** If true, then this scope will active night vision potion effect*/
+	public boolean hasNightVision = false;
 	
 	@SideOnly(Side.CLIENT)
 	/** Model. Only applicable when the attachment is added to 3D guns */
@@ -207,6 +209,8 @@ public class AttachmentType extends PaintableType implements IScope
 					hasScopeOverlay = false;
 				else zoomOverlay = split[1];
 			}
+			else if(split[0].equals("HasNightVision"))
+				hasNightVision = Boolean.parseBoolean(split[1].toLowerCase());
 		}
 		catch (Exception e)
 		{
