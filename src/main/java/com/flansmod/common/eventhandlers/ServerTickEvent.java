@@ -48,21 +48,15 @@ public class ServerTickEvent
             	{
             		if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun)
             		{
-            			ItemGun itemGun;
-            			itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
-            			//Apply night vision while scoped if AllowNightVision = True
-            			
+            			ItemGun itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
             			ItemStack itemstack = player.getCurrentEquippedItem();
             			AttachmentType scope = itemGun.type.getScope(itemstack);
-            			//Apply night vision while scoped if attachment.hasNightVision = True
-            			System.out.println("est");
-   
-            			if(scope == null || (scope != null && !scope.hasNightVision))
-            			  {
-            			           player.removePotionEffect(Potion.nightVision.id);
-            			           playersToRemove.add(player);
-            			  }
-            			
+            			//Apply night vision while scoped if attachment.hasNightVision or gun.allowNightvision
+                		if(scope == null && !itemGun.type.allowNightVision || (scope != null && !scope.hasNightVision && !itemGun.type.allowNightVision))
+                		{
+                			player.removePotionEffect(Potion.nightVision.id);
+                			playersToRemove.add(player);
+                		}	
             		}
             		else
             		{
