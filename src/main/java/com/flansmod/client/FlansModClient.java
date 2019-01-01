@@ -84,7 +84,7 @@ public class FlansModClient extends FlansMod
 	public static int controlModeSwitchTimer = 20;
 	
 	/** The delay between shots / reloading */
-	public static int shootTimeLeft, shootTimeRight;
+	public static float shootTimeLeft, shootTimeRight;
 	
 	//Recoil variables
 	/** The recoil applied to the player view by shooting */
@@ -256,7 +256,7 @@ public class FlansModClient extends FlansMod
 
 	}
 	
-	public static int shootTime(boolean left)
+	public static float shootTime(boolean left)
 	{
 		return left ? shootTimeLeft : shootTimeRight;
 	}

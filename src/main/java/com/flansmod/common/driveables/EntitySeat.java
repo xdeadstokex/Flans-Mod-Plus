@@ -64,7 +64,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 	/** For smooth renderering */
     public RotatedAxes prevPlayerLooking;
 	/** Delay ticker for shooting guns */
-	public int gunDelay;
+	public float gunDelay;
 	/** Minigun speed */
 	public float minigunSpeed;
 	/** Minigun angle for render */

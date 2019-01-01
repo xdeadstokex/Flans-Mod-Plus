@@ -59,8 +59,10 @@ public class GunType extends PaintableType implements IScope
 	/** The number of bullet entities created by each shot */
 	public int numBullets = 1;
 	public boolean allowNumBulletsByBulletType = false;
-	/** The delay between shots in ticks (1/20ths of seconds) */
-	public int shootDelay = 0;
+	/** The delay between shots in ticks (1/20ths of seconds) OUTDATED, USE RPM */
+	public float shootDelay = 0;
+	/** The fire rate of the gun in RPM, 1200 = MAX */
+	public float roundsPerMin = 0;
 	/** Number of ammo items that the gun may hold. Most guns will hold one magazine.
 	 * Some may hold more, such as Nerf pistols, revolvers or shotguns */
 	public int numPrimaryAmmoItems = 1;
@@ -342,7 +344,9 @@ public class GunType extends PaintableType implements IScope
 
 			//Sounds
 			else if(split[0].equals("ShootDelay"))
-				shootDelay = Integer.parseInt(split[1]);
+				shootDelay = Float.parseFloat(split[1]);
+			else if(split[0].equals("RoundsPerMin"))
+				roundsPerMin = Float.parseFloat(split[1]);
 			else if(split[0].equals("SoundLength"))
 				shootSoundLength = Integer.parseInt(split[1]);
 			else if(split[0].equals("DistortSound"))
@@ -875,15 +879,32 @@ public class GunType extends PaintableType implements IScope
 	}
 
 	/** Get the fire rate of a specific gun */
-	public int getShootDelay(ItemStack stack)
-	{
-		int fireRate = shootDelay;
-
-		if(getGrip(stack) != null && getSecondaryFire(stack))
-			fireRate = getGrip(stack).secondaryShootDelay;
-
-		return fireRate;
-	}
+    public float getShootDelay(ItemStack stack)
+    {
+    	//Legacy system input as direct ticks
+    	if(shootDelay != 0)
+    	{
+    		float fireRate = shootDelay;
+            if(getGrip(stack) != null && getSecondaryFire(stack))
+                fireRate = getGrip(stack).secondaryShootDelay;
+            
+    		return fireRate;
+    	}
+    	//New system, input as RPM
+    	else
+    	{
+    		float fireRate = roundsPerMin;
+    		
+    		if(getGrip(stack) != null && getSecondaryFire(stack))
+    			fireRate = getGrip(stack).secondaryShootDelay;
+    		
+    		float fireTicks = 1200 / fireRate;
+    		if(fireTicks < 1)
+    			fireTicks = 1;
+    		
+    		return fireRate = fireTicks;
+    	}
+    }
 
 	/** Get the number of bullets fired per shot of a specific gun */
 	public int getNumBullets(ItemStack stack)
