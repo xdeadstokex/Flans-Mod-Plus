@@ -38,6 +38,8 @@ public class GunType extends PaintableType implements IScope
 	public List<ShootableType> ammo = new ArrayList<ShootableType>();
 	/** Whether the player can press the reload key (default R) to reload this gun */
 	public boolean canForceReload = true;
+	/** Whether the player can receive ammo for this gun from an ammo mag */
+	public boolean allowRearm = true;
 	/** The time (in ticks) it takes to reload this gun */
 	public int reloadTime;
 	/** The amount to recoil the player's view by when firing a single shot from this gun */
@@ -272,6 +274,8 @@ public class GunType extends PaintableType implements IScope
 			}
 			else if(split[0].equals("CanForceReload"))
 				canForceReload = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("AllowRearm"))
+				allowRearm = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("ReloadTime"))
 				reloadTime = Integer.parseInt(split[1]);
 			else if(split[0].equals("Recoil"))
