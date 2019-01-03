@@ -86,7 +86,16 @@ public class GunBoxType extends InfoType
 			if (split[0].equals("Page") || split[0].equals("SetPage"))
 			{
 				//If empty, rename the page. If not, add the current page to list and start next one.
-				String pageName = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
+				String[] pageNameArray = Arrays.copyOfRange(split, 1, split.length);
+				String pageName = "";
+				for(int i = 0; i < pageNameArray.length; i++)
+				{
+				    pageName += pageNameArray[i];
+				    if((i + 1) < pageNameArray.length)
+				    {
+				        pageName += " ";
+				    }
+				}
 				if(gunEntries[0] != null)
 				{
 					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
