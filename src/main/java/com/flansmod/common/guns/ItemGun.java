@@ -34,6 +34,7 @@ import com.flansmod.common.network.PacketGunState;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
+import com.flansmod.common.network.PacketUpdateSpeed;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
@@ -43,6 +44,7 @@ import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.utils.MathUtils;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -50,6 +52,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ibxm.Player;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -69,8 +72,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
@@ -208,9 +209,9 @@ public class ItemGun extends Item implements IPaintableItem
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
 		KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
-
-		if( !type.getPaintjob(stack.getItemDamage()).displayName.equals("default") )
-			lines.add("\u00a7b\u00a7o" + type.getPaintjob(stack.getItemDamage()).displayName);
+		String paintName = type.getPaintjob(stack.getItemDamage()).displayName;		
+		if(!paintName.equals("default") && !paintName.isEmpty())
+			lines.add("\u00a7b\u00a7o" + paintName);
 
 		if(!type.packName.isEmpty())
 		{
@@ -642,6 +643,37 @@ public class ItemGun extends Item implements IPaintableItem
 			itemstack.stackTagCompound = tags;
 		}
 		
+		/*
+		//If enabled a speed nerf will be applied for each gun after gunCarryLimt starting at 0.6 and decreasing by 0.1 for each additional
+		if(FlansMod.gunCarryLimitEnable && entity instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer) entity;
+			int gunCount = 0;
+			for (int slot = 0; slot < 9; slot++)
+			{
+				ItemStack itemInSlot = player.inventory.getStackInSlot(slot);
+				ItemStack current = player.inventory.getCurrentItem();
+				if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
+				{
+					gunCount++;
+				}
+			}
+			if(gunCount > FlansMod.gunCarryLimit)
+			{
+				float movementSpeed = MathUtils.clampf((float) (0.1 - (0.04f + (0.010f * (gunCount - FlansMod.gunCarryLimit)))), 0.01f, 0.1f);
+				//player.capabilities.setPlayerWalkSpeed(walkSpeed);
+				//player.jumpMovementFactor = 0.002F;
+				FlansMod.getPacketHandler().sendTo(new PacketUpdateSpeed(0.01F, 0.002F), (EntityPlayerMP) player);
+			}
+			else
+			{
+				//player.capabilities.setPlayerWalkSpeed(0.1F);
+				//player.jumpMovementFactor = 0.02F; //(default)
+				FlansMod.getPacketHandler().sendTo(new PacketUpdateSpeed(0.1F, 0.02F), (EntityPlayerMP) player);
+			}
+		}
+		*/
+		
 		if(entity instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP player = (EntityPlayerMP)entity;
@@ -749,40 +781,6 @@ public class ItemGun extends Item implements IPaintableItem
 			PlayerData data = PlayerHandler.getPlayerData(player);
 			if(data == null)
 				return;
-
-			/*
-			//If enabled a speed nerf will be applied for each gun after gunCarryLimt starting at 0.6 and decreasing by 0.1 for each additional
-			if(FlansMod.gunCarryLimitEnable)
-			{
-				int gunCount = 0;
-				for (int slot = 0; slot < 9; slot++)
-				{
-					ItemStack itemInSlot = player.inventory.getStackInSlot(slot);
-					ItemStack current = player.inventory.getCurrentItem();
-					if(itemInSlot != null && itemInSlot.getItem() instanceof ItemGun)
-					{
-						gunCount++;
-					}
-				}
-				if(gunCount > FlansMod.gunCarryLimit)
-				{
-					float walkSpeed = MathUtils.clampf((float) (0.1 - (0.04f + (0.010f * (gunCount - FlansMod.gunCarryLimit)))), 0.01f, 0.1f);
-					player.capabilities.setPlayerWalkSpeed(walkSpeed);
-					player.jumpMovementFactor = 0.002F;
-				}
-				else
-				{
-					player.capabilities.setPlayerWalkSpeed(0.1F);
-					player.jumpMovementFactor = 0.02F; //(default)
-					SharedMonsterAttributes.movementSpeed.
-					player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).applyModifier(new AttributeModifier(UUID.fromString("91AEAA56-376B-4498-935B-2F7F68070635", "generic.movementSpeed", 4.0D, 0));
-
-
-				}
-				
-
-			}
-			*/
 
 			if(!type.canSetPosition)
 				this.impactX = this.impactY = this.impactZ = 0;

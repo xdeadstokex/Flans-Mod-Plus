@@ -127,7 +127,8 @@ public class FlansMod
     public static int noticeSpawnKillTime = 10;
     public static boolean gunCarryLimitEnable = false;
     public static int gunCarryLimit = 3;
-    public static int armorDurability = 1;
+    public static int breakableArmor = 0;
+    public static int defaultArmorDurability = 500;
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
@@ -602,6 +603,8 @@ public class FlansMod
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
+        breakableArmor = configFile.getInt("breakableArmor", Configuration.CATEGORY_GENERAL, 0,0,2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
+        defaultArmorDurability = configFile.getInt("defaultArmorDurability", Configuration.CATEGORY_GENERAL, 500,1,10000, "Default durability if breakable = 1");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
@@ -638,6 +641,8 @@ public class FlansMod
         TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
+        breakableArmor = configFile.getInt("breakableArmor", Configuration.CATEGORY_GENERAL, 0,0,2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
+        defaultArmorDurability = configFile.getInt("defaultArmorDurability", Configuration.CATEGORY_GENERAL, 500,1,10000, "Default durability if breakable = 1");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");

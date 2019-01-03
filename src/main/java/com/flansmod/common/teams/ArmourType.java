@@ -40,7 +40,9 @@ public class ArmourType extends InfoType
 	public boolean waterBreathing = false;
 	/** If true, the player can walk on water */
 	public boolean onWaterWalking = false;
-	
+	/** If true, the armor has durability */
+	public boolean hasDurability = false;
+	/** The durability for the piece of armor */
 	public int durability = 0;
 
 	@SideOnly(Side.CLIENT)
@@ -113,10 +115,11 @@ public class ArmourType extends InfoType
 			if(split[0].equals("OnWaterWalking"))
 				onWaterWalking = Boolean.parseBoolean(split[1]);
 
-			if(split[0].equals("Durability"))
+			if(split[0].equals("Durability")) {
 				durability = Integer.parseInt(split[1]);
-
-
+				hasDurability = durability > 0;
+			}
+			
 			if(split[0].equals("ArmourTexture") || split[0].equals("ArmorTexture"))
 			{
 				armourTextureName = split[1];

@@ -40,6 +40,8 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 		type.item = this;
 		setCreativeTab(FlansMod.tabFlanTeams);
 		if(t.durability > 0) setMaxDamage(t.durability);
+		else if(FlansMod.breakableArmor == 1)
+			setMaxDamage(FlansMod.defaultArmorDurability);
 		GameRegistry.registerItem(this, type.shortName, FlansMod.MODID);
 	}
 
@@ -63,8 +65,12 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 	@Override
 	public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot)
 	{
-		//TODO; Add armor durability option
-		//Do nothing to the armour. It should not break as that would leave the player's team ambiguous
+		//0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config
+		int breakType = FlansMod.breakableArmor;
+		if(breakType == 2 && type.hasDurability || breakType == 1)
+		{
+			stack.damageItem(damage, entity);
+		}
 	}
 
 	@Override
