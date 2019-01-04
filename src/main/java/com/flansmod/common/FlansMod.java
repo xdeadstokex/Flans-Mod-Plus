@@ -120,8 +120,6 @@ public class FlansMod
 	public static final String VERSION = "@VERSION@";
 	@Instance(MODID)
 	public static FlansMod INSTANCE;
-    public static int generalConfigInteger = 32;
-    public static String generalConfigString = "Hello!";
     public static boolean printDebugLog = true;
     public static boolean printStackTrace = false;
     public static int noticeSpawnKillTime = 10;
@@ -137,7 +135,7 @@ public class FlansMod
 	public static boolean bulletGuiEnable = true;
     public static float hitCrossHairColor[] = new float[]{ 1.0F, 1.0F, 1.0F, 1.0F };
     public static boolean addGunpowderRecipe = true;
-    public static boolean addAllPaintjobsToCreative = true;
+    public static boolean addAllPaintjobsToCreative = false;
     public static int teamsConfigInteger = 32;
     public static String teamsConfigString = "Hello!";
     public static boolean teamsConfigBoolean = false;
@@ -583,82 +581,82 @@ public class FlansMod
 	{
 		return INSTANCE.packetHandler;
 	}
-
-    public static void syncConfig() {
-    	printDebugLog = configFile.getBoolean("Print Debug Log", Configuration.CATEGORY_GENERAL, printDebugLog, "");
-    	printStackTrace = configFile.getBoolean("Print Stack Trace", Configuration.CATEGORY_GENERAL, printStackTrace, "");
-        //generalConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, generalConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-        //generalConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, generalConfigString, "A String!");
-        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", Configuration.CATEGORY_GENERAL, addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
-        addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
-        //teamsConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, teamsConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-        //teamsConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, teamsConfigString, "A String!");
-        //teamsConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, teamsConfigBoolean, "A Boolean!");
-
-        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	Configuration.CATEGORY_GENERAL,  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
-
-        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime",	Configuration.CATEGORY_GENERAL,  10, 0, 600, "Min(default=10)");
-
-        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
-        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
-        gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
-        breakableArmor = configFile.getInt("breakableArmor", Configuration.CATEGORY_GENERAL, 0,0,2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
-        defaultArmorDurability = configFile.getInt("defaultArmorDurability", Configuration.CATEGORY_GENERAL, 500,1,10000, "Default durability if breakable = 1");
-        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
-        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
-        crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
-		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
-        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
+		/*FORMATS 
+		ConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, ConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
+        ConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, ConfigString, "A String!");
+        ConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, ConfigBoolean, "A Boolean!");
+		*/
+    public static void syncConfig() 
+    {
+    	//Teams/Advanced Settings
+    	printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
+    	printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
+        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings",  10, 0, 600, "Min");
+        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min", "Teams/advanced settings",  0, 0, 1000, "Min");
+        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
+        
+    	//Server/Gameplay Settings (Server-client synced)
+    	gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+        gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
+        bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
+        crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+        breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
+        defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
+        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
+        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	"Gameplay Settings (synced)",  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+    	
+        //Client Side Settings
+        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
+        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
+        addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
         	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
         	hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor"+COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
-        			"Hit cross hair color "+COLOR[i]+"(default=1.0)");
+        			"Hit cross hair color "+COLOR[i]);
         }
 
         if(configFile.hasChanged())
             configFile.save();
     }
     
-    public static void syncConfig(Side side) {
-    	printDebugLog = configFile.getBoolean("Print Debug Log", Configuration.CATEGORY_GENERAL, printDebugLog, "");
-    	printStackTrace = configFile.getBoolean("Print Stack Trace", Configuration.CATEGORY_GENERAL, printStackTrace, "");
-        //generalConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, generalConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-        //generalConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, generalConfigString, "A String!");
-        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", Configuration.CATEGORY_GENERAL, addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
+    public static void syncConfig(Side side) 
+    {
+    	//Teams/Advanced Settings
+    	printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
+    	printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
+        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings",  10, 0, 600, "Min");
+        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min", "Teams/advanced settings",  0, 0, 1000, "Min");
+        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
+        
+    	//Server/Gameplay Settings (Server-client synced)
+    	gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+        gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
+		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
+        crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+        breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
+        defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
+        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
+        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	"Gameplay Settings (synced)",  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+    	
+        //Client Side Settings
+        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
+        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
+        hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
         addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
-        //teamsConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, teamsConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-        //teamsConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, teamsConfigString, "A String!");
-        //teamsConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, teamsConfigBoolean, "A Boolean!");
-
-        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	Configuration.CATEGORY_GENERAL,  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
-
-        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime",	Configuration.CATEGORY_GENERAL,  10, 0, 600, "Min(default=10)");
-
-        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min",	Configuration.CATEGORY_GENERAL,  0, 0, 1000, "Min(default=0)");
-        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor",Configuration.CATEGORY_GENERAL, 50, 0, 1000, "Divisor(default=50)");
-        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", Configuration.CATEGORY_GENERAL, gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
-        gunCarryLimit = configFile.getInt("gunCarryLimit", Configuration.CATEGORY_GENERAL, 3,2,9, "Set the soft carry limit for guns(2-9)");
-        breakableArmor = configFile.getInt("breakableArmor", Configuration.CATEGORY_GENERAL, 0,0,2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
-        defaultArmorDurability = configFile.getInt("defaultArmorDurability", Configuration.CATEGORY_GENERAL, 500,1,10000, "Default durability if breakable = 1");
-        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering default=true");
-        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections default=true");
-        crosshairEnable = configFile.getBoolean("Enable crosshairs", Configuration.CATEGORY_GENERAL, crosshairEnable, "Enable default crosshair default=false");
-		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", Configuration.CATEGORY_GENERAL, bulletGuiEnable, "Enable bullet gui default=true");
-		hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", Configuration.CATEGORY_GENERAL, hitCrossHairEnable, "");
-		hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
         for(int i=0; i<hitCrossHairColor.length; i++)
         {
         	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
         	hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor"+COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
-        			"Hit cross hair color "+COLOR[i]+"(default=1.0)");
+        			"Hit cross hair color "+COLOR[i]);
         }
 
         if(side.isClient())
         {
-        	String aimTypeInput = configFile.getString("Aim Type", "Settings", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
+        	String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
             AimType aimType = AimType.fromString(aimTypeInput);
             
             if(aimType != null)
@@ -670,7 +668,7 @@ public class FlansMod
             	FlansModClient.aimType = AimType.TOGGLE;
             }
             
-            String aimButtonInput = configFile.getString("Aim Button", "Settings", "left", "The mouse button used to aim a gun 'left' or 'right'");
+            String aimButtonInput = configFile.getString("Aim Button", "Input Settings", "left", "The mouse button used to aim a gun 'left' or 'right'");
             FlanMouseButton aimButtonType = FlanMouseButton.fromString(aimButtonInput);
             
             if(aimButtonType != null)
@@ -682,7 +680,7 @@ public class FlansMod
             	FlansModClient.aimButton = FlanMouseButton.LEFT;
             }
             
-            String shootButtonInput = configFile.getString("Fire Button", "Settings", "right", "The mouse button used to fire a gun 'left' or 'right'");
+            String shootButtonInput = configFile.getString("Fire Button", "Input Settings", "right", "The mouse button used to fire a gun 'left' or 'right'");
             FlanMouseButton shootButtonType = FlanMouseButton.fromString(shootButtonInput);
             
             if(shootButtonType != null)

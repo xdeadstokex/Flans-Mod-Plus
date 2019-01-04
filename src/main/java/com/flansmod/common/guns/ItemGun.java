@@ -34,7 +34,7 @@ import com.flansmod.common.network.PacketGunState;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
-import com.flansmod.common.network.PacketUpdateSpeed;
+//import com.flansmod.common.network.PacketUpdateSpeed;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
@@ -110,8 +110,6 @@ public class ItemGun extends Item implements IPaintableItem
 	{
 		return type;
 	}
-
-	//public boolean sendPosToServer = false;
 
 	public IIcon[] icons;
 	public IIcon defaultIcon;
@@ -642,7 +640,7 @@ public class ItemGun extends Item implements IPaintableItem
 			tags.setTag("ammo", ammoTagsList);
 			itemstack.stackTagCompound = tags;
 		}
-		
+		//TODO Temp marker
 		/*
 		//If enabled a speed nerf will be applied for each gun after gunCarryLimt starting at 0.6 and decreasing by 0.1 for each additional
 		if(FlansMod.gunCarryLimitEnable && entity instanceof EntityPlayer)
