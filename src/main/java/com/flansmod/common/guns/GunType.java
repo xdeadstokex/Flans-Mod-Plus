@@ -50,7 +50,7 @@ public class GunType extends PaintableType implements IScope
 	//This must never be set to 0, will cause massive issues
 	public float decreaseRecoilYaw = 0.5F;
 	/** Modifier for increasing the final pitch recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
-	public float increaseRecoilPitch = 0;
+	public float increaseRecoilPitch = 0.5F;
 	/** Modifier for increasing the final yaw recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
 	public float increaseRecoilYaw = 0;
 	
@@ -846,7 +846,17 @@ public class GunType extends PaintableType implements IScope
 		}
 		return stackRecoil;
 	}
-
+	//Used for displaying static recoil stats
+	public float getRecoilDisplay(ItemStack stack)
+	{
+		float stackRecoil = this.recoilPitch;
+		for(AttachmentType attachment : getCurrentAttachments(stack))
+		{
+			stackRecoil *= attachment.recoilMultiplier;
+		}
+		return stackRecoil;
+	}
+	
 	public float getRecoilYaw(ItemStack stack)
 	{
 		float stackRecoilYaw = this.recoilYaw + ((rand.nextFloat()-0.5F) * this.rndRecoilYawRange);
@@ -856,6 +866,7 @@ public class GunType extends PaintableType implements IScope
 		}
 		return stackRecoilYaw;
 	}
+	
 
 	/** Get the bullet speed of a specific gun, taking into account attachments */
 	public float getBulletSpeed(ItemStack stack)

@@ -73,6 +73,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -248,7 +249,8 @@ public class ItemGun extends Item implements IPaintableItem
 				lines.add("\u00a7e[Underbarrel]");
 
 			lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
-			lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilPitch(stack), 2));
+			String recoil = String.format("%s %s[-%s] %s[+%s]", roundFloat(type.getRecoilDisplay(stack), 2), EnumChatFormatting.GREEN, type.decreaseRecoilPitch, EnumChatFormatting.RED, type.increaseRecoilPitch);
+			lines.add("\u00a79Recoil" + "\u00a77: " + recoil);	
 			lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack), 2));
 			lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
 			//TODO Convert to stack values so this works with attachments

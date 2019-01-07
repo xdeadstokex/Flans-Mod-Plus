@@ -1,27 +1,29 @@
 package com.flansmod.client.gui;
 
-import com.flansmod.common.guns.boxes.ContainerGunBox;
-import com.flansmod.common.guns.boxes.GunBoxEntry;
-import com.flansmod.common.guns.boxes.GunPage;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.StringUtils;
-import net.minecraft.world.World;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.boxes.ContainerGunBox;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
+import com.flansmod.common.guns.boxes.GunBoxType;
+import com.flansmod.common.guns.boxes.GunPage;
+
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import cpw.mods.fml.client.FMLClientHandler;
-
-import com.flansmod.common.guns.boxes.GunBoxType;
-
-import java.util.Collections;
-import java.util.List;
+import net.minecraft.world.World;
 
 public class GuiGunBox extends GuiContainer
 {
@@ -43,6 +45,7 @@ public class GuiGunBox extends GuiContainer
 	private boolean craftHighlight = false;
 	private boolean nextHighlight = false;
 	private boolean backHighlight = false;
+	private List<String> gunStats;
 
 
 	public GuiGunBox(InventoryPlayer playerinventory, GunBoxType type, World w)
@@ -87,7 +90,6 @@ public class GuiGunBox extends GuiContainer
 		if(selectedItem != -1)
 		{
 			GunBoxEntry entry = entries[selectedItem];
-
 			//Draw gun and ammo items
 			drawSlotInventory(new ItemStack(entry.type.getItem()), 127, 26);
 			if(!entry.isAmmoNullOrEmpty())
@@ -126,10 +128,12 @@ public class GuiGunBox extends GuiContainer
 		else
 			fontRendererObj.drawStringWithShadow("<", (7 + 10) - (fontRendererObj.getStringWidth("<") / 2), 26, hexColor(type.buttonTextColor));
 
-
 		//Draw tooltips
 		if(recipeTooltip != null)
 			drawHoveringText(Collections.singletonList(recipeTooltip), mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
+		//Draw Stats
+		if(gunStats != null)
+			drawHoveringText(gunStats, mouseX - guiLeft, mouseY - guiTop, fontRendererObj);
 	}
 
 	@Override
@@ -241,6 +245,7 @@ public class GuiGunBox extends GuiContainer
 
 		//Hover for recipe tooltips
 		recipeTooltip = null;
+		gunStats = null;
 		if(selectedItem != -1)
 		{
 			GunBoxEntry entry = currentPage.gunList[selectedItem];
@@ -255,9 +260,26 @@ public class GuiGunBox extends GuiContainer
 					itemX = 127;
 					itemY = 87;
 				}
-
 				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
 					recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
+			}
+			if(mouseXInGUI >= 127 && mouseXInGUI < 127 + 16 && mouseYInGUI >= 26 && mouseYInGUI < 26 + 16)
+			{
+				List<String> lines = new ArrayList<String>();
+				GunType gunType = (GunType) entry.type;
+				lines.add(gunType.name);
+				lines.add("\u00a79Damage" + "\u00a77: " + gunType.damage);
+				lines.add("\u00a79Recoil" + "\u00a77: " + gunType.recoilPitch);
+				lines.add("\u00a79Spread" + "\u00a77: " + gunType.bulletSpread);
+				lines.add("\u00a79Reload" + "\u00a77: " + (gunType.reloadTime / 20) + "s");
+				if(gunType.shootDelay != 0)
+				{
+					lines.add("\u00a79RPM" + "\u00a77: " + (1200 / gunType.shootDelay) + "rpm");
+				}
+				else
+					lines.add("\u00a79RPM" + "\u00a77: " + (gunType.roundsPerMin) + "rpm");
+				lines.add("\u00a79Mode(s)" + "\u00a77: " + gunType.mode);
+				gunStats = lines;
 			}
 		}
 	}
