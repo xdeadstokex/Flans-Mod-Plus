@@ -34,6 +34,27 @@ public class GunType extends PaintableType implements IScope
 	public static final Random rand = new Random();
 	
 	//Gun Behaviour Variables
+	
+	//Recoil Variables
+	/** Base value for Upwards cursor/view recoil */
+	public float recoilPitch = 0.0F;
+	/** Base value for Left/Right cursor/view recoil */
+	public float recoilYaw = 0.0F;
+	/** Modifier for setting the maximum pitch divergence when randomizing recoil (Recoil 2 + rndRecoil 0.5 == 1.5-2.5 Recoil range) */
+	public float rndRecoilPitchRange = 0.5F;
+	/** Modifier for setting the maximum yaw divergence when randomizing recoil (Recoil 2 + rndRecoil 0.5 == 1.5-2.5 Recoil range) */
+	public float rndRecoilYawRange = 0.5F;
+	/** Modifier for decreasing the final pitch recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range) */
+	public float decreaseRecoilPitch = 0.5F;
+	/** Modifier for decreasing the final yaw recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range) */
+	//This must never be set to 0, will cause massive issues
+	public float decreaseRecoilYaw = 0.5F;
+	/** Modifier for increasing the final pitch recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
+	public float increaseRecoilPitch = 0;
+	/** Modifier for increasing the final yaw recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
+	public float increaseRecoilYaw = 0;
+	
+	//Ammo & Reload Variables
 	/** The list of bullet types that can be used in this gun */
 	public List<ShootableType> ammo = new ArrayList<ShootableType>();
 	/** Whether the player can press the reload key (default R) to reload this gun */
@@ -42,15 +63,14 @@ public class GunType extends PaintableType implements IScope
 	public boolean allowRearm = true;
 	/** The time (in ticks) it takes to reload this gun */
 	public int reloadTime;
-	/** The amount to recoil the player's view by when firing a single shot from this gun */
-	public float recoilPitch = 0.0F;
-	public float recoilYaw = 0.0F;
-	public float rndRecoilPitchRange = 0;
-	public float rndRecoilYawRange = 0;
-	public float decreaseRecoilPitch = 0;
-	public float decreaseRecoilYaw = 1;
+	/** Number of ammo items that the gun may hold. Most guns will hold one magazine.
+	 * Some may hold more, such as Nerf pistols, revolvers or shotguns */
+	public int numPrimaryAmmoItems = 1;
+	
+	//Projectile Mechanic Variables
 	/** The amount that bullets spread out when fired from this gun */
 	public float bulletSpread;
+	/** If true, spread determined by loaded ammo type */
 	public boolean allowSpreadByBullet = false;
 	/** Damage inflicted by this gun. Multiplied by the bullet damage. */
 	public float damage = 0;
@@ -60,15 +80,12 @@ public class GunType extends PaintableType implements IScope
 	public float bulletSpeed = 5.0F;
 	/** The number of bullet entities created by each shot */
 	public int numBullets = 1;
+	/** Allows you to set how many bullet entities are fired per shot via the ammo used */
 	public boolean allowNumBulletsByBulletType = false;
 	/** The delay between shots in ticks (1/20ths of seconds) OUTDATED, USE RPM */
 	public float shootDelay = 0;
 	/** The fire rate of the gun in RPM, 1200 = MAX */
 	public float roundsPerMin = 0;
-	/** Number of ammo items that the gun may hold. Most guns will hold one magazine.
-	 * Some may hold more, such as Nerf pistols, revolvers or shotguns */
-	public int numPrimaryAmmoItems = 1;
-	//public int numAmmoItemsInGun = 1;
 	/** The firing mode of the gun. One of semi-auto, full-auto, minigun or burst */
 	public EnumFireMode mode = EnumFireMode.FULLAUTO;
 	public EnumFireMode[] submode = new EnumFireMode[]{ EnumFireMode.FULLAUTO };
@@ -92,43 +109,29 @@ public class GunType extends PaintableType implements IScope
 	public boolean showCrosshair = false;
 	/** Item to drop on shooting */
 	public String dropItemOnShoot = null;
-	//Custom Melee Stuff
-	/** The time delay between custom melee attacks */
-	public int meleeTime = 1;
-	/** The path the melee weapon takes */
-	public ArrayList<Vector3f> meleePath = new ArrayList<Vector3f>(), meleePathAngles = new ArrayList<Vector3f>();
-	/** The points on the melee weapon that damage is actually done from. */
-	public ArrayList<Vector3f> meleeDamagePoints = new ArrayList<Vector3f>();
 	/** Set these to make guns only usable by a certain type of entity */
 	public boolean usableByPlayers = true, usableByMechas = true;
 	/** Whether Gun makes players to be EnumAction.bow */
 	public EnumAction itemUseAction = EnumAction.bow;
+	
+	//Launcher variables
 	public int canLockOnAngle = 5;
 	public int lockOnSoundTime = 0;
 	public String lockOnSound = "";
 	public int maxRangeLockOn = 80;
-
 	public boolean canSetPosition = false;
-
+	/** Determines what the launcher can lock on to */
 	public boolean lockOnToPlanes = false, lockOnToVehicles = false, lockOnToMechas = false, lockOnToPlayers = false, lockOnToLivings = false;
 
-	//Information
-	//Show any variables into the GUI when hovering over items.
-	/** If false, then attachments wil not be listed in item GUI */
-	public boolean showAttachments = true;
-	/** Show statistics */
-	public boolean showDamage = false, showRecoil = false, showSpread = false;
-	/** Show reload time in seconds */
-	public boolean showReloadTime = false;
 
 	//Shields
-	//A shield is actually a gun without any shoot functionality (similar to knives or binoculars)
-	//and a load of shield code on top. This means that guns can have in built shields (think Nerf Stampede)
+	/*A shield is actually a gun without any shoot functionality (similar to knives or binoculars)
+	and a load of shield code on top. This means that guns can have in built shields (think Nerf Stampede) */
 	/** Whether or not this gun has a shield piece */
 	public boolean shield = false;
 	/** Shield collision box definition. In model co-ordinates */
 	public Vector3f shieldOrigin, shieldDimensions;
-	/** Float between 0 and 1 denoting the proportion of damage blocked by the shield */
+	/** Percentage of damage blocked between 0.00-1.00 (0.50F = 50%) */
 	public float shieldDamageAbsorption = 0F;
 
 	//Sounds
@@ -141,15 +144,26 @@ public class GunType extends PaintableType implements IScope
 	/** The length of the sound for looping sounds */
 	public int shootSoundLength;
 	/** Whether to distort the sound or not. Generally only set to false for looping sounds */
-	public boolean distortSound = true;
-	/** The sound to play upon reloading */
 	public String reloadSound;
 	/** The sound to play upon reloading when empty */
 	public String reloadSoundOnEmpty;
+	/** The sound to play open firing when empty(once) */
 	public String clickSoundOnEmpty;
+	/** The sound to play while holding the weapon in the hand*/
+	public String idleSound;
+	
+	//Sound Modifiers
+	/** Whether to distort the sound or not. Generally only set to false for looping sounds */
+	public boolean distortSound = true;
+	/** The length of the idle sound for looping sounds (miniguns) */
+	public int idleSoundLength;
+	/** The block range for idle sounds (for miniguns etc) */
 	public int idleSoundRange = 50;
+	/** The block range for melee sounds  */
 	public int meleeSoundRange = 50;
+	/** The block range for reload sounds */
 	public int reloadSoundRange = 50;
+	/** The block range for gunshots sounds  */
 	public int gunSoundRange = 50;
 
 	//Looping sounds
@@ -164,12 +178,15 @@ public class GunType extends PaintableType implements IScope
 	/** Played when the player stops holding shoot */
 	public String cooldownSound;
 
-
+	//Custom Melee Stuff
 	/** The sound to play upon weapon swing */
 	public String meleeSound;
-	/** The sound to play while holding the weapon in the hand*/
-	public String idleSound;
-	public int idleSoundLength;
+	/** The time delay between custom melee attacks */
+	public int meleeTime = 1;
+	/** The path the melee weapon takes */
+	public ArrayList<Vector3f> meleePath = new ArrayList<Vector3f>(), meleePathAngles = new ArrayList<Vector3f>();
+	/** The points on the melee weapon that damage is actually done from. */
+	public ArrayList<Vector3f> meleeDamagePoints = new ArrayList<Vector3f>();
 
 
 	//Deployable Settings
@@ -193,9 +210,10 @@ public class GunType extends PaintableType implements IScope
 	public float zoomLevel = 1.0F;
 	/** The FOV zoom level of the default scope */
 	public float FOVFactor = 1.5F;
-
+	/** Gives night vision while scoped if true */
 	public boolean allowNightVision = false;
 
+	//Model variables
 	/** For guns with 3D models */
 	@SideOnly(Side.CLIENT)
 	public ModelGun model;
@@ -234,7 +252,6 @@ public class GunType extends PaintableType implements IScope
 	public float moveSpeedModifier = 1F;
 	/** Gives knockback resistance to the player */
 	public float knockbackModifier = 0F;
-
 	/** Default spread of the gun. Do not modify. */
 	private float defaultSpread = 0F;
 
@@ -289,7 +306,7 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("DecreaseRecoil"))
 				decreaseRecoilPitch = Float.parseFloat(split[1]);
 			else if(split[0].equals("DecreaseRecoilYaw"))
-				decreaseRecoilYaw = Float.parseFloat(split[1]);
+				decreaseRecoilYaw = Float.parseFloat(split[1]) > 0 ? Float.parseFloat(split[1]) : 0.5F;
 			else if(split[0].equals("Knockback"))
 				knockback = Float.parseFloat(split[1]);
 			else if(split[0].equals("Accuracy") || split[0].equals("Spread"))
@@ -333,18 +350,6 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("MaxRangeLockOn"))
 				maxRangeLockOn = Integer.parseInt(split[1]);
 
-
-			//Information
-			else if(split[0].equals("ShowAttachments"))
-				showAttachments = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("ShowDamage"))
-				showDamage = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("ShowRecoil"))
-				showRecoil = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("ShowAccuracy"))
-				showSpread = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("ShowReloadTime"))
-				showReloadTime = Boolean.parseBoolean(split[1]);
 
 			//Sounds
 			else if(split[0].equals("ShootDelay"))
