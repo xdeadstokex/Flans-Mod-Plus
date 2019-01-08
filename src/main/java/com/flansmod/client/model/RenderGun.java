@@ -836,7 +836,7 @@ public class RenderGun implements IItemRenderer {
 					}
 					case RIFLE:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
 
@@ -847,7 +847,7 @@ public class RenderGun implements IItemRenderer {
 					}
 					case CUSTOMRIFLE:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
 
@@ -859,7 +859,7 @@ public class RenderGun implements IItemRenderer {
 					}
 					case RIFLE_TOP: case CUSTOMRIFLE_TOP:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
 
@@ -872,7 +872,7 @@ public class RenderGun implements IItemRenderer {
 					//TODO
 					case SHOTGUN: case STRIKER: case CUSTOMSHOTGUN: case CUSTOMSTRIKER:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
 
@@ -1279,12 +1279,13 @@ public class RenderGun implements IItemRenderer {
 	 * reload
 	 */
 	//TODO
-	private float getNumBulletsInReload(AttachmentType grip, GunType gun, ItemStack gunStack)
+	private float getNumBulletsInReload(GunAnimations animations, AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
-		if (grip != null && gun.getSecondaryFire(gunStack))
+		return animations.reloadAmmoCount;
+		/*if (grip != null && gun.getSecondaryFire(gunStack))
 			return grip.model.numBulletsInReloadAnimation;
 		else
-			return gun.model.numBulletsInReloadAnimation;
+			return gun.model.numBulletsInReloadAnimation;*/
 	}
 
 	/** Get the recoil distance, based on ammo type to reload */

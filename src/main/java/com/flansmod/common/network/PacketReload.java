@@ -20,6 +20,7 @@ import com.flansmod.common.PlayerHandler;
 public class PacketReload extends PacketBase 
 {
 	public boolean left;
+	public Integer amount = -1;
 	
 	public PacketReload() {}
 	
@@ -27,17 +28,25 @@ public class PacketReload extends PacketBase
 	{
 		left = l;
 	}
+	
+	public PacketReload(boolean l, int count) 
+	{
+		left = l;
+		amount = count;
+	}
 		
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) 
 	{
 		data.writeBoolean(left);
+		data.writeInt(amount);
 	}
 
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) 
 	{
 		left = data.readBoolean();
+		amount = data.readInt();
 	}
 
 	@Override
@@ -63,6 +72,16 @@ public class PacketReload extends PacketBase
 					break;
 				}
 			}
+			
+			int reloadCount = 0;
+			for(int i = 0; i < type.getNumAmmoItemsInGun(stack); i++)
+			{
+				ItemStack bulletStack = ((ItemGun)stack.getItem()).getBulletItemStack(stack, i);
+				if(bulletStack != null && (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) == 0)
+				{
+					reloadCount += 1;
+				}
+			}
 
     		if(((ItemGun)stack.getItem()).reload(stack, type, playerEntity.worldObj, playerEntity, true, left))
     		{
@@ -72,7 +91,8 @@ public class PacketReload extends PacketBase
     				data.reloadingLeft = true;
     			else data.reloadingRight = true;
 				//Send reload packet to induce reload effects client side
-				FlansMod.getPacketHandler().sendTo(new PacketReload(left), playerEntity);
+    			
+				FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount), playerEntity);
 
 				//Play reload sound, empty variant if not null
 				String soundToPlay = null;
@@ -132,8 +152,8 @@ public class PacketReload extends PacketBase
 			int pumpTime = type.model == null ? 1 : type.model.pumpTime;
 			int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
 			int chargeTime = type.model == null ? 1 : type.model.chargeTime;
-			animations.doReload((int)type.getReloadTime(stack), pumpDelay, pumpTime, chargeDelay, chargeTime, type.getReloadCount(stack));
-			System.out.println(type.getReloadCount(stack));
+			animations.doReload((int)type.getReloadTime(stack), pumpDelay, pumpTime, chargeDelay, chargeTime, amount);
+			System.out.println("Reload Packet: " + System.currentTimeMillis()/1000);
     		
 			//Iterate over all inventory slots and find the magazine / bullet item with the most bullets
 			int bestSlot = -1;

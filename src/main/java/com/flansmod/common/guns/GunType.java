@@ -903,9 +903,12 @@ public class GunType extends PaintableType implements IScope
 	{
 		int reloadCount = 1;
 		
+		System.out.println("Gun Reload Count: " + System.currentTimeMillis()/1000);
+		
 		if(stack.stackTagCompound != null && stack.stackTagCompound.hasKey("reloadCount"))
 		{
 			reloadCount = stack.stackTagCompound.getInteger("reloadCount");
+			System.out.println("NBT " + reloadCount);
 		}	
 		return reloadCount;
 	}

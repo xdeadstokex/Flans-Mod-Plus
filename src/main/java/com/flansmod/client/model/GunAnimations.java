@@ -228,7 +228,6 @@ public class GunAnimations
 		timeUntilCharge = chargeDelay;
 		timeToChargeFor = chargeTime;
 		reloadAmmoCount = ammoCount;
-		System.out.println(reloadAmmoCount);
 	}
 	
 	public void doMelee(int meleeTime)
