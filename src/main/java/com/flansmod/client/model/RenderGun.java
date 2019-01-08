@@ -1190,7 +1190,7 @@ public class RenderGun implements IItemRenderer {
 		} else if (!anim.reloading && !model.lefthandPump) {
 			RenderArms.renderArmDefault(model, anim, smoothing, model.leftArmRot, model.leftArmPos);
 		} else {
-			RenderArms.renderArmReload(model, anim, smoothing, model.leftArmRot, model.leftArmPos);
+			RenderArms.renderArmReload(model, anim, smoothing, model.leftArmReloadRot, model.leftArmReloadPos);
 		}
 
 		GL11.glScalef(model.leftArmScale.x, model.leftArmScale.y, model.leftArmScale.z);
