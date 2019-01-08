@@ -203,6 +203,17 @@ public class ItemGun extends Item implements IPaintableItem
 		//Set the tags to match the bullet stack
 		bullet.writeToNBT(ammoTags);
 	}
+	//TODO
+	public void setReloadCount(ItemStack gun, int count)
+	{
+		//If the gun has no tags, give it some
+		if(!gun.hasTagCompound())
+		{
+			gun.stackTagCompound = new NBTTagCompound();
+		}
+		
+		gun.stackTagCompound.setInteger("reloadCount", count);	
+	}
 
 	@Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
@@ -1234,6 +1245,15 @@ public class ItemGun extends Item implements IPaintableItem
 			return false;
 		//For playing sounds afterwards
 		boolean reloadedSomething = false;
+		int reloadCount = 0;
+		for(int i = 0; i < type.getNumAmmoItemsInGun(gunStack); i++)
+		{
+			ItemStack bulletStack = getBulletItemStack(gunStack, i);
+			if(bulletStack != null && (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) == 0)
+			{
+				reloadCount += 1;
+			}
+		}
 		//Check each ammo slot, one at a time
 		for(int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++)
 		{
@@ -1263,6 +1283,7 @@ public class ItemGun extends Item implements IPaintableItem
 				//If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
 				if(bestSlot != -1)
 				{
+					//TODO
 					ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
 					ShootableType newBulletType = ((ItemShootable)newBulletStack.getItem()).type;
 					//Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
@@ -1270,8 +1291,10 @@ public class ItemGun extends Item implements IPaintableItem
 						dropItem(world, entity, ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload);
 					//The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
 					if(bulletStack != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
+					{
 						if(!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative))
-							entity.entityDropItem(bulletStack, 0.5F);
+							entity.entityDropItem(bulletStack, 0.5F);	
+					}
 
 					//Load the new magazine
 					ItemStack stackToLoad = newBulletStack.copy();
@@ -1291,6 +1314,12 @@ public class ItemGun extends Item implements IPaintableItem
 				}
 			}
 		}
+		
+		if(reloadedSomething)
+		{
+			setReloadCount(gunStack, reloadCount);
+		}
+
 		return reloadedSomething;
 	}
 

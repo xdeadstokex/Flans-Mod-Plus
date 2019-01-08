@@ -836,9 +836,9 @@ public class RenderGun implements IItemRenderer {
 					}
 					case RIFLE:
 					{
-						float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
-						int bulletNum = MathHelper.floor_float(thing);
-						float bulletProgress = thing - bulletNum;
+						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						int bulletNum = MathHelper.floor_float(ammoPosition);
+						float bulletProgress = ammoPosition - bulletNum;
 
 						GL11.glRotatef(bulletProgress * 15F, 0F, 1F, 0F);
 						GL11.glRotatef(bulletProgress * 15F, 0F, 0F, 1F);
@@ -847,9 +847,9 @@ public class RenderGun implements IItemRenderer {
 					}
 					case CUSTOMRIFLE:
 					{
-						float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
-						int bulletNum = MathHelper.floor_float(thing);
-						float bulletProgress = thing - bulletNum;
+						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						int bulletNum = MathHelper.floor_float(ammoPosition);
+						float bulletProgress = ammoPosition - bulletNum;
 
 						GL11.glRotatef(bulletProgress * model.rotateClipVertical, 0F, 1F, 0F);
 						GL11.glRotatef(bulletProgress * model.rotateClipHorizontal, 0F, 0F, 1F);
@@ -859,9 +859,9 @@ public class RenderGun implements IItemRenderer {
 					}
 					case RIFLE_TOP: case CUSTOMRIFLE_TOP:
 					{
-						float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
-						int bulletNum = MathHelper.floor_float(thing);
-						float bulletProgress = thing - bulletNum;
+						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						int bulletNum = MathHelper.floor_float(ammoPosition);
+						float bulletProgress = ammoPosition - bulletNum;
 
 						GL11.glRotatef(bulletProgress * 55F, 0F, 1F, 0F);
 						GL11.glRotatef(bulletProgress * 95F, 0F, 0F, 1F);
@@ -869,11 +869,12 @@ public class RenderGun implements IItemRenderer {
 
 						break;
 					}
+					//TODO
 					case SHOTGUN: case STRIKER: case CUSTOMSHOTGUN: case CUSTOMSTRIKER:
 					{
-						float thing = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
-						int bulletNum = MathHelper.floor_float(thing);
-						float bulletProgress = thing - bulletNum;
+						float ammoPosition = clipPosition * getNumBulletsInReload(gripAttachment, type, item);
+						int bulletNum = MathHelper.floor_float(ammoPosition);
+						float bulletProgress = ammoPosition - bulletNum;
 
 						GL11.glRotatef(bulletProgress * -30F, 0F, 0F, 1F);
 						GL11.glTranslatef(bulletProgress * -0.5F * 1 / type.modelScale, bulletProgress * -1F * 1 / type.modelScale, 0F);
@@ -1223,7 +1224,7 @@ public class RenderGun implements IItemRenderer {
 			RenderArms.renderArmDefault(model, anim, smoothing, model.rightArmRot, model.rightArmPos);
 		}
 		else {
-			RenderArms.renderArmReload(model, anim, smoothing, model.rightArmRot, model.rightArmPos);
+			RenderArms.renderArmReload(model, anim, smoothing, model.rightArmReloadRot, model.rightArmReloadPos);
 		}
 
 		GL11.glScalef(model.rightArmScale.x, model.rightArmScale.y, model.rightArmScale.z);
@@ -1277,6 +1278,7 @@ public class RenderGun implements IItemRenderer {
 	 * Get the number of bullets to reload in animation, based on ammo type to
 	 * reload
 	 */
+	//TODO
 	private float getNumBulletsInReload(AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
 		if (grip != null && gun.getSecondaryFire(gunStack))

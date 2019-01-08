@@ -52,7 +52,7 @@ public class GunType extends PaintableType implements IScope
 	/** Modifier for increasing the final pitch recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
 	public float increaseRecoilPitch = 0.5F;
 	/** Modifier for increasing the final yaw recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
-	public float increaseRecoilYaw = 0;
+	public float increaseRecoilYaw = 0.5F;
 	
 	//Ammo & Reload Variables
 	/** The list of bullet types that can be used in this gun */
@@ -896,6 +896,18 @@ public class GunType extends PaintableType implements IScope
 			stackReloadTime *= attachment.reloadTimeMultiplier;
 		}
 		return stackReloadTime;
+	}
+	
+	/** Get the reload time of a specific gun, taking into account attachments */
+	public int getReloadCount(ItemStack stack)
+	{
+		int reloadCount = 1;
+		
+		if(stack.stackTagCompound != null && stack.stackTagCompound.hasKey("reloadCount"))
+		{
+			reloadCount = stack.stackTagCompound.getInteger("reloadCount");
+		}	
+		return reloadCount;
 	}
 
 	/** Get the fire rate of a specific gun */

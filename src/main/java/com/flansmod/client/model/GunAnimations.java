@@ -29,6 +29,7 @@ public class GunAnimations
 	public boolean reloading = false;
 	public float reloadAnimationTime = 0;
 	public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
+	public int reloadAmmoCount = 1;
 
 	public float minigunBarrelRotation = 0F;
 	public float minigunBarrelRotationSpeed = 0F;
@@ -217,7 +218,7 @@ public class GunAnimations
 		casingStage = 0;
 	}
 		
-	public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime)
+	public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount)
 	{
 		reloading = true;
 		lastReloadAnimationProgress = reloadAnimationProgress = 0F;
@@ -226,6 +227,8 @@ public class GunAnimations
 		timeToPumpFor = pumpTime;
 		timeUntilCharge = chargeDelay;
 		timeToChargeFor = chargeTime;
+		reloadAmmoCount = ammoCount;
+		System.out.println(reloadAmmoCount);
 	}
 	
 	public void doMelee(int meleeTime)
