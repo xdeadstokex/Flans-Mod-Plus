@@ -666,6 +666,15 @@ public class RenderGun implements IItemRenderer {
 						model.renderDefaultGrip(f);
 					if (gadgetAttachment == null && model.gadgetIsOnPump)
 						model.renderDefaultGadget(f);
+					if(FlansModClient.shotState != -1 && -(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance != -0.0)
+					{
+						// TODO: pump
+						FlansModClient.shotState = -1;
+						if(type.pumpSound != null)
+						{
+							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.pumpSound), 1.0F));
+						}
+					}
 				}
 				GL11.glPopMatrix();
 			}

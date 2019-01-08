@@ -78,6 +78,7 @@ public class GunAnimations
 				//Pump it!
 				pumping = true;	
 				lastPumped = pumped = -1F;
+				FlansModClient.shotState = 1;
 			}
 			
 		}
@@ -217,6 +218,8 @@ public class GunAnimations
         casingRandom.y = ((r.nextFloat()*2)-1);
         casingRandom.z = ((r.nextFloat()*2)-1);
 		casingStage = 0;
+		
+		FlansModClient.shotState = 1;
 	}
 		
 	public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount)
