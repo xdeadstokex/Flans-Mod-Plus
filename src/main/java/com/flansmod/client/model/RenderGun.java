@@ -1,31 +1,37 @@
 package com.flansmod.client.model;
 
-import com.flansmod.common.guns.*;
-
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.client.IItemRenderer;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.guns.AttachmentType;
+import com.flansmod.common.guns.EnumFireMode;
+import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.IScope;
+import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.ItemShootable;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.vector.Vector3f;
 
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.IItemRenderer;
 
 public class RenderGun implements IItemRenderer {
 	private static TextureManager renderEngine;
@@ -847,10 +853,31 @@ public class RenderGun implements IItemRenderer {
 					}
 					case CUSTOMRIFLE:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
+						float maxBullets = getNumBulletsInReload(animations, gripAttachment, type, item);
+						float ammoPosition = clipPosition * maxBullets;
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
 
+						if(type.getNumAmmoItemsInGun(item) > 1 && type.bulletInsert != null && FlansModClient.lastBulletReload != -2)
+						{
+							if(maxBullets == 2 && FlansModClient.lastBulletReload != -1)
+							{
+								int time = (int) (animations.reloadAnimationTime / maxBullets);
+								Minecraft.getMinecraft().getSoundHandler().playDelayedSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F), time);
+								FlansModClient.lastBulletReload = -1;
+							} else if((bulletNum == (int) maxBullets || bulletNum == FlansModClient.lastBulletReload-1))
+							{
+								FlansModClient.lastBulletReload = bulletNum;
+								Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F));
+							}
+							
+							if((ammoPosition < 0.03 && bulletProgress > 0))
+							{
+								FlansModClient.lastBulletReload = -2;
+								Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F));
+							}
+						}
+																				
 						GL11.glRotatef(bulletProgress * model.rotateClipVertical, 0F, 1F, 0F);
 						GL11.glRotatef(bulletProgress * model.rotateClipHorizontal, 0F, 0F, 1F);
 						GL11.glRotatef(bulletProgress * model.tiltClip, 1F, 0F, 0F);

@@ -1159,6 +1159,9 @@ public class ItemGun extends Item implements IPaintableItem
 						if(oldBulletStack != null && (oldBulletStack.getMaxDamage() - oldBulletStack.getItemDamage()) == 0)
 						{
 							reloadCount += 1;
+						} else if(oldBulletStack == null)
+						{
+							reloadCount += 1;
 						}
 					}
 				} else
@@ -1199,7 +1202,7 @@ public class ItemGun extends Item implements IPaintableItem
 					else if(gunType.reloadSound != null)
 						soundToPlay = gunType.reloadSound;
 
-					if(soundToPlay != null)
+					if(soundToPlay != null && type.getNumAmmoItemsInGun(gunStack) == 1)
 						PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
 				}
 				else if((gunType.clickSoundOnEmpty != null) && canClick)

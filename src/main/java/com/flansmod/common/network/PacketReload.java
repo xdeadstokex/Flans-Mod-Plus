@@ -90,6 +90,9 @@ public class PacketReload extends PacketBase
 					if(oldBulletStack != null && (oldBulletStack.getMaxDamage() - oldBulletStack.getItemDamage()) == 0)
 					{
 						reloadCount += 1;
+					} else if(oldBulletStack == null)
+					{
+						reloadCount += 1;
 					}
 				}
 			} else
@@ -121,7 +124,7 @@ public class PacketReload extends PacketBase
 				else if(type.reloadSound != null)
 					soundToPlay = type.reloadSound;
 
-				if(soundToPlay != null)
+				if(soundToPlay != null && maxAmmo == 1)
 					PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true);
     		}
     	}

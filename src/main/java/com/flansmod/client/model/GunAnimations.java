@@ -2,6 +2,7 @@ package com.flansmod.client.model;
 
 import java.util.Random;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.vector.Vector3f;
 
 public class GunAnimations 
@@ -228,6 +229,7 @@ public class GunAnimations
 		timeUntilCharge = chargeDelay;
 		timeToChargeFor = chargeTime;
 		reloadAmmoCount = ammoCount;
+		FlansModClient.lastBulletReload = ammoCount - 1;
 	}
 	
 	public void doMelee(int meleeTime)

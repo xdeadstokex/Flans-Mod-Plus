@@ -94,7 +94,7 @@ public class FlansModClient extends FlansMod
 	public static float antiRecoilPitch;
 	public static float antiRecoilYaw;
 
-	
+	public static int lastBulletReload = 0;
 	
 	//Scope variables
 	/** A delayer on the scope button to avoid repeat presses */
