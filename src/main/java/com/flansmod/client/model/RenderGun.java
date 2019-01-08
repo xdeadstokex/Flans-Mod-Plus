@@ -668,7 +668,6 @@ public class RenderGun implements IItemRenderer {
 						model.renderDefaultGadget(f);
 					if(FlansModClient.shotState != -1 && -(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance != -0.0)
 					{
-						// TODO: pump
 						FlansModClient.shotState = -1;
 						if(type.pumpSound != null)
 						{
