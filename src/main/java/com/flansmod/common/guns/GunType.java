@@ -138,7 +138,7 @@ public class GunType extends PaintableType implements IScope
 	/** The sound played upon shooting */
 	public String shootSound;
 	/** Bullet insert reload sound */
-	public String bulletInsert;
+	public String bulletInsert = "defaultshellinsert";
 	/** Pump Sound */
 	public String actionSound;
 	/** The sound to play upon shooting on last round */
