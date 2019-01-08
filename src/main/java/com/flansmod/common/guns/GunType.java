@@ -898,21 +898,6 @@ public class GunType extends PaintableType implements IScope
 		return stackReloadTime;
 	}
 	
-	/** Get the reload time of a specific gun, taking into account attachments */
-	public int getReloadCount(ItemStack stack)
-	{
-		int reloadCount = 1;
-		
-		System.out.println("Gun Reload Count: " + System.currentTimeMillis()/1000);
-		
-		if(stack.stackTagCompound != null && stack.stackTagCompound.hasKey("reloadCount"))
-		{
-			reloadCount = stack.stackTagCompound.getInteger("reloadCount");
-			System.out.println("NBT " + reloadCount);
-		}	
-		return reloadCount;
-	}
-
 	/** Get the fire rate of a specific gun */
     public float getShootDelay(ItemStack stack)
     {

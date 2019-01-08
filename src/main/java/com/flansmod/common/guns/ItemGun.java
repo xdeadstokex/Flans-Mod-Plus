@@ -203,23 +203,6 @@ public class ItemGun extends Item implements IPaintableItem
 		//Set the tags to match the bullet stack
 		bullet.writeToNBT(ammoTags);
 	}
-	//TODO
-	public static void setReloadCount(ItemStack gun, int count)
-	{
-		NBTTagCompound tag;
-		//If the gun has no tags, give it some
-		if(!gun.hasTagCompound())
-		{
-			tag = new NBTTagCompound();
-		} else
-		{
-			tag = gun.stackTagCompound;
-		}
-		System.out.println("Gun Count Set = " + count);
-		System.out.println("Set Reload Count: " + System.currentTimeMillis()/1000);
-		tag.setInteger("reloadCount", count);
-		gun.setTagCompound(tag);
-	}
 
 	@Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
@@ -1163,23 +1146,35 @@ public class ItemGun extends Item implements IPaintableItem
 			//If no bullet stack was found, reload
 			if(bulletStack == null)
 			{
-				int reloadCount = 0;
-				for(int i = 0; i < type.getNumAmmoItemsInGun(gunStack); i++)
+				int maxAmmo = type.getNumAmmoItemsInGun(gunStack);
+				boolean singlesReload = maxAmmo > 1;
+				int reloadCount;
+				
+				if(singlesReload)
 				{
-					ItemStack oldBulletStack = ((ItemGun)gunStack.getItem()).getBulletItemStack(gunStack, i);
-					if(oldBulletStack != null && (oldBulletStack.getMaxDamage() - oldBulletStack.getItemDamage()) == 0)
+					reloadCount = 0;
+					for(int i = 0; i < type.getNumAmmoItemsInGun(gunStack); i++)
 					{
-						reloadCount += 1;
+						ItemStack oldBulletStack = ((ItemGun)gunStack.getItem()).getBulletItemStack(gunStack, i);
+						if(oldBulletStack != null && (oldBulletStack.getMaxDamage() - oldBulletStack.getItemDamage()) == 0)
+						{
+							reloadCount += 1;
+						}
 					}
+				} else
+				{
+					reloadCount = 1;
 				}
 				
 				if(reload(gunStack, gunType, world, entityplayer, false, left))
 				{
-					
 					//Set player shoot delay to be the reload delay
 					//Set both gun delays to avoid reloading two guns at once
-					data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
+					//data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
 
+	    			float reloadTime = singlesReload ? (type.reloadTime / maxAmmo) * reloadCount : type.reloadTime;
+	    			data.shootTimeRight = data.shootTimeLeft = reloadTime;
+					
 					if(left)
 					{
 						data.reloadingLeft = true;
@@ -1192,7 +1187,7 @@ public class ItemGun extends Item implements IPaintableItem
 					}
 					//Send reload packet to induce reload effects client side
 	    			//ItemGun.setReloadCount(gunStack, reloadCount);
-					FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount), entityplayer);
+					FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount, (int) reloadTime), entityplayer);
 					//Play reload sound
 					String soundToPlay = null;
 					AttachmentType grip = gunType.getGrip(gunStack);
@@ -1209,7 +1204,6 @@ public class ItemGun extends Item implements IPaintableItem
 				}
 				else if((gunType.clickSoundOnEmpty != null) && canClick)
 				{
-                    System.out.println("Playing sound");
 					PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
                     canClick = false;
 				}
