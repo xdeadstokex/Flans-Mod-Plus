@@ -140,7 +140,7 @@ public class GunType extends PaintableType implements IScope
 	/** Bullet insert reload sound */
 	public String bulletInsert;
 	/** Pump Sound */
-	public String pumpSound;
+	public String actionSound;
 	/** The sound to play upon shooting on last round */
     public String lastShootSound;
 	/** The sound played upon shooting with a suppressor */
@@ -382,9 +382,9 @@ public class GunType extends PaintableType implements IScope
 				bulletInsert = split[1];
 				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
 			}
-			else if(split[0].equals("PumpSound"))
+			else if(split[0].equals("ActionSound"))
 			{
-				pumpSound = split[1];
+				actionSound = split[1];
 				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
 			}
 			else if(split[0].equals("LastShootSound"))

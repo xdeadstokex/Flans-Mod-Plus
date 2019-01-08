@@ -669,9 +669,9 @@ public class RenderGun implements IItemRenderer {
 					if(FlansModClient.shotState != -1 && -(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance != -0.0)
 					{
 						FlansModClient.shotState = -1;
-						if(type.pumpSound != null)
+						if(type.actionSound != null)
 						{
-							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.pumpSound), 1.0F));
+							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.actionSound), 1.0F));
 						}
 					}
 				}
