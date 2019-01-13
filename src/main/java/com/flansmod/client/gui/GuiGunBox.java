@@ -78,7 +78,7 @@ public class GuiGunBox extends GuiContainer
 			{
 				String label = entries[i].type.name;
 
-				//Truncate is name is greater than the boundary
+				//Truncate if name is greater than the boundary
 				if(fontRendererObj.getStringWidth(label) > 97)
 					label = label.substring(0, Math.min(label.length(), 15)) + "...";
 
@@ -263,23 +263,28 @@ public class GuiGunBox extends GuiContainer
 				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
 					recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
 			}
+
+
 			if(mouseXInGUI >= 127 && mouseXInGUI < 127 + 16 && mouseYInGUI >= 26 && mouseYInGUI < 26 + 16)
 			{
-				List<String> lines = new ArrayList<String>();
-				GunType gunType = (GunType) entry.type;
-				lines.add(gunType.name);
-				lines.add("\u00a79Damage" + "\u00a77: " + gunType.damage);
-				lines.add("\u00a79Recoil" + "\u00a77: " + gunType.recoilPitch);
-				lines.add("\u00a79Spread" + "\u00a77: " + gunType.bulletSpread);
-				lines.add("\u00a79Reload" + "\u00a77: " + (gunType.reloadTime / 20) + "s");
-				if(gunType.shootDelay != 0)
+				if(entry.type instanceof GunType)
 				{
-					lines.add("\u00a79RPM" + "\u00a77: " + (1200 / gunType.shootDelay) + "rpm");
+					List<String> lines = new ArrayList<String>();
+					GunType gunType = (GunType) entry.type;
+					lines.add(gunType.name);
+					lines.add("\u00a79Damage" + "\u00a77: " + gunType.damage);
+					lines.add("\u00a79Recoil" + "\u00a77: " + gunType.recoilPitch);
+					lines.add("\u00a79Spread" + "\u00a77: " + gunType.bulletSpread);
+					lines.add("\u00a79Reload" + "\u00a77: " + (gunType.reloadTime / 20) + "s");
+					if(gunType.shootDelay != 0)
+					{
+						lines.add("\u00a79RPM" + "\u00a77: " + (1200 / gunType.shootDelay) + "rpm");
+					}
+					else
+						lines.add("\u00a79RPM" + "\u00a77: " + (gunType.roundsPerMin) + "rpm");
+					lines.add("\u00a79Mode(s)" + "\u00a77: " + gunType.mode);
+					gunStats = lines;
 				}
-				else
-					lines.add("\u00a79RPM" + "\u00a77: " + (gunType.roundsPerMin) + "rpm");
-				lines.add("\u00a79Mode(s)" + "\u00a77: " + gunType.mode);
-				gunStats = lines;
 			}
 		}
 	}
