@@ -512,7 +512,7 @@ public class RenderGun implements IItemRenderer {
 		// This allows you to offset your gun with a sight attached to properly align
 		// the aiming reticle
 		// Can be adjusted per scope and per gun
-		if (scopeAttachment != null && model.gunOffset != 0)
+		if (scopeAttachment != null && model.gunOffset != 0 && FlansModClient.zoomProgress >= 0.5F)
 			GL11.glTranslatef(0F, -scopeAttachment.model.renderOffset + model.gunOffset / 16F, 0F);
 
 		// Render the gun and default attachment models
@@ -1201,7 +1201,7 @@ public class RenderGun implements IItemRenderer {
 				RenderArms.renderArmDefault(model, anim, smoothing, model.rightArmRot, model.rightArmPos);
 			}
 			else {
-				RenderArms.renderArmReload(model, anim, smoothing, model.rightArmRot, model.rightArmPos);
+				RenderArms.renderArmReload(model, anim, smoothing, model.rightArmReloadRot, model.rightArmReloadPos);
 			}
 			
 			GL11.glScalef(model.rightArmScale.x, model.rightArmScale.y, model.rightArmScale.z);
