@@ -537,25 +537,24 @@ public class ItemGun extends Item implements IPaintableItem
 				animations.doMelee(type.meleeTime);
 			}
 			//Do custom melee hit detection
-			if(player instanceof EntityPlayer)
-			{
-				PlayerData whenshootdata = PlayerHandler.getPlayerData((EntityPlayer)player);
-				data.doMelee((EntityPlayer)player, type.meleeTime, type);
+			PlayerData whenshootdata = PlayerHandler.getPlayerData(player);
+			if (data != null) {
+				data.doMelee(player, type.meleeTime, type);
 			}
 		}
 
 		if((FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F) ||
 				(FlansModClient.shootTime(left) <= 0 && !sprinting))
 		{
-			boolean onLastBullet = false;
+//			boolean onLastBullet = false;
 			boolean hasAmmo = false;
 			for(int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++)
 			{
 				ItemStack bulletStack = getBulletItemStack(stack, i);
 				if(bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
 				{
-					if(bulletStack.getMaxDamage() - bulletStack.getItemDamage() == 1 && gunType.model.slideLockOnEmpty)
-						onLastBullet = true;
+//					if(bulletStack.getMaxDamage() - bulletStack.getItemDamage() == 1 && gunType.model.slideLockOnEmpty)
+//						onLastBullet = true;
 					hasAmmo = true;
 					break;
 				}
@@ -590,7 +589,7 @@ public class ItemGun extends Item implements IPaintableItem
 				float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
 				float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
 
-				animations.onGunEmpty(onLastBullet);
+//				animations.onGunEmpty(onLastBullet);
 				animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
 				
 				//Old client side recoil, moved to PacketGunRecoil
