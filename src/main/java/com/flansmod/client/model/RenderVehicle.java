@@ -85,7 +85,7 @@ public class RenderVehicle extends Render implements IItemRenderer
 						for(; rotZ > 180F; rotZ -= 360F) {}
 						for(; rotZ <= -180F; rotZ += 360F) {}
 			        	GL11.glRotatef(rotZ * (float)(180/Math.PI), 0, 0, 1);
-			        	modVehicle.renderFancyTracks(vehicle, f1);
+//			        	modVehicle.renderFancyTracks(vehicle, f1); removed to fix crash
 			        	GL11.glPopMatrix();
 			        }
 			        
@@ -98,7 +98,7 @@ public class RenderVehicle extends Render implements IItemRenderer
 			        	GL11.glPushMatrix();
 			        	GL11.glTranslatef(link.position.x/16F, link.position.y/16F, link.position.z/16F);
 			        	GL11.glRotatef(rotZ * (float)(180/Math.PI), 0, 0, 1);
-			        	modVehicle.renderFancyTracks(vehicle, f1);
+//			        	modVehicle.renderFancyTracks(vehicle, f1); removed to fix crash
 			        	GL11.glPopMatrix();
 			        }
 					

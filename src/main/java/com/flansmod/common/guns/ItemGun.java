@@ -205,6 +205,7 @@ public class ItemGun extends Item implements IPaintableItem
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advancedTooltips)
 	{
 		KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;

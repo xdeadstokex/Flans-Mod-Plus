@@ -792,7 +792,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 	public void setDead()
 	{
 		if (worldObj.isRemote) {
-			if (driveable.isDead) {
+			if (driveable == null || driveable.isDead) {
 				// Print.spam(1, "Received 'setDead()' call, but ignoring it since it wasn't
 				// sent from the server.");
 				super.setDead();

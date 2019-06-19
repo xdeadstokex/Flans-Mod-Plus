@@ -109,15 +109,18 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = "@ALLOWEDVERSIONS@", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
+@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod
 {
 	//Core mod stuff
+	public static Logger logger = LogManager.getLogger("Flan's Mod");
 	public static boolean DEBUG = false;
     public static Configuration configFile;
 	public static final String MODID = "flansmod";
-	public static final String VERSION = "@VERSION@";
+	public static final String VERSION = "1.0.0";
 	@Instance(MODID)
 	public static FlansMod INSTANCE;
     public static boolean printDebugLog = true;
@@ -194,11 +197,11 @@ public class FlansMod
 	public static boolean debugMode = true;
 	
 
-	/** The mod pre-initialiser method */
+	/** The mod pre-initializer method */
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		log("Preinitialising Flan's mod.");
+		log("Pre-initializing Flan's mod.");
         configFile = new Configuration(event.getSuggestedConfigurationFile());
         syncConfig(event.getSide());
 
@@ -212,8 +215,8 @@ public class FlansMod
 		{
 			log("Flan folder not found. Creating empty folder.");
 			log("You should get some content packs and put them in the Flan folder.");
-			flanDir.mkdirs();
-			flanDir.mkdir();
+			boolean success = flanDir.mkdirs();
+			log("Created Flan directory: " + success);
 		}
 
 		//Set up mod blocks and items
@@ -248,14 +251,14 @@ public class FlansMod
 		//Force Minecraft to reload all resources in order to load content pack resources.
 		proxy.forceReload();
 
-		log("Preinitializing complete.");
+		log("Pre-initializing complete.");
 	}
 
-	/** The mod initialiser method */
+	/** The mod initializer method */
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		log("Initialising Flan's Mod.");
+		log("Initializing Flan's Mod.");
 
 		//Initialising handlers
 		packetHandler.initialise();
@@ -549,18 +552,19 @@ public class FlansMod
 					case gun : gunItems.add((ItemGun)new ItemGun((GunType)infoType).setUnlocalizedName(infoType.shortName)); break;
 					case grenade : grenadeItems.add((ItemGrenade)new ItemGrenade((GrenadeType)infoType).setUnlocalizedName(infoType.shortName)); break;
 					case part : partItems.add((ItemPart)new ItemPart((PartType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case plane : planeItems.add((ItemPlane)new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case vehicle : vehicleItems.add((ItemVehicle)new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case aa : aaGunItems.add((ItemAAGun)new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case mechaItem : mechaToolItems.add((ItemMechaAddon)new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case mecha : mechaItems.add((ItemMecha)new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName)); break;
+//					case plane : planeItems.add((ItemPlane)new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName)); break;
+//					case vehicle : vehicleItems.add((ItemVehicle)new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName)); break;
+//					case aa : aaGunItems.add((ItemAAGun)new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName)); break;
+//					case mechaItem : mechaToolItems.add((ItemMechaAddon)new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName)); break;
+//					case mecha : mechaItems.add((ItemMecha)new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName)); break;
 					case tool : toolItems.add((ItemTool)new ItemTool((ToolType)infoType).setUnlocalizedName(infoType.shortName)); break;
 					case box : gunBoxBlocks.add((BlockGunBox)new BlockGunBox((GunBoxType)infoType).setBlockName(infoType.shortName)); break;
 					case armour : armourItems.add((ItemTeamArmour)new ItemTeamArmour((ArmourType)infoType).setUnlocalizedName(infoType.shortName)); break;
 					case armourBox : armourBoxBlocks.add((BlockArmourBox)new BlockArmourBox((ArmourBoxType)infoType).setBlockName(infoType.shortName)); break;
-					case playerClass : break;
-					case team : break;
-					default : log("Unrecognised type for " + infoType.shortName); break;
+					case playerClass :
+						case team :
+							break;
+						default : log("Unrecognised type for " + infoType.shortName); break;
 					}
 				}
 				catch(Exception e)
@@ -719,11 +723,13 @@ public class FlansMod
 	//TODO : Proper logger
 	public static void log(String string)
 	{
-		if(printDebugLog)
-		{
-			System.out.println("[Flan's Mod] " + string);
-		}
+//		if(printDebugLog)
+//		{
+//			System.out.println("[Flan's Mod] " + string);
+//		}
+		logger.info(string);
 	}
+
 	public static void log(String format, Object ... args)
 	{
 		log(String.format(format, args));
