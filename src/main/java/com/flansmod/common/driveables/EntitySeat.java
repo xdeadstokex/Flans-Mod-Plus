@@ -756,7 +756,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 			for(Object obj : nearbyMobs)
 			{
 				EntityLiving entity = (EntityLiving)obj;
-				if(entity.getLeashed() && entity.getLeashedToEntity() == entityplayer && !driveable.locked)
+				if(entity.getLeashed() && entity.getLeashedToEntity() == entityplayer)
 				{
 					entity.mountEntity(this);
 					looking.setAngles(-entity.rotationYaw, entity.rotationPitch, 0F);
@@ -766,7 +766,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 			return true;
 		}
 		//Put them in the seat
-		if(riddenByEntity == null && !driveable.locked)
+		if(riddenByEntity == null)
 		{
 			entityplayer.mountEntity(this);
 			return true;

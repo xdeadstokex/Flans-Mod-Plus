@@ -357,9 +357,6 @@ public class GuiGunBox extends GuiContainer
 					type.block.buyGun(currentPage.gunList[selectedItem].ammoEntryList.get(selectedAmmoitem).type, inventory, type);
 			}
 		}
-
-		if(button != 0)
-			return;
 	}
 
 	private void resetAndSwapPages()

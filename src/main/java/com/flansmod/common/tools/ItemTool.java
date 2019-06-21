@@ -1,13 +1,18 @@
 package com.flansmod.common.tools;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
+import com.flansmod.client.debug.EntityDebugVector;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.driveables.DriveablePart;
+import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.guns.EntityGrenade;
+import com.flansmod.common.network.PacketFlak;
+import com.flansmod.common.vector.Vector3f;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,34 +20,17 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-import com.flansmod.client.debug.EntityDebugVector;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.driveables.DriveablePart;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.DriveableType.ShootParticle;
-import com.flansmod.common.guns.EntityGrenade;
-import com.flansmod.common.network.PacketFlak;
-import com.flansmod.common.vector.Vector3f;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-public class ItemTool extends ItemFood 
-{
+public class ItemTool extends ItemFood {
 	public ToolType type;
-	
-    private static final String CHAR_LIST = 
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    private static final int RANDOM_STRING_LENGTH = 10;
 
 
     public ItemTool(ToolType t)
@@ -64,6 +52,7 @@ public class ItemTool extends ItemFood
     }
     
 	@Override
+	@SuppressWarnings("unchecked")
 	public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean b)
 	{
 		if(!type.packName.isEmpty())
@@ -82,7 +71,6 @@ public class ItemTool extends ItemFood
 	
 	public void onCreated(ItemStack itemStack, World world, EntityPlayer player) {
 	    itemStack.stackTagCompound = new NBTTagCompound();
-	    itemStack.stackTagCompound.setString("key", generateRandomString());
 	}
     
     @Override
@@ -130,10 +118,11 @@ public class ItemTool extends ItemFood
 			//Our work here is done. Let's be off
 			return itemstack;
 		}
-		
 		else if(type.remote)
 		{
 			PlayerData data = PlayerHandler.getPlayerData(entityplayer, world.isRemote ? Side.CLIENT : Side.SERVER);
+			if(data == null)
+				return null;
 			Iterator<EntityGrenade> i = data.remoteExplosives.iterator();
 			while (i.hasNext())
 			{
@@ -161,10 +150,7 @@ public class ItemTool extends ItemFood
 				//Our work here is done. Let's be off
 				return itemstack;
 			}
-		}
-		else
-		{
-		
+		} else {
 	    	//Raytracing
 	        float cosYaw = MathHelper.cos(-entityplayer.rotationYaw * 0.01745329F);
 	        float sinYaw = MathHelper.sin(-entityplayer.rotationYaw * 0.01745329F);
@@ -238,23 +224,20 @@ public class ItemTool extends ItemFood
 						hitLiving = checkEntity;
 				}
 		        //Now heal whatever it was we just decided to heal
-		        if(hitLiving != null)
-		        {        		
-		        	//If its finished, don't use it
-		        	if(itemstack.getItemDamage() >= itemstack.getMaxDamage() && type.toolLife > 0)
-		        		return itemstack;
-		        	
-		        	hitLiving.heal(type.healAmount);
-		        	FlansMod.getPacketHandler().sendToAllAround(new PacketFlak(hitLiving.posX, hitLiving.posY, hitLiving.posZ, 5, "heart"), new NetworkRegistry.TargetPoint(hitLiving.dimension, hitLiving.posX, hitLiving.posY, hitLiving.posZ, 50F));
-		        	
-					//If not in creative and the tool should decay, damage it
-					if(!entityplayer.capabilities.isCreativeMode && type.toolLife > 0)
-						itemstack.setItemDamage(itemstack.getItemDamage() + 1);
-					//If the tool is damagable and is destroyed upon being used up, then destroy it
-					if(type.toolLife > 0 && type.destroyOnEmpty && itemstack.getItemDamage() >= itemstack.getMaxDamage())
-						itemstack.stackSize--;
-		        }
-	        }
+				//If its finished, don't use it
+				if(itemstack.getItemDamage() >= itemstack.getMaxDamage() && type.toolLife > 0)
+					return itemstack;
+
+				hitLiving.heal(type.healAmount);
+				FlansMod.getPacketHandler().sendToAllAround(new PacketFlak(hitLiving.posX, hitLiving.posY, hitLiving.posZ, 5, "heart"), new NetworkRegistry.TargetPoint(hitLiving.dimension, hitLiving.posX, hitLiving.posY, hitLiving.posZ, 50F));
+
+				//If not in creative and the tool should decay, damage it
+				if(!entityplayer.capabilities.isCreativeMode && type.toolLife > 0)
+					itemstack.setItemDamage(itemstack.getItemDamage() + 1);
+				//If the tool is damagable and is destroyed upon being used up, then destroy it
+				if(type.toolLife > 0 && type.destroyOnEmpty && itemstack.getItemDamage() >= itemstack.getMaxDamage())
+					itemstack.stackSize--;
+			}
 	        if(!world.isRemote && type.key){
 				for(int i = 0; i < world.loadedEntityList.size(); i++)
 				{
@@ -263,55 +246,13 @@ public class ItemTool extends ItemFood
 					{
 						EntityDriveable driveable = (EntityDriveable)obj;
 						//Raytrace
-						DriveablePart part = driveable.raytraceParts(new Vector3f(posVec), Vector3f.sub(new Vector3f(lookVec), new Vector3f(posVec), null));
+						driveable.raytraceParts(new Vector3f(posVec), Vector3f.sub(new Vector3f(lookVec), new Vector3f(posVec), null));
 						//If we hit something that is healable
-						if(part != null && part.maxHealth > 0)
-						{
-							if (part.owner.locked){
-								if(itemstack.stackTagCompound == null){
-								    itemstack.stackTagCompound = new NBTTagCompound();
-								    itemstack.stackTagCompound.setString("key", generateRandomString());
-								}
-								part.owner.unlock(itemstack.stackTagCompound.getString("key"), entityplayer);
-							}  else if (!part.owner.locked){
-								if(itemstack.stackTagCompound == null){
-								    itemstack.stackTagCompound = new NBTTagCompound();
-								    itemstack.stackTagCompound.setString("key", generateRandomString());
-								}
-								part.owner.lock(itemstack.stackTagCompound.getString("key"), entityplayer);
-							}
-						}
 					}
 				}
 	        }
 		}
         return itemstack;
-    }
-	
-    public String generateRandomString(){
-        
-        StringBuffer randStr = new StringBuffer();
-        for(int i=0; i<RANDOM_STRING_LENGTH; i++){
-            int number = getRandomNumber();
-            char ch = CHAR_LIST.charAt(number);
-            randStr.append(ch);
-        }
-        return randStr.toString();
-    }
-     
-    /**
-     * This method generates random numbers
-     * @return int
-     */
-    private int getRandomNumber() {
-        int randomInt = 0;
-        Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(CHAR_LIST.length());
-        if (randomInt - 1 == -1) {
-            return randomInt;
-        } else {
-            return randomInt - 1;
-        }
     }
 	
 	@Override

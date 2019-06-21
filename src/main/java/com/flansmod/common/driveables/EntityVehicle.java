@@ -1,31 +1,5 @@
 package com.flansmod.common.driveables;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
-
 import com.flansmod.api.IExplodeable;
 import com.flansmod.client.model.AnimTankTrack;
 import com.flansmod.client.model.AnimTrackLink;
@@ -33,15 +7,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.driveables.VehicleType.SmokePoint;
-import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EnumFireMode;
-import com.flansmod.common.guns.InventoryHelper;
-import com.flansmod.common.guns.ItemBullet;
-import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.network.PacketDriveableKey;
-import com.flansmod.common.network.PacketDriveableKeyHeld;
 import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketVehicleControl;
@@ -49,11 +16,21 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.vector.Vector3i;
-
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
+
+import java.util.List;
 
 
 public class EntityVehicle extends EntityDriveable implements IExplodeable
@@ -114,13 +91,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 	/** For getting the placer after a reload */
 	public String placerName = null;
 	public Entity target = null;
-	public static final float targetAcquireInterval = 10;
 	
 	public AnimTankTrack rightTrack;
 	public AnimTankTrack leftTrack;
-	
-	public AnimTrackLink trackLinksLeft[] = new AnimTrackLink[0];
-	public AnimTrackLink trackLinksRight[] = new AnimTrackLink[0];
+
+	public AnimTrackLink[] trackLinksLeft = new AnimTrackLink[0];
+	public AnimTrackLink[] trackLinksRight = new AnimTrackLink[0];
 
     public EntityVehicle(World world)
     {
@@ -1324,7 +1300,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 
         VehicleType type = getVehicleType();
 
-		if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null) && !locked)
+		if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null))
 		{
 			ItemStack vehicleStack = new ItemStack(type.item, 1, driveableData.paintjobID);
 			vehicleStack.stackTagCompound = new NBTTagCompound();

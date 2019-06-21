@@ -579,11 +579,6 @@ public class EntityPlane extends EntityDriveable
 			doorsHaveShut = false;
 		}
 
-		if(locked){
-			varDoor = false;
-			doorsHaveShut = false;
-		}
-
 		if(!isPartIntact(EnumDriveablePart.tail) && type.spinWithoutTail) flapsYaw = 15;
 
 		//Return the flaps to their resting position
@@ -830,7 +825,7 @@ public class EntityPlane extends EntityDriveable
 
 		PlaneType type = PlaneType.getPlane(driveableType);
 
-		if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null) && !locked)
+		if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null))
 		{
 			ItemStack planeStack = new ItemStack(type.item, 1, driveableData.paintjobID);
 			planeStack.stackTagCompound = new NBTTagCompound();

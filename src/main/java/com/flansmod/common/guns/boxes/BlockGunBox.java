@@ -49,6 +49,7 @@ public class BlockGunBox extends Block
 
 	public void buyGun(InfoType item, InventoryPlayer inventory, GunBoxType type)
 	{
+		if(item.shortName.contains("44_") && item.shortName.contains("Flag")) return; /* Disable flags for survival reasons */
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
 		{
 			FlansMod.proxy.buyGun(type, item);
