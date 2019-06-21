@@ -54,7 +54,7 @@ public abstract class InfoType
 		preRead(file);
 		for(;;)
 		{
-			String line = null;
+			String line;
 			line = file.readLine();
 			if(line == null)
 				break;
@@ -87,9 +87,7 @@ public abstract class InfoType
 			{
 				name = split[1];
 				for (int i = 0; i < split.length - 2; i++)
-				{
-					name = name + " " + split[i + 2];
-				}
+					name += " " + split[i + 2];
 			}
 			if (split[0].equals("Description"))
 			{
@@ -120,13 +118,13 @@ public abstract class InfoType
 				recipe = new Object[split.length + 2];
 				for (int i = 0; i < 3; i++)
 				{
-					String line = null;
+					String line;
 					line = file.readLine();
 					if (line == null)
 					{
 						continue;
 					}
-					if (line == null || line.startsWith("//"))
+					if (line.startsWith("//"))
 					{
 						i--;
 						continue;
@@ -381,7 +379,7 @@ public abstract class InfoType
 		return new PotionEffect(potionID, duration, amplifier, false);
 	}
 	
-	public static Material getMaterial(String mat)
+	public static Material getMaterial(String material)
 	{
 		return Material.ground;
 	}

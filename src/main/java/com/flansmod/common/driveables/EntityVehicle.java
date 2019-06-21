@@ -76,12 +76,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 	public Vector3f prevDoor2Pos = new Vector3f(0,0,0);
 	public Vector3f prevDoor2Rot = new Vector3f(0,0,0);
 	
-	//Main turret sounds for server (bullshit basically)
-	public int yawDelay = 0;
-	public int pitchDelay = 0;
-	public boolean turretYawing;
-	public boolean turretPitching;
-	
 	public boolean deployedSmoke = false;
 	
 	

@@ -1,54 +1,17 @@
 package com.flansmod.common;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
 import com.flansmod.client.AimType;
 import com.flansmod.client.FlanMouseButton;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
-import com.flansmod.common.driveables.EntityWheel;
-import com.flansmod.common.driveables.ItemPlane;
-import com.flansmod.common.driveables.ItemVehicle;
-import com.flansmod.common.driveables.PlaneType;
-import com.flansmod.common.driveables.VehicleType;
+import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.driveables.mechas.ItemMecha;
 import com.flansmod.common.driveables.mechas.ItemMechaAddon;
-import com.flansmod.common.driveables.mechas.MechaItemType;
-import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
 import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
 import com.flansmod.common.eventhandlers.ServerTickEvent;
-import com.flansmod.common.guns.AAGunType;
-import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.BulletType;
-import com.flansmod.common.guns.EntityAAGun;
-import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityGrenade;
-import com.flansmod.common.guns.EntityMG;
-import com.flansmod.common.guns.GrenadeType;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemAAGun;
-import com.flansmod.common.guns.ItemAttachment;
-import com.flansmod.common.guns.ItemBullet;
-import com.flansmod.common.guns.ItemGrenade;
-import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketHandler;
@@ -56,29 +19,13 @@ import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
-import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.teams.ArmourType;
-import com.flansmod.common.teams.BlockArmourBox;
-import com.flansmod.common.teams.BlockSpawner;
-import com.flansmod.common.teams.ChunkLoadingHandler;
-import com.flansmod.common.teams.CommandTeams;
-import com.flansmod.common.teams.EntityFlag;
-import com.flansmod.common.teams.EntityFlagpole;
-import com.flansmod.common.teams.EntityGunItem;
-import com.flansmod.common.teams.EntityTeamItem;
-import com.flansmod.common.teams.ItemFlagpole;
-import com.flansmod.common.teams.ItemOpStick;
-import com.flansmod.common.teams.ItemTeamArmour;
-import com.flansmod.common.teams.Team;
-import com.flansmod.common.teams.TeamsManager;
-import com.flansmod.common.teams.TileEntitySpawner;
+import com.flansmod.common.teams.*;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -112,17 +59,25 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
-public class FlansMod
-{
-	//Core mod stuff
-	public static Logger logger = LogManager.getLogger("Flan's Mod");
-	public static boolean DEBUG = false;
+public class FlansMod {
+    //Core mod stuff
+    public static Logger logger = LogManager.getLogger("Flan's Mod Ultimate");
+    public static boolean DEBUG = false;
     public static Configuration configFile;
-	public static final String MODID = "flansmod";
-	public static final String VERSION = "1.0.0";
-	@Instance(MODID)
-	public static FlansMod INSTANCE;
+    public static final String MODID = "flansmod";
+    public static final String VERSION = "1.2";
+    @Instance(MODID)
+    public static FlansMod INSTANCE;
     public static boolean printDebugLog = true;
     public static boolean printStackTrace = false;
     public static int noticeSpawnKillTime = 10;
@@ -135,472 +90,454 @@ public class FlansMod
     public static boolean crosshairEnable = false;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
-	public static boolean bulletGuiEnable = true;
-    public static float hitCrossHairColor[] = new float[]{ 1.0F, 1.0F, 1.0F, 1.0F };
+    public static boolean bulletGuiEnable = true;
+    public static float[] hitCrossHairColor = new float[]{1.0F, 1.0F, 1.0F, 1.0F};
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = false;
     public static int teamsConfigInteger = 32;
     public static String teamsConfigString = "Hello!";
     public static boolean teamsConfigBoolean = false;
-	@SidedProxy(clientSide = "com.flansmod.client.ClientProxy", serverSide = "com.flansmod.common.CommonProxy")
-	public static CommonProxy proxy;
-	public static int ticker = 0;
-	public static long lastTime;
-	public static File flanDir;
-	public static final float soundRange = 50F;
-	public static final float driveableUpdateRange = 400F;
-	public static final int numPlayerSnapshots = 20;
+    @SidedProxy(clientSide = "com.flansmod.client.ClientProxy", serverSide = "com.flansmod.common.CommonProxy")
+    public static CommonProxy proxy;
+    public static int ticker = 0;
+    public static long lastTime;
+    public static File flanDir;
+    public static final float soundRange = 50F;
+    public static final float driveableUpdateRange = 400F;
+    public static final int numPlayerSnapshots = 20;
 
 
-	public static int armourSpawnRate = 20;
+    public static int armourSpawnRate = 20;
 
-	/** The spectator team. Moved here to avoid a concurrent modification error */
-	public static Team spectators = new Team("spectators", "Spectators", 0x404040, '7');
+    /**
+     * The spectator team. Moved here to avoid a concurrent modification error
+     */
+    public static Team spectators = new Team("spectators", "Spectators", 0x404040, '7');
 
-	//Handlers
-	public static final PacketHandler packetHandler = new PacketHandler();
-	public static final PlayerHandler playerHandler = new PlayerHandler();
-	public static final TeamsManager teamsManager = new TeamsManager();
-	public static final CommonTickHandler tickHandler = new CommonTickHandler();
-	public static FlansHooks hooks = new FlansHooks();
+    //Handlers
+    public static final PacketHandler packetHandler = new PacketHandler();
+    public static final PlayerHandler playerHandler = new PlayerHandler();
+    public static final TeamsManager teamsManager = new TeamsManager();
+    public static final CommonTickHandler tickHandler = new CommonTickHandler();
+    public static FlansHooks hooks = new FlansHooks();
 
-	public static boolean isInFlash = false;
-	public static int flashTime = 10;
+    public static boolean isInFlash = false;
+    public static int flashTime = 10;
 
-	//Items and creative tabs
-	public static BlockFlansWorkbench workbench;
-	public static BlockPaintjobTable paintjobTable;
-	public static BlockSpawner spawner;
-	public static ItemOpStick opStick;
-	public static ItemFlagpole flag;
-	public static ArrayList<BlockGunBox> gunBoxBlocks = new ArrayList<BlockGunBox>();
-	public static ArrayList<ItemBullet> bulletItems = new ArrayList<ItemBullet>();
-	public static ArrayList<ItemGun> gunItems = new ArrayList<ItemGun>();
-	public static ArrayList<ItemAttachment> attachmentItems = new  ArrayList<ItemAttachment>();
-	public static ArrayList<ItemPart> partItems = new ArrayList<ItemPart>();
-	public static ArrayList<ItemPlane> planeItems = new ArrayList<ItemPlane>();
-	public static ArrayList<ItemVehicle> vehicleItems = new ArrayList<ItemVehicle>();
-	public static ArrayList<ItemMechaAddon> mechaToolItems = new ArrayList<ItemMechaAddon>();
-	public static ArrayList<ItemMecha> mechaItems = new ArrayList<ItemMecha>();
-	public static ArrayList<ItemAAGun> aaGunItems = new ArrayList<ItemAAGun>();
-	public static ArrayList<ItemGrenade> grenadeItems = new ArrayList<ItemGrenade>();
-	public static ArrayList<ItemTool> toolItems = new ArrayList<ItemTool>();
-	public static ArrayList<ItemTeamArmour> armourItems = new ArrayList<ItemTeamArmour>();
-	public static ArrayList<BlockArmourBox> armourBoxBlocks = new ArrayList<BlockArmourBox>();
-	public static CreativeTabFlan tabFlanGuns = new CreativeTabFlan(0), tabFlanDriveables = new CreativeTabFlan(1),
-			tabFlanParts = new CreativeTabFlan(2), tabFlanTeams = new CreativeTabFlan(3), tabFlanMechas = new CreativeTabFlan(4);
+    //Items and creative tabs
+    public static BlockFlansWorkbench workbench;
+    public static BlockPaintjobTable paintjobTable;
+    public static BlockSpawner spawner;
+    public static ItemOpStick opStick;
+    public static ItemFlagpole flag;
+    public static ArrayList<BlockGunBox> gunBoxBlocks = new ArrayList<BlockGunBox>();
+    public static ArrayList<ItemBullet> bulletItems = new ArrayList<ItemBullet>();
+    public static ArrayList<ItemGun> gunItems = new ArrayList<ItemGun>();
+    public static ArrayList<ItemAttachment> attachmentItems = new ArrayList<ItemAttachment>();
+    public static ArrayList<ItemPart> partItems = new ArrayList<ItemPart>();
+    public static ArrayList<ItemPlane> planeItems = new ArrayList<ItemPlane>();
+    public static ArrayList<ItemVehicle> vehicleItems = new ArrayList<ItemVehicle>();
+    public static ArrayList<ItemMechaAddon> mechaToolItems = new ArrayList<ItemMechaAddon>();
+    public static ArrayList<ItemMecha> mechaItems = new ArrayList<ItemMecha>();
+    public static ArrayList<ItemAAGun> aaGunItems = new ArrayList<ItemAAGun>();
+    public static ArrayList<ItemGrenade> grenadeItems = new ArrayList<ItemGrenade>();
+    public static ArrayList<ItemTool> toolItems = new ArrayList<ItemTool>();
+    public static ArrayList<ItemTeamArmour> armourItems = new ArrayList<ItemTeamArmour>();
+    public static ArrayList<BlockArmourBox> armourBoxBlocks = new ArrayList<BlockArmourBox>();
+    public static CreativeTabFlan tabFlanGuns = new CreativeTabFlan(0), tabFlanDriveables = new CreativeTabFlan(1),
+            tabFlanParts = new CreativeTabFlan(2), tabFlanTeams = new CreativeTabFlan(3), tabFlanMechas = new CreativeTabFlan(4);
 
-	//Gun animations
-	/** Gun animation variables for each entity holding a gun. Currently only applicable to the player */
-	public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<EntityLivingBase, GunAnimations>(), gunAnimationsLeft = new HashMap<EntityLivingBase, GunAnimations>();
+    //Gun animations
+    /**
+     * Gun animation variables for each entity holding a gun. Currently only applicable to the player
+     */
+    public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<EntityLivingBase, GunAnimations>(), gunAnimationsLeft = new HashMap<EntityLivingBase, GunAnimations>();
 
-	public static boolean debugMode = true;
-	
+    public static boolean debugMode = true;
 
-	/** The mod pre-initializer method */
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		log("Pre-initializing Flan's mod.");
+
+    /**
+     * The mod pre-initializer method
+     */
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        log("Pre-initializing Flan's mod.");
         configFile = new Configuration(event.getSuggestedConfigurationFile());
         syncConfig(event.getSide());
 
-		//TODO : Load properties
-		//configuration = new Configuration(event.getSuggestedConfigurationFile());
-		//loadProperties();
+        //TODO : Load properties
+        //configuration = new Configuration(event.getSuggestedConfigurationFile());
+        //loadProperties();
 
-		flanDir = new File(event.getModConfigurationDirectory().getParentFile(), "/Flan/");
+        flanDir = new File(event.getModConfigurationDirectory().getParentFile(), "/Flan/");
 
-		if (!flanDir.exists())
-		{
-			log("Flan folder not found. Creating empty folder.");
-			log("You should get some content packs and put them in the Flan folder.");
-			boolean success = flanDir.mkdirs();
-			log("Created Flan directory: " + success);
-		}
+        if (!flanDir.exists()) {
+            log("Flan folder not found. Creating empty folder.");
+            log("You should get some content packs and put them in the Flan folder.");
+            boolean success = flanDir.mkdirs();
+            log("Created Flan directory: " + success);
+        }
 
-		//Set up mod blocks and items
-		workbench = (BlockFlansWorkbench)(new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
-		GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
-		GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot );
-		GameRegistry.addRecipe(new ItemStack(workbench, 1, 1), "ICI", "III", 'C', Items.cauldron, 'I', Items.iron_ingot );
-		opStick = new ItemOpStick();
-		GameRegistry.registerItem(opStick, "opStick", MODID);
-		flag = (ItemFlagpole)(new ItemFlagpole().setUnlocalizedName("flagpole"));
-		GameRegistry.registerItem(flag, "flagpole", MODID);
-		spawner = (BlockSpawner)(new BlockSpawner(Material.iron).setBlockName("teamsSpawner").setBlockUnbreakable().setResistance(1000000F));
-		GameRegistry.registerBlock(spawner, ItemBlockManyNames.class, "teamsSpawner");
-		GameRegistry.registerTileEntity(TileEntitySpawner.class, "teamsSpawner");
-		
-		paintjobTable = new BlockPaintjobTable();
-		GameRegistry.registerBlock(paintjobTable, "paintjobTable");
-		GameRegistry.registerTileEntity(TileEntityPaintjobTable.class, MODID);
-		
-		proxy.registerRenderers();
+        //Set up mod blocks and items
+        workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
+        GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
+        GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(workbench, 1, 1), "ICI", "III", 'C', Items.cauldron, 'I', Items.iron_ingot);
+        opStick = new ItemOpStick();
+        GameRegistry.registerItem(opStick, "opStick", MODID);
+        flag = (ItemFlagpole) (new ItemFlagpole().setUnlocalizedName("flagpole"));
+        GameRegistry.registerItem(flag, "flagpole", MODID);
+        spawner = (BlockSpawner) (new BlockSpawner(Material.iron).setBlockName("teamsSpawner").setBlockUnbreakable().setResistance(1000000F));
+        GameRegistry.registerBlock(spawner, ItemBlockManyNames.class, "teamsSpawner");
+        GameRegistry.registerTileEntity(TileEntitySpawner.class, "teamsSpawner");
 
-		//Read content packs
-		readContentPacks(event);
+        paintjobTable = new BlockPaintjobTable();
+        GameRegistry.registerBlock(paintjobTable, "paintjobTable");
+        GameRegistry.registerTileEntity(TileEntityPaintjobTable.class, MODID);
 
-		if(gunItems.size() >= 1)
-		{
-			MinecraftForge.EVENT_BUS.register(gunItems.get(0));
-		}
+        proxy.registerRenderers();
 
-		//Do proxy loading
-		proxy.load();
-		//Force Minecraft to reload all resources in order to load content pack resources.
-		proxy.forceReload();
+        //Read content packs
+        readContentPacks(event);
 
-		log("Pre-initializing complete.");
-	}
+        if (gunItems.size() >= 1) {
+            MinecraftForge.EVENT_BUS.register(gunItems.get(0));
+        }
 
-	/** The mod initializer method */
-	@EventHandler
-	public void init(FMLInitializationEvent event)
-	{
-		log("Initializing Flan's Mod.");
+        //Do proxy loading
+        proxy.load();
+        //Force Minecraft to reload all resources in order to load content pack resources.
+        proxy.forceReload();
 
-		//Initialising handlers
-		packetHandler.initialise();
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new CommonGuiHandler());
+        log("Pre-initializing complete.");
+    }
 
-		// Recipes
-		for (InfoType type : InfoType.infoTypes)
-		{
-			type.addRecipe();
-		}
-		if(addGunpowderRecipe)
-		{
-			ItemStack charcoal = new ItemStack(Items.coal, 1, 1);
-			GameRegistry.addShapelessRecipe(new ItemStack(Items.gunpowder), charcoal, charcoal, charcoal, new ItemStack(Items.glowstone_dust));
-		}
-		log("Loaded recipes.");
+    /**
+     * The mod initializer method
+     */
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
+        log("Initializing Flan's Mod.");
 
-		//Register teams mod entities
-		EntityRegistry.registerGlobalEntityID(EntityFlagpole.class, "Flagpole", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityFlagpole.class, "Flagpole", 93, this, 40, 5, true);
-		EntityRegistry.registerGlobalEntityID(EntityFlag.class, "Flag", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityFlag.class, "Flag", 94, this, 40, 5, true);
-		EntityRegistry.registerGlobalEntityID(EntityTeamItem.class, "TeamsItem", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityTeamItem.class, "TeamsItem", 97, this, 100, 10000, true);
-		EntityRegistry.registerGlobalEntityID(EntityGunItem.class, "GunItem", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityGunItem.class, "GunItem", 98, this, 100, 20, true);
+        //Initialising handlers
+        packetHandler.initialise();
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, new CommonGuiHandler());
 
-		//Register driveables
-		EntityRegistry.registerGlobalEntityID(EntityPlane.class, "Plane", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityPlane.class, "Plane", 90, this, 200, 3, true);
-		EntityRegistry.registerGlobalEntityID(EntityVehicle.class, "Vehicle", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityVehicle.class, "Vehicle", 95, this, 400, 10, true);
-		EntityRegistry.registerGlobalEntityID(EntitySeat.class, "Seat", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntitySeat.class, "Seat", 99, this, 250, 10, true);
-		EntityRegistry.registerGlobalEntityID(EntityWheel.class, "Wheel", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityWheel.class, "Wheel", 103, this, 200, 20, true);
-		EntityRegistry.registerGlobalEntityID(EntityParachute.class, "Parachute", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityParachute.class, "Parachute", 101, this, 40, 20, false);
-		EntityRegistry.registerGlobalEntityID(EntityMecha.class, "Mecha", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityMecha.class, "Mecha", 102, this, 250, 20, false);
+        // Recipes
+        for (InfoType type : InfoType.infoTypes) {
+            type.addRecipe();
+        }
+        if (addGunpowderRecipe) {
+            ItemStack charcoal = new ItemStack(Items.coal, 1, 1);
+            GameRegistry.addShapelessRecipe(new ItemStack(Items.gunpowder), charcoal, charcoal, charcoal, new ItemStack(Items.glowstone_dust));
+        }
+        log("Loaded recipes.");
 
-		//Register bullets and grenades
-		EntityRegistry.registerGlobalEntityID(EntityBullet.class, "Bullet", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityBullet.class, "Bullet", 96, this, 200, 20, false);
-		EntityRegistry.registerGlobalEntityID(EntityGrenade.class, "Grenade", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityGrenade.class, "Grenade", 100, this, 40, 100, true);
+        //Register teams mod entities
+        EntityRegistry.registerGlobalEntityID(EntityFlagpole.class, "Flagpole", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityFlagpole.class, "Flagpole", 93, this, 40, 5, true);
+        EntityRegistry.registerGlobalEntityID(EntityFlag.class, "Flag", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityFlag.class, "Flag", 94, this, 40, 5, true);
+        EntityRegistry.registerGlobalEntityID(EntityTeamItem.class, "TeamsItem", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityTeamItem.class, "TeamsItem", 97, this, 100, 10000, true);
+        EntityRegistry.registerGlobalEntityID(EntityGunItem.class, "GunItem", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityGunItem.class, "GunItem", 98, this, 100, 20, true);
 
-		//Register MGs and AA guns
-		EntityRegistry.registerGlobalEntityID(EntityMG.class, "MG", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityMG.class, "MG", 91, this, 40, 5, true);
-		EntityRegistry.registerGlobalEntityID(EntityAAGun.class, "AAGun", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerModEntity(EntityAAGun.class, "AAGun", 92, this, 40, 500, false);
+        //Register driveables
+        EntityRegistry.registerGlobalEntityID(EntityPlane.class, "Plane", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityPlane.class, "Plane", 90, this, 200, 3, true);
+        EntityRegistry.registerGlobalEntityID(EntityVehicle.class, "Vehicle", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityVehicle.class, "Vehicle", 95, this, 400, 10, true);
+        EntityRegistry.registerGlobalEntityID(EntitySeat.class, "Seat", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntitySeat.class, "Seat", 99, this, 250, 10, true);
+        EntityRegistry.registerGlobalEntityID(EntityWheel.class, "Wheel", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityWheel.class, "Wheel", 103, this, 200, 20, true);
+        EntityRegistry.registerGlobalEntityID(EntityParachute.class, "Parachute", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityParachute.class, "Parachute", 101, this, 40, 20, false);
+        EntityRegistry.registerGlobalEntityID(EntityMecha.class, "Mecha", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityMecha.class, "Mecha", 102, this, 250, 20, false);
 
-		//Register the chunk loader
-		//TODO : Re-do chunk loading
-		ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkLoadingHandler());
+        //Register bullets and grenades
+        EntityRegistry.registerGlobalEntityID(EntityBullet.class, "Bullet", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityBullet.class, "Bullet", 96, this, 200, 20, false);
+        EntityRegistry.registerGlobalEntityID(EntityGrenade.class, "Grenade", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityGrenade.class, "Grenade", 100, this, 40, 100, true);
 
-		//Config
+        //Register MGs and AA guns
+        EntityRegistry.registerGlobalEntityID(EntityMG.class, "MG", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityMG.class, "MG", 91, this, 40, 5, true);
+        EntityRegistry.registerGlobalEntityID(EntityAAGun.class, "AAGun", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityAAGun.class, "AAGun", 92, this, 40, 500, false);
+
+        //Register the chunk loader
+        //TODO : Re-do chunk loading
+        ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkLoadingHandler());
+
+        //Config
         FMLCommonHandler.instance().bus().register(INSTANCE);
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
         new ServerTickEvent();
-		log("Loading complete.");
-	}
+        log("Loading complete.");
+    }
 
-	/** The mod post-initialisation method */
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event)
-	{
-		packetHandler.postInitialise();
+    /**
+     * The mod post-initialisation method
+     */
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        packetHandler.postInitialise();
 
-		hooks.hook();
+        hooks.hook();
 
 		/* TODO : ICBM
 		isICBMSentryLoaded = Loader.instance().isModLoaded("ICBM|Sentry");
 
 		log("ICBM hooking complete.");
 		*/
-	}
+    }
 
-	@SubscribeEvent
-	public void playerDrops(PlayerDropsEvent event)
-	{
-		for(int i = event.drops.size() - 1; i >= 0; i--)
-		{
-			EntityItem ent = event.drops.get(i);
-			InfoType type = InfoType.getType(ent.getEntityItem());
-			if(type != null && !type.canDrop)
-				event.drops.remove(i);
-		}
-	}
+    @SubscribeEvent
+    public void playerDrops(PlayerDropsEvent event) {
+        for (int i = event.drops.size() - 1; i >= 0; i--) {
+            EntityItem ent = event.drops.get(i);
+            InfoType type = InfoType.getType(ent.getEntityItem());
+            if (type != null && !type.canDrop)
+                event.drops.remove(i);
+        }
+    }
 
-	@SubscribeEvent
-	public void playerDrops(ItemTossEvent event)
-	{
-		InfoType type = InfoType.getType(event.entityItem.getEntityItem());
-		if(type != null && !type.canDrop)
-			event.setCanceled(true);
-	}
+    @SubscribeEvent
+    public void playerDrops(ItemTossEvent event) {
+        InfoType type = InfoType.getType(event.entityItem.getEntityItem());
+        if (type != null && !type.canDrop)
+            event.setCanceled(true);
+    }
 
-	/** Teams command register method */
-	@EventHandler
-	public void registerCommand(FMLServerStartedEvent e)
-	{
-		CommandHandler handler = ((CommandHandler)FMLCommonHandler.instance().getSidedDelegate().getServer().getCommandManager());
-		handler.registerCommand(new CommandTeams());
-	}
+    /**
+     * Teams command register method
+     */
+    @EventHandler
+    public void registerCommand(FMLServerStartedEvent e) {
+        CommandHandler handler = ((CommandHandler) FMLCommonHandler.instance().getSidedDelegate().getServer().getCommandManager());
+        handler.registerCommand(new CommandTeams());
+    }
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
-        if(eventArgs.modID.equals(MODID))
+        if (eventArgs.modID.equals(MODID))
             syncConfig();
     }
 
-	@SubscribeEvent
-	public void onLivingSpecialSpawn(LivingSpawnEvent.CheckSpawn event)
-	{
-		int chance = event.world.rand.nextInt(101);
+    @SubscribeEvent
+    public void onLivingSpecialSpawn(LivingSpawnEvent.CheckSpawn event) {
+        int chance = event.world.rand.nextInt(101);
 
-		if(chance < armourSpawnRate && (event.entityLiving instanceof EntityZombie || event.entityLiving instanceof EntitySkeleton))
-		{
-			if(event.world.rand.nextBoolean() && ArmourType.armours.size() > 0)
-			{
-				//Give a completely random piece of armour
-				ArmourType armour = ArmourType.armours.get(event.world.rand.nextInt(ArmourType.armours.size()));
-				if(armour != null && armour.type != 2)
-					event.entityLiving.setCurrentItemOrArmor(armour.type + 1, new ItemStack(armour.item));
-			}
-			else if(Team.teams.size() > 0)
-			{
-				//Give a random set of armour
-				Team team = Team.teams.get(event.world.rand.nextInt(Team.teams.size()));
-				if(team.hat != null)
-					event.entityLiving.setCurrentItemOrArmor(1, team.hat.copy());
-				if(team.chest != null)
-					event.entityLiving.setCurrentItemOrArmor(2, team.chest.copy());
-				//if(team.legs != null)
-				//	event.entityLiving.setCurrentItemOrArmor(3, team.legs.copy());
-				if(team.shoes != null)
-					event.entityLiving.setCurrentItemOrArmor(4, team.shoes.copy());
-			}
-		}
-	}
+        if (chance < armourSpawnRate && (event.entityLiving instanceof EntityZombie || event.entityLiving instanceof EntitySkeleton)) {
+            if (event.world.rand.nextBoolean() && ArmourType.armours.size() > 0) {
+                //Give a completely random piece of armour
+                ArmourType armour = ArmourType.armours.get(event.world.rand.nextInt(ArmourType.armours.size()));
+                if (armour != null && armour.type != 2)
+                    event.entityLiving.setCurrentItemOrArmor(armour.type + 1, new ItemStack(armour.item));
+            } else if (Team.teams.size() > 0) {
+                //Give a random set of armour
+                Team team = Team.teams.get(event.world.rand.nextInt(Team.teams.size()));
+                if (team.hat != null)
+                    event.entityLiving.setCurrentItemOrArmor(1, team.hat.copy());
+                if (team.chest != null)
+                    event.entityLiving.setCurrentItemOrArmor(2, team.chest.copy());
+                //if(team.legs != null)
+                //	event.entityLiving.setCurrentItemOrArmor(3, team.legs.copy());
+                if (team.shoes != null)
+                    event.entityLiving.setCurrentItemOrArmor(4, team.shoes.copy());
+            }
+        }
+    }
 
-	/** Reads type files from all content packs */
-	private void getTypeFiles(List<File> contentPacks)
-	{
-		for (File contentPack : contentPacks)
-		{
-			if(contentPack.isDirectory())
-			{
-				for(EnumType typeToCheckFor : EnumType.values())
-				{
-					File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
-					if(!typesDir.exists())
-						continue;
-					for(File file : typesDir.listFiles())
-					{
-						try
-						{
-							BufferedReader reader = new BufferedReader(new FileReader(file));
-							String[] splitName = file.getName().split("/");
-							TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
-							for(;;)
-							{
-								String line = null;
-								try
-								{
-									line = reader.readLine();
-								}
-								catch (Exception e)
-								{
-									break;
-								}
-								if (line == null)
-									break;
-								typeFile.lines.add(line);
-							}
-							reader.close();
-						}
-						catch(FileNotFoundException e)
-						{
-							e.printStackTrace();
-						}
-						catch(IOException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			else
-			{
-				try
-				{
-					ZipFile zip = new ZipFile(contentPack);
-					ZipInputStream zipStream = new ZipInputStream(new FileInputStream(contentPack));
-					BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
-					ZipEntry zipEntry = zipStream.getNextEntry();
-					do
-					{
-						zipEntry = zipStream.getNextEntry();
-						if(zipEntry == null)
-							continue;
-						TypeFile typeFile = null;
-						for(EnumType type : EnumType.values())
-						{
-							if(zipEntry.getName().startsWith(type.folderName + "/") && zipEntry.getName().split(type.folderName + "/").length > 1 && zipEntry.getName().split(type.folderName + "/")[1].length() > 0)
-							{
-								String[] splitName = zipEntry.getName().split("/");
-								typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
-							}
-						}
-						if(typeFile == null)
-						{
-							continue;
-						}
-						for(;;)
-						{
-							String line = null;
-							try
-							{
-								line = reader.readLine();
-							}
-							catch (Exception e)
-							{
-								break;
-							}
-							if (line == null)
-								break;
-							typeFile.lines.add(line);
-						}
-					}
-					while(zipEntry != null);
-					reader.close();
+    /**
+     * Reads type files from all content packs
+     */
+    private void getTypeFiles(List<File> contentPacks) {
+        for (File contentPack : contentPacks) {
+            if (contentPack.isDirectory()) {
+                for (EnumType typeToCheckFor : EnumType.values()) {
+                    File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
+                    if (!typesDir.exists())
+                        continue;
+                    for (File file : typesDir.listFiles()) {
+                        try {
+                            BufferedReader reader = new BufferedReader(new FileReader(file));
+                            String[] splitName = file.getName().split("/");
+                            TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
+                            for (; ; ) {
+                                String line = null;
+                                try {
+                                    line = reader.readLine();
+                                } catch (Exception e) {
+                                    break;
+                                }
+                                if (line == null)
+                                    break;
+                                typeFile.lines.add(line);
+                            }
+                            reader.close();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else {
+                try {
+                    ZipFile zip = new ZipFile(contentPack);
+                    ZipInputStream zipStream = new ZipInputStream(new FileInputStream(contentPack));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
+                    ZipEntry zipEntry = zipStream.getNextEntry();
+                    do {
+                        zipEntry = zipStream.getNextEntry();
+                        if (zipEntry == null)
+                            continue;
+                        TypeFile typeFile = null;
+                        for (EnumType type : EnumType.values()) {
+                            if (zipEntry.getName().startsWith(type.folderName + "/") && zipEntry.getName().split(type.folderName + "/").length > 1 && zipEntry.getName().split(type.folderName + "/")[1].length() > 0) {
+                                String[] splitName = zipEntry.getName().split("/");
+                                typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
+                            }
+                        }
+                        if (typeFile == null) {
+                            continue;
+                        }
+                        for (; ; ) {
+                            String line = null;
+                            try {
+                                line = reader.readLine();
+                            } catch (Exception e) {
+                                break;
+                            }
+                            if (line == null)
+                                break;
+                            typeFile.lines.add(line);
+                        }
+                    }
+                    while (zipEntry != null);
+                    reader.close();
                     zip.close();
-					zipStream.close();
-				}
-				catch(IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+                    zipStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-	/** Content pack reader method */
-	private void readContentPacks(FMLPreInitializationEvent event)
-	{
-		// Icons, Skins, Models
-		// Get the classloader in order to load the images
-		ClassLoader classloader = (net.minecraft.server.MinecraftServer.class).getClassLoader();
-		Method method = null;
-		try
-		{
-			method = (java.net.URLClassLoader.class).getDeclaredMethod("addURL", java.net.URL.class);
-			method.setAccessible(true);
-		} catch (Exception e)
-		{
-			log("Failed to get class loader. All content loading will now fail.");
-			if(FlansMod.printStackTrace)
-			{
-				e.printStackTrace();
-			}
-		}
+    /**
+     * Reads Flan content packs.
+     * @param event Forge PreInitialization event.
+     */
+    private void readContentPacks(FMLPreInitializationEvent event) {
+        // Icons, Skins, Models
+        // Get the classloader in order to load the images
+        ClassLoader classloader = (net.minecraft.server.MinecraftServer.class).getClassLoader();
+        Method method;
+        try {
+            method = (java.net.URLClassLoader.class).getDeclaredMethod("addURL", java.net.URL.class);
+            method.setAccessible(true);
+        } catch (Exception e) {
+            log("Failed to get class loader. All content loading will now fail.");
+            if (FlansMod.printStackTrace) {
+                e.printStackTrace();
+            }
+            return;
+        }
 
-		List<File> contentPacks = proxy.getContentList(method, classloader);
+        List<File> contentPacks = proxy.getContentList(method, classloader);
 
-		if (!event.getSide().equals(Side.CLIENT))
-		{
-			//Gametypes (Server only)
-			// TODO: gametype loader
-		}
+        if (!event.getSide().equals(Side.CLIENT)) {
+            //Gametypes (Server only)
+            // TODO: gametype loader
+        }
 
-		getTypeFiles(contentPacks);
+        getTypeFiles(contentPacks);
 
-		for(EnumType type : EnumType.values())
-		{
-			Class<? extends InfoType> typeClass = type.getTypeClass();
-			for(TypeFile typeFile : TypeFile.files.get(type))
-			{
-				try
-				{
-					InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
-					infoType.read(typeFile);
-					switch(type)
-					{
-					case bullet : bulletItems.add((ItemBullet)new ItemBullet((BulletType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case attachment : attachmentItems.add((ItemAttachment)new ItemAttachment((AttachmentType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case gun : gunItems.add((ItemGun)new ItemGun((GunType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case grenade : grenadeItems.add((ItemGrenade)new ItemGrenade((GrenadeType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case part : partItems.add((ItemPart)new ItemPart((PartType)infoType).setUnlocalizedName(infoType.shortName)); break;
+        for (EnumType type : EnumType.values()) {
+            Class<? extends InfoType> typeClass = type.getTypeClass();
+            for (TypeFile typeFile : TypeFile.files.get(type)) {
+                try {
+                    InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
+                    infoType.read(typeFile);
+                    switch (type) {
+                        case bullet:
+                            bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case attachment:
+                            attachmentItems.add((ItemAttachment) new ItemAttachment((AttachmentType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case gun:
+                            gunItems.add((ItemGun) new ItemGun((GunType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case grenade:
+                            grenadeItems.add((ItemGrenade) new ItemGrenade((GrenadeType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case part:
+                            partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
 //					case plane : planeItems.add((ItemPlane)new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName)); break;
 //					case vehicle : vehicleItems.add((ItemVehicle)new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName)); break;
 //					case aa : aaGunItems.add((ItemAAGun)new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName)); break;
 //					case mechaItem : mechaToolItems.add((ItemMechaAddon)new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName)); break;
 //					case mecha : mechaItems.add((ItemMecha)new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case tool : toolItems.add((ItemTool)new ItemTool((ToolType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case box : gunBoxBlocks.add((BlockGunBox)new BlockGunBox((GunBoxType)infoType).setBlockName(infoType.shortName)); break;
-					case armour : armourItems.add((ItemTeamArmour)new ItemTeamArmour((ArmourType)infoType).setUnlocalizedName(infoType.shortName)); break;
-					case armourBox : armourBoxBlocks.add((BlockArmourBox)new BlockArmourBox((ArmourBoxType)infoType).setBlockName(infoType.shortName)); break;
-					case playerClass :
-						case team :
-							break;
-						default : log("Unrecognised type for " + infoType.shortName); break;
-					}
-				}
-				catch(Exception e)
-				{
-					log("Failed to add " + type.name() + " : " + typeFile.name);
-					if(FlansMod.printStackTrace)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-			log("Loaded " + type.name() + ".");
-		}
-		Team.spectators = spectators;
-	}
+                        case tool:
+                            toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case box:
+                            gunBoxBlocks.add((BlockGunBox) new BlockGunBox((GunBoxType) infoType).setBlockName(infoType.shortName));
+                            break;
+                        case armour:
+                            armourItems.add((ItemTeamArmour) new ItemTeamArmour((ArmourType) infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case armourBox:
+                            armourBoxBlocks.add((BlockArmourBox) new BlockArmourBox((ArmourBoxType) infoType).setBlockName(infoType.shortName));
+                            break;
+                        case playerClass:
+                        case team:
+                            break;
+                        default:
+                            log("Unrecognized type for " + infoType.shortName);
+                            break;
+                    }
+                } catch (Exception e) {
+                    log("Failed to add " + type.name() + " : " + typeFile.name);
+                    if (FlansMod.printStackTrace) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            log("Loaded " + type.name() + ".");
+        }
+        Team.spectators = spectators;
+    }
 
-	public static PacketHandler getPacketHandler()
-	{
-		return INSTANCE.packetHandler;
-	}
-		/*FORMATS 
-		ConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, ConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-        ConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, ConfigString, "A String!");
-        ConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, ConfigBoolean, "A Boolean!");
-		*/
-    public static void syncConfig() 
-    {
-    	//Teams/Advanced Settings
-    	printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
-    	printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
-        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings",  10, 0, 600, "Min");
-        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min", "Teams/advanced settings",  0, 0, 1000, "Min");
-        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
-        
-    	//Server/Gameplay Settings (Server-client synced)
-    	gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+    public static PacketHandler getPacketHandler() {
+        return packetHandler;
+    }
+
+    /*FORMATS
+    ConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, ConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
+    ConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, ConfigString, "A String!");
+    ConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, ConfigBoolean, "A Boolean!");
+    */
+    public static void syncConfig() {
+        //Teams/Advanced Settings
+        printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
+        printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
+        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings", 10, 0, 600, "Min");
+        TeamsManager.bulletSnapshotMin = configFile.getInt("BltSS_Min", "Teams/advanced settings", 0, 0, 1000, "Min");
+        TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
+
+        //Server/Gameplay Settings (Server-client synced)
+        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
@@ -608,130 +545,113 @@ public class FlansMod
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
-        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	"Gameplay Settings (synced)",  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
-    	
+        armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
         addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
-        for(int i=0; i<hitCrossHairColor.length; i++)
-        {
-        	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
-        	hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor"+COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
-        			"Hit cross hair color "+COLOR[i]);
+        for (int i = 0; i < hitCrossHairColor.length; i++) {
+            final String[] COLOR = new String[]{"Alpha", "Red", "Green", "Blue"};
+            hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor" + COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
+                    "Hit cross hair color " + COLOR[i]);
         }
 
-        if(configFile.hasChanged())
+        if (configFile.hasChanged())
             configFile.save();
     }
-    
-    public static void syncConfig(Side side) 
-    {
-    	//Teams/Advanced Settings
-    	printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
-    	printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
-        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings",  10, 0, 600, "Min");
-        TeamsManager.bulletSnapshotMin		= configFile.getInt("BltSS_Min", "Teams/advanced settings",  0, 0, 1000, "Min");
-        TeamsManager.bulletSnapshotDivisor	= configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
-        
-    	//Server/Gameplay Settings (Server-client synced)
-    	gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
+
+    public static void syncConfig(Side side) {
+        //Teams/Advanced Settings
+        printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
+        printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
+        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings", 10, 0, 600, "Min");
+        TeamsManager.bulletSnapshotMin = configFile.getInt("BltSS_Min", "Teams/advanced settings", 0, 0, 1000, "Min");
+        TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
+
+        //Server/Gameplay Settings (Server-client synced)
+        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
-		bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
-        armourSpawnRate = configFile.getInt("ArmourSpawnRate",	"Gameplay Settings (synced)",  20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
-    	
+        armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
         addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
-        for(int i=0; i<hitCrossHairColor.length; i++)
-        {
-        	final String[] COLOR = new String[]{ "Alpha", "Red", "Green", "Blue" };
-        	hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor"+COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
-        			"Hit cross hair color "+COLOR[i]);
+        for (int i = 0; i < hitCrossHairColor.length; i++) {
+            final String[] COLOR = new String[]{"Alpha", "Red", "Green", "Blue"};
+            hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor" + COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
+                    "Hit cross hair color " + COLOR[i]);
         }
 
-        if(side.isClient())
-        {
-        	String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
+        if (side.isClient()) {
+            String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "hold", "The type of aiming that you want to use 'toggle' or 'hold'");
             AimType aimType = AimType.fromString(aimTypeInput);
-            
-            if(aimType != null)
-            {
-            	FlansModClient.aimType = aimType;
-            } else
-            {
-            	log(String.format("The aim type '%s' does not exist.", aimTypeInput));
-            	FlansModClient.aimType = AimType.TOGGLE;
+
+            if (aimType != null) {
+                FlansModClient.aimType = aimType;
+            } else {
+                log(String.format("The aim type '%s' does not exist.", aimTypeInput));
+                FlansModClient.aimType = AimType.TOGGLE;
             }
-            
-            String aimButtonInput = configFile.getString("Aim Button", "Input Settings", "left", "The mouse button used to aim a gun 'left' or 'right'");
+
+            String aimButtonInput = configFile.getString("Aim Button", "Input Settings", "right", "The mouse button used to aim a gun 'left' or 'right'");
             FlanMouseButton aimButtonType = FlanMouseButton.fromString(aimButtonInput);
-            
-            if(aimButtonType != null)
-            {
-            	FlansModClient.aimButton = aimButtonType;
-            } else
-            {
-            	log(String.format("The aim button type '%s' does not exist.", aimTypeInput));
-            	FlansModClient.aimButton = FlanMouseButton.LEFT;
+
+            if (aimButtonType != null) {
+                FlansModClient.aimButton = aimButtonType;
+            } else {
+                log(String.format("The aim button type '%s' does not exist.", aimTypeInput));
+                FlansModClient.aimButton = FlanMouseButton.LEFT;
             }
-            
-            String shootButtonInput = configFile.getString("Fire Button", "Input Settings", "right", "The mouse button used to fire a gun 'left' or 'right'");
+
+            String shootButtonInput = configFile.getString("Fire Button", "Input Settings", "left", "The mouse button used to fire a gun 'left' or 'right'");
             FlanMouseButton shootButtonType = FlanMouseButton.fromString(shootButtonInput);
-            
-            if(shootButtonType != null)
-            {
-            	FlansModClient.fireButton = shootButtonType;
-            } else
-            {
-            	log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
-            	FlansModClient.fireButton = FlanMouseButton.RIGHT;
+
+            if (shootButtonType != null) {
+                FlansModClient.fireButton = shootButtonType;
+            } else {
+                log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
+                FlansModClient.fireButton = FlanMouseButton.RIGHT;
             }
-            
+
         }
-        
-        if(configFile.hasChanged())
+
+        if (configFile.hasChanged())
             configFile.save();
     }
-    
-    public static void updateBltssConfig(int min, int divisor)
-    {
-    	ConfigCategory category = configFile.getCategory(Configuration.CATEGORY_GENERAL);
-    	if(category==null) return;
-    	if(category.containsKey("BltSS_Min"))
-    	{
-    		category.get("BltSS_Min").set(min);
-    	}
-    	if(category.containsKey("BltSS_Divisor"))
-    	{
-    		category.get("BltSS_Divisor").set(divisor);
-    	}
-    	
+
+    public static void updateBltssConfig(int min, int divisor) {
+        ConfigCategory category = configFile.getCategory(Configuration.CATEGORY_GENERAL);
+        if (category == null) return;
+        if (category.containsKey("BltSS_Min")) {
+            category.get("BltSS_Min").set(min);
+        }
+        if (category.containsKey("BltSS_Divisor")) {
+            category.get("BltSS_Divisor").set(divisor);
+        }
+
         TeamsManager.bulletSnapshotMin = min;
-        TeamsManager.bulletSnapshotDivisor	= divisor;
+        TeamsManager.bulletSnapshotDivisor = divisor;
         configFile.save();
     }
 
-	//TODO : Proper logger
-	public static void log(String string)
-	{
-//		if(printDebugLog)
-//		{
-//			System.out.println("[Flan's Mod] " + string);
-//		}
-		logger.info(string);
-	}
+    //TODO : Proper logger
+    public static void log(String string) {
+		if(printDebugLog) {
+            logger.info(string);
+		}
+    }
 
-	public static void log(String format, Object ... args)
-	{
-		log(String.format(format, args));
-	}
+    public static void log(String format, Object... args) {
+        log(String.format(format, args));
+    }
 }

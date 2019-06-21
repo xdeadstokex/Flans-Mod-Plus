@@ -134,10 +134,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
 	public int tickCount = 0;
 
-	public int impactX;
-	public int impactY;
-	public int impactZ;
-
 	//Gun recoil
 	public boolean isRecoil = false;
 	public float recoilPos = 0;
@@ -507,11 +503,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 	{
 		if(ticksExisted > 1)
 			return;
-		if(riddenByEntity instanceof EntityPlayer && FlansMod.proxy.isThePlayer((EntityPlayer)riddenByEntity))
-		{
-		}
-		else
-		{
+		if (!(riddenByEntity instanceof EntityPlayer) || !FlansMod.proxy.isThePlayer((EntityPlayer) riddenByEntity)) {
 			if(syncFromServer)
 			{
 				serverPositionTransitionTicker = i + 5;
@@ -675,7 +667,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 			float bkz = shootPoint.rootPos.position.z;
 
 			Vector3f velocity = new Vector3f(s.x, s.y, s.z);
-			Vector3f vv = lastPos;
 
 			//if(shootPoint.rootPos.part == EnumDriveablePart.turret){
 			velocity = getDirection(shootPoint, velocity);
@@ -772,8 +763,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 		}
 		else //One of the other modes
 		{
-
-
 			switch(weaponType)
 			{
 				case BOMB :
