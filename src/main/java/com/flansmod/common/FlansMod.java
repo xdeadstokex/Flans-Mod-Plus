@@ -8,6 +8,8 @@ import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.driveables.mechas.ItemMecha;
 import com.flansmod.common.driveables.mechas.ItemMechaAddon;
+import com.flansmod.common.driveables.mechas.MechaType;
+import com.flansmod.common.driveables.mechas.MechaItemType;
 import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
 import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
 import com.flansmod.common.eventhandlers.ServerTickEvent;
@@ -483,11 +485,21 @@ public class FlansMod {
                         case part:
                             partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
                             break;
-//					case plane : planeItems.add((ItemPlane)new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName)); break;
-//					case vehicle : vehicleItems.add((ItemVehicle)new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName)); break;
-//					case aa : aaGunItems.add((ItemAAGun)new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName)); break;
-//					case mechaItem : mechaToolItems.add((ItemMechaAddon)new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName)); break;
-//					case mecha : mechaItems.add((ItemMecha)new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName)); break;
+                        case plane:
+                            planeItems.add((ItemPlane) new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case vehicle:
+                            vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case aa:
+                            aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case mechaItem:
+                            mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName));
+                            break;
+                        case mecha:
+                            mechaItems.add((ItemMecha) new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName));
+                            break;
                         case tool:
                             toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
                             break;
