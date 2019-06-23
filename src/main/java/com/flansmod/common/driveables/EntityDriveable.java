@@ -1908,7 +1908,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 	public boolean hasEnoughFuel() {
 		//if (seats == null || seats[0] == null || seats[0].riddenByEntity == null)
 		//return false;
-		return driverIsCreative() || driveableData.fuelInTank > driveableData.engine.fuelConsumption * throttle;
+		return driverIsCreative() || driveableData.fuelInTank > Math.abs(driveableData.engine.fuelConsumption * throttle);
 	}
 
 	//Physics time! Oooh yeah
