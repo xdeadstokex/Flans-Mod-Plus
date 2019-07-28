@@ -688,16 +688,24 @@ public class DriveableType extends PaintableType {
                 //Recipe
             else if (split[0].equals("AddRecipeParts")) {
                 EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-                ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
+                ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
                 for (int i = 0; i < (split.length - 2) / 2; i++) {
                     int amount = Integer.parseInt(split[2 * i + 2]);
                     boolean damaged = split[2 * i + 3].contains(".");
                     String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
                     int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
-                    stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
-                    driveableRecipe.add(stacks[i]);
+
+                    // Only add part if it is NOT null. (Seems obvious?)
+                    ItemStack potentialPart = getRecipeElement(itemName, amount, damage, shortName);
+                    if (potentialPart != null) {
+                        stacks.add(potentialPart);
+                        driveableRecipe.add(potentialPart);
+                    }
+                    
                 }
-                partwiseRecipe.put(part, stacks);
+                ItemStack[] items = new ItemStack[stacks.size()];
+                items = stacks.toArray(items);
+                partwiseRecipe.put(part, items);
             }
 
             //Dyes
