@@ -288,14 +288,6 @@ public class DriveableType extends PaintableType {
     public String flareSound = "";
     public int timeFlareUsing = 1;
 
-    // radar (for mapwriter)
-    /**
-     * The height of the entity that can be detected by radar.<br>
-     * -1 = It does not detect.<br>
-     */
-    public int radarDetectableAltitude = -1;
-    public boolean stealth = false;
-
     /**
      * Barrel Recoil stuff
      */
@@ -955,12 +947,6 @@ public class DriveableType extends PaintableType {
                 emitter.velocity.scale(1.0f / 16.0f);
                 emitters.add(emitter);
             }
-
-            // radar (for mapwriter)
-            else if (split[0].equals("RadarDetectableAltitude"))
-                radarDetectableAltitude = Integer.parseInt(split[1]);
-            else if (split[0].equals("Stealth"))
-                stealth = split[1].equals("True");
         } catch (Exception e) {
             if (split != null) {
                 String msg = " : ";
