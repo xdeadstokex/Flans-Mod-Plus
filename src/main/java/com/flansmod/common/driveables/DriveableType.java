@@ -1015,7 +1015,11 @@ public class DriveableType extends PaintableType {
         //Start with the items required to build this part
         if (partwiseRecipe.get(part.type) != null) {
             for (ItemStack stack : partwiseRecipe.get(part.type)) {
-                stacks.add(stack.copy());
+                if (stack != null) {
+                    stacks.add(stack.copy());
+                } else {
+                    FlansMod.log("Failed to drop item on death of part [%s] on vehicle [%s]", part.type.getShortName(), name);
+                }
             }
         }
         //Add the items required for the guns connected to this part
