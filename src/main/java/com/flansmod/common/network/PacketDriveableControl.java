@@ -34,9 +34,6 @@ public class PacketDriveableControl extends PacketBase
 	public boolean reload;
 	public int stage;
 	public int stageDelay;
-	public String key;
-
-
 	
 	public PacketDriveableControl() {}
 	
