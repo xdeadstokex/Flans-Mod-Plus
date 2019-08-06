@@ -1,8 +1,10 @@
 package com.flansmod.client.gui;
 
 import java.util.HashMap;
+import java.util.Collections;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -23,6 +25,7 @@ import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.types.EnumType;
+import com.flansmod.common.FlansMod;
 
 public class GuiDriveableCrafting extends GuiScreen 
 {
@@ -51,6 +54,10 @@ public class GuiDriveableCrafting extends GuiScreen
 	private float spinner = 0;
 	/** Whether or not the currently selected driveable can be crafted */
 	private boolean canCraft = false;
+	/** The currently selected Driveable */
+	DriveableType selectedType;
+	/** The string to be rendered when hovering over a recipe item */
+	String recipeTooltip;
 	
 	public GuiDriveableCrafting(InventoryPlayer playerinventory, World w, int i, int j, int k)
 	{
@@ -136,7 +143,7 @@ public class GuiDriveableCrafting extends GuiScreen
 		canCraft = true;
 		
 		//Get the currently selected driveable type and check its not null
-		DriveableType selectedType = DriveableType.types.get(selectedBlueprint);
+		selectedType = DriveableType.types.get(selectedBlueprint);
 		if(selectedType != null)
 		{
 			//Render rotating driveable model
@@ -298,6 +305,11 @@ public class GuiDriveableCrafting extends GuiScreen
 		{
 			super.drawScreen(i, j, f);
 		}
+		int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+		int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+		if (recipeTooltip != null) {
+			drawHoveringText(Collections.singletonList(recipeTooltip), mouseX, mouseY, fontRendererObj);
+		}
 	}
 	
 	/** Item stack renderering method */
@@ -363,7 +375,7 @@ public class GuiDriveableCrafting extends GuiScreen
 			//Recipe forwards button
 			if(x >= 83 && x <= 93 && y >= 177 && y <= 187)
 			{
-				DriveableType selectedType = DriveableType.types.get(selectedBlueprint);
+				selectedType = DriveableType.types.get(selectedBlueprint);
 				if(selectedType != null && recipeScroll * 4 + 12 < selectedType.driveableRecipe.size())
 					recipeScroll++;
 			}
@@ -374,5 +386,37 @@ public class GuiDriveableCrafting extends GuiScreen
 	public boolean doesGuiPauseGame()
 	{
 		return false;
+	}
+
+	@Override
+	public void handleMouseInput()
+	{
+		super.handleMouseInput();
+		int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+		int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+		
+		int recipeX = mouseX - 8 - guiOriginX;
+		int recipeY = mouseY - 138 - guiOriginY;
+		if (recipeX >= 0 && recipeY >= 0 && recipeX < 18 * 4 && recipeY < 17 * 3) {
+			int idX = recipeX / 18;
+			int idY = recipeY / 18;
+
+			int id;
+			if (recipeX % 18 >= 16 || recipeY % 18 >= 16) {
+				id = -1;
+			} else {
+				id = recipeScroll * 4 + idY * 4 + idX;
+			}
+
+			if(id < selectedType.driveableRecipe.size() && id > -1)
+			{
+				ItemStack recipeStack = selectedType.driveableRecipe.get(id);
+				recipeTooltip = recipeStack.getDisplayName();
+			} else {
+				recipeTooltip = null;
+			}
+		} else {
+			recipeTooltip = null;
+		}
 	}
 }
