@@ -28,6 +28,7 @@ public class BlockFlansWorkbench extends Block
         setCreativeTab(FlansMod.tabFlanDriveables);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List par3List)
     {

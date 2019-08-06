@@ -683,7 +683,7 @@ public class FlansModClient extends FlansMod
 	
 	public static void setAimType(AimType aimInputType)
 	{
-		Property cw = FlansMod.configFile.get("Settings", "Aim Type", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
+		Property cw = FlansMod.configFile.get("Input Settings", "Aim Type", "toggle", "The type of aiming that you want to use 'toggle' or 'hold'");
 		cw.set(aimInputType.toString());
 		FlansMod.configFile.save();
 		aimType = aimInputType;
@@ -691,7 +691,7 @@ public class FlansModClient extends FlansMod
 	
 	public static void setAimButton(FlanMouseButton buttonInput)
 	{
-		Property cw = FlansMod.configFile.get("Settings", "Aim Button", "left", "The mouse button used to aim a gun 'left' or 'right'");
+		Property cw = FlansMod.configFile.get("Input Settings", "Aim Button", "left", "The mouse button used to aim a gun 'left' or 'right'");
 		cw.set(buttonInput.toString());
 		FlansMod.configFile.save();
 		aimButton = buttonInput;
@@ -699,7 +699,7 @@ public class FlansModClient extends FlansMod
 	
 	public static void setFireButton(FlanMouseButton buttonInput)
 	{
-		Property cw = FlansMod.configFile.get("Settings", "Fire Button", "right", "The mouse button used to fire a gun 'left' or 'right'");
+		Property cw = FlansMod.configFile.get("Input Settings", "Fire Button", "right", "The mouse button used to fire a gun 'left' or 'right'");
 		cw.set(buttonInput.toString());
 		FlansMod.configFile.save();
 		fireButton = buttonInput;
