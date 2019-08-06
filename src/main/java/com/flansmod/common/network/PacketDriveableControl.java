@@ -116,7 +116,6 @@ public class PacketDriveableControl extends PacketBase
     	data.writeInt(stageDelay);
     	data.writeBoolean(canFire);
     	data.writeBoolean(reload);
-    	writeUTF(data, key);
 
 	}
 
@@ -153,7 +152,6 @@ public class PacketDriveableControl extends PacketBase
 		stageDelay = data.readInt();
 		canFire = data.readBoolean();
 		reload = data.readBoolean();
-		key = readUTF(data);
 	}
 
 
