@@ -1124,7 +1124,7 @@ public class ItemGun extends Item implements IPaintableItem
 	public ItemStack tryToShoot(ItemStack gunStack, GunType gunType, World world, EntityPlayerMP entityplayer, boolean left)
 	{
         
-		if(type.deployable)
+		if(type.deployable ||  !type.usableByPlayers)
 			return gunStack;
 		PlayerData data = PlayerHandler.getPlayerData(entityplayer);
 		//Shoot delay ticker is at (or below) 0. Try and shoot the next bullet
