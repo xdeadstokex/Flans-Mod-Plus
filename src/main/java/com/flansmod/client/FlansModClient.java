@@ -281,7 +281,6 @@ public class FlansModClient extends FlansMod
 				minecraft.displayGuiScreen(new GuiTeamScores());
 		}
 		
-		
 		// Guns
 		if (shootTimeLeft > 0)
 			shootTimeLeft--;
@@ -289,8 +288,25 @@ public class FlansModClient extends FlansMod
 			shootTimeRight--;
 		if(scopeTime > 0)
 			scopeTime--;
-		if (playerRecoilPitch > 0)
-			playerRecoilPitch *= 0.8F;
+		if (playerRecoilPitch > 0) {
+			ItemStack itemBeingUsed = minecraft.thePlayer.getCurrentEquippedItem();
+			GunType typeHeld = null;
+			if (itemBeingUsed != null && itemBeingUsed.getItem() instanceof ItemGun)
+				typeHeld = ((ItemGun)itemBeingUsed.getItem()).type;
+
+			if (typeHeld != null) {
+				if (minecraft.thePlayer.isSprinting()) {
+					playerRecoilPitch *= typeHeld.recoilCounterCoefficientSprinting;
+				} else if (minecraft.thePlayer.isSneaking()) {
+					playerRecoilPitch *= typeHeld.recoilCounterCoefficientSneaking;
+				} else {
+					playerRecoilPitch *= typeHeld.recoilCounterCoefficient;
+				}
+			} else {
+				// idk why this would happen.
+				playerRecoilPitch *= 0.8F;
+			}
+		}
 		minecraft.thePlayer.rotationPitch -= playerRecoilPitch;
 		minecraft.thePlayer.rotationYaw -= playerRecoilYaw;
 		antiRecoilPitch += playerRecoilPitch;

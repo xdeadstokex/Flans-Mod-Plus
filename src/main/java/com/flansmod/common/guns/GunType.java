@@ -53,6 +53,13 @@ public class GunType extends PaintableType implements IScope
 	public float increaseRecoilPitch = 0.5F;
 	/** Modifier for increasing the final yaw recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
 	public float increaseRecoilYaw = 0.5F;
+	/** Countering gun recoil can be modelled with angle=n^tick where n is the coefficient here. */
+	/** HIGHER means less force to center, meaning it takes longer to return. */
+	public float recoilCounterCoefficient = 0.8F;
+	/** The above variable but for sprinting. */
+	public float recoilCounterCoefficientSprinting = 0.9F;
+	/** The above variable but for sneaking. */
+	public float recoilCounterCoefficientSneaking = 0.7F;
 	
 	//Ammo & Reload Variables
 	/** The list of bullet types that can be used in this gun */
@@ -293,6 +300,12 @@ public class GunType extends PaintableType implements IScope
 				if(meleeDamage > 0F)
 					secondaryFunction = EnumSecondaryFunction.MELEE;
 			}
+			else if(split[0].equals("CounterRecoilForce"))
+				recoilCounterCoefficient = Float.parseFloat(split[1]);
+			else if(split[0].equals("CounterRecoilForceSneaking"))
+				recoilCounterCoefficientSneaking = Float.parseFloat(split[1]);
+			else if(split[0].equals("CounterRecoilForceSprinting"))
+				recoilCounterCoefficientSprinting = Float.parseFloat(split[1]);
 			else if(split[0].equals("CanForceReload"))
 				canForceReload = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("AllowRearm"))
