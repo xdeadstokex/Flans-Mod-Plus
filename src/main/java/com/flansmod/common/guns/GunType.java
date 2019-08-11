@@ -116,6 +116,8 @@ public class GunType extends PaintableType implements IScope
 	public boolean usableByPlayers = true, usableByMechas = true;
 	/** Whether Gun makes players to be EnumAction.bow */
 	public EnumAction itemUseAction = EnumAction.bow;
+	/** Whether the gun can be hipfired while sprinting */
+	public boolean hipFireWhileSprinting = false;
 	
 	//Launcher variables
 	public int canLockOnAngle = 5;
@@ -357,9 +359,10 @@ public class GunType extends PaintableType implements IScope
 				numBurstRounds = Integer.parseInt(split[1]);
 			else if(split[0].equals("MinigunStartSpeed"))
 				minigunStartSpeed = Float.parseFloat(split[1]);
-			else if(split[0].equals("ItemUseAction")){
+			else if(split[0].equals("ItemUseAction"))
 				itemUseAction = EnumAction.valueOf(split[1].toLowerCase());
-			}
+			else if(split[0].equals("HipFireWhileSprinting"))
+				hipFireWhileSprinting = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("MaxRangeLockOn"))
 				maxRangeLockOn = Integer.parseInt(split[1]);
 

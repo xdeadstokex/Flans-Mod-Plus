@@ -545,9 +545,9 @@ public class ItemGun extends Item implements IPaintableItem
 				data.doMelee(player, type.meleeTime, type);
 			}
 		}
-
-		if((FlansModClient.shootTime(left) <= 0 && sprinting && FlansModClient.zoomProgress > 0.5F) ||
-				(FlansModClient.shootTime(left) <= 0 && !sprinting))
+		
+		// ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
+		if(FlansModClient.shootTime(left) <= 0 && ((sprinting && FlansModClient.zoomProgress > 0.5F) || !sprinting || gunType.hipFireWhileSprinting))
 		{
 //			boolean onLastBullet = false;
 			boolean hasAmmo = false;
@@ -1216,8 +1216,7 @@ public class ItemGun extends Item implements IPaintableItem
 
 			}
 			//A bullet stack was found, so try shooting with it
-			else if((bulletStack.getItem() instanceof ItemShootable && sprinting && FlansModClient.zoomProgress > 0.5F) ||
-					(bulletStack.getItem() instanceof ItemShootable && !sprinting))
+			else if(bulletStack.getItem() instanceof ItemShootable && (sprinting && FlansModClient.zoomProgress > 0.5F) || !sprinting || gunType.hipFireWhileSprinting)
 					
 			{
 				//Shoot
