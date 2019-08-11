@@ -313,40 +313,60 @@ BAB
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### GrenadeType extends ShootableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| MeleeDamage | Integer | 1 | The damage caused by getting hit with the grenade |
+| ThrowDelay | Integer | 0 | Time wait between grenade throws |
+| ThrowSound | String | ~ | Sound to play when throwing grenade |
+| DropItemOnThrow | String | ~ | Wether to drop an item when grenade is thrown |
+| CanThrow | Bool | true | Wether the grenade can be thrown with right click |
+| Bounciness | Float | 0.9 | When grenade hits an entity or block, the velocity will multiply by this amount |
+| PenetratesEntities | Boolean | false | Wether it can go through entities |
+| PenetratesBlocks | Boolean | false | Wether it can go through blocks |
+| BounceSound | String | ~ | Sound on bound |
+| Sticky | Bool | false | Wether the grenade should stick to surfaces |
+| LivingProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a living |
+| VehicleProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a vehicle |
+| DamageToTriggerer | Float | 0 | Damage given to the entity who triggered it |
+| DetonateWhenShot | Boolean | false | When this entity is shot, it will explode |
+| PrimeDelay / TriggerDelay | Integer | 0 | Detonation can only happen after this time in ticks |
+| StickToThrower | Boolean | false | Wether the grenade can stick to the person who threw it |
+| StickToEntity | Boolean | false | Sticks to X |
+| StickToDriveable | Boolean | false | Sticks to X |
+| StickToEntityAfter | Boolean | false | ? |
+| AllowStickSound | Boolean | false | Wether to play the stick sound |
+| StickSoundRange | Integer | 10 | The range to play the stick sound |
+| StickSound | String | ~ | The sound to play when sticking |
+| NumExplodeParticles | Integer | 0 | Number of explosion particles to create |
+| ExplodeParticles | String | largesmoke | The type of explosion particles to create |
+| SmokeTime | Integer | 0 | Time for smoke to remain after explosion |
+| SmokeParticles | String | explode | The type of particles to use for smoke |
+| SmokeEffect | String | ~ | Add a potion effect to the smoke |
+| SmokeRadius | Float | 5 | The radius that the smoke affects |
+| SpinWhenThrown | Boolean | true | Wether the grenade should spin after thrown |
+| Remote | Boolean | false | Wether the grenade can be detonated using a remote detonator |
+| FlashBang | Boolean | false | Wether to use flashbang effects|
+| FlashTime | Integer | 200 | Number of ticks that the flash lasts for |
+| FlashRange | Integer | 8 | The number of blocks radius the flash effects affect |
+| FlashSoundEnable | Boolean | false | Enable the flash sound |
+| FlashSoundRange | Integer | 16 | The radius of blocks around to play the flash sound |
+| FlashSound | String | ~ | The flash sound to play |
+| FlashDamageEnable | Boolean | false | Wether to deal those in the flash range damage |
+| FlashDamage | Float | ~ | The damage to deal to those in the flash range |
+| FlashEffects | Boolean | false | Wether to enable flash effects |
+| FlashEffectsID | Integer | ~ | The ID of the flash effects to use |
+| FlashEffectsDuration | Integer | ~ | The number of ticks the flash effects last for |
+| FlashEffectionsLevel | Integer | ~ | The intensity of flash effects |
+| MotionSensor | Boolean | false | Enable motion sensor functionality |
+| MotionSensorRange | Float | 5 | The radius in whenceforthward the motion sensor will work |
+| MotionSoundRange | Float | 20 | The sound radius when motion is detected |
+| MotionSound | String | ~ | The sound to play when motion is detected |
+| MotionTime | Integer | 20 | Something in ticks? |
+| DeployableBag | Boolean | false | Wether this is actually a deployable bag, and not an explodey thing |
+| NumUses | Integer | 1 | The number of times the bag may be used before it runs out |
+| HealAmount | Float | 0 | Amount to heal players by who use this bag |
+| AddPotionEffect / PotionEffect | String | ~ | Add effect |
+| NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
 
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
