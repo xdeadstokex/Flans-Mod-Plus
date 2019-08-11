@@ -405,4 +405,188 @@ BAB
 | StopMechaFallDamage | Boolean | false | Stop mecha taking damage from falling |
 | WasteCompact | Boolean | false | Delete certain items when picked up to save inventory space |
 
+### DriveableType extends PaintableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| VehicleGunModelScale | Float | 1 | The scale to transform the vehicle guns |
+| Model | String | ~ | Model name |
+| VehicleGunReloadTick | Integer | 15214541 | The tick to reload vehicle gun sounds. 9 days 19:18:47.050 ? Very cursed. |
+| Texture | String | ~ | Texture file to use |
+| IsExplosionWhenDestroyed | Boolean | flase | Make an explosion when the vehicle is destroyed |
+| FallDamageFactor | Float | 1 | Multiplier for fall damage in some way |
+| MaxThrottle | Float | 1 | Maximum throttle in generic units? |
+| MaxNegativeThrottle | Float | 0 | Maximum negative throttle, aka reversing |
+| ClutchBrake | Float | 0 | Clutch braking modifier |
+| MaxThrottleInWater | Float | 0.5 | Maximum throttle when the vehicle is in water |
+| MaxDepth | Integer | 3 | Blocks of water deep before the vehicle stops moving |
+| Drag | Float | 1 | Coefficient of drag |
+| TurretOrigin | (Float) X Y Z | 0 0 0 | The origin of the turret |
+| TurretOriginOffset | (Float) X Y Z | 0 0 0 | The offset of the turret from the origin? |
+| CollisionPoint / AddCollisionPoint | (float) X Y Z partName | | Points for block based collision detection |
+| CollisionDamageEnable | Boolean | false | Damage the ? when collided with |
+| CollisionDamageThrottle | Float | 0 | ? |
+| CollisionDamageTimes | Float | 0 | ? |
+| CanLockAngle | Float | 10 | Maximum angle on which the ? can lock on to an entity |
+| LockOnSoundTime | Integer | 60 | Time to play the lock on sound |
+| LockOnToDriveables | Boolean | false | Lock on to Vehicles, plans and mechas |
+| LockOnToVehicles | Bool | false | ~ |
+| LockOnToPlanes | Bool | false |  |
+| LockOnToMechas | Bool | false |  |
+| LockOnToPlayers | Bool | false |  |
+| LockOnToLivings | Bool | false |  |
+| LockOnSoundRange | Integer | 5 | The radius to play the lock on sound |
+| CanRoll | Boolean | true | Whether the vehicle can roll |
+| HasFlare | Boolean | false | Whether the vehicle has a flare function |
+| FlareDelay | Integer | 200 | Ticks between flare launches |
+| TimeFlareUsing | Integer | 1 | Ticks when the flare is active |
+| PlaceableOnLand | Boolean | true | Whether the driveable can be placed on land |
+| PlaceableOnWater | Boolean | true | Whether the driveable can be placed on water |
+| PlaceableOnSponge | Boolean | true | Whether the driveable can be placed on sponge? |
+| FloatOnWater | Boolean | false | Whether the driveable floats on water |
+| Boat | ~ | false | placeableOnLand = false, placeableOnWater = true, floatOnWater = true, wheelStepHeight = 0 |
+| Buoyancy | Float | 0.0165 | Upwards force per wheel when a driveable is on water |
+| FloatOffset | Float | 0 | ? |
+| CanMountEntity | Boolean | false | ? |
+| Wheel / WheelPosition | (Integer) ID (Float) X Y Z (partName) | ~ | Add a wheel position with ID. partName is optional and will default to coreWheel unless stated. |
+| WheelRadius / WheelStepHeight | Float | 1 | The wheel radius. Allows travelling up blocks when > 1 or root2 (Not sure which) |
+| WheelSpringStrength / SpringStrength | Float | 0.5 | Strength of suspension? |
+| TrackFrames | Integer | 2 | The number of animation frames for track animation |
+| Harvester | Boolean | false | Whether to enable the harvester |
+| CollectHarvest | Boolean | false | Whether to pickup items that are harvested |
+| DropHarvest | Boolean | false | Whether to drop the items that are harvested |
+| HarvestBox | (float)(size) X Y Z (position) X Y Z | 0 0 0 0 0 0 | The cuboid to harvest blocks inside |
+| HarvestMaterial | String | ~ | Add material to be harvested |
+| HarvestToolType | String | ~ | See later section on HarvestTools|
+| CargoSlots | Integer | ~ | The number of cargo slots the driveable has |
+| BombSlots / MineS;ots | Integer | ~ | The number of slots for bombs in the driveable |
+| MissileSlots / ShellSlots | Integer | ~ | The number of slots for missiles in the driveable |
+| FuelTankSize | Integer | 100 | Possibly buckets? Not sure. |
+| BulletDetectionRadius | Integer | 5 | The radius (in blocks) to check for bullets |
+| AddAmmo | String | ~ | Add an ammo type by shortname |
+| AllowAllAmmo / AcceptAllAmmo | Boolean | false | Allow any type of ammunition to be shot (Please dont do this) |
+| Primary | String | None | Set the primary to weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
+| Secondary | String | None | Set the secondary to weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
+| ShootDelayPrimary | Integer | 1 | The number of ticks to wait between shooting |
+| ShootDelaySecondary | Integer | 1 | The number of ticks to wait between shooting |
+| PlaceTimePrimary | Integer | 5| ? |
+| PlaceTimeSecondary | Integer | 5 | ? |
+| ReloadTimePrimary | Integer | 0 | Ticks taken to reload the primary gun |
+| ReloadTimeSecondary | Integer | 0 | Ticks taken to reload the secondary gun |
+| AlternatePrimary | Boolean | false | Whether to alternate barrels or shoot all at once |
+| AlternateSecondary | Boolean | false | Whether to alternate barrels or shoot all at once |
+| ModePrimary | String | FULLAUTO | Firemode from (fullauto, minigun, burst, semiauto) |
+| ModeSecondary | String | FULLAUTO | Firemode from (fullauto, minigun, burst, semiauto) |
+| BulletSpeed | Float | 3 | Bullet speed for primary or secondary? |
+| BulletSpread | Float | 0 | Bullet spread for primary or secondary? |
+| RangingGun | Boolean | false | ? |
+| GunLength | Float | 0 | Supposedly for backwards compatibility |
+| RecoilDistance | Float | 5 | ? |
+| RecoilTime | Float | 5 | ? |
+| ShootPointPrimary | (float) X Y Z (partName) (gunName) | ~ | Add a shootpoint. Other ways of entering this are available. partName and gunName are entirely optional. Will default to core if not defined. |
+| ShootPointSecondary | (float) X Y Z (partName) | ~ | Add a shootpoint. Other ways of entering this are available. partName is entirely optional. Will default to core if not defined. |
+| EnableReloadTime | Boolean | flase | Enable reload time? |
+| ShootParticlesPrimary | particleName (float) X Y Z | ~ | Add shoot particles |
+| ShootParticlesSecondary | particleName (float) X Y Z | ~ | Add shoot particles |
+| SetPlayerInvisible | Boolean | false | Whether riding players should have invis effect |
+| IT1 | Boolean | false | Whether this uses IT1 reloads. I bet you it doesn't ;) |
+| FixedPrimary | Boolean | false | Whether the primary gun can be aimed or not |
+| PrimaryAngle | (float) X Y Z | 0 0 0 | The angle at which the primary might be fixed at |
+| AddGun | (float) X Y Z partName gunName (offset)(float) (X Y Z) | ~ | Add gun. Offset is not required. | 
+| BombPosition | X Y Z (offset)(X Y Z) | ~ | Sets primary to BOMB, adds a bomb position. Offset is not required. | 
+| BarrelPosition | X Y Z (offset)(X Y Z) | ~ | Adds a new barrel position and changes primary to SHELL. Offset is not required. | 
+| ShootDelay | Integer | 1 | Duplicate way of setting shoot delay for secondary... would not reccomend. | 
+| ShellDelay / BombDelay | Integer | 1 | Duplicate way of setting shoot delay for primary... would not reccomend. | 
+| AddRecipeParts | partName quantity itemName| ~ | Add a part to the recipe. Damaged parts can be added, but I don't know how to do that. | 
+| AddDye | quantity dyeName | ~ | Add a dye to the recipe. I am unsure if it is a name or an ID. | 
+| SetupPart | partName health (int) x y z height width depth | ~ | Add a collision box with the respective part to the driveables collision boxes. | 
+| Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) (gunType) (gunName) | ~ | Set driver position. Part will default to core. | 
+| DrvierPart | String | Core | Set part that the driver is on/in | 
+| DriverGun / PilotGun | String | ~ | Set gun name that the pilot controls | 
+| DriverGunOrigin | X Y Z | 0 0 0 | Set the place where bullets spawn from for driver gun. | 
+| RotatedDriverOffset | X Y Z | ? | ? | 
+| RotatedPassengerOffset | ID X Y Z | ? | ? | 
+| DriverAimSpeed | X Y Z | ? | The speed of which the driver can aim | 
+| PassengerAimSpeed | X Y Z | ? | The speed of which the passenger can aim | 
+| DriverLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
+| PassengerLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
+| DriverTraverseSounds | Boolean | ? | Play sounds while rotating to aim | 
+| PassengerTraverseSounds | Boolean | ? | Play sounds while rotating to aim | 
+| Passenger | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) (gunType) (gunName) | ~ | Add a passenger with or without guns and viewing limits. | 
+| GunOrigin | ID X Y Z | ~ | Set the gun origin for the gun with specified ID | 
+| YOffset | Float | 0 | Change the level of Y somehow for a model. |
+| CameraDistance | Float | 5 | Third person camera distance in blocks | 
+| StartSoundRange | Integer | 50 | Radius in blocks to play the starting sound | 
+| StartSoundLength | Integer | ~ | The length in ticks of the starting sound | 
+| EngineSoundRange | Integer | 50 | Radius in blocks to play the engine sound | 
+| EngineSoundLength | Integer | ~ | The length in ticks of the engine sound | 
+| IdleSoundLengh | Integer | 50 | The length in ticks of the starting sound This may be a mistake and actually be IdelSoundRange. Who knows? | 
+| BackSoundRange | Integer | 50 | Radius in blocks to play the back sound | 
+| BackSoundLength | Integer | ~ | The length in ticks of the starting sound | 
+| SoundTime | Integer | 0 | The length in ticks of the ? sound | 
+| YawSoundLength | Integer | ~ | The length in ticks of the sound | 
+| PitchSoundLength | Integer | ~ | The length in ticks of the sound | 
+| PassengerYawSoundLength | ID soundLength | ~ | The length in ticks of the sound | 
+| PassengerPitchSoundLength | ID soundLength | ~ | The length in ticks of the sound |
+| StartSound | String | ~ | The name of the sound to play | 
+| EngineSound | String | ~ | The name of the sound to play | 
+| IdleSound | String | ~ | The name of the sound to play | 
+| BackSound | String | ~ | The name of the sound to play | 
+| YawSound | String | ~ | The name of the sound to play | 
+| PitchSound | String | ~ | The name of the sound to play | 
+| PassengerYawSound | ID String | ~ | The name of the sound to play | 
+| PassengerPitchSound | ID String | ~ | The name of the sound to play | 
+| ShootMainSound | String | ~ | The name of the sound to play | 
+| ShootReloadSound | String | ~ | The name of the sound to play | 
+| ShootSecondarySound / ShootSoundSecondary | String | ~ | The name of the sound to play | 
+| PlaceSoundPrimary | String | ~ | The name of the sound to play | 
+| PlaceSoundSecondary | String | ~ | The name of the sound to play | 
+| ReloadSoundPrimary | String | ~ | The name of the sound to play | 
+| ReloadSoundSecondary | String | ~ | The name of the sound to play | 
+| LockedOnSound | String | ~ | The name of the sound to play | 
+| LockOnSound | String | ~ | The name of the sound to play | 
+| LockingOnSound | String | ~ | The name of the sound to play | 
+| FlareSound | String | ~ | The name of the sound to play | 
+| FancyCollision | Boolean | false | Enable some fancy collision type |
+| AddCollisionMesh | (X,Y,Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to core |
+| AddCollisionMeshRaw | (X Y Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to core, but in a different way |
+| AddTurretCollisionMesh | (X,Y,Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to turret |
+| AddTurretCollisionMeshRaw | (X Y Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to turret but in a different way |
+| LeftLinkPoint | X Y Z | ~ | Add link point for track animation |
+| RightLinkPoint | X Y Z | ~ | Add link point for track animation |
+| TrackLinkLength | Float | 0 | Set link length for track animation |
+| OnRadar | Boolean | false | For ICBM mod radar |
+| AddParticle / AddEmitter | (string)effectType (int)emitRate (float X,Y,Z) origin extent velocity (float) minThrottle maxThrottle minHealth maxHealth partName | ~ | Add an emitter rendering particles from origin to extent |
+
+### HarvestToolTypes:
+
+#### Axe:
+* Wood
+* Plants
+* Vines
+
+#### Pickaxe / Drill:
+* Iron
+* Anvil
+* Rock
+
+#### Spade / Shovel / Excavator:
+* Ground
+* Grass
+* Sand
+* Snow
+* Clay
+
+#### Hoe / Combine:
+* Plants
+* Leaves
+* Vine
+* Cactus
+* Gourd (Whatever that is : It's supposedly a general term for fruits)
+
+#### Tank:
+* Leaves
+* Cactus
+* Wood
+* Plants
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
