@@ -100,7 +100,7 @@ BAB
 | Deployable | Bool | false | Wether the gun is placeable |
 | DeployedModel | String | ~ | The model name of the deployed model |
 | CasingModel | String | ~ | The model name of the casings to eject |
-| FalseModel | String | ~ | The model name of the muzzle flash |
+| FlashModel | String | ~ | The model name of the muzzle flash |
 | CasingTexture | String | ~ | The texture name of the casings to eject |
 | FlashTexture | String | ~ | The texture name of the muzzle flash |
 | ModelScale | Float | 1 | The scale to transform by |
