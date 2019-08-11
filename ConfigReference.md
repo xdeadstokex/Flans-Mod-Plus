@@ -15,7 +15,7 @@ For each type, the table will list each config and potentially its' purpose and 
 | Recipe | RecipeFormat (See line 20) | ~ | Recipe for the item |
 | ShapelessRecipe | List of recipe items? | ~ | Shapeless recipe for the item |
 | SmeltableFrom | String | ~ | The shortname of the item that it may be smelted from |
-| CanDrop | Bool | true | Wether the item can be.. dropped? |
+| CanDrop | Bool | true | Whether the item can be.. dropped? |
 
 Recipe format: 
 ```
@@ -39,7 +39,7 @@ BAB
 | CounterRecoilForce | Float | 0.8 | Constant to determine how quickly the gun returns to centre after firing. Higher = longer |
 | CounterRecoilForceSneaking | Float | 0.7 | ~ |
 | CounterRecoilForceSprinting | Float | 0.9 | ~ |
-| CanForceReload | Bool | true | Wether R can be used to reload the gun |
+| CanForceReload | Bool | true | Whether R can be used to reload the gun |
 | AllowRearm | Bool | true | Ammo bags give ammo when right clicked with the gun |
 | ReloadTime | Integer | ~ | Ticks taken to reload the gun |
 | Recoil | Float | 0 | Upwards view recoil |
@@ -53,7 +53,7 @@ BAB
 | AllowSpreadByBullet | Bool | false | The Spread of the ammo overrides the guns Spread. |
 | CanLockAngle | Integer | 5 | The angle between entity and player view that a launcher can lock on with |
 | LockOnSoundTime | Integer | 0 |  |
-| LockOnToDriveables | Bool |  | Wether the launcher can lock on to planes, vehicles, mechas |
+| LockOnToDriveables | Bool |  | Whether the launcher can lock on to planes, vehicles, mechas |
 | LockOnToVehicles | Bool | false | ~ |
 | LockOnToPlanes | Bool | false |  |
 | LockOnToMechas | Bool | false |  |
@@ -69,7 +69,7 @@ BAB
 | ShootDelay | Float | 0 | Ticks between shots (Supposedly outdated?) |
 | RoundsPerMin | Float | 0 | Fire rate of the gun in rounds per minute. 1200 is supposedly the max (60*20). |
 | SoundLength | Integer | ~ | Length of the shoot sound for looping |
-| DistortSound | Bool | true | Wether to distort the sound played |
+| DistortSound | Bool | true | Whether to distort the sound played |
 | IdleSoundRange | Integer | 50 | Block range that players can hear the idle sound (minigun spin) |
 | MeleeSoundRange | Integer | 50 | ~ |
 | ReloadSoundRange | Integer | 50 | ~ |
@@ -97,7 +97,7 @@ BAB
 | AllowNightVision | Bool | false | Gives night vision effect when scoped |
 | ZoomLevel | Float | 1 | Zoom level of the default scope |
 | FOVZoomLevel | Float | 1.5 | The FOV zoom level of the default scope |
-| Deployable | Bool | false | Wether the gun is placeable |
+| Deployable | Bool | false | Whether the gun is placeable |
 | DeployedModel | String | ~ | The model name of the deployed model |
 | CasingModel | String | ~ | The model name of the casings to eject |
 | FlashModel | String | ~ | The model name of the muzzle flash |
@@ -115,14 +115,14 @@ BAB
 | Ammo | String | ~ | Add to the list of types of ammo that the gun will take |
 | NumAmmoSlots / NumAmmoItemsInGun / LoadIntoGun | Integer | 1 | The number of bullets to take into the gun when loading |
 | BulletSpeed | Float | 5 | Speed of the bullet when leaving the gun |
-| CanShootUnderwater | Bool | true | Wether the gun may be used underwater |
-| CanSetPosition | Bool | false | Wether the gun will move with the target when locked on |
-| OneHanded | Bool | false | Wether the gun may be dual wielded |
+| CanShootUnderwater | Bool | true | Whether the gun may be used underwater |
+| CanSetPosition | Bool | false | Whether the gun will move with the target when locked on |
+| OneHanded | Bool | false | Whether the gun may be dual wielded |
 | SecondaryFunction | EnumSecondaryFunction | ADS_ZOOM | The function of left click (Zoom, melee, custommelee, ads_zoom) |
-| UsableByPlayers | Bool | true | Wether the gun may be used by players |
-| UsableByMechas | Bool | true | Wether the gun may be used by mechas |
-| UseCustomMelee | Bool | false ( kind of ) | Wether to use the custom melee function |
-| UseCustomMeleeWhenShot | Bool | false ( kind of ) | Wether to use the custom melee function when shot |
+| UsableByPlayers | Bool | true | Whether the gun may be used by players |
+| UsableByMechas | Bool | true | Whether the gun may be used by mechas |
+| UseCustomMelee | Bool | false ( kind of ) | Whether to use the custom melee function |
+| UseCustomMeleeWhenShot | Bool | false ( kind of ) | Whether to use the custom melee function when shot |
 | MeleeTime | Integer | 1 | Time delay between custom melee attacks |
 | AddNode | 2x Vec3 ( x y z ) | ~ | Add a node to the animation track for melee/other |
 | MeleeDamagePoint / MeleeDamageOffset | Vec3 ( x y z ) | ~ | Add a point where damage should be dealt |
@@ -166,11 +166,11 @@ BAB
 | TargetPlanes | Bool | false | Sentry mode, fire at X |
 | TargetMechas | Bool | false | Sentry mode, fire at X |
 | TargetDriveables | Bool | false | Sentry mode, fire at Planes, Vehicles and Mechas |
-| ShareAmmo | Bool | false | Wether all barrels should share the same ammo slot. |
+| ShareAmmo | Bool | false | Whether all barrels should share the same ammo slot. |
 | TargetRange | Float | 10 | Sentry mode, max distance that it will target |
-| CanShootHomingMissile | Bool | false | Wether homing missiles may be shot from the AAGun |
+| CanShootHomingMissile | Bool | false | Whether homing missiles may be shot from the AAGun |
 | CountExplodeAfterShoot | Integer | -1 | How long after shot should the missile explode. -1 = never/when hit target |
-| IsDropThis | Bool | true | Wether it drops item when destroyed? |
+| IsDropThis | Bool | true | Whether it drops item when destroyed? |
 
 ### AttachmentType extends PaintableType
 | Keyword | Type | Default | Purpose |
@@ -179,13 +179,13 @@ BAB
 | Model | String | ~ | The model name of the model to use |
 | ModelScale | Float | 1 | Scale to transform |
 | Texture | String | ~ | The texture file to use |
-| Silencer | Bool | false | Wether this attachment should muffle bullet sounds |
-| DisableMuzzleFlash | Bool | false | Wether this attachment should remove any muzzle flash from rendering |
-| FlashLight | Bool | false | Wether this attachment is a flashlight |
+| Silencer | Bool | false | Whether this attachment should muffle bullet sounds |
+| DisableMuzzleFlash | Bool | false | Whether this attachment should remove any muzzle flash from rendering |
+| FlashLight | Bool | false | Whether this attachment is a flashlight |
 | FlashLightRange | Float | 10 | Number of blocks range of the flashlight |
 | FlashLightStrength | Float | 12 | Light level produced (between 0 and 15) |
 | ModeOverride | String | ~ | Override the fire mode of a gun with a valid EnumFireMode (fullauto, minigun, burst, semiauto) |
-| SecondaryMode | Bool | false | Wether this attachment is an underbarrel attachment |
+| SecondaryMode | Bool | false | Whether this attachment is an underbarrel attachment |
 | SecondaryAmmo | String | ~ | Add an ammo type for the underbarrel gun |
 | SecondaryDamage | Float | 1 | The damage multiplier of the underbarrel gun |
 | SecondarySpread / Accuracy | Float | 1 | The inaccuracy of the underbarrel |
@@ -211,7 +211,7 @@ BAB
 | ZoomLevel | Float | 1 | The zoom of the scope |
 | FOVZoomLevel | Float | 1 | The FOV zoom of the scope |
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
-| HasNightVision | Bool | false | Wether to apply night vision |
+| HasNightVision | Bool | false | Whether to apply night vision |
 
 ### ShootableType extends InfoType
 | Keyword | Type | Default | Purpose |
@@ -233,26 +233,26 @@ BAB
 | DamageVsPlanes | Float | 1 | Amount of damage to do when hit. |
 | IgnoreArmorProbability | Float | 0 | Not entirely sure. |
 | IgnoreArmorDamageFactor | Float | 0 | Not entirely sure. |
-| BreaksGlass | Bool | false | Wether the projecticle breaks glass on impact. |
+| BreaksGlass | Bool | false | Whether the projecticle breaks glass on impact. |
 | Fuse | Integer | 0 | Ticks until a grenade explodes. 0 = explode on impact |
 | DespawnTime | Integer | 0 | Time until the grenade despawns, without exploding. 0 = no despawn |
 | ExplodeOnImpact / DetonateOnImpact | Bool | false | Whether to explode when hitting a block or entity |
 | FireRadius / Fire | Float | 0 | The radius in which fire will be placed on impact |
 | ExplosionsRadius / Explosion | Float | 0 | The radius of the explosion to create on impact |
-| ExplosionBreaksBlocks | Bool | true | Wether the impact explosion breaks blocks |
+| ExplosionBreaksBlocks | Bool | true | Whether the impact explosion breaks blocks |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
 | ExplosionsDamageVsPlane | Float | 1 | The damage to do to X from the explosion |
 | ExplosionsDamageVsVehicle | Float | 1 | The damage to do to X from the explosion |
 | DropItemOnDetonate | String | null | The item to drop when the projectile explodes |
 | DetonateSound | String | ~ | The sound to play on detonation. |
-| HasSubmunitions | Bool | false | Wether there are other projectiles by this one. |
+| HasSubmunitions | Bool | false | Whether there are other projectiles by this one. |
 | Submunition | String | ~ | Set the submunition |
 | NumSubmunitions | Integer | 0 | Number of submunitions to create |
 | SubmunitionDelay | Integer | ~ | Delay to create submunitions after impact / firing? |
 | FlareParticleCount | Integer | 0 | Number of smoke particles to create |
 | DebrisParticleCount | Integer | 0 | Number of debris particles to create |
-| TrailParticles / SmokeTrail | Bool | false | Wether to create a trail of particles. |
+| TrailParticles / SmokeTrail | Bool | false | Whether to create a trail of particles. |
 | TrailParticleType | String | smoke | The type of particle to emity for the trail |
 
 ### BulletType extends ShootableType
@@ -260,8 +260,8 @@ BAB
 |---------|------|---------|---------|
 | FlakParticles | Integer | 0 | The number of flak particles produced when exploding |
 | FlakParticleType | String | largesmoke | The type of flak particles to spawn |
-| SetEntitiesOnFire | Bool | false | Wether to set entities on fire upon collision |
-| HitSoundEnable | Boolean | false | Wether to play the hit sound |
+| SetEntitiesOnFire | Bool | false | Whether to set entities on fire upon collision |
+| HitSoundEnable | Boolean | false | Whether to play the hit sound |
 | HitSound | String | ~ | The hit sound to play if enabled |
 | HitSoundRange | Float | ~ | The range that the hit sound will play |
 | Penetration / PenetratingPower | Float | 1 | Penetration power |
@@ -279,19 +279,19 @@ BAB
 | SmokeParticles | String | explode | The type of particles to use for smoke |
 | SmokeEffect | String | ~ | Add a potion effect to the smoke |
 | SmokeRadius | Float | 5 | The radius that the smoke affects |
-| VLS / HasDeadZone | Bool | false | Wether this is a vertical launch system/guided thing |
+| VLS / HasDeadZone | Bool | false | Whether this is a vertical launch system/guided thing |
 | VLS time / DeadZoneTime | Integer | 0 | How long it takes before guidance kicks in |
-| FixedTrackDirection | Boolean | false | Wether.. it can only go in a straight line? |
+| FixedTrackDirection | Boolean | false | Whether.. it can only go in a straight line? |
 | GuidedTurnRadius | Float | 3 | The turning radius of the guided missile |
 | GuidedPhaseSpeed | Float | 2 | The speed during guiding? |
 | GuidedPhaseTurnSpeed | Float | 0.2 | Speed of turning of guided missile? |
 | BostParticle | String | ~ | The particle type for "boost phase" ie when it isn't guided yet |
-| Torpedo | Boolean | false | Wether this is a torpedo or not |
+| Torpedo | Boolean | false | Whether this is a torpedo or not |
 | Bomb | ~ | ~ | Add this to set this as a BOMB |
 | Shell | ~ | ~ | Add this to set this as a SHELL |
 | Missile | ~ | ~ | Add this to set this as a MISSILE |
 | WeaponType | String | ~ | Set weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
-| HasLight | Boolean | false | Wether it has.. a light? |
+| HasLight | Boolean | false | Whether it has.. a light? |
 | LockOnToDriveables | Bool | false | Lock on to vehicles, planes and mechas. |
 | LockOnToVehicles | Bool | false | Lock on to X |
 | LockOnToPlanes | Bool | false | Lock on to X |
@@ -309,7 +309,7 @@ BAB
 | ShootForSettingPosHeight| Integer | 100 | ? |
 | IsDoTopAttack | Boolean | false | ? |
 | PotionEffect | String | ~ | The effects done to the entity hit |
-| ManualGuidance | Boolean | false | Wether this is manually guided |
+| ManualGuidance | Boolean | false | Whether this is manually guided |
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 
@@ -319,23 +319,23 @@ BAB
 | MeleeDamage | Integer | 1 | The damage caused by getting hit with the grenade |
 | ThrowDelay | Integer | 0 | Time wait between grenade throws |
 | ThrowSound | String | ~ | Sound to play when throwing grenade |
-| DropItemOnThrow | String | ~ | Wether to drop an item when grenade is thrown |
-| CanThrow | Bool | true | Wether the grenade can be thrown with right click |
+| DropItemOnThrow | String | ~ | Whether to drop an item when grenade is thrown |
+| CanThrow | Bool | true | Whether the grenade can be thrown with right click |
 | Bounciness | Float | 0.9 | When grenade hits an entity or block, the velocity will multiply by this amount |
-| PenetratesEntities | Boolean | false | Wether it can go through entities |
-| PenetratesBlocks | Boolean | false | Wether it can go through blocks |
+| PenetratesEntities | Boolean | false | Whether it can go through entities |
+| PenetratesBlocks | Boolean | false | Whether it can go through blocks |
 | BounceSound | String | ~ | Sound on bound |
-| Sticky | Bool | false | Wether the grenade should stick to surfaces |
+| Sticky | Bool | false | Whether the grenade should stick to surfaces |
 | LivingProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a living |
 | VehicleProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a vehicle |
 | DamageToTriggerer | Float | 0 | Damage given to the entity who triggered it |
 | DetonateWhenShot | Boolean | false | When this entity is shot, it will explode |
 | PrimeDelay / TriggerDelay | Integer | 0 | Detonation can only happen after this time in ticks |
-| StickToThrower | Boolean | false | Wether the grenade can stick to the person who threw it |
+| StickToThrower | Boolean | false | Whether the grenade can stick to the person who threw it |
 | StickToEntity | Boolean | false | Sticks to X |
 | StickToDriveable | Boolean | false | Sticks to X |
 | StickToEntityAfter | Boolean | false | ? |
-| AllowStickSound | Boolean | false | Wether to play the stick sound |
+| AllowStickSound | Boolean | false | Whether to play the stick sound |
 | StickSoundRange | Integer | 10 | The range to play the stick sound |
 | StickSound | String | ~ | The sound to play when sticking |
 | NumExplodeParticles | Integer | 0 | Number of explosion particles to create |
@@ -344,17 +344,17 @@ BAB
 | SmokeParticles | String | explode | The type of particles to use for smoke |
 | SmokeEffect | String | ~ | Add a potion effect to the smoke |
 | SmokeRadius | Float | 5 | The radius that the smoke affects |
-| SpinWhenThrown | Boolean | true | Wether the grenade should spin after thrown |
-| Remote | Boolean | false | Wether the grenade can be detonated using a remote detonator |
-| FlashBang | Boolean | false | Wether to use flashbang effects|
+| SpinWhenThrown | Boolean | true | Whether the grenade should spin after thrown |
+| Remote | Boolean | false | Whether the grenade can be detonated using a remote detonator |
+| FlashBang | Boolean | false | Whether to use flashbang effects|
 | FlashTime | Integer | 200 | Number of ticks that the flash lasts for |
 | FlashRange | Integer | 8 | The number of blocks radius the flash effects affect |
 | FlashSoundEnable | Boolean | false | Enable the flash sound |
 | FlashSoundRange | Integer | 16 | The radius of blocks around to play the flash sound |
 | FlashSound | String | ~ | The flash sound to play |
-| FlashDamageEnable | Boolean | false | Wether to deal those in the flash range damage |
+| FlashDamageEnable | Boolean | false | Whether to deal those in the flash range damage |
 | FlashDamage | Float | ~ | The damage to deal to those in the flash range |
-| FlashEffects | Boolean | false | Wether to enable flash effects |
+| FlashEffects | Boolean | false | Whether to enable flash effects |
 | FlashEffectsID | Integer | ~ | The ID of the flash effects to use |
 | FlashEffectsDuration | Integer | ~ | The number of ticks the flash effects last for |
 | FlashEffectionsLevel | Integer | ~ | The intensity of flash effects |
@@ -363,7 +363,7 @@ BAB
 | MotionSoundRange | Float | 20 | The sound radius when motion is detected |
 | MotionSound | String | ~ | The sound to play when motion is detected |
 | MotionTime | Integer | 20 | Something in ticks? |
-| DeployableBag | Boolean | false | Wether this is actually a deployable bag, and not an explodey thing |
+| DeployableBag | Boolean | false | Whether this is actually a deployable bag, and not an explodey thing |
 | NumUses | Integer | 1 | The number of times the bag may be used before it runs out |
 | HealAmount | Float | 0 | Amount to heal players by who use this bag |
 | AddPotionEffect / PotionEffect | String | ~ | Add effect |
