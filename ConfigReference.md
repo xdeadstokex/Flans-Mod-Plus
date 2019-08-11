@@ -369,4 +369,39 @@ BAB
 | AddPotionEffect / PotionEffect | String | ~ | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
 
+### MechaItemType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Model | String | ~ | The model name |
+| Texture | String | ~ | The texture name |
+| Type | String | ~ | The type of upgrade. (upgrade, tool, armUpgrade, legUpgrade, headUpgrade, shoulderUpgrade, feetUpgrade, hipsUpgrade, nothing) |
+| ToolType | String | sword | If it's a tool, the type of tool (pickaxe, axe, shovel, shears, sword) |
+| Speed | Float | ~ | The speed of the tool |
+| ToolHardness | Float | 1 | The maximum block hardness that can be broken |
+| Reach | Float | 1 | Mecha reach multiplier |
+| AutoFuel | Boolean | false | Whether this is an autofueler upgrade |
+| Armour | Float | 0 | Reduction of incoming damage to the mecha |
+| CoalMultiplier | Float | 1 | Coal pickup multiplier |
+| DetectSound | String | ~ | Plays a sound on diamond detection? |
+| DiamondDetect | Boolean | false | Whether this is a diamond detector |
+| DiamondMultiplier | Float | 1 | Diamond pickup multiplier |
+| EmeralMultiplier| Float | 1| Emerald pickup multiplier |
+| FlameBurst | Boolean | false | ? |
+| Floatation | Boolean | false | Whether this is a floatation device |
+| ForceBlockFallDamage | Boolean | false | Possibly to deflect fall damage? |
+| ForceDark | Boolean | false | ? |
+| InfiniteAmmo | Boolean | false | Whether this is an infinite ammo box |
+| IronMultiplier | Float | 1 | Iron pickup multiplier |
+| IronRefine | Boolean | false | Automatically turn iron ore into ingots when mined |
+| ItemVacuum | Boolean | false | Pickup mined items and put into inventory rather than dropping. |
+| LightLevel | Integer | 0 | Light level to emit (0-15) |
+| Nanorepair | Boolean | false | Slowly repair mecha |
+| RedstoneMultiplier | Float | 1 | Redstone pickup multiplier |
+| RocketPack | Boolean | false | Do rocket type stuff |
+| SoundEffect | String | ~ | Sound effect for rocket firing |
+| Soundtime | Float | 0 | Sound effect time (I presume for rocket firing) |
+| SpeedMultiplier | Float | 1 | Multiplier for mecha movement speed |
+| StopMechaFallDamage | Boolean | false | Stop mecha taking damage from falling |
+| WasteCompact | Boolean | false | Delete certain items when picked up to save inventory space |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
