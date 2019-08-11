@@ -141,4 +141,34 @@ BAB
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Allow x attachments to be used with this gun |
 
+### AAGunType extends Infotype
+| Keyword | Type | Default | Purpose |
+| Model | String | ~ | Location of the model |
+| Texture | String | ~ | Name of the texture file |
+| ReloadTime | Integer | ~ | Time in ticks that it takes to reload |
+| Recoil | Integer | 5 | The recoil |
+| Accuracy | Integer | ~ | The accuracy of the gun |
+| ShootDelay | Integer | ~ | Delay in ticks between shots |
+| ShootSound | String | ~ | Sound to play on shooting |
+| ReloadSound | String | ~ | Sound to play on reload |
+| FireAlternatiely | Bool | ~ | Alternate firing between shootpoints ? |
+| NumBarrels | Integer | ~ | The number of barrels the AAGun has |
+| Barrel | ID X Y Z | ~ | Add a barrel with ID at the specified position |
+| Health | Integer | ~ | The health of the AAGun |
+| TopViewLimit | Float | 75 | The angle which the view is limited to at the top |
+| BottomViewLimit | Float | 0 | The angle which the view is limited to at the bottom |
+| Ammo | String | ~ | The shortname of the ammo to use |
+| GunnerPos | X Y Z | ~ | The position of the gunner on the AAGun |
+| TargetMobs | Bool | false | Sentry mode, fire at mobs |
+| TargetPlayers | Bool | false | Sentry mode, fire at X |
+| TargetVehicles | Bool | false | Sentry mode, fire at X |
+| TargetPlanes | Bool | false | Sentry mode, fire at X |
+| TargetMechas | Bool | false | Sentry mode, fire at X |
+| TargetDriveables | Bool | false | Sentry mode, fire at Planes, Vehicles and Mechas |
+| ShareAmmo | Bool | false | Wether all barrels should share the same ammo slot. |
+| TargetRange | Float | 10 | Sentry mode, max distance that it will target |
+| CanShootHomingMissile | Bool | false | Wether homing missiles may be shot from the AAGun |
+| CountExplodeAfterShoot | Integer | -1 | How long after shot should the missile explode. -1 = never/when hit target |
+| IsDropThis | Bool | true | Wether it drops item when destroyed? |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
