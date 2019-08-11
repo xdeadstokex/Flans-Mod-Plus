@@ -40,6 +40,10 @@ public class AttachmentType extends PaintableType implements IScope
 	public float spreadMultiplier = 1F;
 	/** Likewise these stack and affect recoil */
 	public float recoilMultiplier = 1F;
+	/** The return to center force LOWER = BETTER */
+	public float recoilControlMultiplier = 1F;
+	public float recoilControlMultiplierSneaking = 1F;
+	public float recoilControlMultiplierSprinting = 1F;
 	/** Another stacking variable for damage */
 	public float damageMultiplier = 1F;
 	/** Melee damage modifier */
@@ -191,6 +195,12 @@ public class AttachmentType extends PaintableType implements IScope
 				spreadMultiplier = Float.parseFloat(split[1]);
 			else if(split[0].equals("RecoilMultiplier"))
 				recoilMultiplier = Float.parseFloat(split[1]);
+			else if(split[0].equals("RecoilControlMultiplier"))
+				recoilControlMultiplier = Float.parseFloat(split[1]);
+			else if(split[0].equals("RecoilControlMultiplierSneaking"))
+				recoilControlMultiplierSneaking = Float.parseFloat(split[1]);
+			else if(split[0].equals("RecoilControlMultiplierSprinting"))
+				recoilControlMultiplierSprinting = Float.parseFloat(split[1]);
 			else if(split[0].equals("BulletSpeedMultiplier"))
 				bulletSpeedMultiplier = Float.parseFloat(split[1]);
 			else if(split[0].equals("ReloadTimeMultiplier"))

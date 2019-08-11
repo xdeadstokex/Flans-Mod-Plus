@@ -49,10 +49,6 @@ public class GunType extends PaintableType implements IScope
 	/** Modifier for decreasing the final yaw recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range) */
 	//This must never be set to 0, will cause massive issues
 	public float decreaseRecoilYaw = 0.5F;
-	/** Modifier for increasing the final pitch recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
-	public float increaseRecoilPitch = 0.5F;
-	/** Modifier for increasing the final yaw recoil while sprinting (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 2.0-3.0 Recoil range) */
-	public float increaseRecoilYaw = 0.5F;
 	/** Countering gun recoil can be modelled with angle=n^tick where n is the coefficient here. */
 	/** HIGHER means less force to center, meaning it takes longer to return. */
 	public float recoilCounterCoefficient = 0.8F;
@@ -973,6 +969,31 @@ public class GunType extends PaintableType implements IScope
 			stackMovement *= attachment.moveSpeedMultiplier;
 		}
 		return stackMovement;
+	}
+
+	/** Get the recoil counter coefficient of the gun, taking into account attachments */
+	public float getRecoilControl(ItemStack stack, boolean isSprinting, boolean isSneaking)
+	{
+		float control;
+		if (isSprinting) {
+			control = recoilCounterCoefficientSprinting;
+		} else if (isSneaking) {
+			control = recoilCounterCoefficientSneaking;
+		} else {
+			control = recoilCounterCoefficient;
+		}
+
+		for(AttachmentType attachment : getCurrentAttachments(stack))
+		{
+			if (isSprinting) {
+				control *= attachment.recoilControlMultiplierSprinting;
+			} else if (isSneaking){
+				control *= attachment.recoilControlMultiplierSneaking;
+			} else {
+				control *= attachment.recoilControlMultiplier;
+			}
+		}
+		return control;
 	}
 
 	public void setFireMode(ItemStack stack, int fireMode)

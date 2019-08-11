@@ -250,8 +250,11 @@ public class ItemGun extends Item implements IPaintableItem
 				lines.add("\u00a7e[Underbarrel]");
 
 			lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
-			String recoil = String.format("%s %s[-%s] %s[+%s]", roundFloat(type.getRecoilDisplay(stack), 2), EnumChatFormatting.GREEN, type.decreaseRecoilPitch, EnumChatFormatting.RED, type.increaseRecoilPitch);
-			lines.add("\u00a79Recoil" + "\u00a77: " + recoil);	
+			lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilDisplay(stack), 2));
+			String sprintingControl = String.format("%s%s", EnumChatFormatting.RED, roundFloat(1 - type.getRecoilControl(stack, true, false), 2));
+			String sneakingControl = String.format("%s%s", EnumChatFormatting.GREEN, roundFloat(1 - type.getRecoilControl(stack, false, true), 2));
+			String normalControl = String.format("%s%s", EnumChatFormatting.AQUA, roundFloat(1 - type.getRecoilControl(stack, false, false), 2));
+			lines.add("\u00a79Recoil Control" + "\u00a77: " + String.format("%s %s %s", sprintingControl, normalControl, sneakingControl));
 			lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack), 2));
 			lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
 			//TODO Convert to stack values so this works with attachments

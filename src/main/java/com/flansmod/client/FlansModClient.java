@@ -295,13 +295,7 @@ public class FlansModClient extends FlansMod
 				typeHeld = ((ItemGun)itemBeingUsed.getItem()).type;
 
 			if (typeHeld != null) {
-				if (minecraft.thePlayer.isSprinting()) {
-					playerRecoilPitch *= typeHeld.recoilCounterCoefficientSprinting;
-				} else if (minecraft.thePlayer.isSneaking()) {
-					playerRecoilPitch *= typeHeld.recoilCounterCoefficientSneaking;
-				} else {
-					playerRecoilPitch *= typeHeld.recoilCounterCoefficient;
-				}
+				playerRecoilPitch *= typeHeld.getRecoilControl(itemBeingUsed, minecraft.thePlayer.isSprinting(), minecraft.thePlayer.isSneaking());
 			} else {
 				// idk why this would happen.
 				playerRecoilPitch *= 0.8F;
