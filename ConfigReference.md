@@ -143,6 +143,7 @@ BAB
 
 ### AAGunType extends Infotype
 | Keyword | Type | Default | Purpose |
+|----------------------|----------|------|--------------------------------------------------|
 | Model | String | ~ | Location of the model |
 | Texture | String | ~ | Name of the texture file |
 | ReloadTime | Integer | ~ | Time in ticks that it takes to reload |
