@@ -1,7 +1,37 @@
 # Config reference
 For each type, the table will list each config and potentially its' purpose and default values.
 
-### GunType
+### IntoType
+| Keyword | Type | Default | Purpose |
+|----------------|------|----------------------------|----------------------------------------------------------------|
+| Model | String | ~ | The name of the model file |
+| ModelScale | Float | 1 | The scale to transform |
+| Name | String | ~ | The name of the model (Names are set in the lang file, not here) |
+| Description | String | ~ | The item description |
+| ShortName | String | ~ | The item's shortname |
+| Colour / Color | Int Int Int | 255 255 255 | The colour of the item (Not sure where this is actually used?) |
+| Icon | String | ~ | The texture path of the item icon |
+| RecipeOutput | Integer | 1 | The number of items produced when crafted |
+| Recipe | RecipeFormat (See line 20) | ~ | Recipe for the item |
+| ShapelessRecipe | List of recipe items? | ~ | Shapeless recipe for the item |
+| SmeltableFrom | String | ~ | The shortname of the item that it may be smelted from |
+| CanDrop | Bool | true | Wether the item can be.. dropped? |
+
+Recipe format: 
+```
+A ItemTypeOne B ItemTypeTwo
+ABA
+BAB
+   
+```
+
+### PaintableType extends InfoType
+| Keyword | Type | Default | Purpose |
+|-------------|------------------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Paintjob | iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Sets up a new paintjob with the dyes required dyeDamage is optional and I'm not entirely sure how that works. The dye setup in [] can be repeated. (you don't need to add the []) |
+| AdvPaintjob | displayName iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Creates an advanced paintjob |
+
+### GunType extends PaintableType
 | Keyword | Type | Default | Purpose |
 |-----------------------------|------------|----------------|-------------------------------------------------------------------------------------------|
 | Damage | Float | 0 | Multiplies the damage of the bullet |
@@ -16,8 +46,6 @@ For each type, the table will list each config and potentially its' purpose and 
 | RecoilYaw | Float | 0 | Sideways view recoil |
 | RandomRecoilRange | Float | 0.5 | Maximum divergence of the recoil vertically |
 | RandomRecoilYawRange | Float | 0.5 | ~ Horizontally |
-| DecreaseRecoil | Float |  | Not implemented. |
-| DecreaseRecoilYaw | Float |  | Not implemented. |
 | Knockback | Float | 0 | Amount of knockback to push the player when shot |
 | Accuracy / Spread | Float | 0 | Amount that the bullets spread out |
 | NumBullets | Integer | 1 | The number of bullets created by each shot |
