@@ -83,12 +83,20 @@ public class GuiGunModTable extends GuiContainer {
             fontRendererObj.drawString("Accuracy", 181, 73, 0x404040);
             fontRendererObj.drawString("Recoil", 181, 85, 0x404040);
             fontRendererObj.drawString("Reload", 181, 97, 0x404040);
+            fontRendererObj.drawString("Control", 181, 109, 0x404040);
+
+            fontRendererObj.drawString("Sprint", 240, 119, 0x404040);
+            fontRendererObj.drawString("Sneak", 290, 119, 0x404040);
 
 
-            fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getDamage(gunStack))), 241, 62, 0x404040);
+            fontRendererObj.drawString(String.valueOf(roundFloat( gunType.getDamage(gunStack))), 241, 62, 0x404040);
             fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getSpread(gunStack))), 241, 74, 0x404040);
             fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getRecoilDisplay(gunStack))), 241, 86, 0x404040);
             fontRendererObj.drawString(roundFloat(reload / 20) + "s", 241, 98, 0x404040);
+            Float sprinting = roundFloat(1 - gunType.getRecoilControl(gunStack, true, false), 2);
+            Float normal = roundFloat(1 - gunType.getRecoilControl(gunStack, false, false), 2);
+            Float sneaking = roundFloat(1 - gunType.getRecoilControl(gunStack, false, true), 2);
+            fontRendererObj.drawString(String.format("%3.2f  %3.2f  %3.2f", sprinting, normal, sneaking), 241, 110, 0x404040);
 
             //Draw attachment tooltips
             if (hoveringOverModSlots != null)
@@ -111,7 +119,7 @@ public class GuiGunModTable extends GuiContainer {
 
         ItemStack gunStack = inventorySlots.getSlot(0).getStack();
         if (gunStack == null) {
-            lastStats = new int[]{0, 0, 0, 0};
+            lastStats = new int[]{0, 0, 0, 0, 0};
         }
 
         if (gunStack != null && gunStack.getItem() instanceof ItemGun) {
@@ -119,7 +127,7 @@ public class GuiGunModTable extends GuiContainer {
             int reload = Math.round(gunType.getReloadTime(gunStack));
             //Calculates yellow stat bar
             int[] stats = {Math.round(gunType.getDamage(gunStack)) * 4, Math.round(gunType.getSpread(gunStack)) * 4,
-                    Math.round(gunType.getRecoilPitch(gunStack)) * 4, (reload / 20) * 8};
+                    Math.round(gunType.getRecoilPitch(gunStack)) * 4, (reload / 20) * 8, 0};
             displayGunValues(stats);
             boolean[] allowBooleans = {gunType.allowBarrelAttachments, gunType.allowScopeAttachments, gunType.allowStockAttachments,
                     gunType.allowGripAttachments, gunType.allowGadgetAttachments, gunType.allowSlideAttachments,
@@ -220,10 +228,10 @@ public class GuiGunModTable extends GuiContainer {
         int xOrigin = (width - xSize) / 2;
         int yOrigin = (height - ySize) / 2;
 
-        for (int y = 0; y < 4; y++)
+        for (int y = 0; y < 5; y++)
             drawTexturedModalRect(xOrigin + 239, yOrigin + 60 + (12 * y), 340, 80, 80, 10);
 
-        for (int k = 0; k < 4; k++) {
+        for (int k = 0; k < 5; k++) {
             int difference = stats[k] - lastStats[k];
             int finalWidth;
 
@@ -239,6 +247,11 @@ public class GuiGunModTable extends GuiContainer {
                     finalWidth = 80;
 
                 drawTexturedModalRect(xOrigin + 239, yOrigin + 60 + (12 * k), 340, 90, finalWidth, 10);
+            // Control stat
+            } else if (k == 4) {
+                drawTexturedModalRect(xOrigin + 239, yOrigin + 60 + (12 * k), 340, 80, 32, 10);
+                drawTexturedModalRect(xOrigin + 239 + 26, yOrigin + 60 + (12 * k), 341, 90, 28, 10);
+                drawTexturedModalRect(xOrigin + 239 + 26 + 28, yOrigin + 60 + (12 * k), 394, 70, 388, 10);
             } else //every other stat. Works in reverse (i.e to show low spread being good accuracy)
             {
                 difference = (80 - stats[k]) - lastStats[k];
@@ -350,4 +363,15 @@ public class GuiGunModTable extends GuiContainer {
 
         return (float) (int) ((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
     }
+
+	//Round values to n number of decimal points
+	public static float roundFloat(float value, int points)
+	{
+		int pow = 10;
+		for (int i = 1; i < points; i++)
+			pow *= 10;
+		float result = value * pow;
+
+		return (float)(int)((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
+	}
 }
