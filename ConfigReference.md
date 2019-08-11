@@ -213,4 +213,48 @@ BAB
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
 | HasNightVision | Bool | false | Wether to apply night vision |
 
+### ShootableType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Model | String | ~ | Sets the model of the Shootable |
+| Texture | String | ~ | Sets the texture of the Shootable |
+| StackSize / NaxStackSize | Integer | 1 | The maximum number of X that can be stacked |
+| DropItemOnShoot | String | null | Items dropped on various events |
+| DropItemOnReload | String | null | Items dropped on various events |
+| DropItemOnHit | String | null | Items dropped on various events |
+| RoundsPerItem | Integer | 1 | The number of rounds fired by a gun per item |
+| FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired |
+| ThrowSpeed / ShootSpeed | Float | 1 | The speed at which the projectile should be launched. 0 Will give it no velocity and drop instantly. |
+| HitBoxSize | Float | 0.5 | The size of the hitbox. Units are probably /16ths |
+| DamageVsLiving | Float | 1 | Amount of damage to do when hit. |
+| DamageVsPlayer | Float | 1 | Amount of damage to do when hit. |
+| DamageVsEntity | Float | 1 | Amount of damage to do when hit. |
+| DamageVsVehicles | Float | 1 | Amount of damage to do when hit. |
+| DamageVsPlanes | Float | 1 | Amount of damage to do when hit. |
+| IgnoreArmorProbability | Float | 0 | Not entirely sure. |
+| IgnoreArmorDamageFactor | Float | 0 | Not entirely sure. |
+| BreaksGlass | Bool | false | Wether the projecticle breaks glass on impact. |
+| Fuse | Integer | 0 | Ticks until a grenade explodes. 0 = explode on impact |
+| DespawnTime | Integer | 0 | Time until the grenade despawns, without exploding. 0 = no despawn |
+| ExplodeOnImpact / DetonateOnImpact | Bool | false | Whether to explode when hitting a block or entity |
+| FireRadius / Fire | Float | 0 | The radius in which fire will be placed on impact |
+| ExplosionsRadius / Explosion | Float | 0 | The radius of the explosion to create on impact |
+| ExplosionBreaksBlocks | Bool | true | Wether the impact explosion breaks blocks |
+| ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
+| ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
+| ExplosionsDamageVsPlane | Float | 1 | The damage to do to X from the explosion |
+| ExplosionsDamageVsVehicle | Float | 1 | The damage to do to X from the explosion |
+| DropItemOnDetonate | String | null | The item to drop when the projectile explodes |
+| DetonateSound | String | ~ | The sound to play on detonation. |
+| HasSubmunitions | Bool | false | Wether there are other projectiles by this one. |
+| Submunition | String | ~ | Set the submunition |
+| NumSubmunitions | Integer | 0 | Number of submunitions to create |
+| SubmunitionDelay | Integer | ~ | Delay to create submunitions after impact / firing? |
+| FlareParticleCount | Integer | 0 | Number of smoke particles to create |
+| DebrisParticleCount | Integer | 0 | Number of debris particles to create |
+| TrailParticles / SmokeTrail | Bool | false | Wether to create a trail of particles. |
+| TrailParticleType | String | smoke | The type of particle to emity for the trail |
+
+### BulletType extends ShootableType
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
