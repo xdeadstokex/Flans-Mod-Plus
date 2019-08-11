@@ -172,4 +172,45 @@ BAB
 | CountExplodeAfterShoot | Integer | -1 | How long after shot should the missile explode. -1 = never/when hit target |
 | IsDropThis | Bool | true | Wether it drops item when destroyed? |
 
+### AttachmentType extends PaintableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| AttachmentType | String | EnumAttachmentType.generic | The type of attachment |
+| Model | String | ~ | The model name of the model to use |
+| ModelScale | Float | 1 | Scale to transform |
+| Texture | String | ~ | The texture file to use |
+| Silencer | Bool | false | Wether this attachment should muffle bullet sounds |
+| DisableMuzzleFlash | Bool | false | Wether this attachment should remove any muzzle flash from rendering |
+| FlashLight | Bool | false | Wether this attachment is a flashlight |
+| FlashLightRange | Float | 10 | Number of blocks range of the flashlight |
+| FlashLightStrength | Float | 12 | Light level produced (between 0 and 15) |
+| ModeOverride | String | ~ | Override the fire mode of a gun with a valid EnumFireMode (fullauto, minigun, burst, semiauto) |
+| SecondaryMode | Bool | false | Wether this attachment is an underbarrel attachment |
+| SecondaryAmmo | String | ~ | Add an ammo type for the underbarrel gun |
+| SecondaryDamage | Float | 1 | The damage multiplier of the underbarrel gun |
+| SecondarySpread / Accuracy | Float | 1 | The inaccuracy of the underbarrel |
+| SecondaryBulletSpeed | Float | 5 | Speed of the bullet when leaving the underbarrel |
+| SecondaryShootDelay | Integer | 1 | Ticks to wait between firing the underbarrel |
+| SecondaryReloadTime | Integer | 1 | Ticks taken to reload the underbarrel |
+| SecondaryNumBullets | Integer | 1 | Number of bullets created by the underbarrel when fired |
+| LoadSecondaryIntoGun | integer| 1 | Number of bullet stacks in magazine? (Has something to do with underbarrel) |
+| SecondaryFireMode | String | SEMIAUTO | The EnumFireMode of the underbarrel (fullauto, minigun, burst, semiauto) |
+| SecondaryShootSound | String | ~ | The sound to play when the underbarrel is shot |
+| SecondaryReloadSound | String | ~ | ~ |
+| ModeSwitchSound | String | ~ | The sound to play when toggling between primary and underbarrel gun |
+| MeleeDamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| DamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| SpreadMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| RecoilMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| RecoilControlMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| RecoilControlMultiplierSneaking | Float | 1 | The multiplier to the X stat of the gun |
+| RecoilControlMultiplierSprinting | Float | 1 | The multiplier to the X stat of the gun |
+| BulletSpeedMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| ReloadTimeMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| MovementSpeedMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| ZoomLevel | Float | 1 | The zoom of the scope |
+| FOVZoomLevel | Float | 1 | The FOV zoom of the scope |
+| ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
+| HasNightVision | Bool | false | Wether to apply night vision |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
