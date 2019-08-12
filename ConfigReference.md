@@ -308,7 +308,7 @@ BAB
 | CanSpotEntityDriveable | Boolean | false | ? |
 | ShootForSettingPos | Boolean | false | ? |
 | ShootForSettingPosHeight| Integer | 100 | ? |
-| IsDoTopAttack | Boolean | false | ? |
+| IsDoTopAttack | Boolean | false | Whether to hit from the top of the entitity it's locked on to |
 | PotionEffect | String | ~ | The effects done to the entity hit |
 | ManualGuidance | Boolean | false | Whether this is manually guided |
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
