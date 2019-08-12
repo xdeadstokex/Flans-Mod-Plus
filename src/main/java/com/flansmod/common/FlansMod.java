@@ -70,6 +70,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+@SuppressWarnings("unused")
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
     //Core mod stuff
@@ -97,7 +98,6 @@ public class FlansMod {
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = false;
     public static int teamsConfigInteger = 32;
-    public static String teamsConfigString = "Hello!";
     public static boolean teamsConfigBoolean = false;
     @SidedProxy(clientSide = "com.flansmod.client.ClientProxy", serverSide = "com.flansmod.common.CommonProxy")
     public static CommonProxy proxy;
@@ -412,7 +412,7 @@ public class FlansMod {
                             continue;
                         }
                         for (; ; ) {
-                            String line = null;
+                            String line;
                             try {
                                 line = reader.readLine();
                             } catch (Exception e) {
@@ -656,7 +656,6 @@ public class FlansMod {
         configFile.save();
     }
 
-    //TODO : Proper logger
     public static void log(String string) {
 		if(printDebugLog) {
             logger.info(string);

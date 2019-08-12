@@ -1,9 +1,5 @@
 package com.flansmod.client;
 
-import java.io.File;
-
-import org.lwjgl.opengl.GL11;
-
 import com.flansmod.api.IControllable;
 import com.flansmod.client.gui.GuiDriveableController;
 import com.flansmod.client.gui.GuiTeamScores;
@@ -19,7 +15,6 @@ import com.flansmod.common.network.PacketTeamInfo.PlayerScoreData;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -30,33 +25,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.particle.EntityAuraFX;
-import net.minecraft.client.particle.EntityBlockDustFX;
-import net.minecraft.client.particle.EntityBreakingFX;
-import net.minecraft.client.particle.EntityBubbleFX;
-import net.minecraft.client.particle.EntityCloudFX;
-import net.minecraft.client.particle.EntityCritFX;
-import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.particle.EntityDropParticleFX;
-import net.minecraft.client.particle.EntityEnchantmentTableParticleFX;
-import net.minecraft.client.particle.EntityExplodeFX;
-import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityFireworkSparkFX;
-import net.minecraft.client.particle.EntityFishWakeFX;
-import net.minecraft.client.particle.EntityFlameFX;
-import net.minecraft.client.particle.EntityFootStepFX;
-import net.minecraft.client.particle.EntityHeartFX;
-import net.minecraft.client.particle.EntityHugeExplodeFX;
-import net.minecraft.client.particle.EntityLargeExplodeFX;
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityNoteFX;
-import net.minecraft.client.particle.EntityPortalFX;
-import net.minecraft.client.particle.EntityReddustFX;
-import net.minecraft.client.particle.EntitySmokeFX;
-import net.minecraft.client.particle.EntitySnowShovelFX;
-import net.minecraft.client.particle.EntitySpellParticleFX;
-import net.minecraft.client.particle.EntitySplashFX;
-import net.minecraft.client.particle.EntitySuspendFX;
+import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
@@ -72,6 +41,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
+import org.lwjgl.opengl.GL11;
 
 public class FlansModClient extends FlansMod
 {
@@ -142,10 +112,9 @@ public class FlansModClient extends FlansMod
 	{
 		RenderPlayer renderer = event.renderer;
 		EntityPlayer player = event.entityPlayer;
-		float dt = event.partialRenderTick;
-		PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
+        PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
 		
-		ItemStack gunStack = null;
+		ItemStack gunStack;
 		
 		//Check current stack is a one handed gun
 		if(player instanceof EntityOtherPlayerMP)
@@ -456,24 +425,6 @@ public class FlansModClient extends FlansMod
 			//FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(split[3] + " killed " + split[2] + " with a " + InfoType.getType(split[1]).name);
 		}
 	}
-		
-	private boolean checkFileExists(File file)
-	{
-		if(!file.exists())
-		{
-			try
-			{ 
-				file.createNewFile();
-			}
-			catch(Exception e)
-			{
-				FlansMod.log("Failed to create file");
-				FlansMod.log(file.getAbsolutePath());
-			}
-			return false;
-		}	
-		return true;
-	}
 
 	public static boolean flipControlMode()
 	{
@@ -560,8 +511,10 @@ public class FlansModClient extends FlansMod
 		else if(s.equals("witchMagic"))
 		{
 			fx = new EntitySmokeFX(w, x, y, z, 0D, 0D, 0D);
-			((EntitySpellParticleFX)fx).setBaseSpellTextureIndex(144);
-            float f = w.rand.nextFloat() * 0.5F + 0.35F;
+			if (fx instanceof EntitySpellParticleFX) {
+				((EntitySpellParticleFX)fx).setBaseSpellTextureIndex(144);
+			}
+			float f = w.rand.nextFloat() * 0.5F + 0.35F;
             fx.setRBGColorF(1.0F * f, 0.0F * f, 1.0F * f);
 		}
 		else if(s.equals("note"))
@@ -612,50 +565,42 @@ public class FlansModClient extends FlansMod
 			fx.setParticleTextureIndex(82);
             fx.setRBGColorF(1.0F, 1.0F, 1.0F);
 		}
-		else if(s.equals("snowshovel"))
-			fx = new EntitySnowShovelFX(w, x, y, z, 0D, 0D, 0D);
-		else if(s.equals("snowshovel"))
-			fx = new EntitySnowShovelFX(w, x, y, z, 0D, 0D, 0D);
-		else if(s.equals("snowshovel"))
-			fx = new EntitySnowShovelFX(w, x, y, z, 0D, 0D, 0D);
+		else {
+			int k;
+			String[] astring;
 
-        else
-        {
-            int k;
-            String[] astring;
+			if (s.startsWith("iconcrack_"))
+			{
+				astring = s.split("_", 3);
+				int j = Integer.parseInt(astring[1]);
 
-            if (s.startsWith("iconcrack_"))
-            {
-                astring = s.split("_", 3);
-                int j = Integer.parseInt(astring[1]);
+				if (astring.length > 2)
+				{
+					k = Integer.parseInt(astring[2]);
+					fx = new EntityBreakingFX(w, x, y, z, 0D, 0D, 0D, Item.getItemById(j), k);
+				}
+				else fx = new EntityBreakingFX(w, x, y, z, 0D, 0D, 0D, Item.getItemById(j), 0);
+			}
+			else
+			{
+				Block block;
 
-                if (astring.length > 2)
-                {
-                    k = Integer.parseInt(astring[2]);
-                    fx = new EntityBreakingFX(w, x, y, z, 0D, 0D, 0D, Item.getItemById(j), k);
-                }
-                else fx = new EntityBreakingFX(w, x, y, z, 0D, 0D, 0D, Item.getItemById(j), 0);
-            }
-            else
-            {
-                Block block;
-
-                if (s.startsWith("blockcrack_"))
-                {
-                    astring = s.split("_", 3);
-                    block = Block.getBlockById(Integer.parseInt(astring[1]));
-                    k = Integer.parseInt(astring[2]);
-                    fx = (new EntityDiggingFX(w, x, y, z, 0D, 0D, 0D, block, k)).applyRenderColor(k);
-                }
-                else if (s.startsWith("blockdust_"))
-                {
-                    astring = s.split("_", 3);
-                    block = Block.getBlockById(Integer.parseInt(astring[1]));
-                    k = Integer.parseInt(astring[2]);
-                    fx = (new EntityBlockDustFX(w, x, y, z, 0D, 0D, 0D, block, k)).applyRenderColor(k);
-                }
-            }
-        }
+				if (s.startsWith("blockcrack_"))
+				{
+					astring = s.split("_", 3);
+					block = Block.getBlockById(Integer.parseInt(astring[1]));
+					k = Integer.parseInt(astring[2]);
+					fx = (new EntityDiggingFX(w, x, y, z, 0D, 0D, 0D, block, k)).applyRenderColor(k);
+				}
+				else if (s.startsWith("blockdust_"))
+				{
+					astring = s.split("_", 3);
+					block = Block.getBlockById(Integer.parseInt(astring[1]));
+					k = Integer.parseInt(astring[2]);
+					fx = (new EntityBlockDustFX(w, x, y, z, 0D, 0D, 0D, block, k)).applyRenderColor(k);
+				}
+			}
+		}
 		
 		if(mc.gameSettings.fancyGraphics)
 			fx.renderDistanceWeight = 200D;
@@ -667,7 +612,7 @@ public class FlansModClient extends FlansMod
 
 	public static GunAnimations getGunAnimations(EntityLivingBase living, boolean offHand) 
 	{
-		GunAnimations animations = null;
+		GunAnimations animations;
 		if(offHand)
 		{
 			if(FlansModClient.gunAnimationsLeft.containsKey(living))
