@@ -103,7 +103,7 @@ public class ModelGun extends ModelBase
     public int casingAnimTime = 20;
     //  Rotation of the casing, 180 is the total rotation. If you do not understand rotation vectors, like me, just use the standard value here.
     public Vector3f casingRotateVector = new Vector3f(0.1F, 1F, 0.1F);
-	public Vector3f casingAttachPoint = new Vector3f();
+	public Vector3f casingAttachPoint = new Vector3f(0F, 0F, 0F);
 	// Time before the casing is ejected from gun
 	public int casingDelay = 0;
 	// Scale the bullet casing separately from gun
