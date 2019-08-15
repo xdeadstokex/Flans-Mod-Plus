@@ -769,4 +769,33 @@ BAB
 | SideTexture | String | ~ | Texture to use for the box |
 | AddArmor / AddArmour | (String)shortname (String)name NEXT LINE (String) armourType (list) amount shortname | ~ | Add armour of type + recipe |
 
+### ArmourType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Model | String | ~ | The model file to use |
+| Type | String | ~ | Hat/Helmet Chest/Body Legs/Pants Shoes/Boots |
+| DamageReduction / Defence | Double | ~ | Damage modifier between 0 and 1 that stacks with other armours |
+| MoveSpeedModifier / Slowness | Float | 1 | Modifier for player movement speed |
+| JumpModifier | Float | 1 | Modifier for player jump height |
+| KnockbackReduction / KnockbackModifier | Float | 0.2 | Modifier for knockback |
+| NightVision | Boolean | false | Whether night vision should be enabled for this armour |
+| Invisible | Boolean | false | Whether this gives the user the invisibilty effect |
+| NegateFallDamage | Boolean | false | Stop fall damage affecting the player |
+| FireResistance | Boolean | false | Give the player fire resistance effects |
+| WaterBreathing | Boolean | false | Give the player water breathing effects |
+| Overlay | String | null | Location of texture from scopes directory to use |
+| SmokeProtection | Boolean | false | Whether smoke effects from grenades affect the player |
+| OnWaterWalking | Boolean | false | Gives the player the ability to walk on water |
+| Durability | Integer | false / 0 | Set the durability of the armour |
+| ArmourTexture / ArmorTexture | String | ~ | Texture from assets/flansmod/armor/(armourTextureName)_armourID.png See next section for armour ID|
+
+#### Armour types
+
+| ID | Keyword | Alternate Keyword |
+|---------|------|---------|
+| 0 | Hat | Helmet |
+| 1 | Chest | Body |
+| 2 | Legs | Pants |
+| 3 | Shoes | Boots |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
