@@ -589,4 +589,48 @@ BAB
 * Wood
 * Plants
 
+### MechaType extends DriveableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| TurnLeftSpeed | Float | 1 | The speed at which the mehca will turn left |
+| TurnRightSpeed | Float | 1 | The speed at which the mehca will turn right |
+| MoveSpeed | Float | 1 | The forwards and backwards speed of the mecha |
+| SquashMobs | Boolean | false | Whether mobs under the wheels will be crushed/killed |
+| StepHeight | Integer | 0 | How many blocks may be stepped up when walking. (Without jumping) | 
+| JumpHeight | Float | 1 | How high the mecha can jump in blocks. |
+| ~ | Float | 1 | jumpVelocity = Sqrt(Abs(9.81 * (jumpHeight + 0.2)/200))|
+| RotateSpeed | Float | 10 | Degrees per second/tick that the mecha will rotate at, max |
+| StompSound | String | ~ | The sound to play on impace with the ground? |
+| StompSoundLength | Integer | 0 | Number of ticks to play the stomp sound for |
+| StompSoundRangeLower | Float | 0 | ? |
+| StompSoundRangeUpper | Float | 0 | ? |
+| LeftArmOrigin | (float) X Y Z | ~ | The origin of X |
+| RightArmOrigin | (float) X Y Z | ~ | The origin of X |
+| ArmLength | Float | 1 | Length of the arm in 16ths of a block |
+| LegLength | Float | 1 | Length of the leg in 16ths of a block |
+| HeldItemScale | Float | 1 | The scale to trasform items or tools rendered in the mechas "hands" |
+| Height | Float | 3 | The height of the collision box in 16ths of a block |
+| Width | Float | 2  | The width of the collision box in 16ths of a block |
+| ChassisHeight | Integer | 1 | The height of the body above the ground in 16ths of a block |
+| FallDamageMultiplier | Float | 1 | How much fall damage the mecha should recieve (compared to a player?) |
+| DamageBlocksFromFalling | Boolean | true | Whether the mecha forces fall damage onto thr blocks around it, destroying them. |
+| LegSwingLimit | Float | 2 | ? |
+| LimitHeadTurn | Boolean Float | false, 90 | Whether view limits should be applied on the head |
+| LegSwingTime | Float | 5 | The speed at which leg movements are animated |
+| UpperArmLimit | Float | 90 | The maximum angle of the upper arm? Probably in the XY plane (Z axis) |
+| LowerArmLimit | Float | 90 | The maximum angle of the lower arm? Probably in the XY plane (Z axis) |
+| LeftHandModifier | (float) X Y Z | 0 0 0 | Modifier for weapons in hand. in 16ths of a block |
+| RightHandModifier | (float) X Y Z | 0 0 0 | Modifier for weapons in hand. in 16ths of a block |
+| LegNode | (Integer)rotation (Float)lowerBound (Float)upperBound (Integer)speed (Integer)legPart | ~ | Add a leg node |
+| LegAnimSpeed | Float | 0 | The speed at which to animate leg movement |
+
+
+
+
+
+
+
+
+
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
