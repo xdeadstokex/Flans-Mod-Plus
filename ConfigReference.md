@@ -681,4 +681,37 @@ BAB
 | DoorRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
 | InflightInventory | Boolean | true | False = true.. yeah. |
 
+### VehicleType extends DriveableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| TurnLeftSpeed | Float | 1 | Modifier for turning speed |
+| TurnRightSpeed | Float | 1 | Modifier for turning speed |
+| SquashMobs | Boolean | false | Whether to squash/kill livings under the wheels |
+| FourWheelDrive | Boolean | false | Apply power to all four wheels, or just two |
+| Tank / TankMode | Boolean | false | This has tracks instead of wheels |
+| HasDoor | Boolean | false | Whether this has openable doors |
+| ShootWithOpenDoor | Boolean | false | Whether the vehicle can shoot while the door is open |
+| RotateWheels | Boolean | false | Whether to animate rotating wheels |
+| FixTrackLink | Integer | 5 | ? Something to do with track animations |
+| FlipLinkFix | Boolean | false | ? Something to do with track animations |
+| DoorPosition1 | (float)X,Y,Z | ~ | Config for animations |
+| DoorPosition2 | (float)X,Y,Z | ~ | Config for animations |
+| DoorRotation1 | (float)X,Y,Z | ~ | Config for animations |
+| DoorRotation2 | (float)X,Y,Z | ~ | Config for animations |
+| DoorRate | (float)X,Y,Z | ~ | Config for animations |
+| DoorRotRate | (float)X,Y,Z | ~ | Config for animations |
+| Door2Position1 | (float)X,Y,Z | ~ | Config for animations |
+| Door2Position2 | (float)X,Y,Z | ~ | Config for animations |
+| Door2Rotation1 | (float)X,Y,Z | ~ | Config for animations |
+| Door2Rotation2 | (float)X,Y,Z | ~ | Config for animations |
+| Door2Rate | (float)X,Y,Z | ~ | Config for animations |
+| Door2RotRate | (float)X,Y,Z | ~ | Config for animations |
+| ShootDelay | Integer | ~ | Number of ticks to wait between shots |
+| ShellDelay | Integer | ~ | Number of ticks to wait between shell shots |
+| ShootSound | String | ~ | Sound to play when shooting | 
+| ShellSound | String | ~ | Sound to play when shooting shells | 
+| DriftSound | String | ~ | Sound to play when drifting | 
+| DriftSoundLength | Integer | ~ | Number of ticks to play drift sound for |
+| AddSmokePoint / AddSmokeDispenser | (float position)X,Y,Z (float direction)X,Y,Z (Integer)detTime part | ~ | Add smoke particle emitter to the model | 
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
