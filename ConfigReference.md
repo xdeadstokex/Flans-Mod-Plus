@@ -761,4 +761,12 @@ BAB
 | DestroyOnEmpty | Boolean | true | Whether to destroy the item when it has been entirely used up |
 | Food / Foodness | Integer | 0 | Hunger filled when this item is used |
 
+### ArmourBoxType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| TopTexture | String | ~ | Texture to use for the box |
+| BottomTexture | String | ~ | Texture to use for the box |
+| SideTexture | String | ~ | Texture to use for the box |
+| AddArmor / AddArmour | (String)shortname (String)name NEXT LINE (String) armourType (list) amount shortname | ~ | Add armour of type + recipe |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
