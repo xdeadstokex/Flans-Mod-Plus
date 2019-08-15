@@ -714,4 +714,21 @@ BAB
 | DriftSoundLength | Integer | ~ | Number of ticks to play drift sound for |
 | AddSmokePoint / AddSmokeDispenser | (float position)X,Y,Z (float direction)X,Y,Z (Integer)detTime part | ~ | Add smoke particle emitter to the model | 
 
+### GunBoxType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| TopTexture | String | ~ | The path of the texture to display on the block | 
+| BottomTexture | String | ~ | The path of the texture to display on the block | 
+| SideTexture | String | ~ | The path of the texture to display on the block | 
+| Page / SetPage | List of strings | ~ | Set name of pages in the gun box | 
+| AddGun | (String)nameOfGun num partname num partname.... | ~ | Adds a gun with recipe to the box | 
+| AddAmmo / AddAltAmmo / AddAlternateAmmo | (String)nameOfGun num partname num partname.... | ~ | Adds ammo with recipe to the box | 
+| GuiTexture | String | ~ | The path of the texture to use for the GUI background. Defaults if not set |
+| GunBoxNameColor | HexString | 404040 | Unsigned hex colour |
+| ItemTextColor | HexString | 404040 | Unsigned hex colour |
+| ListTextColor | HexString | 404040 | Unsigned hex colour |
+| PageTextColor | HexString | FFFFFF| Unsigned hex colour |
+| ButtonTextColor | HexString | FFFFFF | Unsigned hex colour |
+| ButtonTextHighlight | HexString | FFFFFF | Unsigned hex colour |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
