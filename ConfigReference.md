@@ -624,13 +624,61 @@ BAB
 | LegNode | (Integer)rotation (Float)lowerBound (Float)upperBound (Integer)speed (Integer)legPart | ~ | Add a leg node |
 | LegAnimSpeed | Float | 0 | The speed at which to animate leg movement |
 
-
-
-
-
-
-
-
-
+### PlaneType extends DriveableType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Mode | String | PLANE | VTOL / HELI / PlANE |
+| TurnLeftSpeed | Float | 1 | Modifier for turn speed |
+| TurnRightSpeed | Float | 1 | Modifier for turn speed |
+| LookUpSpeed | Float | 1 | Modifier for turn speed |
+| LookDownSpeed | Float | 1 | Modifier for turn speed |
+| RollLeftSpeed | Float | 1 | Modifier for turn speed |
+| RollRightSpeed | Float | 1 | Modifier for turn speed |
+| Lift | Float | 1 | Coefficient of lift |
+| ShootDelay | Integer | ~ | Number of ticks between shots of the guns |
+| BombDelay | Integer | ~ | Number of ticks between bombs dropping |
+| Propeller | (Int)ID (Int)X Y Z part partType | ~ | Add a propeller to the plane |
+| HeliPropeller | (Int)ID (Int)X Y Z part partType | ~ | Add a propeller to the plane |
+| HeliTailPropeller | (Int)ID (Int)X Y Z part partType | ~ | Add a propeller to the plane |
+| HasFlare | Boolean | ~ | Whether the plane is equipped with a flare |
+| FlareDelay | Integer | ~ | The number of ticks between flares being deployed |
+| TimeFlareUsing | Integer | ~ | The number of ticks the flare is used for |
+| PropSoundLength | Integer | ~ | The number of ticks the prop sound plays for |
+| PropSound | String | ~ | Set the propeller sound |
+| ShootSound | String | ~ | Set the sound played on shoot |
+| BombSound | String | ~ | Set the sound played on bomb drop |
+| HasGear | Boolean | false | Whether the plane has retractable landing gear |
+| HasDoor | Boolean | false | Whether the plane has openable doors |
+| HasWing | Boolean | false | Whether the plane has retractable wings |
+| FoldWingForLand | Boolean | false | Whether to retract the wings when close enough to the ground |
+| FlyWithOpenDoor | Boolean | false | Whether the plane can fly with the door open |
+| RestingPitch | Float | 0 | The angle when parked. Angle that it will spawn in at |
+| SpinWithoutTail | Boolean | false | Whether the helicopter should spin if no tail is present |
+| Valkyrie | Boolean | false | Whether this plane is a valkyrie |
+| WingPosition1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingPosition2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingRotation1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingRotation2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelPosition1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelPosition2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelRotation1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelRotation2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| WingWheelRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelPosition1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelPosition2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelRotation1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelRotation2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| TailWheelRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorPosition1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorPosition2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorRotation1 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorRotation2 | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| DoorRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
+| InflightInventory | Boolean | true | False = true.. yeah. |
 
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
