@@ -744,4 +744,21 @@ BAB
 | UseRF / UseRFPower | Boolean | false | Whether to use redstone flux power if it is available |
 | RFDrawRate | Integer | 1 | Amount of RF to consume per tick |
 
+### ToolType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Model | String | ~ | The model file to use |
+| Texture | String | ~ | Path of the texture file to use |
+| Parachute | Boolean | false | Whether to deploy a parachute on use, then consume the item |
+| ExplosiveRemote | Boolean | false | Whether this will detonate the most recently placed remote trigger explosive |
+| Key | Boolean | false | Whether this item is a key (Unimplmented/De-implemented) |
+| Heal / HealPlayers | Boolean | false | Whether to give player health on use |
+| Repair / RepairVehicles | Boolean | false | Wether to give driveable health on use |
+| HealAmount / RepairAmount | Integer | 0 | Amount of healing to give per click |
+| ToolLife / ToolUses | Integer | 0 | Number of teims the tool can be used. 0 is infinite |
+| EUPerCharge | Integer | 0 | Unimplemented. Charging tools with IC2 EU |
+| RechargeRecipe | list of (Integer)amount (String)itemName[.](integer damage) | ~ | Add recharge recipe. Damage not required |
+| DestroyOnEmpty | Boolean | true | Whether to destroy the item when it has been entirely used up |
+| Food / Foodness | Integer | 0 | Hunger filled when this item is used |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
