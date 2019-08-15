@@ -731,4 +731,17 @@ BAB
 | ButtonTextColor | HexString | FFFFFF | Unsigned hex colour |
 | ButtonTextHighlight | HexString | FFFFFF | Unsigned hex colour |
 
+### PartType extends InfoType
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Category | String | ~ | Generic string marking category. In theory is part of a set that I haven't looked for |
+| StackSize | Integer | ~ | The maximum stack size of the item |
+| EngineSpeed | Float | 1 | Speed modifier to the attached vehicle |
+| FuelConsumption | Float | 1 | Rate at which the engine consumes fuel |
+| Fuel | Integer | 0 | If this is a fuel tank, the amount of fuel that it gives |
+| PartBoxRecipe | ~ | ~ | Part box is unused |
+| WorksWith | List of strings | mecha, plane, vehicle | The types of driveable an engine will work with |
+| UseRF / UseRFPower | Boolean | false | Whether to use redstone flux power if it is available |
+| RFDrawRate | Integer | 1 | Amount of RF to consume per tick |
+
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
