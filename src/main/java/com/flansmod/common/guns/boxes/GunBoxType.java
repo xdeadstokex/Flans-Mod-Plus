@@ -109,17 +109,22 @@ public class GunBoxType extends InfoType
 			}
 			if (split[0].equals("AddGun"))
 			{
-				nextGun++;
-				if(nextGun > gunEntries.length - 1)
-				{
-					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
-					iteratePage("default " + (gunPages.size() + 2));
+				if	(InfoType.getType(split[1]).item != null) {
 					nextGun++;
+					if(nextGun > gunEntries.length - 1)
+					{
+						currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
+						iteratePage("default " + (gunPages.size() + 2));
+						nextGun++;
+					}
+					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split));
 				}
-				gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split));
 			}
-			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo"))
-				gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo")) {
+				if	(InfoType.getType(split[1]).item != null) {
+					gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+				}
+			}
 
 			//GunBox gui customisation
 			if(split[0].equals("GuiTexture"))
