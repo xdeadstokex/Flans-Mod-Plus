@@ -31,7 +31,8 @@ public class GuiDriveableMenu extends GuiContainer
 		inventory = inventoryplayer;
     }
 	
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	public void initGui()
 	{
 		super.initGui();

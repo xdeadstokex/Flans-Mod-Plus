@@ -70,7 +70,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
     //Core mod stuff
@@ -396,7 +396,7 @@ public class FlansMod {
                     ZipFile zip = new ZipFile(contentPack);
                     ZipInputStream zipStream = new ZipInputStream(new FileInputStream(contentPack));
                     BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
-                    ZipEntry zipEntry = zipStream.getNextEntry();
+                    ZipEntry zipEntry;
                     do {
                         zipEntry = zipStream.getNextEntry();
                         if (zipEntry == null)
