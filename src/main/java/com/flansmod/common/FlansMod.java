@@ -70,7 +70,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
     //Core mod stuff
@@ -91,6 +91,7 @@ public class FlansMod {
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
+    public static boolean realisticRecoil = false;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
     public static boolean bulletGuiEnable = true;
@@ -396,7 +397,7 @@ public class FlansMod {
                     ZipFile zip = new ZipFile(contentPack);
                     ZipInputStream zipStream = new ZipInputStream(new FileInputStream(contentPack));
                     BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
-                    ZipEntry zipEntry = zipStream.getNextEntry();
+                    ZipEntry zipEntry;
                     do {
                         zipEntry = zipStream.getNextEntry();
                         if (zipEntry == null)
@@ -553,6 +554,7 @@ public class FlansMod {
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
+        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", hitCrossHairEnable, "Changes recoil to be more realistic.");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
@@ -587,6 +589,7 @@ public class FlansMod {
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
+        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", hitCrossHairEnable, "Changes recoil to be more realistic.");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");

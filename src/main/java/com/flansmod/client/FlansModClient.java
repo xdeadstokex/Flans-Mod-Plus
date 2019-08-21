@@ -131,8 +131,7 @@ public class FlansModClient extends FlansMod
 				
 		if(gunStack == null || !(gunStack.getItem() instanceof ItemGun))
 			return;
-		GunType gunType = ((ItemGun)gunStack.getItem()).type;
-				
+
 		//Render!
 		GL11.glPushMatrix();
 		renderer.modelBipedMain.bipedLeftArm.postRender(0.0625F);
@@ -275,7 +274,9 @@ public class FlansModClient extends FlansMod
 		antiRecoilPitch += playerRecoilPitch;
 		antiRecoilYaw += playerRecoilYaw;
 
-		minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+		if(!FlansMod.realisticRecoil) {
+			minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+		}
 		minecraft.thePlayer.rotationYaw += antiRecoilYaw * 0.2F;
 		antiRecoilPitch *= 0.8F;
 		antiRecoilYaw *= 0.8F;
@@ -410,19 +411,6 @@ public class FlansModClient extends FlansMod
 				log("I forgot to update obfuscated reflection D:");
 				throw new RuntimeException(e);
 			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void chatMessage(ClientChatReceivedEvent event)
-	{
-		if(event.message.getUnformattedText().equals("#flansmod"))
-		{
-			//String[] split = event.message.getUnformattedText().split("\\.");
-			//split[split.length - 1] = split[split.length - 1].split("\"}")[0];
-			event.setCanceled(true);
-			//TickHandlerClient.addKillMessage(split);
-			//FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(split[3] + " killed " + split[2] + " with a " + InfoType.getType(split[1]).name);
 		}
 	}
 

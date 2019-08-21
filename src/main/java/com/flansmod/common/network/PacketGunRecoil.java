@@ -21,10 +21,8 @@ public class PacketGunRecoil extends PacketBase
 	public float decreaseRecoilYaw;
 
 	
-	public PacketGunRecoil()
-	{
-
-	}
+	@SuppressWarnings("unused")
+	public PacketGunRecoil() {}
 	
 	public PacketGunRecoil(float recoilPitch, float recoilYaw, float decreaseRecoilPitch, float decreaseRecoilYaw)
 	{

@@ -17,10 +17,10 @@ public class ContainerDriveableInventory extends Container
 	public int maxScroll;
 	public int scroll;
 	
-    public ContainerDriveableInventory(InventoryPlayer inventoryplayer, World worldy, EntityDriveable entPlane, int i)
+    public ContainerDriveableInventory(InventoryPlayer inventoryplayer, World world, EntityDriveable entPlane, int i)
     {
 		inventory = inventoryplayer;
-        world = worldy;
+        this.world = world;
 		plane = entPlane;
 		screen = i;
 		//Find the number of items in the inventory
