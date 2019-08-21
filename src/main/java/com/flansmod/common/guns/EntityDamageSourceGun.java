@@ -51,6 +51,6 @@ public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
     			(killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
     		    living.dimension);
 //        return new ChatComponentText("#flansmod");//flanDeath." + weapon.shortName + "." + (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName() + "." + (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName());
-		return null;
+		return new ChatComponentText("");
     }
 }

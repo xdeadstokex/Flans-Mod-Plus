@@ -414,6 +414,13 @@ public class FlansModClient extends FlansMod
 		}
 	}
 
+	@SubscribeEvent
+	public void chatMessage(ClientChatReceivedEvent event) {
+		if(event.message.getUnformattedText().isEmpty()) {
+			event.setCanceled(true);
+		}
+	}
+
 	public static boolean flipControlMode()
 	{
 		if (controlModeSwitchTimer > 0)
