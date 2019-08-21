@@ -21,6 +21,7 @@ public class PacketModConfig extends PacketBase
 	public boolean crosshairEnable;
 	public boolean gunCarryLimitEnable;
 	public int gunCarryLimit;
+	public bool realisticRecoil;
 	
 	public PacketModConfig()
 	{
@@ -29,6 +30,7 @@ public class PacketModConfig extends PacketBase
 		crosshairEnable = FlansMod.crosshairEnable;
 		gunCarryLimitEnable = FlansMod.gunCarryLimitEnable;
 		gunCarryLimit = FlansMod.gunCarryLimit;
+		realisticRecoil = FlansMod.realisticRecoil;
 	}
 	
 	@Override
@@ -39,6 +41,7 @@ public class PacketModConfig extends PacketBase
 		data.writeBoolean(crosshairEnable);
 		data.writeBoolean(gunCarryLimitEnable);
 		data.writeInt(gunCarryLimit);
+		data.writeBoolean(realisticRecoil);
 	}
 
 	@Override
@@ -49,6 +52,7 @@ public class PacketModConfig extends PacketBase
 		crosshairEnable = data.readBoolean();
 		gunCarryLimitEnable = data.readBoolean();
 		gunCarryLimit = data.readInt();
+		realisticRecoil = data.readBoolean();
 	}
 
 	@Override
@@ -66,6 +70,7 @@ public class PacketModConfig extends PacketBase
 		FlansMod.crosshairEnable = crosshairEnable;
 		FlansMod.gunCarryLimitEnable = gunCarryLimitEnable;
 		FlansMod.gunCarryLimit = gunCarryLimit;
+		FlansMod.realisticRecoil = realisticRecoil;
 		FlansMod.log("Config synced successfully");
 	}
 }
