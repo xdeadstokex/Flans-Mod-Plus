@@ -1,8 +1,12 @@
 package com.flansmod.common.guns.boxes;
 
-import java.util.ArrayList;
-
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.guns.GunType;
 import com.flansmod.common.types.InfoType;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -12,17 +16,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.guns.GunType;
+import java.util.ArrayList;
 
 public class BlockGunBox extends Block
 {
@@ -36,7 +33,7 @@ public class BlockGunBox extends Block
 	    type = t;
 
 	    setBlockName(type.shortName);
-	    Block block = Block.getBlockFromName("flansmod:gunBox." + type.shortName);
+	    Block block = Block.getBlockFromName(FlansMod.MODID + ":gunBox." + type.shortName);
 	    if(block != null)
 	    {
 	    	throw new Exception("Caught an exception during block registration");
@@ -185,9 +182,9 @@ public class BlockGunBox extends Block
     {
     	//for(GunBoxType type : GunBoxType.gunBoxMap.values())
     	//{
-    		type.top = register.registerIcon("FlansMod:" + type.topTexturePath);
-    		type.side = register.registerIcon("FlansMod:" + type.sideTexturePath);
-    		type.bottom = register.registerIcon("FlansMod:" + type.bottomTexturePath);
+    		type.top = register.registerIcon(FlansMod.MODID + type.topTexturePath);
+    		type.side = register.registerIcon(FlansMod.MODID + type.sideTexturePath);
+    		type.bottom = register.registerIcon(FlansMod.MODID + type.bottomTexturePath);
     	//}
     }
 }
