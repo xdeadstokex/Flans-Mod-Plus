@@ -1,57 +1,21 @@
 package com.flansmod.client;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
-
+import com.flansmod.client.debug.*;
+import com.flansmod.client.gui.*;
+import com.flansmod.client.model.*;
+import com.flansmod.common.CommonProxy;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.driveables.*;
+import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.driveables.mechas.MechaType;
+import com.flansmod.common.guns.*;
+import com.flansmod.common.guns.boxes.BlockGunBox;
+import com.flansmod.common.guns.boxes.GunBoxType;
+import com.flansmod.common.network.*;
+import com.flansmod.common.paintjob.TileEntityPaintjobTable;
+import com.flansmod.common.teams.*;
+import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.types.InfoType;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityAuraFX;
-import net.minecraft.client.particle.EntityBlockDustFX;
-import net.minecraft.client.particle.EntityBreakingFX;
-import net.minecraft.client.particle.EntityBubbleFX;
-import net.minecraft.client.particle.EntityCloudFX;
-import net.minecraft.client.particle.EntityCritFX;
-import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.particle.EntityDropParticleFX;
-import net.minecraft.client.particle.EntityEnchantmentTableParticleFX;
-import net.minecraft.client.particle.EntityExplodeFX;
-import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityFireworkSparkFX;
-import net.minecraft.client.particle.EntityFishWakeFX;
-import net.minecraft.client.particle.EntityFlameFX;
-import net.minecraft.client.particle.EntityFootStepFX;
-import net.minecraft.client.particle.EntityHeartFX;
-import net.minecraft.client.particle.EntityHugeExplodeFX;
-import net.minecraft.client.particle.EntityLargeExplodeFX;
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityNoteFX;
-import net.minecraft.client.particle.EntityPortalFX;
-import net.minecraft.client.particle.EntityReddustFX;
-import net.minecraft.client.particle.EntitySmokeFX;
-import net.minecraft.client.particle.EntitySnowShovelFX;
-import net.minecraft.client.particle.EntitySpellParticleFX;
-import net.minecraft.client.particle.EntitySplashFX;
-import net.minecraft.client.particle.EntitySuspendFX;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ReportedException;
-import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -60,70 +24,27 @@ import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.discovery.ModCandidate;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.*;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
-import com.flansmod.client.debug.EntityDebugAABB;
-import com.flansmod.client.debug.EntityDebugDot;
-import com.flansmod.client.debug.EntityDebugVector;
-import com.flansmod.client.debug.RenderDebugAABB;
-import com.flansmod.client.debug.RenderDebugDot;
-import com.flansmod.client.debug.RenderDebugVector;
-import com.flansmod.client.gui.GuiArmourBox;
-import com.flansmod.client.gui.GuiDriveableCrafting;
-import com.flansmod.client.gui.GuiDriveableFuel;
-import com.flansmod.client.gui.GuiDriveableInventory;
-import com.flansmod.client.gui.GuiDriveableMenu;
-import com.flansmod.client.gui.GuiDriveableRepair;
-import com.flansmod.client.gui.GuiGunBox;
-import com.flansmod.client.gui.GuiGunModTable;
-import com.flansmod.client.gui.GuiMechaInventory;
-import com.flansmod.client.gui.GuiPaintjobTable;
-import com.flansmod.client.model.RenderAAGun;
-import com.flansmod.client.model.RenderBullet;
-import com.flansmod.client.model.RenderFlag;
-import com.flansmod.client.model.RenderFlagpole;
-import com.flansmod.client.model.RenderGrenade;
-import com.flansmod.client.model.RenderGun;
-import com.flansmod.client.model.RenderMG;
-import com.flansmod.client.model.RenderMecha;
-import com.flansmod.client.model.RenderNull;
-import com.flansmod.client.model.RenderParachute;
-import com.flansmod.client.model.RenderPlane;
-import com.flansmod.client.model.RenderVehicle;
-import com.flansmod.common.CommonProxy;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.driveables.DriveablePart;
-import com.flansmod.common.driveables.DriveableType;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
-import com.flansmod.common.driveables.EntityWheel;
-import com.flansmod.common.driveables.EnumPlaneMode;
-import com.flansmod.common.driveables.PlaneType;
-import com.flansmod.common.driveables.VehicleType;
-import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.driveables.mechas.MechaType;
-import com.flansmod.common.guns.EntityAAGun;
-import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityGrenade;
-import com.flansmod.common.guns.EntityMG;
-import com.flansmod.common.guns.GrenadeType;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.boxes.BlockGunBox;
-import com.flansmod.common.guns.boxes.GunBoxType;
-import com.flansmod.common.network.PacketBuyArmour;
-import com.flansmod.common.network.PacketBuyWeapon;
-import com.flansmod.common.network.PacketCraftDriveable;
-import com.flansmod.common.network.PacketGiveItem;
-import com.flansmod.common.network.PacketRepairDriveable;
-import com.flansmod.common.paintjob.TileEntityPaintjobTable;
-import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.teams.BlockArmourBox;
-import com.flansmod.common.teams.EntityFlag;
-import com.flansmod.common.teams.EntityFlagpole;
-import com.flansmod.common.teams.TileEntitySpawner;
-import com.flansmod.common.tools.EntityParachute;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class ClientProxy extends CommonProxy {
     public static String modelDir = "com.flansmod.client.model.";
 
@@ -182,26 +103,29 @@ public class ClientProxy extends CommonProxy {
     @Override
     public List<File> getContentList(Method method, ClassLoader classloader) {
         contentPacks = new ArrayList<File>();
-        for (File file : FlansMod.flanDir.listFiles()) {
-            if (file.isDirectory() || zipJar.matcher(file.getName()).matches()) {
-                try {
-                    method.invoke(classloader, file.toURI().toURL());
+        File[] files = FlansMod.flanDir.listFiles();
+        if(files != null) {
+            for (File file : files) {
+                if (file.isDirectory() || zipJar.matcher(file.getName()).matches()) {
+                    try {
+                        method.invoke(classloader, file.toURI().toURL());
 
-                    HashMap<String, Object> map = new HashMap<String, Object>();
-                    map.put("modid", "FlansMod");
-                    map.put("name", "Flan's Mod : " + file.getName());
-                    map.put("version", "1");
-                    FMLModContainer container = new FMLModContainer("com.flansmod.common.FlansMod", new ModCandidate(file, file, file.isDirectory() ? ContainerType.DIR : ContainerType.JAR), map);
-                    container.bindMetadata(MetadataCollection.from(null, ""));
-                    FMLClientHandler.instance().addModAsResource(container);
+                        HashMap<String, Object> map = new HashMap<String, Object>();
+                        map.put("modid", "FlansMod");
+                        map.put("name", "Flan's Mod : " + file.getName());
+                        map.put("version", "1");
+                        FMLModContainer container = new FMLModContainer("com.flansmod.common.FlansMod", new ModCandidate(file, file, file.isDirectory() ? ContainerType.DIR : ContainerType.JAR), map);
+                        container.bindMetadata(MetadataCollection.from(null, ""));
+                        FMLClientHandler.instance().addModAsResource(container);
 
-                } catch (Exception e) {
-                    FlansMod.log("Failed to load images for content pack : " + file.getName());
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        FlansMod.log("Failed to load images for content pack : " + file.getName());
+                        e.printStackTrace();
+                    }
+                    // Add the directory to the content pack list
+                    FlansMod.log("Loaded content pack : " + file.getName());
+                    contentPacks.add(file);
                 }
-                // Add the directory to the content pack list
-                FlansMod.log("Loaded content pack : " + file.getName());
-                contentPacks.add(file);
             }
         }
 
@@ -332,11 +256,11 @@ public class ClientProxy extends CommonProxy {
             return "Model" + in;
             //Otherwise, we need to slightly rearrange the wording of the string for it to make sense
         else if (split.length > 1) {
-            String out = "Model" + split[split.length - 1];
+            StringBuilder out = new StringBuilder("Model" + split[split.length - 1]);
             for (int i = split.length - 2; i >= 0; i--) {
-                out = split[i] + "." + out;
+                out.insert(0, split[i] + ".");
             }
-            return out;
+            return out.toString();
         }
         return in;
     }

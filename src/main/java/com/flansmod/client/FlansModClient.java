@@ -43,6 +43,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import org.lwjgl.opengl.GL11;
 
+@SuppressWarnings("unused")
 public class FlansModClient extends FlansMod
 {
 	//Plane / Vehicle control handling
@@ -153,17 +154,7 @@ public class FlansModClient extends FlansMod
         
         GL11.glPopMatrix();
 	}
-	
-    private float interpolateRotation(float x, float y, float dT)
-    {
-        float f3;
 
-        for(f3 = y - x; f3 < -180.0F; f3 += 360.0F) { }
-        for( ; f3 >= 180.0F; f3 -= 360.0F) { }
-
-        return x + dT * f3;
-    }
-    	
 	//Handle player hiding / name tag removal for teams
 	@SubscribeEvent
 	public void renderLiving(RenderPlayerEvent.Pre event)
@@ -416,12 +407,13 @@ public class FlansModClient extends FlansMod
 
 	@SubscribeEvent
 	public void chatMessage(ClientChatReceivedEvent event) {
-		if(event.message.getUnformattedText().isEmpty()) {
+		if(event.message.toString().equals("#flansmod"))
+		{
 			event.setCanceled(true);
 		}
 	}
 
-	public static boolean flipControlMode()
+	static boolean flipControlMode()
 	{
 		if (controlModeSwitchTimer > 0)
 			return false;

@@ -16,8 +16,8 @@ import com.flansmod.common.types.InfoType;
 public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
 
 	public InfoType weapon;
-	public EntityPlayer shooter;
-	public boolean headshot;
+	private EntityPlayer shooter;
+	private boolean headshot;
 	
 	public EntityDamageSourceGun(String s, Entity entity, EntityPlayer player, InfoType wep, boolean head) 
 	{
@@ -51,6 +51,6 @@ public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
     			(killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
     		    living.dimension);
 //        return new ChatComponentText("#flansmod");//flanDeath." + weapon.shortName + "." + (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName() + "." + (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName());
-		return new ChatComponentText("");
+		return new ChatComponentText("#flansmod");
     }
 }

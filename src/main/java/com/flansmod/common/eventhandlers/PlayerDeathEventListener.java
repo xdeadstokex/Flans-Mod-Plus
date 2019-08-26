@@ -16,6 +16,7 @@ import com.flansmod.common.types.InfoType;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+@SuppressWarnings("unused")
 public class PlayerDeathEventListener {
 
 	public PlayerDeathEventListener()
@@ -34,7 +35,7 @@ public class PlayerDeathEventListener {
 			DamageEvent.entityLiving instanceof EntityPlayer)
 		{
 			InfoType info;
-			EntityPlayer killer = null;
+			EntityPlayer killer;
 			EntityPlayer killed = (EntityPlayer) DamageEvent.entityLiving;
 
 			if(souceEntity instanceof EntityGrenade)

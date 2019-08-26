@@ -36,6 +36,7 @@ import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.network.PacketRequestDebug;
 import com.flansmod.common.teams.TeamsManager;
 
+@SuppressWarnings("unused")
 public class PlayerHandler
 {
 	private static final Random rand = new Random();
@@ -53,7 +54,7 @@ public class PlayerHandler
 	public void onEntityHurt(LivingAttackEvent event)
 	{
 		EntityLivingBase entity = event.entityLiving;
-		if(event instanceof LivingAttackEvent && (entity.ridingEntity instanceof EntityDriveable || entity.ridingEntity instanceof EntitySeat))
+		if(entity.ridingEntity instanceof EntityDriveable || entity.ridingEntity instanceof EntitySeat)
 		{
 			event.setCanceled(true);
 		}
