@@ -67,3 +67,18 @@ idea {
 		inheritOutputDirs = true 
 	} 
 }
+
+task outputJar(type: Jar) {
+    destinationDir = new File("build/output/mods/")
+    from (zipTree("build/libs/${archiveName}")) {
+    }
+}
+
+task clearOutput(type: Delete) {
+    delete 'build/output/'
+}
+
+build {
+    dependsOn clearOutput
+    dependsOn outputJar
+}
