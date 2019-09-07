@@ -21,7 +21,7 @@ public class PacketModConfig extends PacketBase
 	public boolean crosshairEnable;
 	public boolean gunCarryLimitEnable;
 	public int gunCarryLimit;
-	public bool realisticRecoil;
+	public boolean realisticRecoil;
 	
 	public PacketModConfig()
 	{
