@@ -214,7 +214,7 @@ BAB
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
 | HasNightVision | Bool | false | Whether to apply night vision |
 
-### ]ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
+### [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Model | String | ~ | Sets the model of the Shootable |
