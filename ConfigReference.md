@@ -1,7 +1,7 @@
 # Config reference
 For each type, the table will list each config and potentially its' purpose and default values.
 
-### IntoType
+### [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |----------------|------|----------------------------|----------------------------------------------------------------|
 | Model | String | ~ | The name of the model file |
@@ -25,13 +25,13 @@ BAB
    
 ```
 
-### PaintableType extends InfoType
+### [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |-------------|------------------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Paintjob | iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Sets up a new paintjob with the dyes required dyeDamage is optional and I'm not entirely sure how that works. The dye setup in [] can be repeated. (you don't need to add the []) |
 | AdvPaintjob | displayName iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Creates an advanced paintjob |
 
-### GunType extends PaintableType
+### [GunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GunType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
 | Keyword | Type | Default | Purpose |
 |-----------------------------|------------|----------------|-------------------------------------------------------------------------------------------|
 | Damage | Float | 0 | Multiplies the damage of the bullet |
@@ -142,7 +142,7 @@ BAB
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Allow x attachments to be used with this gun |
 
-### AAGunType extends Infotype
+### [AAGunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/AAGunType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |----------------------|----------|------|--------------------------------------------------|
 | Model | String | ~ | Location of the model |
@@ -173,7 +173,7 @@ BAB
 | CountExplodeAfterShoot | Integer | -1 | How long after shot should the missile explode. -1 = never/when hit target |
 | IsDropThis | Bool | true | Whether it drops item when destroyed? |
 
-### AttachmentType extends PaintableType
+### [AttachmentType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/AttachmentType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | AttachmentType | String | EnumAttachmentType.generic | The type of attachment |
@@ -214,7 +214,7 @@ BAB
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
 | HasNightVision | Bool | false | Whether to apply night vision |
 
-### ShootableType extends InfoType
+### ]ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Model | String | ~ | Sets the model of the Shootable |
@@ -256,7 +256,7 @@ BAB
 | TrailParticles / SmokeTrail | Bool | false | Whether to create a trail of particles. |
 | TrailParticleType | String | smoke | The type of particle to emity for the trail |
 
-### BulletType extends ShootableType
+### [BulletType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/BulletType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | FlakParticles | Integer | 0 | The number of flak particles produced when exploding |
@@ -314,7 +314,7 @@ BAB
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 
-### GrenadeType extends ShootableType
+### [GrenadeType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GrenadeType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | MeleeDamage | Integer | 1 | The damage caused by getting hit with the grenade |
@@ -370,7 +370,7 @@ BAB
 | AddPotionEffect / PotionEffect | String | ~ | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
 
-### MechaItemType extends InfoType
+### [MechaItemType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaItemType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Model | String | ~ | The model name |
@@ -405,7 +405,7 @@ BAB
 | StopMechaFallDamage | Boolean | false | Stop mecha taking damage from falling |
 | WasteCompact | Boolean | false | Delete certain items when picked up to save inventory space |
 
-### DriveableType extends PaintableType
+### [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | VehicleGunModelScale | Float | 1 | The scale to transform the vehicle guns |
@@ -589,7 +589,7 @@ BAB
 * Wood
 * Plants
 
-### MechaType extends DriveableType
+### [MechaType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaType.java) extends [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | TurnLeftSpeed | Float | 1 | The speed at which the mehca will turn left |
@@ -624,7 +624,7 @@ BAB
 | LegNode | (Integer)rotation (Float)lowerBound (Float)upperBound (Integer)speed (Integer)legPart | ~ | Add a leg node |
 | LegAnimSpeed | Float | 0 | The speed at which to animate leg movement |
 
-### PlaneType extends DriveableType
+### [PlaneType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/PlaneType.java) extends [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Mode | String | PLANE | VTOL / HELI / PlANE |
@@ -681,7 +681,7 @@ BAB
 | DoorRotRate | (Float)X,Y,Z | 0 0 0 | Animation position for X |
 | InflightInventory | Boolean | true | False = true.. yeah. |
 
-### VehicleType extends DriveableType
+### [VehicleType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/VehicleType.java) extends [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | TurnLeftSpeed | Float | 1 | Modifier for turning speed |
@@ -714,7 +714,7 @@ BAB
 | DriftSoundLength | Integer | ~ | Number of ticks to play drift sound for |
 | AddSmokePoint / AddSmokeDispenser | (float position)X,Y,Z (float direction)X,Y,Z (Integer)detTime part | ~ | Add smoke particle emitter to the model | 
 
-### GunBoxType extends InfoType
+### [GunBoxType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/boxes/GunBoxType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | TopTexture | String | ~ | The path of the texture to display on the block | 
@@ -731,7 +731,7 @@ BAB
 | ButtonTextColor | HexString | FFFFFF | Unsigned hex colour |
 | ButtonTextHighlight | HexString | FFFFFF | Unsigned hex colour |
 
-### PartType extends InfoType
+### [PartType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/parts/PartType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Category | String | ~ | Generic string marking category. In theory is part of a set that I haven't looked for |
@@ -744,7 +744,7 @@ BAB
 | UseRF / UseRFPower | Boolean | false | Whether to use redstone flux power if it is available |
 | RFDrawRate | Integer | 1 | Amount of RF to consume per tick |
 
-### ToolType extends InfoType
+### [ToolType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/tools/ToolType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Model | String | ~ | The model file to use |
@@ -761,7 +761,7 @@ BAB
 | DestroyOnEmpty | Boolean | true | Whether to destroy the item when it has been entirely used up |
 | Food / Foodness | Integer | 0 | Hunger filled when this item is used |
 
-### ArmourBoxType extends InfoType
+### [ArmourBoxType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/ArmourBoxType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | TopTexture | String | ~ | Texture to use for the box |
@@ -769,7 +769,7 @@ BAB
 | SideTexture | String | ~ | Texture to use for the box |
 | AddArmor / AddArmour | (String)shortname (String)name NEXT LINE (String) armourType (list) amount shortname | ~ | Add armour of type + recipe |
 
-### ArmourType extends InfoType
+### [ArmourType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/ArmourType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Model | String | ~ | The model file to use |
