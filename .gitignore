@@ -15,6 +15,7 @@ eclipse/
 *.iml
 *.ipr
 *.iws
+.vscode/
 
 # System
 Thumbs.db

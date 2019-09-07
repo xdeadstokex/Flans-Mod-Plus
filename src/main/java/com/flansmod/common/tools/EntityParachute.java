@@ -1,5 +1,7 @@
 package com.flansmod.common.tools;
 
+import com.flansmod.common.FlansMod;
+
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
@@ -26,7 +28,7 @@ public class EntityParachute extends Entity implements IEntityAdditionalSpawnDat
 	{
 		super(w);
 		ignoreFrustumCheck = true;
-		System.out.println(w.isRemote ? "Client paraspawn" : "Server paraspawn");
+		FlansMod.log(w.isRemote ? "Client paraspawn" : "Server paraspawn");
 	}
 	
 	public EntityParachute(World w, ToolType t, EntityPlayer player)

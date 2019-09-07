@@ -66,7 +66,7 @@ public class EntityAfterburn extends EntityFX
         par1Tessellator.addVertexWithUV((double) (xPos - par3 * scale + par6 * scale), (double) (yPos + par4 * scale), (double) (zPos - par5 * scale + par7 * scale), 1D, 1D);
         par1Tessellator.addVertexWithUV((double) (xPos + par3 * scale + par6 * scale), (double) (yPos + par4 * scale), (double) (zPos + par5 * scale + par7 * scale), 1D, 0D);
         par1Tessellator.addVertexWithUV((double) (xPos + par3 * scale - par6 * scale), (double) (yPos - par4 * scale), (double) (zPos + par5 * scale - par7 * scale), 0D, 0D);
-        //System.out.println("renderParticle:" + this + " at [" +this.posX +", " + this.posY + ", " + this.posZ + "]");
+        //FlansMod.log("renderParticle:" + this + " at [" +this.posX +", " + this.posY + ", " + this.posZ + "]");
         par1Tessellator.draw();
 		//GL11.glBlendFunc(srcBlend, dstBlend);
 		GL11.glDisable(GL11.GL_BLEND);

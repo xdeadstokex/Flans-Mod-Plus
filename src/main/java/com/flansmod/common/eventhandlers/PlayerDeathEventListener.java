@@ -60,28 +60,28 @@ public class PlayerDeathEventListener {
 					(killedTeam == null ? "f" : killedTeam.textColour) + killed.getDisplayName(),
 					(killerTeam == null ? "f" : killedTeam.textColour) + killer.getDisplayName()),
 				DamageEvent.entityLiving.dimension);
-			// System.out.println("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());
-			// System.out.println("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());
-			System.out.println(killer.getDisplayName() + " has killed " + killed.getDisplayName() + " with " + info.name + ". TickExisted:" + killed.ticksExisted / 20 +
+			// FlansMod.log("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());
+			// FlansMod.log("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());
+			FlansMod.log(killer.getDisplayName() + " has killed " + killed.getDisplayName() + " with " + info.name + ". TickExisted:" + killed.ticksExisted / 20 +
 				" KilledPos(X:" + (int)(killed.posX) + " Y:" + (int)(killed.posY) + " Z:" + (int)(killed.posZ) + ")" +
 				" KillerPos(X:" + (int)(killer.posX) + " Y:" + (int)(killer.posY) + " Z:" + (int)(killer.posZ) + ")");
 
 			if(killed.getCurrentArmor(2) != null) {
-				System.out.println("KilledPlayer:" + killed + " wear a " + killed.getCurrentArmor(2).getUnlocalizedName());
+				FlansMod.log("KilledPlayer:" + killed + " wear a " + killed.getCurrentArmor(2).getUnlocalizedName());
 			} else {
-				System.out.println("KilledPlayer:" + killed + " wear nothing.");
+				FlansMod.log("KilledPlayer:" + killed + " wear nothing.");
 			}
 
 			if(killer.getCurrentArmor(2) != null) {
-				System.out.println("Killer:" + killer + " wear a " + killer.getCurrentArmor(2).getUnlocalizedName());
+				FlansMod.log("Killer:" + killer + " wear a " + killer.getCurrentArmor(2).getUnlocalizedName());
 			} else {
-				System.out.println("Killer:" + killer + " wear nothing.");
+				FlansMod.log("Killer:" + killer + " wear nothing.");
 			}
 
 			if(killed.ticksExisted / 20 < FlansMod.noticeSpawnKillTime) {
-				System.out.println("Warning! PlayerName:" + killer.getCommandSenderName() + " may do SPAWN KILL. Time:" + killed.ticksExisted / 20 + " " + killed.getCommandSenderName() + " was killed.");
+				FlansMod.log("Warning! PlayerName:" + killer.getCommandSenderName() + " may do SPAWN KILL. Time:" + killed.ticksExisted / 20 + " " + killed.getCommandSenderName() + " was killed.");
 			}
-			// System.out.println(killed.getCurrentArmor(2));
+			// FlansMod.log(killed.getCurrentArmor(2));
 		}
 	}
 }

@@ -224,7 +224,7 @@ public class AttachmentType extends PaintableType implements IScope
 		}
 		catch (Exception e)
 		{
-			System.out.println("Reading attachment file failed.");
+			FlansMod.log("Reading attachment file failed.");
 			if(FlansMod.printStackTrace)
 			{
 				e.printStackTrace();

@@ -87,7 +87,7 @@ public class PacketSeatCheck extends PacketBase
 	private void log(String s, EntityPlayer player)
 	{
 		Entity re = player.ridingEntity;
-		System.out.println(s +" :"+player.getDisplayName()+
+		FlansMod.log(s +" :"+player.getDisplayName()+
 				" : rideEntity="+(re!=null? re.getClass().getName(): re)+
 				" : seatEntityId="+entityId+
 				" : check="+checkCount);
@@ -111,7 +111,7 @@ public class PacketSeatCheck extends PacketBase
 				Entity entity = clientPlayer.worldObj.getEntityByID(entityId);
 				if(entity instanceof EntitySeat)
 				{
-					System.out.println("mount seat :"+clientPlayer.getDisplayName()+
+					FlansMod.log("mount seat :"+clientPlayer.getDisplayName()+
 							" : seatEntityId="+entityId+
 							" : check="+checkCount);
 

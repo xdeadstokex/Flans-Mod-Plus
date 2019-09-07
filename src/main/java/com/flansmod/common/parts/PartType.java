@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.FlansMod;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -122,7 +123,7 @@ public class PartType extends InfoType {
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Reading part file failed.");
+			FlansMod.log("Reading part file failed.");
 			e.printStackTrace();
 		}
 	}

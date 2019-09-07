@@ -193,7 +193,7 @@ public class PlayerClass extends InfoType
 			}
 		} catch (Exception e)
 		{
-			System.out.println("Interpreting player class file failed.");
+			FlansMod.log("Interpreting player class file failed.");
 			e.printStackTrace();
 		}
 	}

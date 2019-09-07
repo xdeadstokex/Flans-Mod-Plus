@@ -620,11 +620,11 @@ public class GunType extends PaintableType implements IScope
 			{
 				String msg = " : ";
 				for(String s : split) msg = msg +" "+ s;
-				System.out.println("Reading gun file failed. " + file.name + msg);
+				FlansMod.log("Reading gun file failed. " + file.name + msg);
 			}
 			else
 			{
-				System.out.println("Reading gun file failed. " + file.name);
+				FlansMod.log("Reading gun file failed. " + file.name);
 			}
 			if(FlansMod.printStackTrace)
 			{

@@ -161,11 +161,11 @@ public class CreativeTabFlan extends CreativeTabs {
 //			e.printStackTrace();
         }
 		/*
-		System.out.println("===============================================================");
+		FlansMod.log("===============================================================");
 		for(int i=0; i<list.size(); i++)
 		{
 			ItemStack is = (ItemStack)list.get(i);
-			System.out.println(is.getItem() + " : " + is.getDisplayName() + "("+ is.getUnlocalizedName() +")");
+			FlansMod.log(is.getItem() + " : " + is.getDisplayName() + "("+ is.getUnlocalizedName() +")");
 		}
 		*/
     }

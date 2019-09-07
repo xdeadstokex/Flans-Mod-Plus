@@ -237,7 +237,7 @@ public class TeamsManager
 							GuiTeamSelect.teamChoices = null;
 						}
 					}catch(NoClassDefFoundError e){
-						System.out.println("Round is successfully finished!");
+						FlansMod.log("Round is successfully finished!");
 					}*/
 					//enabled = false;
 					/*enabled = true;

@@ -254,7 +254,7 @@ public class BulletType extends ShootableType
 		}
 		catch (Exception e)
 		{
-			System.out.println("Reading bullet file failed.");
+			FlansMod.log("Reading bullet file failed.");
 			if(FlansMod.printStackTrace)
 			{
 				e.printStackTrace();

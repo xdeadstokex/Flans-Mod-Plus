@@ -333,7 +333,7 @@ public class FlansModClient extends FlansMod
 		{
 			stanceProgress = 1F - (1F - stanceProgress) * 0.66F; 
 		}
-		//System.out.println(zoomProgress);
+		//FlansMod.log(zoomProgress);
 		if (minecraft.thePlayer.ridingEntity instanceof IControllable)
 		{
 			inPlane = true;

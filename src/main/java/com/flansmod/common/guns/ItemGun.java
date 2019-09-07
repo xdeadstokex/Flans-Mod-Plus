@@ -760,12 +760,12 @@ public class ItemGun extends Item implements IPaintableItem {
 					}
 					AttachmentType scope = itemGun.type.getScope(itemstack);
 					//IScope scope = itemGun.type.getCurrentScope(itemstack);
-					//System.out.println(scope);
+					//FlansMod.log(scope);
 					//Apply night vision while scoped if attachment.hasNightVision = True
 					if(scope != null && scope.hasNightVision && FlansModClient.currentScope != null)
 					{
 						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
-						//System.out.println("1");
+						//FlansMod.log("1");
 					}
 					//Apply a penalty to jumpMovement equal to the moveSpeed penalty (0.5 moveSpeed = 0.5 jumpDistance)
 					if(itemGun.type.moveSpeedModifier != 1F)

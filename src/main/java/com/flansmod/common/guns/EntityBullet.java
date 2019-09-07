@@ -890,7 +890,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 			}
 		}
 
-		//System.out.println((int)posX+","+(int)posY+","+(int)posZ);
+		//FlansMod.log((int)posX+","+(int)posY+","+(int)posZ);
 
 		if(owner != null && type.shootForSettingPos && !this.isFirstPositionSetting)
 		{
