@@ -81,15 +81,15 @@ public abstract class InfoType
 		{
 			if(split[0].equals("Model"))
 				modelString = split[1];
-			if(split[0].equals("ModelScale"))
+			else if(split[0].equals("ModelScale"))
 				modelScale = Float.parseFloat(split[1]);
-			if (split[0].equals("Name"))
+			else if (split[0].equals("Name"))
 			{
 				name = split[1];
 				for (int i = 0; i < split.length - 2; i++)
 					name += " " + split[i + 2];
 			}
-			if (split[0].equals("Description"))
+			else if (split[0].equals("Description"))
 			{
 				description = split[1];
 				for (int i = 0; i < split.length - 2; i++)
@@ -97,23 +97,23 @@ public abstract class InfoType
 					description = description + " " + split[i + 2];
 				}
 			}
-			if (split[0].equals("ShortName"))
+			else if (split[0].equals("ShortName"))
 			{
 				shortName = split[1];
 			}
-			if (split[0].equals("Colour") || split[0].equals("Color"))
+			else if (split[0].equals("Colour") || split[0].equals("Color"))
 			{
 				colour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
 			}
-			if (split[0].equals("Icon"))
+			else if (split[0].equals("Icon"))
 			{
 				iconPath = split[1];
 			}
-			if (split[0].equals("RecipeOutput"))
+			else if (split[0].equals("RecipeOutput"))
 			{
 				recipeOutput = Integer.parseInt(split[1]);
 			}
-			if (split[0].equals("Recipe"))
+			else if (split[0].equals("Recipe"))
 			{
 				recipe = new Object[split.length + 2];
 				for (int i = 0; i < 3; i++)
@@ -134,17 +134,18 @@ public abstract class InfoType
 				recipeLine = split;
 				shapeless = false;
 			}
-			if (split[0].equals("ShapelessRecipe"))
+			else if (split[0].equals("ShapelessRecipe"))
 			{
 				recipeLine = split;
 				shapeless = true;
 			}
-			if (split[0].equals("SmeltableFrom"))
+			else if (split[0].equals("SmeltableFrom"))
 			{
 				smeltableFrom = split[1];
 			}
-			if(split[0].equals("CanDrop"))
+			else if(split[0].equals("CanDrop"))
 				canDrop = Boolean.parseBoolean(split[1]);
+
 		} catch (Exception e)
 		{
 			FlansMod.log("Reading file failed : " + shortName);

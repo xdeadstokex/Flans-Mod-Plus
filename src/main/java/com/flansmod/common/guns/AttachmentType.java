@@ -221,6 +221,7 @@ public class AttachmentType extends PaintableType implements IScope
 			}
 			else if(split[0].equals("HasNightVision"))
 				hasNightVision = Boolean.parseBoolean(split[1].toLowerCase());
+				
 		}
 		catch (Exception e)
 		{

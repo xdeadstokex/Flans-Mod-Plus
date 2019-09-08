@@ -959,7 +959,7 @@ public class DriveableType extends PaintableType {
             if (split != null) {
                 String msg = " : ";
                 for (String s : split) msg = msg + " " + s;
-                FlansMod.log("Errored reading " + file.name + "");
+                FlansMod.log("Errored reading " + file.name + msg);
             } else {
                 FlansMod.log("Errored reading " + file.name);
             }

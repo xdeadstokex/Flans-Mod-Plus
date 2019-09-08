@@ -67,6 +67,7 @@ public abstract class PaintableType extends InfoType
 				//}
 				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks));
 			}
+
 		} 
 		catch (Exception e)
 		{
