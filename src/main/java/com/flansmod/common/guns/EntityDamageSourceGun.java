@@ -15,42 +15,38 @@ import com.flansmod.common.types.InfoType;
 
 public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
 
-	public InfoType weapon;
-	private EntityPlayer shooter;
-	private boolean headshot;
-	
-	public EntityDamageSourceGun(String s, Entity entity, EntityPlayer player, InfoType wep, boolean head) 
-	{
-		super(s, entity, player);
-		weapon = wep;
-		shooter = player;
-		headshot = head;
-	}
-	
-	public Entity getDamageSourceEntity()
-	{
-		return this.damageSourceEntity;
-	}
+    public InfoType weapon;
+    private EntityPlayer shooter;
+    private boolean headshot;
 
-	@Override
-	public IChatComponent func_151519_b(EntityLivingBase living)
-    {
-		if(!(living instanceof EntityPlayer) || shooter == null || PlayerHandler.getPlayerData(shooter) == null)
-		{
-			return super.func_151519_b(living);
-		}
-		EntityPlayer player = (EntityPlayer)living;
-    	Team killedTeam = PlayerHandler.getPlayerData(player).team;
-    	Team killerTeam = PlayerHandler.getPlayerData(shooter).team;
-    	
-    	FlansMod.getPacketHandler().sendToDimension(
-    		new PacketKillMessage(
-    			headshot,
-    			weapon,
-    			(killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName(),
-    			(killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
-    		    living.dimension);
+    public EntityDamageSourceGun(String s, Entity entity, EntityPlayer player, InfoType wep, boolean head) {
+        super(s, entity, player);
+        weapon = wep;
+        shooter = player;
+        headshot = head;
+    }
+
+    public Entity getDamageSourceEntity() {
+        return this.damageSourceEntity;
+    }
+
+    @Override
+    public IChatComponent func_151519_b(EntityLivingBase living) {
+        if (!(living instanceof EntityPlayer) || shooter == null || PlayerHandler.getPlayerData(shooter) == null) {
+            return super.func_151519_b(living);
+        }
+        EntityPlayer player = (EntityPlayer) living;
+        Team killedTeam = PlayerHandler.getPlayerData(player).team;
+        Team killerTeam = PlayerHandler.getPlayerData(shooter).team;
+
+        FlansMod.getPacketHandler().sendToDimension(
+                new PacketKillMessage(
+                        headshot,
+                        weapon,
+                        (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName(),
+                        (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
+                living.dimension);
 //        return new ChatComponentText("#flansmod");//flanDeath." + weapon.shortName + "." + (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName() + "." + (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName());
-		return new ChatComponentText("#flansmod");
+        return new ChatComponentText("#flansmod");
     }
 }

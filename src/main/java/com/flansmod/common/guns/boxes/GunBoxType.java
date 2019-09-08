@@ -87,23 +87,23 @@ public class GunBoxType extends InfoType
 			{
 				//If empty, rename the page. If not, add the current page to list and start next one.
 				String[] pageNameArray = Arrays.copyOfRange(split, 1, split.length);
-				String pageName = "";
+				StringBuilder pageName = new StringBuilder();
 				for(int i = 0; i < pageNameArray.length; i++)
 				{
-				    pageName += pageNameArray[i];
+				    pageName.append(pageNameArray[i]);
 				    if((i + 1) < pageNameArray.length)
 				    {
-				        pageName += " ";
+				        pageName.append(" ");
 				    }
 				}
 				if(gunEntries[0] != null)
 				{
 					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
-					iteratePage(pageName);
+					iteratePage(pageName.toString());
 				}
 				else
 				{
-					currentPage.setPageName(pageName);
+					currentPage.setPageName(pageName.toString());
 				}
 
 			}
@@ -296,8 +296,8 @@ public class GunBoxType extends InfoType
 		{
 			if(recipe!=null)
 			{
-				String msg = " : ";
-				for(Object o : recipe) msg = msg + " " + o;
+				StringBuilder msg = new StringBuilder(" : ");
+				for(Object o : recipe) msg.append(" ").append(o);
 				FlansMod.log("Failed to add recipe for : " + shortName + msg);
 			}
 			else

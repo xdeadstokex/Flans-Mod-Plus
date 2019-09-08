@@ -383,8 +383,7 @@ public class ClientProxy extends CommonProxy {
      */
     @Override
     public boolean keyDown(int keyCode) {
-        boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
-        return state;
+        return (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
     }
 
     @Override
@@ -392,7 +391,7 @@ public class ClientProxy extends CommonProxy {
                               double x, double y, double z,
                               double mx, double my, double mz) {
         try {
-            this.doSpawnParticle(s, x, y, z, mx, my, mz);
+            doSpawnParticle(s, x, y, z, mx, my, mz);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -401,7 +400,7 @@ public class ClientProxy extends CommonProxy {
     private static EntityFX doSpawnParticle(String p_72726_1_, double p_72726_2_, double p_72726_4_, double p_72726_6_, double p_72726_8_, double p_72726_10_, double p_72726_12_) {
         Minecraft mc = Minecraft.getMinecraft();
         World theWorld = mc.theWorld;
-        if (mc != null && mc.renderViewEntity != null && mc.effectRenderer != null) {
+        if (mc.renderViewEntity != null && mc.effectRenderer != null) {
             int i = mc.gameSettings.particleSetting;
 
             if (i == 1 && theWorld.rand.nextInt(3) == 0) {
@@ -422,7 +421,7 @@ public class ClientProxy extends CommonProxy {
             }
 
             if (entityfx != null) {
-                return (EntityFX) entityfx;
+                return entityfx;
             } else {
                 double d9 = 160.0D;
 
@@ -497,17 +496,17 @@ public class ClientProxy extends CommonProxy {
                         entityfx = new EntityCritFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("magicCrit")) {
                         entityfx = new EntityCritFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                        ((EntityFX) entityfx).setRBGColorF(((EntityFX) entityfx).getRedColorF() * 0.3F, ((EntityFX) entityfx).getGreenColorF() * 0.8F, ((EntityFX) entityfx).getBlueColorF());
-                        ((EntityFX) entityfx).nextTextureIndexX();
+                        entityfx.setRBGColorF(entityfx.getRedColorF() * 0.3F, entityfx.getGreenColorF() * 0.8F, entityfx.getBlueColorF());
+                        entityfx.nextTextureIndexX();
                     } else if (p_72726_1_.equals("smoke")) {
                         entityfx = new EntitySmokeFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("mobSpell")) {
                         entityfx = new EntitySpellParticleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
-                        ((EntityFX) entityfx).setRBGColorF((float) p_72726_8_, (float) p_72726_10_, (float) p_72726_12_);
+                        entityfx.setRBGColorF((float) p_72726_8_, (float) p_72726_10_, (float) p_72726_12_);
                     } else if (p_72726_1_.equals("mobSpellAmbient")) {
                         entityfx = new EntitySpellParticleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
-                        ((EntityFX) entityfx).setAlphaF(0.15F);
-                        ((EntityFX) entityfx).setRBGColorF((float) p_72726_8_, (float) p_72726_10_, (float) p_72726_12_);
+                        entityfx.setAlphaF(0.15F);
+                        entityfx.setRBGColorF((float) p_72726_8_, (float) p_72726_10_, (float) p_72726_12_);
                     } else if (p_72726_1_.equals("spell")) {
                         entityfx = new EntitySpellParticleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("instantSpell")) {
@@ -517,7 +516,7 @@ public class ClientProxy extends CommonProxy {
                         entityfx = new EntitySpellParticleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                         ((EntitySpellParticleFX) entityfx).setBaseSpellTextureIndex(144);
                         float f = theWorld.rand.nextFloat() * 0.5F + 0.35F;
-                        ((EntityFX) entityfx).setRBGColorF(1.0F * f, 0.0F * f, 1.0F * f);
+                        entityfx.setRBGColorF(1.0F * f, 0.0F * f, 1.0F * f);
                     } else if (p_72726_1_.equals("note")) {
                         entityfx = new EntityNoteFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("portal")) {
@@ -556,12 +555,12 @@ public class ClientProxy extends CommonProxy {
                         entityfx = new EntityHeartFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("angryVillager")) {
                         entityfx = new EntityHeartFX(theWorld, p_72726_2_, p_72726_4_ + 0.5D, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                        ((EntityFX) entityfx).setParticleTextureIndex(81);
-                        ((EntityFX) entityfx).setRBGColorF(1.0F, 1.0F, 1.0F);
+                        entityfx.setParticleTextureIndex(81);
+                        entityfx.setRBGColorF(1.0F, 1.0F, 1.0F);
                     } else if (p_72726_1_.equals("happyVillager")) {
                         entityfx = new EntityAuraFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                        ((EntityFX) entityfx).setParticleTextureIndex(82);
-                        ((EntityFX) entityfx).setRBGColorF(1.0F, 1.0F, 1.0F);
+                        entityfx.setParticleTextureIndex(82);
+                        entityfx.setRBGColorF(1.0F, 1.0F, 1.0F);
                     } else {
                         int k;
                         String[] astring;
@@ -594,10 +593,10 @@ public class ClientProxy extends CommonProxy {
                     }
 
                     if (entityfx != null) {
-                        mc.effectRenderer.addEffect((EntityFX) entityfx);
+                        mc.effectRenderer.addEffect(entityfx);
                     }
 
-                    return (EntityFX) entityfx;
+                    return entityfx;
                 }
             }
         } else {

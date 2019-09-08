@@ -475,18 +475,18 @@ public class ItemGun extends Item implements IPaintableItem {
             PacketPlaySound.sendSoundPacket(player.posX, player.posY, player.posZ, type.meleeSoundRange, player.dimension, type.meleeSound, true);
         //Do custom melee code here
         if (type.secondaryFunctionWhenShoot != null) {
-			if (type.secondaryFunctionWhenShoot == EnumSecondaryFunction.CUSTOM_MELEE) {
-				//Do animation
-				if (player.worldObj.isRemote) {
-					GunAnimations animations = FlansModClient.getGunAnimations(player, false);
-					animations.doMelee(type.meleeTime);
-				}
-				//Do custom melee hit detection
-				if (data != null) {
-					data.doMelee(player, type.meleeTime, type);
-				}
-			}
-		}
+            if (type.secondaryFunctionWhenShoot == EnumSecondaryFunction.CUSTOM_MELEE) {
+                //Do animation
+                if (player.worldObj.isRemote) {
+                    GunAnimations animations = FlansModClient.getGunAnimations(player, false);
+                    animations.doMelee(type.meleeTime);
+                }
+                //Do custom melee hit detection
+                if (data != null) {
+                    data.doMelee(player, type.meleeTime, type);
+                }
+            }
+        }
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         if (FlansModClient.shootTime(left) <= 0 && ((sprinting && FlansModClient.zoomProgress > 0.5F) || !sprinting || gunType.hipFireWhileSprinting)) {

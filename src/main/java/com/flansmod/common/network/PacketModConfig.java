@@ -13,64 +13,57 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
 
-public class PacketModConfig extends PacketBase 
-{
-	
-	public boolean hitCrossHairEnable;
-	public boolean bulletGuiEnable;
-	public boolean crosshairEnable;
-	public boolean gunCarryLimitEnable;
-	public int gunCarryLimit;
-	public boolean realisticRecoil;
-	
-	public PacketModConfig()
-	{
-		hitCrossHairEnable = FlansMod.hitCrossHairEnable;
-		bulletGuiEnable = FlansMod.bulletGuiEnable;
-		crosshairEnable = FlansMod.crosshairEnable;
-		gunCarryLimitEnable = FlansMod.gunCarryLimitEnable;
-		gunCarryLimit = FlansMod.gunCarryLimit;
-		realisticRecoil = FlansMod.realisticRecoil;
-	}
-	
-	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) 
-	{
-		data.writeBoolean(hitCrossHairEnable);
-		data.writeBoolean(bulletGuiEnable);
-		data.writeBoolean(crosshairEnable);
-		data.writeBoolean(gunCarryLimitEnable);
-		data.writeInt(gunCarryLimit);
-		data.writeBoolean(realisticRecoil);
-	}
+public class PacketModConfig extends PacketBase {
+    public boolean hitCrossHairEnable;
+    public boolean bulletGuiEnable;
+    public boolean crosshairEnable;
+    public boolean gunCarryLimitEnable;
+    public int gunCarryLimit;
+    public boolean realisticRecoil;
 
-	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) 
-	{
-		hitCrossHairEnable = data.readBoolean();
-		bulletGuiEnable = data.readBoolean();
-		crosshairEnable = data.readBoolean();
-		gunCarryLimitEnable = data.readBoolean();
-		gunCarryLimit = data.readInt();
-		realisticRecoil = data.readBoolean();
-	}
+    public PacketModConfig() {
+        hitCrossHairEnable = FlansMod.hitCrossHairEnable;
+        bulletGuiEnable = FlansMod.bulletGuiEnable;
+        crosshairEnable = FlansMod.crosshairEnable;
+        gunCarryLimitEnable = FlansMod.gunCarryLimitEnable;
+        gunCarryLimit = FlansMod.gunCarryLimit;
+        realisticRecoil = FlansMod.realisticRecoil;
+    }
 
-	@Override
-	public void handleServerSide(EntityPlayerMP playerEntity) 
-	{
+    @Override
+    public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        data.writeBoolean(hitCrossHairEnable);
+        data.writeBoolean(bulletGuiEnable);
+        data.writeBoolean(crosshairEnable);
+        data.writeBoolean(gunCarryLimitEnable);
+        data.writeInt(gunCarryLimit);
+        data.writeBoolean(realisticRecoil);
+    }
 
-	}
+    @Override
+    public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        hitCrossHairEnable = data.readBoolean();
+        bulletGuiEnable = data.readBoolean();
+        crosshairEnable = data.readBoolean();
+        gunCarryLimitEnable = data.readBoolean();
+        gunCarryLimit = data.readInt();
+        realisticRecoil = data.readBoolean();
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void handleClientSide(EntityPlayer clientPlayer) 
-	{
-		FlansMod.hitCrossHairEnable = hitCrossHairEnable;
-		FlansMod.bulletGuiEnable = bulletGuiEnable;
-		FlansMod.crosshairEnable = crosshairEnable;
-		FlansMod.gunCarryLimitEnable = gunCarryLimitEnable;
-		FlansMod.gunCarryLimit = gunCarryLimit;
-		FlansMod.realisticRecoil = realisticRecoil;
-		FlansMod.log("Config synced successfully");
-	}
+    @Override
+    public void handleServerSide(EntityPlayerMP playerEntity) {
+
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void handleClientSide(EntityPlayer clientPlayer) {
+        FlansMod.hitCrossHairEnable = hitCrossHairEnable;
+        FlansMod.bulletGuiEnable = bulletGuiEnable;
+        FlansMod.crosshairEnable = crosshairEnable;
+        FlansMod.gunCarryLimitEnable = gunCarryLimitEnable;
+        FlansMod.gunCarryLimit = gunCarryLimit;
+        FlansMod.realisticRecoil = realisticRecoil;
+        FlansMod.log("Config synced successfully");
+    }
 }
