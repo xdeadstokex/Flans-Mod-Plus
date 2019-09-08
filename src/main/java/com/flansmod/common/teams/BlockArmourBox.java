@@ -85,9 +85,9 @@ public class BlockArmourBox extends Block
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister register)
     {
-		type.top = register.registerIcon("FlansMod:" + type.topTexturePath);
-		type.side = register.registerIcon("FlansMod:" + type.sideTexturePath);
-		type.bottom = register.registerIcon("FlansMod:" + type.bottomTexturePath);
+		type.top = register.registerIcon(FlansMod.MODID + ":" + type.topTexturePath);
+		type.side = register.registerIcon(FlansMod.MODID + ":" + type.sideTexturePath);
+		type.bottom = register.registerIcon(FlansMod.MODID + ":" + type.bottomTexturePath);
     }
 
 	@Override

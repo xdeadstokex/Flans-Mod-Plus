@@ -146,7 +146,8 @@ public class GunBoxType extends InfoType
 		catch (Exception e)
 		{
 			FlansMod.log("Reading gun box file failed : " + shortName);
-			e.printStackTrace();
+			if (FlansMod.printStackTrace)
+				e.printStackTrace();
 		}
 	}
 

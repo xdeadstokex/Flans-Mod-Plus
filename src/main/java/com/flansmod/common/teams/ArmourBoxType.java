@@ -101,8 +101,9 @@ public class ArmourBoxType extends InfoType
 			
 		} catch (Exception e)
 		{
-			FlansMod.log("Reading gun box file failed : " + shortName);
-			e.printStackTrace();
+			FlansMod.log("Reading armour box file failed : " + shortName);
+			if (FlansMod.printStackTrace)
+				e.printStackTrace();
 		}
 	}
 

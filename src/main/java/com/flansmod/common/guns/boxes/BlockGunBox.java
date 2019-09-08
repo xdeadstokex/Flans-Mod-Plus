@@ -182,9 +182,9 @@ public class BlockGunBox extends Block
     {
     	//for(GunBoxType type : GunBoxType.gunBoxMap.values())
     	//{
-    		type.top = register.registerIcon(FlansMod.MODID + type.topTexturePath);
-    		type.side = register.registerIcon(FlansMod.MODID + type.sideTexturePath);
-    		type.bottom = register.registerIcon(FlansMod.MODID + type.bottomTexturePath);
+    		type.top = register.registerIcon(FlansMod.MODID + ":" + type.topTexturePath);
+    		type.side = register.registerIcon(FlansMod.MODID + ":" + type.sideTexturePath);
+    		type.bottom = register.registerIcon(FlansMod.MODID + ":" + type.bottomTexturePath);
     	//}
     }
 }
