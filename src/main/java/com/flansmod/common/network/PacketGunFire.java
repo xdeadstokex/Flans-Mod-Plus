@@ -20,11 +20,11 @@ public class PacketGunFire extends PacketBase {
     public PacketGunFire() {
     }
 
-    public PacketGunFire(boolean l, boolean h, float y, float p) {
-        left = l;
-        held = h;
-        yaw = y;
-        pitch = p;
+    public PacketGunFire(boolean left, boolean held, float yaw, float pitch) {
+        this.left = left;
+        this.held = held;
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PacketGunFire extends PacketBase {
     @Override
     public void handleServerSide(EntityPlayerMP playerEntity) {
         ItemStack currentItem = playerEntity.inventory.getCurrentItem();
-        if (currentItem != null && currentItem.getItem() != null && currentItem.getItem() instanceof ItemGun) {
+        if (currentItem != null && currentItem.getItem() instanceof ItemGun) {
             float bkYaw = playerEntity.rotationYaw;
             float bkPitch = playerEntity.rotationPitch;
             playerEntity.rotationYaw = yaw;
