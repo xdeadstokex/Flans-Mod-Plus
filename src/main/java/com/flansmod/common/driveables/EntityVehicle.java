@@ -658,12 +658,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 			//Secondary check whether all wheels are on ground...
 			if(wheels[0] != null && wheels[1] != null && wheels[2] != null && wheels[3] != null)
 			{
-			avgWheelHeight = (float)(wheels[0].posX + wheels[1].posX + wheels[2].posX + wheels[3].posX)/4;
-	    	if(!wheels[0].onGround && !wheels[1].onGround && !wheels[2].onGround && !wheels[3].onGround){
-	    		allWheelsOnGround = false;
-	    	} else {
-	    		allWheelsOnGround = true;
-	    	}
+				avgWheelHeight = (float)(wheels[0].posX + wheels[1].posX + wheels[2].posX + wheels[3].posX)/4;
+	    		if(!wheels[0].onGround && !wheels[1].onGround && !wheels[2].onGround && !wheels[3].onGround){
+	    			allWheelsOnGround = false;
+	    		} else {
+	    			allWheelsOnGround = true;
+	    		}
 			}
 
 			//Now we apply gravity
@@ -673,8 +673,8 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 				wheel.moveEntity(0F, 1F, 0F);	
 			} else if((type.floatOnWater && worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, -type.floatOffset, 0))) && !worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, 1 - type.floatOffset, 0)) || wheel.onDeck){
 				wheel.moveEntity(0F, 0F, 0F);
-			this.roll = 0;
-			this.pitch = 0;
+				this.roll = 0;
+				this.pitch = 0;
 			} else {
 				wheel.moveEntity(0F, (!onDeck)?-0.98F:0, 0F);	
 			}
