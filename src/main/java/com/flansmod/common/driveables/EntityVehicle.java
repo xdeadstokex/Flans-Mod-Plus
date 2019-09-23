@@ -55,7 +55,10 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
     public float pitch = 0;
     public float roll = 0;
     
-    public float yawSpeed = 0;
+	public float yawSpeed = 0;
+	
+	// Used for better falling
+	private float fallVelocity = 0;
     
     //Handling stuff
     public int keyHeld = 0;
@@ -668,7 +671,8 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 
 			//Now we apply gravity
 			if(allWheelsOnGround && !(type.floatOnWater && worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, -type.floatOffset, 0))) && !wheel.onDeck){
-				wheel.moveEntity(0F, -0.98/5, 0F);
+				fallVelocity -=0.98/5;
+				wheel.moveEntity(0F, fallVelocity, 0F);
 			} else if((type.floatOnWater && worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, -type.floatOffset, 0))) && worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, 1 - type.floatOffset, 0)) && !wheel.onDeck){
 				wheel.moveEntity(0F, 1F, 0F);	
 			} else if((type.floatOnWater && worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, -type.floatOffset, 0))) && !worldObj.isAnyLiquid(wheel.boundingBox.copy().offset(0, 1 - type.floatOffset, 0)) || wheel.onDeck){
@@ -676,6 +680,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 				this.roll = 0;
 				this.pitch = 0;
 			} else {
+				fallVelocity = 0;
 				wheel.moveEntity(0F, (!onDeck)?-0.98F:0, 0F);	
 			}
 			
