@@ -35,6 +35,7 @@ import com.flansmod.common.network.PacketSeatUpdates;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.common.sync.Sync;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -768,8 +769,12 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 		//Put them in the seat
 		if(riddenByEntity == null)
 		{
-			entityplayer.mountEntity(this);
-			return true;
+			if (Sync.checkType(driveable.getDriveableType())) {
+				entityplayer.mountEntity(this);
+				return true;
+			} else {
+				return false;
+			}
 		}
         return false;
     }

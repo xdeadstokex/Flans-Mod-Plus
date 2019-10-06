@@ -28,6 +28,7 @@ import com.flansmod.common.parts.PartType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.sync.Sync;
 
 public class ItemMecha extends Item implements IPaintableItem
 {
@@ -103,7 +104,7 @@ public class ItemMecha extends Item implements IPaintableItem
             int i = movingobjectposition.blockX;
             int j = movingobjectposition.blockY;
             int k = movingobjectposition.blockZ;
-            if(!world.isRemote)
+            if(!world.isRemote && Sync.checkType(type))
             {
 				world.spawnEntityInWorld(new EntityMecha(world, (double)i + 0.5F, (double)j + 1.5F + type.yOffset, (double)k + 0.5F, entityplayer, type, getData(itemstack, world), getTagCompound(itemstack, world)));
             }
