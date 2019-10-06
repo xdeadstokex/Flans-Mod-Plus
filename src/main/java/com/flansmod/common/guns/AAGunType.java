@@ -10,6 +10,7 @@ import com.flansmod.client.model.ModelAAGun;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -28,8 +29,11 @@ public class AAGunType extends InfoType
 	public boolean fireAlternately;
 	public int health;
 	public int gunnerX, gunnerY, gunnerZ;
+	@SyncExclude
 	public String shootSound;
+	@SyncExclude
 	public String reloadSound;
+	@SideOnly(Side.CLIENT)
 	public ModelAAGun model;
 	public float topViewLimit = 75F;
 	public float bottomViewLimit = 0F;

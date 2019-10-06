@@ -10,6 +10,7 @@ import net.minecraft.util.IIcon;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -17,8 +18,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ArmourBoxType extends InfoType 
 {
 	//Textures
+	@SideOnly(Side.CLIENT)
 	public String topTexturePath;
+	@SideOnly(Side.CLIENT)
 	public String sideTexturePath;
+	@SideOnly(Side.CLIENT)
 	public String bottomTexturePath;
 	@SideOnly(Side.CLIENT)
 	public IIcon top;
@@ -28,10 +32,11 @@ public class ArmourBoxType extends InfoType
 	public IIcon bottom;
 	
 	public BlockArmourBox block;
-	
+
 	public ArrayList<ArmourBoxEntry> pages = new ArrayList<ArmourBoxEntry>();
 	
 	/** The static box map. Indexed by shortName for server ~ client syncing */
+	@SyncExclude
 	public static HashMap<String, ArmourBoxType> boxes = new HashMap<String, ArmourBoxType>();
 	
 	public ArmourBoxType(TypeFile file) 

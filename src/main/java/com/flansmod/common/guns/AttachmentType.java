@@ -16,8 +16,11 @@ import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
+import com.flansmod.common.sync.SyncExclude;
+
 public class AttachmentType extends PaintableType implements IScope
 {
+	@SyncExclude
 	public static ArrayList<AttachmentType> attachments = new ArrayList<AttachmentType>();
 	
 	/** The type of attachment. Each gun can have one barrel, one scope, one grip, one stock and some number of generics up to a limit set by the gun */
@@ -73,12 +76,15 @@ public class AttachmentType extends PaintableType implements IScope
 	/** The delay between shots in ticks (1/20ths of seconds) */
 	public int secondaryShootDelay = 1;
 	/** The sound played upon shooting */
+	@SyncExclude
 	public String secondaryShootSound;
 	/** The sound to play upon reloading */
+	@SyncExclude
 	public String secondaryReloadSound;
 	/** The firing mode of the gun. One of semi-auto, full-auto, minigun or burst */
 	public EnumFireMode secondaryFireMode = EnumFireMode.SEMIAUTO;
 	/** The sound to play if toggling between primary and underbarrel */
+	@SyncExclude
 	public String toggleSound;
 	/** The number of bullet entities created by each shot */
 	public int secondaryNumBullets = 1;
@@ -101,6 +107,7 @@ public class AttachmentType extends PaintableType implements IScope
 	/** Model. Only applicable when the attachment is added to 3D guns */
 	public ModelAttachment model;
 	/** For making detailed models and scaling down mainly */
+	@SideOnly(Side.CLIENT)
 	public float modelScale = 1F;
 	
 	//Some more mundane variables

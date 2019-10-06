@@ -7,9 +7,11 @@ import net.minecraft.potion.PotionEffect;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 public class GrenadeType extends ShootableType
 {
+	@SyncExclude
 	public static ArrayList<GrenadeType> grenades = new ArrayList<GrenadeType>();
 
 	//Misc
@@ -20,6 +22,7 @@ public class GrenadeType extends ShootableType
 	/** The delay between subsequent grenade throws */
 	public int throwDelay = 0;
 	/** The sound to play upon throwing this grenade */
+	@SyncExclude
 	public String throwSound = "";
 	/** The name of the item to drop (if any) when throwing the grenade */
 	public String dropItemOnThrow = null;
@@ -32,6 +35,7 @@ public class GrenadeType extends ShootableType
 	/** Whether this grenade may pass through entities or blocks */
 	public boolean penetratesEntities = false, penetratesBlocks = false;
 	/** The sound to play upon bouncing off a surface */
+	@SyncExclude
 	public String bounceSound = "";
 	/** Whether the grenade should stick to surfaces */
 	public boolean sticky = false;
@@ -41,8 +45,11 @@ public class GrenadeType extends ShootableType
 	public boolean stickToEntity = false;
 	public boolean stickToDriveable = false;
 	public boolean stickToEntityAfter = false;
+	@SyncExclude
 	public boolean allowStickSound = false;
+	@SyncExclude
 	public int stickSoundRange = 10;
+	@SyncExclude
 	public String stickSound;
 
 	public boolean flashBang = false;
@@ -98,6 +105,7 @@ public class GrenadeType extends ShootableType
 	/** Particles given off after detonation */
 	public String smokeParticleType = "explode";
 	/** The effects to be given to people coming too close */
+	@SyncExclude
 	public ArrayList<PotionEffect> smokeEffects = new ArrayList<PotionEffect>();
 	/** The radius for smoke effects to take place in */
 	public float smokeRadius = 5F;
@@ -110,6 +118,7 @@ public class GrenadeType extends ShootableType
 	/** The amount to heal the player using this bag */
 	public float healAmount = 0;
 	/** The potion effects to apply to users of this bag */
+	@SyncExclude
 	public ArrayList<PotionEffect> potionEffects = new ArrayList<PotionEffect>();
 	/** The number of clips to give to the player when using this bag
 	 * When they right click with a gun, they will get this number of clips for that gun.

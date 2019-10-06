@@ -25,15 +25,15 @@ import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.driveables.ShootPoint;
 import com.flansmod.common.driveables.collisions.CollisionShapeBox;
+import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class DriveableType extends PaintableType {
-    @SideOnly(value = Side.CLIENT)
     /** The plane model */
-    public ModelDriveable model;
+    @SideOnly(value = Side.CLIENT) public ModelDriveable model;
 
     //Health and recipe
     /**
@@ -43,10 +43,12 @@ public class DriveableType extends PaintableType {
     /**
      * Recipe parts associated to each driveable part
      */
+    @SyncExclude
     public HashMap<EnumDriveablePart, ItemStack[]> partwiseRecipe = new HashMap<EnumDriveablePart, ItemStack[]>();
     /**
      * Recipe parts as one complete list
      */
+    @SyncExclude
     public ArrayList<ItemStack> driveableRecipe = new ArrayList<ItemStack>();
 
     //Ammo
@@ -72,6 +74,7 @@ public class DriveableType extends PaintableType {
     public boolean dropHarvest = false;
     public Vector3f harvestBoxSize = new Vector3f(0, 0, 0);
     public Vector3f harvestBoxPos = new Vector3f(0, 0, 0);
+    @SyncExclude
     public int reloadSoundTick = 15214541;
     public float fallDamageFactor = 1.0F;
 
@@ -95,6 +98,7 @@ public class DriveableType extends PaintableType {
     /**
      * Sounds
      */
+    @SyncExclude
     public String shootSoundPrimary, shootSoundSecondary, shootReloadSound;
     /**
      * Positions of primary and secondary weapons
@@ -104,13 +108,16 @@ public class DriveableType extends PaintableType {
      * Pilot guns also have their own seperate array so ammo handling can be done
      */
     public ArrayList<PilotGun> pilotGuns = new ArrayList<PilotGun>();
-
+    @SyncExclude
     public int reloadTimePrimary = 0,
             reloadTimeSecondary = 0;
+    @SyncExclude
     public String reloadSoundPrimary = "",
             reloadSoundSecondary = "";
+    @SyncExclude
     public int placeTimePrimary = 5,
             placeTimeSecondary = 5;
+    @SyncExclude
     public String placeSoundPrimary = "",
             placeSoundSecondary = "";
     //Passengers
@@ -127,6 +134,7 @@ public class DriveableType extends PaintableType {
      */
     public int numPassengerGunners = 0;
 
+    @SyncExclude
     public float vehicleGunModelScale = 1f;
 
     public class ShootParticle {
@@ -141,6 +149,7 @@ public class DriveableType extends PaintableType {
         String name;
     }
 
+    @SyncExclude
     public ArrayList<ShootParticle> shootParticlesPrimary = new ArrayList<ShootParticle>();
     public ArrayList<ShootParticle> shootParticlesSecondary = new ArrayList<ShootParticle>();
 
@@ -168,6 +177,7 @@ public class DriveableType extends PaintableType {
     /**
      * A list of ambient particle emitters on this vehicle
      */
+    @SyncExclude
     public ArrayList<ParticleEmitter> emitters = new ArrayList<ParticleEmitter>();
 
     //Movement variables
@@ -238,21 +248,33 @@ public class DriveableType extends PaintableType {
     /**
      * Track animation frames
      */
+    @SyncExclude
     public int animFrames = 2;
 
     /**
      * Sounds
      */
+    @SyncExclude
     public int startSoundRange = 50;
+    @SyncExclude
     public String startSound = "";
+    @SyncExclude
     public int startSoundLength;
+    @SyncExclude
     public int engineSoundRange = 50;
+    @SyncExclude
     public String engineSound = "";
+    @SyncExclude
     public int engineSoundLength;
+    @SyncExclude
     public int backSoundRange = 50;
+    @SyncExclude
     public String idleSound = "";
+    @SyncExclude
     public int idleSoundLength = 50;
+    @SyncExclude
     public String backSound = "";
+    @SyncExclude
     public int backSoundLength;
 
     public boolean collisionDamageEnable = false;
@@ -269,15 +291,20 @@ public class DriveableType extends PaintableType {
     public boolean rangingGun = false;
 
     public boolean isExplosionWhenDestroyed = false;
-
+    @SyncExclude
     public String lockedOnSound = "";
+    @SyncExclude
     public int soundTime = 0;
 
     public int canLockOnAngle = 10;
+    @SyncExclude
     public int lockOnSoundTime = 60;
+    @SyncExclude
     public String lockOnSound = "";
     public int maxRangeLockOn = 500;
+    @SyncExclude
     public int lockedOnSoundRange = 5;
+    @SyncExclude
     public String lockingOnSound = "";
 
     public boolean lockOnToPlanes = false, lockOnToVehicles = false, lockOnToMechas = false, lockOnToPlayers = false, lockOnToLivings = false;
@@ -285,6 +312,7 @@ public class DriveableType extends PaintableType {
     //flares
     public boolean hasFlare = false;
     public int flareDelay = 20 * 10;
+    @SyncExclude
     public String flareSound = "";
     public int timeFlareUsing = 1;
 
@@ -319,7 +347,8 @@ public class DriveableType extends PaintableType {
      * activator boolean for IT-1 reloads
      */
     public boolean IT1 = false;
-
+    
+    @SyncExclude
     public static ArrayList<DriveableType> types = new ArrayList<DriveableType>();
 
     public ArrayList<CollisionShapeBox> collisionBox = new ArrayList<CollisionShapeBox>();

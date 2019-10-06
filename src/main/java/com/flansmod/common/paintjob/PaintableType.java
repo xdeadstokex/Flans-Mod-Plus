@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -14,12 +15,16 @@ public abstract class PaintableType extends InfoType
 {
 	//Paintjobs
 	/** The list of all available paintjobs for this gun */
+	@SyncExclude
 	public ArrayList<Paintjob> paintjobs = new ArrayList<Paintjob>();
 	/** The default paintjob for this gun. This is created automatically in the load process from existing info */
+	@SyncExclude
 	public Paintjob defaultPaintjob;	
 	/** Assigns IDs to paintjobs */
+	@SyncExclude
 	private int nextPaintjobID = 1;
 	/** Add a friendly paintjob name */
+	@SyncExclude
 	private String paintjobName;
 	
 	public PaintableType(TypeFile file)

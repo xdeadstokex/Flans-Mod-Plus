@@ -7,6 +7,7 @@ import net.minecraft.client.model.ModelBase;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -19,8 +20,10 @@ public abstract class ShootableType extends InfoType
 	@SideOnly(Side.CLIENT)
 	public ModelBase model;
 	/** Whether trail particles are given off */
+	@SideOnly(Side.CLIENT)
 	public boolean trailParticles = false;
 	/** Trail particles given off by this while being thrown */
+	@SideOnly(Side.CLIENT)
 	public String trailParticleType = "smoke";
 
 	//Item Stuff
@@ -77,6 +80,7 @@ public abstract class ShootableType extends InfoType
 	/** The name of the item to drop upon detonating */
 	public String dropItemOnDetonate = null;
 	/** Sound to play upon detonation */
+	@SyncExclude
 	public String detonateSound = "";
 	
 	public boolean hasSubmunitions = false;
@@ -95,6 +99,7 @@ public abstract class ShootableType extends InfoType
 	public int debrisParticleCount = 0;
 
 	/** The static list of all shootable types */
+	@SyncExclude
 	public static HashMap<String, ShootableType> shootables = new HashMap<String, ShootableType>();
 
 	public ShootableType(TypeFile file)

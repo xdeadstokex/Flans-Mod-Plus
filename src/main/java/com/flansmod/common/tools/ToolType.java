@@ -32,6 +32,7 @@ public class ToolType extends InfoType
 	/** If true, the tool will destroy itself when finished. Disable this for rechargeable tools */
 	public boolean destroyOnEmpty = true;
 	/** The items required to be added (shapelessly) to recharge the tool */
+	@SideOnly(Side.CLIENT)
 	public ArrayList<ItemStack> rechargeRecipe = new ArrayList<ItemStack>();
 	/** Not yet implemented. For making tools chargeable with IC2 EU */
 	public int EUPerCharge = 0;

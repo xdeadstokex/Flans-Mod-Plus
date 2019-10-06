@@ -17,13 +17,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 public class GunBoxType extends InfoType
 {
 	public BlockGunBox block;
-	
+	@SideOnly(Side.CLIENT)	
 	public String topTexturePath;
+	@SideOnly(Side.CLIENT)
 	public String sideTexturePath;
+	@SideOnly(Side.CLIENT)
 	public String bottomTexturePath;
 	@SideOnly(Side.CLIENT)
 	public IIcon top;
@@ -38,15 +41,23 @@ public class GunBoxType extends InfoType
 	public GunPage currentPage;
 
 	/** Custom GUI variables. Use an unsigned hex code for colors.*/
+	@SideOnly(Side.CLIENT)
 	public String guiTexturePath;
+	@SideOnly(Side.CLIENT)
 	public String gunBoxTextColor = "404040";
+	@SideOnly(Side.CLIENT)
 	public String itemListTextColor = "404040";
+	@SideOnly(Side.CLIENT)
 	public String itemTextColor= "404040";
+	@SideOnly(Side.CLIENT)
 	public String pageTextColor = "FFFFFF";
+	@SideOnly(Side.CLIENT)
 	public String buttonTextColor = "FFFFFF";
+	@SideOnly(Side.CLIENT)
 	public String buttonTextHoverColor = "FFFFA0";
 
 	private static int lastIconIndex = 2;
+	@SyncExclude
 	public static HashMap<String, GunBoxType> gunBoxMap = new HashMap<String, GunBoxType>();
 	
 	public GunBoxType(TypeFile file)

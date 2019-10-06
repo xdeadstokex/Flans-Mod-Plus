@@ -21,6 +21,7 @@ public class ArmourType extends InfoType
 	/** The amount of damage to absorb. From 0 to 1. Stacks additively between armour pieces */
 	public double defence;
 	/** The name for the armour texture. Texture path/name is assets/flansmod/armor/<armourTextureName>_1.png or _2 for legs */
+	@SideOnly(Side.CLIENT)
 	public String armourTextureName;
 	/** Modifiers for various player stats */
 	public float moveSpeedModifier = 1F, knockbackModifier = 0.2F, jumpModifier = 1F;

@@ -8,6 +8,7 @@ import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.vector.Vector3i;
+import com.flansmod.common.sync.SyncExclude;
 
 public class VehicleType extends DriveableType
 {
@@ -30,18 +31,30 @@ public class VehicleType extends DriveableType
     
     
 	//Door animations
+	@SyncExclude
 	public Vector3f doorPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRotRate = new Vector3f(0,0,0);
 	
+	@SyncExclude
 	public Vector3f door2Pos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f door2Pos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f door2Rot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f door2Rot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f door2Rate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f door2RotRate = new Vector3f(0,0,0);
 	
 	public boolean shootWithOpenDoor = false;
@@ -49,11 +62,14 @@ public class VehicleType extends DriveableType
 	public int trackLinkFix = 5;
 	public boolean flipLinkFix = false;
 	
+	@SyncExclude
 	public String driftSound = "";
+	@SyncExclude
 	public int driftSoundLength;
 	
+	@SyncExclude
 	public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
-
+	@SyncExclude
 	public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
 
     public VehicleType(TypeFile file)

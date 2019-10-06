@@ -9,6 +9,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.common.sync.SyncExclude;
 
 public class PlaneType extends DriveableType
 {
@@ -32,43 +33,73 @@ public class PlaneType extends DriveableType
 	
 	
 	//Wing Animations
+	@SyncExclude
 	public Vector3f wingPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingRotRate = new Vector3f(0,0,0);
 	
 	//Wing Wheel Animations
+	@SyncExclude
 	public Vector3f wingWheelPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingWheelPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingWheelRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingWheelRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingWheelRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f wingWheelRotRate = new Vector3f(0,0,0);
 	
 	//Body Wheel Animations
+	@SyncExclude
 	public Vector3f bodyWheelPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f bodyWheelPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f bodyWheelRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f bodyWheelRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f bodyWheelRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f bodyWheelRotRate = new Vector3f(0,0,0);
 	
 	//Tail Wheel Animations
+	@SyncExclude
 	public Vector3f tailWheelPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f tailWheelPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f tailWheelRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f tailWheelRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f tailWheelRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f tailWheelRotRate = new Vector3f(0,0,0);
 	
 	//Door animations
+	@SyncExclude
 	public Vector3f doorPos1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorPos2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRot1 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRot2 = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRate = new Vector3f(0,0,0);
+	@SyncExclude
 	public Vector3f doorRotRate = new Vector3f(0,0,0);
 	
 	/** The positions, parent parts and recipe items of the propellers, used to calculate forces and render the plane correctly */
@@ -90,6 +121,7 @@ public class PlaneType extends DriveableType
     /** Whether the player can access the inventory while in the air */
     public boolean invInflight = true;
 
+	@SyncExclude
 	public static ArrayList<PlaneType> types = new ArrayList<PlaneType>();
 	
     public PlaneType(TypeFile file)
