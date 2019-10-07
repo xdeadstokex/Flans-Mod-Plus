@@ -152,7 +152,7 @@ public class ItemPlane extends Item implements IPaintableItem
             Block block = world.getBlock(i, j, k);
             if(type.placeableOnLand || block instanceof BlockLiquid)
             {
-	            if(!world.isRemote && Sync.checkType(type))
+	            if(!world.isRemote && Sync.checkPlayerType(type, entityplayer))
 	            {
 					DriveableData data = getPlaneData(itemstack, world);
 	            	if(data != null)
@@ -166,7 +166,7 @@ public class ItemPlane extends Item implements IPaintableItem
 
             if(!type.placeableOnLand && type.placeableOnSponge && block instanceof BlockSponge)
             {
-	            if(!world.isRemote && Sync.checkType(type))
+	            if(!world.isRemote && Sync.checkPlayerType(type, entityplayer))
 	            {
 					DriveableData data = getPlaneData(itemstack, world);
 	            	if(data != null)
