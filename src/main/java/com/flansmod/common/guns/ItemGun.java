@@ -45,7 +45,7 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.MathUtils;
-import com.flansmod.sync.Sync;
+import com.flansmod.common.sync.Sync;
 
 import com.google.common.collect.Multimap;
 

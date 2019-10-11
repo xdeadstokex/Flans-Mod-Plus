@@ -14,14 +14,11 @@ public class SyncExclusionStrategy implements ExclusionStrategy {
   
     @Override
     public boolean shouldSkipClass(Class<?> aClass) {
-      FlansMod.log("Class: " + aClass.getName());
       return false;
     }
 
     @Override
     public boolean shouldSkipField(FieldAttributes f) {
-      boolean s = f.getAnnotation(SyncExclude.class) != null || f.getAnnotation(SideOnly.class) != null;
-      if (!s) FlansMod.log("Field: " + f.getName());
-      return s;
+      return f.getAnnotation(SyncExclude.class) != null || f.getAnnotation(SideOnly.class) != null;
     }
 }
