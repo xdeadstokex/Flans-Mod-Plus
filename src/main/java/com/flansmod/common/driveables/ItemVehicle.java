@@ -148,7 +148,7 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
             Block block = world.getBlock(i, j, k);
             if(type.placeableOnLand || block instanceof BlockLiquid)
             {
-	            if(!world.isRemote && Sync.checkPlayerType(type, entityplayer))
+	            if(!world.isRemote)
 	            {
 					world.spawnEntityInWorld(new EntityVehicle(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, getData(itemstack, world)));
 	            }
@@ -159,7 +159,7 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
             }
             if(!type.placeableOnLand && type.placeableOnSponge && block instanceof BlockSponge)
             {
-            	if(!world.isRemote && Sync.checkPlayerType(type, entityplayer))
+            	if(!world.isRemote)
 	            {
 					world.spawnEntityInWorld(new EntityVehicle(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, getData(itemstack, world)));
 	            }

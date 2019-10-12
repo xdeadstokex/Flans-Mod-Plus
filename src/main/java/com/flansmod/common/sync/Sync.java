@@ -34,11 +34,9 @@ import net.minecraft.entity.player.EntityPlayer;
 public class Sync {
 	private static Gson gsonWriter = new GsonBuilder().setExclusionStrategies(new SyncExclusionStrategy()).create();
 
-	private static HashMap<String, Boolean> cachedTypes = new HashMap<String, Boolean>();
-	public static HashMap<String, String> packetMap = new HashMap<String, String>();
+	public static HashMap<String, String> typeHashes = new HashMap<String, String>();
 
-	public static String getHash(Object type) {
-		String str = gsonWriter.toJson(type);
+	public static String getStringHash(String str) {
 		String hash = "";
 		try {
 			MessageDigest digester = MessageDigest.getInstance("SHA-512");
@@ -51,54 +49,21 @@ public class Sync {
 		return hash;
 	}
 
-	public static boolean checkType(InfoType type) {
-		String clientHash = getHash(type);
-		String typeName = "";
-		if (GunType.class.isInstance(type)) { typeName = "Gun"; }
-		else if (AAGunType.class.isInstance(type)) { typeName = "AAGun"; }
-		else if (AttachmentType.class.isInstance(type)) { typeName = "Attachment"; }
-		else if (GrenadeType.class.isInstance(type)) { typeName = "Grenade"; }
-		else if (MechaItemType.class.isInstance(type)) { typeName = "MechaItem"; }
-		else if (MechaType.class.isInstance(type)) { typeName = "Mecha"; }
-		else if (VehicleType.class.isInstance(type)) { typeName = "Vehicle"; }
-		else if (PlaneType.class.isInstance(type)) { typeName = "Plane"; }
-		else if (ArmourType.class.isInstance(type)) { typeName = "Armour"; }
-		else if (ToolType.class.isInstance(type)) { typeName = "Tool"; }
-		else { return false; }
-		FlansMod.getPacketHandler().sendToServer(new PacketHashSend(clientHash, type.shortName, typeName));
-		// while (!packetMap.containsKey(type.shortName)) {
-			// Enjoy the waiting room music....
-		// }
-		// String serverHash = packetMap.get(type.shortName);
-		// FlansMod.log("Client received server packet, server : client " + serverHash + " " + clientHash);
-		// packetMap.remove(type.shortName);
-		// return (clientHash.equals(serverHash));
-		return false;
+	public static String getHash(Object type) {
+		String str = gsonWriter.toJson(type);
+		return getStringHash(str);
 	}
 
-	public static boolean checkPlayerType(InfoType type, EntityPlayer player) {
-		if (player.getEntityWorld().isRemote) {
-			return true;
+	public static void checkAllOfType(ArrayList<InfoType> types, String typeName) {
+		typeHashes.put(typeName, getHash(types));
+	}
+
+	public static String getUnifiedHash() {
+		String str = "";
+		for (String hash : typeHashes.values()) {
+			str += hash;
 		}
 
-		// Player doesn't already exist, create an entry.
-		if (!cachedTypes.containsKey(type.shortName)) {
-			if (checkType(type)) {
-				cachedTypes.put(type.shortName, true);
-				return true;
-			} else {
-				cachedTypes.put(type.shortName, false);
-				// Send message to player, ez win
-				return false;
-			}
-		} else {
-			if (cachedTypes.get(type.shortName)) {
-				// Has been verified by server and cached
-				return true;
-			} else {
-				// Has been checked, did not match. return false, we got a heck on our hands here
-				return false;
-			}
-		}
+		return getStringHash(str);
 	}
 }
