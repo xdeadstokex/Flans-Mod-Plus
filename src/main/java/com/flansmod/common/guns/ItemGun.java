@@ -45,7 +45,6 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.MathUtils;
-import com.flansmod.common.sync.Sync;
 
 import com.google.common.collect.Multimap;
 
@@ -1329,10 +1328,7 @@ public class ItemGun extends Item implements IPaintableItem {
                                     return itemstack;
                             }
                             if (!world.isRemote) {
-                                // Could use and, need checkType to run on client tho.
-                                if (Sync.checkPlayerType(type, entityplayer)) {
-                                    world.spawnEntityInWorld(new EntityMG(world, i, j + 1, k, playerDir, type));
-                                }
+                                world.spawnEntityInWorld(new EntityMG(world, i, j + 1, k, playerDir, type));
                             }
                             if (!entityplayer.capabilities.isCreativeMode)
                                 itemstack.stackSize = 0;

@@ -28,6 +28,8 @@ import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.Sync;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -202,6 +204,8 @@ public class FlansMod {
 
         //Read content packs
         readContentPacks(event);
+        generateHashes();
+        log(Sync.getUnifiedHash());
 
         if (gunItems.size() >= 1) {
             MinecraftForge.EVENT_BUS.register(gunItems.get(0));
@@ -530,6 +534,23 @@ public class FlansMod {
             log("Loaded " + type.name() + ".");
         }
         Team.spectators = spectators;
+    }
+
+    private void generateHashes() {
+        Sync.checkAllOfType((ArrayList)BulletType.bullets, "Bullet");
+        Sync.checkAllOfType(AttachmentType.attachments, "Attachment");
+        Sync.checkAllOfType(GunType.gunList, "Gun");
+        Sync.checkAllOfType(GrenadeType.grenades, "Grenade");
+        Sync.checkAllOfType((ArrayList)PartType.parts, "Part");
+        Sync.checkAllOfType(PlaneType.types, "Plane");
+        Sync.checkAllOfType(MechaType.types, "Mehca");
+        Sync.checkAllOfType(VehicleType.types, "Vehicle");
+        Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
+        Sync.checkAllOfType(MechaItemType.types, "MechaItem");
+        Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
+        Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
+        Sync.checkAllOfType(ArmourType.armours, "Armour");
+        Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
     }
 
     public static PacketHandler getPacketHandler() {

@@ -54,7 +54,7 @@ public class Sync {
 		return getStringHash(str);
 	}
 
-	public static void checkAllOfType(ArrayList<InfoType> types, String typeName) {
+	public static void checkAllOfType(ArrayList<?> types, String typeName) {
 		typeHashes.put(typeName, getHash(types));
 	}
 
