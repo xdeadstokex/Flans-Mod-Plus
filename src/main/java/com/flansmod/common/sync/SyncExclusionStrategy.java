@@ -14,11 +14,11 @@ public class SyncExclusionStrategy implements ExclusionStrategy {
   
     @Override
     public boolean shouldSkipClass(Class<?> aClass) {
-      return false;
+		return false;
     }
 
     @Override
     public boolean shouldSkipField(FieldAttributes f) {
-      return f.getAnnotation(SyncExclude.class) != null || f.getAnnotation(SideOnly.class) != null;
+		return f.getAnnotation(SyncExclude.class) != null || f.getAnnotation(SideOnly.class) != null;
     }
 }

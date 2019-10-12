@@ -548,9 +548,9 @@ public class FlansMod {
         Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
         Sync.checkAllOfType(MechaItemType.types, "MechaItem");
         Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
-        Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
+        // Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
         Sync.checkAllOfType(ArmourType.armours, "Armour");
-        Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
+        // Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
     }
 
     public static PacketHandler getPacketHandler() {
