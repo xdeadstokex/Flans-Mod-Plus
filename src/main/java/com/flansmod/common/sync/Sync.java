@@ -35,6 +35,7 @@ public class Sync {
 	private static Gson gsonWriter = new GsonBuilder().setExclusionStrategies(new SyncExclusionStrategy()).create();
 
 	private static HashMap<String, Boolean> cachedTypes = new HashMap<String, Boolean>();
+	public static HashMap<String, String> packetMap = new HashMap<String, String>();
 
 	public static String getHash(Object type) {
 		String str = gsonWriter.toJson(type);
@@ -65,9 +66,14 @@ public class Sync {
 		else if (ToolType.class.isInstance(type)) { typeName = "Tool"; }
 		else { return false; }
 		FlansMod.getPacketHandler().sendToServer(new PacketHashSend(clientHash, type.shortName, typeName));
-		// Somehow.. wait for a packet?
-		String serverHash = "";
-		return (clientHash == serverHash);
+		// while (!packetMap.containsKey(type.shortName)) {
+			// Enjoy the waiting room music....
+		// }
+		// String serverHash = packetMap.get(type.shortName);
+		// FlansMod.log("Client received server packet, server : client " + serverHash + " " + clientHash);
+		// packetMap.remove(type.shortName);
+		// return (clientHash.equals(serverHash));
+		return false;
 	}
 
 	public static boolean checkPlayerType(InfoType type, EntityPlayer player) {

@@ -1,5 +1,7 @@
 package com.flansmod.common.network;
 
+import java.util.HashMap;
+
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.eventhandlers.ServerTickEvent;
@@ -105,6 +107,7 @@ public class PacketHashSend extends PacketBase
 	@Override
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
-        FlansMod.log("Recieved packet %s %s %s", hash, shortname, type);
+		FlansMod.log("Recieved packet %s %s %s", hash, shortname, type);
+		Sync.packetMap.put(shortname, hash);
 	}
 }
