@@ -17,13 +17,13 @@ public abstract class ShootableType extends InfoType
 {
 	//Aesthetics
 	/** The model to render for this grenade in the world */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelBase model;
 	/** Whether trail particles are given off */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public boolean trailParticles = false;
 	/** Trail particles given off by this while being thrown */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String trailParticleType = "smoke";
 
 	//Item Stuff

@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 
 public class PacketHashSend extends PacketBase 
 {
@@ -46,5 +47,9 @@ public class PacketHashSend extends PacketBase
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
 		FlansMod.log("Recieved packet %s", hash);
+		if (!hash.equals(Sync.getUnifiedHash())) {
+			clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch detected."));
+		}
+		FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));
 	}
 }

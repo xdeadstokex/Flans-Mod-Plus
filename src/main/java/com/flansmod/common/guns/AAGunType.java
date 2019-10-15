@@ -33,7 +33,7 @@ public class AAGunType extends InfoType
 	public String shootSound;
 	@SyncExclude
 	public String reloadSound;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelAAGun model;
 	public float topViewLimit = 75F;
 	public float bottomViewLimit = 0F;

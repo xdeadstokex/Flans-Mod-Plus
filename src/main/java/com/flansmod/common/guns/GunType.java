@@ -230,10 +230,10 @@ public class GunType extends PaintableType implements IScope
 	/** If true, then the bullet does not shoot when right clicked, but must instead be placed on the ground */
 	public boolean deployable = false;
 	/** The deployable model */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelMG deployableModel;
 	/** The deployable model's texture*/
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String deployableTexture;
 	/** Various deployable settings controlling the player view limits and standing position */
 	public float standBackDist = 1.5F, topViewLimit = -60F, bottomViewLimit = 30F, sideViewLimit = 45F, pivotHeight = 0.375F;
@@ -253,22 +253,22 @@ public class GunType extends PaintableType implements IScope
 
 	//Model variables
 	/** For guns with 3D models */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelGun model;
 	/** For making detailed models and scaling down */
 	@SyncExclude
 	public float modelScale = 1F;
 	/** For adding a bullet casing model to render */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelCasing casingModel;
 	/** For adding a muzzle flash model to render */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelFlash flashModel;
 	/** Set a bullet casing texture */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String casingTexture;
 	/** Set a muzzle flash texture */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String flashTexture;
 	/** Set a hit marker texture */
 	public String hitTexture;

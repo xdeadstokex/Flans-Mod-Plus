@@ -6,6 +6,7 @@ import com.flansmod.client.model.ModelCustomArmour;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -14,6 +15,7 @@ import net.minecraft.client.model.ModelBase;
 
 public class ArmourType extends InfoType
 {
+	@SyncExclude
 	public static ArrayList<ArmourType> armours = new ArrayList<ArmourType>();
 
 	/** 0 = Helmet, 1 = Chestplate, 2 = Legs, 3 = Shoes */
@@ -21,7 +23,7 @@ public class ArmourType extends InfoType
 	/** The amount of damage to absorb. From 0 to 1. Stacks additively between armour pieces */
 	public double defence;
 	/** The name for the armour texture. Texture path/name is assets/flansmod/armor/<armourTextureName>_1.png or _2 for legs */
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String armourTextureName;
 	/** Modifiers for various player stats */
 	public float moveSpeedModifier = 1F, knockbackModifier = 0.2F, jumpModifier = 1F;
@@ -46,7 +48,7 @@ public class ArmourType extends InfoType
 	/** The durability for the piece of armor */
 	public int durability = 0;
 
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public ModelCustomArmour model;
 
 	public ArmourType(TypeFile file)

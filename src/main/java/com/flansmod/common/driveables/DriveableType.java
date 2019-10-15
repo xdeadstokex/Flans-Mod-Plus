@@ -33,7 +33,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class DriveableType extends PaintableType {
     /** The plane model */
-    @SideOnly(value = Side.CLIENT) public ModelDriveable model;
+    @SyncExclude
+    public ModelDriveable model;
 
     //Health and recipe
     /**

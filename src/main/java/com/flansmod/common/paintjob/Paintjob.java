@@ -13,7 +13,7 @@ public class Paintjob
 	public String displayName;
 	@SyncExclude
 	public String iconName;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String textureName;
 	@SyncExclude
 	public ItemStack[] dyesNeeded;

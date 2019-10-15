@@ -29,6 +29,8 @@ import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.sync.Sync;
+import com.flansmod.common.sync.SyncEventHandler;
+
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -286,6 +288,7 @@ public class FlansMod {
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
         new ServerTickEvent();
+
         log("Loading complete.");
     }
 
@@ -298,6 +301,7 @@ public class FlansMod {
 
         hooks.hook();
 
+        FMLCommonHandler.instance().bus().register(new SyncEventHandler());
 		/* TODO : ICBM
 		isICBMSentryLoaded = Loader.instance().isModLoaded("ICBM|Sentry");
 
@@ -549,7 +553,7 @@ public class FlansMod {
         Sync.checkAllOfType(MechaItemType.types, "MechaItem");
         Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
         // Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
-        Sync.checkAllOfType(ArmourType.armours, "Armour");
+        // Sync.checkAllOfType(ArmourType.armours, "Armour");
         // Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
     }
 

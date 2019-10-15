@@ -22,17 +22,17 @@ import com.flansmod.common.sync.SyncExclude;
 public class GunBoxType extends InfoType
 {
 	public BlockGunBox block;
-	@SideOnly(Side.CLIENT)	
+	@SyncExclude
 	public String topTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String sideTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String bottomTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon top;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon side;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon bottom;
 	public int nextGun = -1;
 
@@ -41,19 +41,19 @@ public class GunBoxType extends InfoType
 	public GunPage currentPage;
 
 	/** Custom GUI variables. Use an unsigned hex code for colors.*/
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String guiTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String gunBoxTextColor = "404040";
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String itemListTextColor = "404040";
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String itemTextColor= "404040";
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String pageTextColor = "FFFFFF";
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String buttonTextColor = "FFFFFF";
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String buttonTextHoverColor = "FFFFA0";
 
 	private static int lastIconIndex = 2;

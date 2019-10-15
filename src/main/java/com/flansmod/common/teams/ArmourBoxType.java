@@ -18,21 +18,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ArmourBoxType extends InfoType 
 {
 	//Textures
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String topTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String sideTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String bottomTexturePath;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon top;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon side;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public IIcon bottom;
 	
+	@SyncExclude
 	public BlockArmourBox block;
 
+	@SyncExclude
 	public ArrayList<ArmourBoxEntry> pages = new ArrayList<ArmourBoxEntry>();
 	
 	/** The static box map. Indexed by shortName for server ~ client syncing */
@@ -117,7 +119,9 @@ public class ArmourBoxType extends InfoType
 	{
 		public String shortName;
 		public String name = "";
+		@SyncExclude
 		public ArmourType[] armours;
+		@SyncExclude
 		public ArrayList<ItemStack>[] requiredStacks;
 		
 		public ArmourBoxEntry(String s, String s1)

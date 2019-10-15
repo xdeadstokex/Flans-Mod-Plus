@@ -21,13 +21,14 @@ import com.flansmod.common.sync.SyncExclude;
 public abstract class InfoType
 {
 	/** infoTypes */
+	@SyncExclude
 	public static List<InfoType> infoTypes = new ArrayList<InfoType>();
 
 	public String contentPack;
 	@SyncExclude
 	public Item item;
 	public int colour = 0xffffff;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String iconPath;
 	@SyncExclude
 	public Object[] recipe;
@@ -41,12 +42,12 @@ public abstract class InfoType
 	public String smeltableFrom = null;
 	public String name;
 	public String shortName;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String texture;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public String modelString;
 	public String description;
-	@SideOnly(Side.CLIENT)
+	@SyncExclude
 	public float modelScale = 1F;
 	/** If this is set to false, then this item cannot be dropped */
 	public boolean canDrop = true;
