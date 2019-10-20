@@ -207,8 +207,6 @@ public class FlansMod {
 
         //Read content packs
         readContentPacks(event);
-        generateHashes();
-        log(Sync.getUnifiedHash());
 
         if (gunItems.size() >= 1) {
             MinecraftForge.EVENT_BUS.register(gunItems.get(0));
@@ -479,6 +477,7 @@ public class FlansMod {
                 try {
                     InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
                     infoType.read(typeFile);
+                    Sync.addHash(typeFile.lines.toString());
                     switch (type) {
                         case bullet:
                             bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
@@ -538,25 +537,9 @@ public class FlansMod {
             }
             log("Loaded " + type.name() + ".");
         }
+        Sync.getUnifiedHash();
+        log(Sync.cachedHash);
         Team.spectators = spectators;
-    }
-
-    private void generateHashes() {
-        // Sync.checkAllOfType((ArrayList)BulletType.bullets, "Bullet");
-        // Sync.checkAllOfType(AttachmentType.attachments, "Attachment");
-        // Sync.checkAllOfType(GunType.gunList, "Gun");
-        // Sync.checkAllOfType(GrenadeType.grenades, "Grenade");
-        // Sync.checkAllOfType((ArrayList)PartType.parts, "Part");
-        // Sync.checkAllOfType(PlaneType.types, "Plane");
-        // Sync.checkAllOfType(MechaType.types, "Mehca");
-        Sync.checkAllOfType(VehicleType.types, "Vehicle");
-        // Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
-        // Sync.checkAllOfType(MechaItemType.types, "MechaItem");
-        // Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
-
-        // Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
-        // Sync.checkAllOfType(ArmourType.armours, "Armour");
-        // Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
     }
 
     public static PacketHandler getPacketHandler() {

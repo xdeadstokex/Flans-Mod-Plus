@@ -17,7 +17,6 @@ import net.minecraft.server.MinecraftServer;
 public class SyncEventHandler {
     @SubscribeEvent
     public void playerJoined(PlayerLoggedInEvent event) {
-        FlansMod.log("Heck");
         MinecraftServer mc = MinecraftServer.getServer();
         if (mc.isDedicatedServer() && event.player instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP)event.player;

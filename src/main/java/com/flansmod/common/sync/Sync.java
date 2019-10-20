@@ -1,8 +1,5 @@
 package com.flansmod.common.sync;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;
@@ -13,20 +10,6 @@ import java.util.ArrayList;
 import java.io.PrintWriter;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.InfoType;
-// Flans types
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.AAGunType;
-import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.GrenadeType;
-// import com.flansmod.common.guns.boxes.GunBoxType;
-import com.flansmod.common.driveables.mechas.MechaItemType;
-import com.flansmod.common.driveables.mechas.MechaType;
-import com.flansmod.common.driveables.VehicleType;
-import com.flansmod.common.driveables.PlaneType;
-import com.flansmod.common.teams.ArmourType;
-// import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.tools.ToolType;
 
 import com.flansmod.common.network.PacketHashSend;
 
@@ -34,9 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 
 public class Sync {
-	private static Gson gsonWriter = new GsonBuilder().setExclusionStrategies(new SyncExclusionStrategy()).create();
-
-	public static HashMap<String, String> typeHashes = new HashMap<String, String>();
+	public static ArrayList<String> hashes = new ArrayList<String>();
 
 	public static String cachedHash = "";
 
@@ -53,29 +34,16 @@ public class Sync {
 		return hash;
 	}
 
-	public static String getHash(Object type) {
-		String str = gsonWriter.toJson(type);
-
-		return getStringHash(str);
-	}
-
-	public static void checkAllOfType(ArrayList<?> types, String typeName) {
-		typeHashes.put(typeName, getHash(types));
-	}
-
 	public static String getUnifiedHash() {
 		String str = "";
-		for (String hash : typeHashes.keySet()) {
-			FlansMod.log("Type %s %s", hash, typeHashes.get(hash));
-			str += typeHashes.get(hash);
+		for (String hash : hashes) {
+			str += hash;
 		}
 		cachedHash = getStringHash(str);
 		return cachedHash;
 	}
 
-	public static void demoArrayList(ArrayList<VehicleType> arr) {
-		for (VehicleType type : arr) {
-			FlansMod.log("%s | %s", type.shortName, getHash(type));
-		}
+	public static void addHash(String str) {
+		hashes.add(getStringHash(str));
 	}
 }

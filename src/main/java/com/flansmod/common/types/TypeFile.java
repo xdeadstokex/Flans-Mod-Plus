@@ -2,6 +2,7 @@ package com.flansmod.common.types;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.StringBuilder;
 
 public class TypeFile 
 {
@@ -42,5 +43,14 @@ public class TypeFile
 		if(readerPosition == lines.size())
 			return null;
 		return lines.get(readerPosition++);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (String s : lines) {
+			sb.append(s);
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 }
