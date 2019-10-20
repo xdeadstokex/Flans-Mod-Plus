@@ -112,6 +112,7 @@ public class FlansMod {
     public static final float soundRange = 50F;
     public static final float driveableUpdateRange = 400F;
     public static final int numPlayerSnapshots = 20;
+    public static int armourEnchantability = 0;
 
 
     public static int armourSpawnRate = 20;
@@ -541,17 +542,19 @@ public class FlansMod {
     }
 
     private void generateHashes() {
-        Sync.checkAllOfType((ArrayList)BulletType.bullets, "Bullet");
-        Sync.checkAllOfType(AttachmentType.attachments, "Attachment");
-        Sync.checkAllOfType(GunType.gunList, "Gun");
-        Sync.checkAllOfType(GrenadeType.grenades, "Grenade");
-        Sync.checkAllOfType((ArrayList)PartType.parts, "Part");
-        Sync.checkAllOfType(PlaneType.types, "Plane");
-        Sync.checkAllOfType(MechaType.types, "Mehca");
-        Sync.checkAllOfType(VehicleType.types, "Vehicle");
-        Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
-        Sync.checkAllOfType(MechaItemType.types, "MechaItem");
-        Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
+        // Sync.checkAllOfType((ArrayList)BulletType.bullets, "Bullet");
+        // Sync.checkAllOfType(AttachmentType.attachments, "Attachment");
+        // Sync.checkAllOfType(GunType.gunList, "Gun");
+        // Sync.checkAllOfType(GrenadeType.grenades, "Grenade");
+        // Sync.checkAllOfType((ArrayList)PartType.parts, "Part");
+        // Sync.checkAllOfType(PlaneType.types, "Plane");
+        // Sync.checkAllOfType(MechaType.types, "Mehca");
+        // Sync.checkAllOfType(VehicleType.types, "Vehicle");
+        Sync.demoArrayList(VehicleType.types);
+        // Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
+        // Sync.checkAllOfType(MechaItemType.types, "MechaItem");
+        // Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");
+
         // Sync.checkAllOfType(new ArrayList<GunBoxType>(GunBoxType.gunBoxMap.values()), "GunBox");
         // Sync.checkAllOfType(ArmourType.armours, "Armour");
         // Sync.checkAllOfType(new ArrayList<ArmourBoxType>(ArmourBoxType.boxes.values()), "ArmourBox");
@@ -585,6 +588,7 @@ public class FlansMod {
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
         armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+        armourEnchantability = configFile.getInt("ArmourEnchantability", "Gameplay Settings (synced)", 0, 0, 25, "The quality of enchantments recieved for the same level of XP 0=UnEnchantable 25=Gold armor");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -620,6 +624,7 @@ public class FlansMod {
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
         armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+        armourEnchantability = configFile.getInt("ArmourEnchantability", "Gameplay Settings (synced)", 0, 0, 25, "The quality of enchantments recieved for the same level of XP 0=UnEnchantable 25=Gold armor");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

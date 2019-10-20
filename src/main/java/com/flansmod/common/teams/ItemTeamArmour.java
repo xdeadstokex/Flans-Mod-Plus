@@ -18,6 +18,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.common.util.EnumHelper;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.IFlanItem;
@@ -32,10 +33,11 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 {
 	public ArmourType type;
 	protected static final UUID[] uuid = new UUID[] { UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID() };
+	public static ArmorMaterial armorMat = EnumHelper.addArmorMaterial("FLANSARMOR", 10, new int[]{1,3,2,1}, FlansMod.armourEnchantability);
 
 	public ItemTeamArmour(ArmourType t)
 	{
-		super(ItemArmor.ArmorMaterial.CLOTH, 0, t.type);
+		super(armorMat, 0, t.type);
 		type = t;
 		type.item = this;
 		setCreativeTab(FlansMod.tabFlanTeams);
