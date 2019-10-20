@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import java.io.PrintWriter;
+
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 // Flans types
@@ -36,6 +38,8 @@ public class Sync {
 
 	public static HashMap<String, String> typeHashes = new HashMap<String, String>();
 
+	public static String cachedHash = "";
+
 	public static String getStringHash(String str) {
 		String hash = "";
 		try {
@@ -51,6 +55,7 @@ public class Sync {
 
 	public static String getHash(Object type) {
 		String str = gsonWriter.toJson(type);
+
 		return getStringHash(str);
 	}
 
@@ -60,10 +65,17 @@ public class Sync {
 
 	public static String getUnifiedHash() {
 		String str = "";
-		for (String hash : typeHashes.values()) {
-			str += hash;
+		for (String hash : typeHashes.keySet()) {
+			FlansMod.log("Type %s %s", hash, typeHashes.get(hash));
+			str += typeHashes.get(hash);
 		}
+		cachedHash = getStringHash(str);
+		return cachedHash;
+	}
 
-		return getStringHash(str);
+	public static void demoArrayList(ArrayList<VehicleType> arr) {
+		for (VehicleType type : arr) {
+			FlansMod.log("%s | %s", type.shortName, getHash(type));
+		}
 	}
 }

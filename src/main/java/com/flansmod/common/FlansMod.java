@@ -549,8 +549,7 @@ public class FlansMod {
         // Sync.checkAllOfType((ArrayList)PartType.parts, "Part");
         // Sync.checkAllOfType(PlaneType.types, "Plane");
         // Sync.checkAllOfType(MechaType.types, "Mehca");
-        // Sync.checkAllOfType(VehicleType.types, "Vehicle");
-        Sync.demoArrayList(VehicleType.types);
+        Sync.checkAllOfType(VehicleType.types, "Vehicle");
         // Sync.checkAllOfType((ArrayList)AAGunType.infoTypes, "AAGun");
         // Sync.checkAllOfType(MechaItemType.types, "MechaItem");
         // Sync.checkAllOfType(new ArrayList<ToolType>(ToolType.tools.values()), "Tool");

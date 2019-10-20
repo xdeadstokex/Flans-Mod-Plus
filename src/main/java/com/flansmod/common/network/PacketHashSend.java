@@ -47,7 +47,7 @@ public class PacketHashSend extends PacketBase
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
 		FlansMod.log("Recieved packet %s", hash);
-		if (!hash.equals(Sync.getUnifiedHash())) {
+		if (!hash.equals(Sync.cachedHash)) {
 			clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch detected."));
 		}
 		FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));
