@@ -13,7 +13,6 @@ import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.sync.SyncExclude;
 
 public class MechaType extends DriveableType 
 {
@@ -75,20 +74,15 @@ public class MechaType extends DriveableType
 	public float rightHandModifierY = 0;
 	public float rightHandModifierZ = 0;
 
-	@SyncExclude
 	public ArrayList<LegNode> legNodes = new ArrayList<LegNode>();
-	
-	@SyncExclude
+		
 	public float legAnimSpeed = 0;
 
-	@SyncExclude
-	public String stompSound = "";
-	@SyncExclude
+	public String stompSound = "";	
 	public int stompSoundLength = 0;
 	public float stompRangeLower = 0F;
 	public float stompRangeUpper = 0F;
 
-	@SyncExclude
 	public static ArrayList<MechaType> types = new ArrayList<MechaType>();
 
 	public MechaType(TypeFile file)

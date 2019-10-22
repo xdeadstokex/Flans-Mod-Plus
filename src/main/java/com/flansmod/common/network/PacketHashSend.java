@@ -40,7 +40,10 @@ public class PacketHashSend extends PacketBase
     @Override    
 	public void handleServerSide(EntityPlayerMP player) 
 	{
-        FlansMod.log("Recieved packet %s", hash);
+		FlansMod.log("Recieved packet %s", hash);
+		if (!hash.equals(Sync.cachedHash)) {
+			player.playerNetServerHandler.kickPlayerFromServer("[Sync] Client-server mismatch.");
+		}
 	}
 
 	@Override

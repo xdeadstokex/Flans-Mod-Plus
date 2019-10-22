@@ -11,11 +11,9 @@ import com.flansmod.client.model.ModelMechaTool;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.sync.SyncExclude;
 
 public class MechaItemType extends InfoType 
 {
-	@SyncExclude
 	public static ArrayList<MechaItemType> types = new ArrayList<MechaItemType>();
 	
 	/** The type of item */
@@ -34,10 +32,8 @@ public class MechaItemType extends InfoType
 	public float speedMultiplier = 1F;
 	/** This allows upgrades to reduce incoming damage */
 	public float damageResistance = 0F;
-	/** This allows a sound to be played upon use (RocketPack only for the moment) */
-	@SyncExclude
+	/** This allows a sound to be played upon use (RocketPack only for the moment) */	
 	public String soundEffect = "";
-	@SyncExclude
 	public String detectSound = "";
 	public float soundTime = 0;
 	public int energyShield = 0;

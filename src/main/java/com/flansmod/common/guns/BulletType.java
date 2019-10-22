@@ -10,7 +10,6 @@ import net.minecraft.potion.PotionEffect;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -19,10 +18,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BulletType extends ShootableType
 {
 	/** The number of flak particles to spawn upon exploding */
-	@SyncExclude
 	public int flak = 0;
 	/** The type of flak particles to spawn */
-	@SyncExclude
 	public String flakParticles = "largesmoke";
 
 	/** If true then this bullet will burn entites it hits */
@@ -43,13 +40,9 @@ public class BulletType extends ShootableType
 	/** Exclusively for driveable usage. Replaces old isBomb and isShell booleans with something more flexible */
 	public EnumWeaponType weaponType = EnumWeaponType.NONE;
 
-	@SyncExclude
 	public String hitSound;
-	@SyncExclude
 	public float hitSoundRange;
-	@SyncExclude
 	public boolean hitSoundEnable = false;
-	@SyncExclude
 	public boolean entityHitSoundEnable = false;
 
 	public boolean hasLight = false;
@@ -72,7 +65,6 @@ public class BulletType extends ShootableType
 	public boolean manualGuidance = false;
 	public int lockOnFuse = 10;
 
-	@SyncExclude
 	public ArrayList<PotionEffect> hitEffects = new ArrayList<PotionEffect>();
 
 	/** Number of bullets to fire per shot if allowNumBulletsByBulletType = true */
@@ -97,13 +89,13 @@ public class BulletType extends ShootableType
 	/** Time to remain after detonation */
 	public int smokeTime = 0;
 	/** Particles given off after detonation */
-	@SyncExclude
+	
 	public String smokeParticleType = "explode";
 	/** The effects to be given to people coming too close */
-	@SyncExclude
+	
 	public ArrayList<PotionEffect> smokeEffects = new ArrayList<PotionEffect>();
 	/** The radius for smoke effects to take place in */
-	@SyncExclude
+	
 	public float smokeRadius = 5F;
 	public boolean TVguide = true;
 	
@@ -119,7 +111,7 @@ public class BulletType extends ShootableType
 	public boolean torpedo = false;
 
 	/** The static bullets list */
-	@SyncExclude
+	
 	public static List<BulletType> bullets = new ArrayList<BulletType>();
 
 	public BulletType(TypeFile file)

@@ -16,38 +16,26 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.sync.SyncExclude;
 
 public abstract class InfoType
 {
 	/** infoTypes */
-	@SyncExclude
 	public static List<InfoType> infoTypes = new ArrayList<InfoType>();
 
 	public String contentPack;
-	@SyncExclude
 	public Item item;
 	public int colour = 0xffffff;
-	@SyncExclude
 	public String iconPath;
-	@SyncExclude
 	public Object[] recipe;
-	@SyncExclude
 	public String[] recipeLine;
-	@SyncExclude
 	public int recipeOutput = 1;
-	@SyncExclude
 	public boolean shapeless;
-	@SyncExclude
 	public String smeltableFrom = null;
 	public String name;
 	public String shortName;
-	@SyncExclude
 	public String texture;
-	@SyncExclude
 	public String modelString;
 	public String description;
-	@SyncExclude
 	public float modelScale = 1F;
 	/** If this is set to false, then this item cannot be dropped */
 	public boolean canDrop = true;

@@ -12,7 +12,6 @@ import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.sync.SyncExclude;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,10 +28,8 @@ public class PartType extends InfoType {
 	/** (Fuel) The amount of fuel this fuel tank gives */
 	public int fuel = 0;
 	/** The types of driveables that this engine works with. Used to designate some engines as mecha CPUs and whatnot */
-	@SyncExclude
 	public List<EnumType> worksWith = Arrays.asList(EnumType.mecha, EnumType.plane, EnumType.vehicle);
 	
-	@SyncExclude
 	public ArrayList<ItemStack> partBoxRecipe = new ArrayList<ItemStack>();
 	
 	//------- RedstoneFlux -------
@@ -43,10 +40,8 @@ public class PartType extends InfoType {
 	//-----------------------------
 
 	/** The default engine (normally the first one read by the type loader) for driveables with corrupt nbt or those spawned in creative  */
-	@SyncExclude
 	public static HashMap<EnumType, PartType> defaultEngines = new HashMap<EnumType, PartType>();
 	/** The list of all PartTypes */
-	@SyncExclude
 	public static List<PartType> parts = new ArrayList<PartType>();
 
 	public PartType(TypeFile file) {

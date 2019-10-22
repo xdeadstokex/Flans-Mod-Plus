@@ -17,22 +17,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.sync.SyncExclude;
 
 public class GunBoxType extends InfoType
 {
 	public BlockGunBox block;
-	@SyncExclude
 	public String topTexturePath;
-	@SyncExclude
 	public String sideTexturePath;
-	@SyncExclude
 	public String bottomTexturePath;
-	@SyncExclude
 	public IIcon top;
-	@SyncExclude
 	public IIcon side;
-	@SyncExclude
 	public IIcon bottom;
 	public int nextGun = -1;
 
@@ -41,23 +34,15 @@ public class GunBoxType extends InfoType
 	public GunPage currentPage;
 
 	/** Custom GUI variables. Use an unsigned hex code for colors.*/
-	@SyncExclude
 	public String guiTexturePath;
-	@SyncExclude
 	public String gunBoxTextColor = "404040";
-	@SyncExclude
 	public String itemListTextColor = "404040";
-	@SyncExclude
 	public String itemTextColor= "404040";
-	@SyncExclude
 	public String pageTextColor = "FFFFFF";
-	@SyncExclude
 	public String buttonTextColor = "FFFFFF";
-	@SyncExclude
 	public String buttonTextHoverColor = "FFFFA0";
 
 	private static int lastIconIndex = 2;
-	@SyncExclude
 	public static HashMap<String, GunBoxType> gunBoxMap = new HashMap<String, GunBoxType>();
 	
 	public GunBoxType(TypeFile file)

@@ -25,15 +25,12 @@ import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 
-import com.flansmod.common.sync.SyncExclude;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class GunType extends PaintableType implements IScope
 {
-	@SyncExclude
 	public static final Random rand = new Random();
 	
 	//Gun Behaviour Variables
@@ -124,9 +121,7 @@ public class GunType extends PaintableType implements IScope
 	
 	//Launcher variables
 	public int canLockOnAngle = 5;
-	@SyncExclude
 	public int lockOnSoundTime = 0;
-	@SyncExclude
 	public String lockOnSound = "";
 	public int maxRangeLockOn = 80;
 	public boolean canSetPosition = false;
@@ -146,77 +141,55 @@ public class GunType extends PaintableType implements IScope
 
 	//Sounds
 	/** The sound played upon shooting */
-	@SyncExclude
 	public String shootSound;
 	/** Bullet insert reload sound */
-	@SyncExclude
 	public String bulletInsert = "defaultshellinsert";
 	/** Pump Sound */
-	@SyncExclude
 	public String actionSound;
 	/** The sound to play upon shooting on last round */
-	@SyncExclude
 	public String lastShootSound;
-	
+
 	/** The sound played upon shooting with a suppressor */
-	@SyncExclude
 	public String suppressedShootSound;
 	/** The length of the sound for looping sounds */
-	@SyncExclude
 	public int shootSoundLength;
 	/** Whether to distort the sound or not. Generally only set to false for looping sounds */
-	@SyncExclude
 	public String reloadSound;
 	/** The sound to play upon reloading when empty */
-	@SyncExclude
 	public String reloadSoundOnEmpty;
 	/** The sound to play open firing when empty(once) */
-	@SyncExclude
 	public String clickSoundOnEmpty;
 	/** The sound to play while holding the weapon in the hand*/
-	@SyncExclude
 	public String idleSound;
 	
 	//Sound Modifiers
 	/** Whether to distort the sound or not. Generally only set to false for looping sounds */
 	public boolean distortSound = true;
 	/** The length of the idle sound for looping sounds (miniguns) */
-	@SyncExclude
 	public int idleSoundLength;
 	/** The block range for idle sounds (for miniguns etc) */
-	@SyncExclude
 	public int idleSoundRange = 50;
 	/** The block range for melee sounds  */
-	@SyncExclude
 	public int meleeSoundRange = 50;
 	/** The block range for reload sounds */
-	@SyncExclude
 	public int reloadSoundRange = 50;
 	/** The block range for gunshots sounds  */
-	@SyncExclude
 	public int gunSoundRange = 50;
 
 	//Looping sounds
 	/** Whether the looping sounds should be used. Automatically set if the player sets any one of the following sounds */
-	@SyncExclude
 	public boolean useLoopingSounds = false;
 	/** Played when the player starts to hold shoot */
-	@SyncExclude
 	public String warmupSound;
-	@SyncExclude
 	public int warmupSoundLength = 20;
 	/** Played in a loop until player stops holding shoot */
-	@SyncExclude
 	public String loopedSound;
-	@SyncExclude
 	public int loopedSoundLength = 20;
 	/** Played when the player stops holding shoot */
-	@SyncExclude
 	public String cooldownSound;
 
 	//Custom Melee Stuff
 	/** The sound to play upon weapon swing */
-	@SyncExclude
 	public String meleeSound;
 	/** The time delay between custom melee attacks */
 	public int meleeTime = 1;
@@ -230,10 +203,8 @@ public class GunType extends PaintableType implements IScope
 	/** If true, then the bullet does not shoot when right clicked, but must instead be placed on the ground */
 	public boolean deployable = false;
 	/** The deployable model */
-	@SyncExclude
 	public ModelMG deployableModel;
 	/** The deployable model's texture*/
-	@SyncExclude
 	public String deployableTexture;
 	/** Various deployable settings controlling the player view limits and standing position */
 	public float standBackDist = 1.5F, topViewLimit = -60F, bottomViewLimit = 30F, sideViewLimit = 45F, pivotHeight = 0.375F;
@@ -253,22 +224,16 @@ public class GunType extends PaintableType implements IScope
 
 	//Model variables
 	/** For guns with 3D models */
-	@SyncExclude
 	public ModelGun model;
 	/** For making detailed models and scaling down */
-	@SyncExclude
 	public float modelScale = 1F;
 	/** For adding a bullet casing model to render */
-	@SyncExclude
 	public ModelCasing casingModel;
 	/** For adding a muzzle flash model to render */
-	@SyncExclude
 	public ModelFlash flashModel;
 	/** Set a bullet casing texture */
-	@SyncExclude
 	public String casingTexture;
 	/** Set a muzzle flash texture */
-	@SyncExclude
 	public String flashTexture;
 	/** Set a hit marker texture */
 	public String hitTexture;
