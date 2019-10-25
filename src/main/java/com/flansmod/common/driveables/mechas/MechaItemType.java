@@ -32,7 +32,7 @@ public class MechaItemType extends InfoType
 	public float speedMultiplier = 1F;
 	/** This allows upgrades to reduce incoming damage */
 	public float damageResistance = 0F;
-	/** This allows a sound to be played upon use (RocketPack only for the moment) */
+	/** This allows a sound to be played upon use (RocketPack only for the moment) */	
 	public String soundEffect = "";
 	public String detectSound = "";
 	public float soundTime = 0;

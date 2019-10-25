@@ -36,14 +36,12 @@ public class VehicleType extends DriveableType
 	public Vector3f doorRot2 = new Vector3f(0,0,0);
 	public Vector3f doorRate = new Vector3f(0,0,0);
 	public Vector3f doorRotRate = new Vector3f(0,0,0);
-	
 	public Vector3f door2Pos1 = new Vector3f(0,0,0);
 	public Vector3f door2Pos2 = new Vector3f(0,0,0);
 	public Vector3f door2Rot1 = new Vector3f(0,0,0);
 	public Vector3f door2Rot2 = new Vector3f(0,0,0);
 	public Vector3f door2Rate = new Vector3f(0,0,0);
 	public Vector3f door2RotRate = new Vector3f(0,0,0);
-	
 	public boolean shootWithOpenDoor = false;
 	
 	public int trackLinkFix = 5;
@@ -53,7 +51,6 @@ public class VehicleType extends DriveableType
 	public int driftSoundLength;
 	
 	public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
-
 	public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
 
     public VehicleType(TypeFile file)

@@ -32,6 +32,8 @@ import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
 
+import com.flansmod.common.sync.Sync;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -152,7 +154,7 @@ public class ItemPlane extends Item implements IPaintableItem
             {
 	            if(!world.isRemote)
 	            {
-	            	DriveableData data = getPlaneData(itemstack, world);
+					DriveableData data = getPlaneData(itemstack, world);
 	            	if(data != null)
 	            		world.spawnEntityInWorld(new EntityPlane(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, data));
 	            }
@@ -166,7 +168,7 @@ public class ItemPlane extends Item implements IPaintableItem
             {
 	            if(!world.isRemote)
 	            {
-	            	DriveableData data = getPlaneData(itemstack, world);
+					DriveableData data = getPlaneData(itemstack, world);
 	            	if(data != null)
 	            		world.spawnEntityInWorld(new EntityPlane(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, data));
 	            }

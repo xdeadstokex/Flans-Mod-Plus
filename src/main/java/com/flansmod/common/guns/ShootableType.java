@@ -16,7 +16,6 @@ public abstract class ShootableType extends InfoType
 {
 	//Aesthetics
 	/** The model to render for this grenade in the world */
-	@SideOnly(Side.CLIENT)
 	public ModelBase model;
 	/** Whether trail particles are given off */
 	public boolean trailParticles = false;
@@ -78,17 +77,12 @@ public abstract class ShootableType extends InfoType
 	public String dropItemOnDetonate = null;
 	/** Sound to play upon detonation */
 	public String detonateSound = "";
-	
+
 	public boolean hasSubmunitions = false;
-	
 	public String submunition = "";
-	
 	public int numSubmunitions = 0;
-	
 	public int subMunitionTimer = 0;
-	
 	public float submunitionSpread = 1;
-	
 	public boolean destroyOnDeploySubmunition = false;
 
 	public int smokeParticleCount = 0;

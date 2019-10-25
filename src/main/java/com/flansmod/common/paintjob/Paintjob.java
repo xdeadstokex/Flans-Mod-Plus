@@ -2,6 +2,9 @@ package com.flansmod.common.paintjob;
 
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class Paintjob 
 {
 	public int ID;

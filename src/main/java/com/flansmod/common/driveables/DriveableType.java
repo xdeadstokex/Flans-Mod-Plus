@@ -31,7 +31,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class DriveableType extends PaintableType {
-    @SideOnly(value = Side.CLIENT)
     /** The plane model */
     public ModelDriveable model;
 
@@ -104,7 +103,6 @@ public class DriveableType extends PaintableType {
      * Pilot guns also have their own seperate array so ammo handling can be done
      */
     public ArrayList<PilotGun> pilotGuns = new ArrayList<PilotGun>();
-
     public int reloadTimePrimary = 0,
             reloadTimeSecondary = 0;
     public String reloadSoundPrimary = "",
@@ -269,10 +267,8 @@ public class DriveableType extends PaintableType {
     public boolean rangingGun = false;
 
     public boolean isExplosionWhenDestroyed = false;
-
     public String lockedOnSound = "";
     public int soundTime = 0;
-
     public int canLockOnAngle = 10;
     public int lockOnSoundTime = 60;
     public String lockOnSound = "";
@@ -319,7 +315,7 @@ public class DriveableType extends PaintableType {
      * activator boolean for IT-1 reloads
      */
     public boolean IT1 = false;
-
+    
     public static ArrayList<DriveableType> types = new ArrayList<DriveableType>();
 
     public ArrayList<CollisionShapeBox> collisionBox = new ArrayList<CollisionShapeBox>();

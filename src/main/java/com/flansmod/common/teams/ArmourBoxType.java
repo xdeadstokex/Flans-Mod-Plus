@@ -20,15 +20,12 @@ public class ArmourBoxType extends InfoType
 	public String topTexturePath;
 	public String sideTexturePath;
 	public String bottomTexturePath;
-	@SideOnly(Side.CLIENT)
 	public IIcon top;
-	@SideOnly(Side.CLIENT)
 	public IIcon side;
-	@SideOnly(Side.CLIENT)
 	public IIcon bottom;
 	
 	public BlockArmourBox block;
-	
+
 	public ArrayList<ArmourBoxEntry> pages = new ArrayList<ArmourBoxEntry>();
 	
 	/** The static box map. Indexed by shortName for server ~ client syncing */

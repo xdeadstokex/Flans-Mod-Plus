@@ -147,7 +147,8 @@ public class GunType extends PaintableType implements IScope
 	/** Pump Sound */
 	public String actionSound;
 	/** The sound to play upon shooting on last round */
-    public String lastShootSound;
+	public String lastShootSound;
+
 	/** The sound played upon shooting with a suppressor */
 	public String suppressedShootSound;
 	/** The length of the sound for looping sounds */
@@ -202,7 +203,6 @@ public class GunType extends PaintableType implements IScope
 	/** If true, then the bullet does not shoot when right clicked, but must instead be placed on the ground */
 	public boolean deployable = false;
 	/** The deployable model */
-	@SideOnly(Side.CLIENT)
 	public ModelMG deployableModel;
 	/** The deployable model's texture*/
 	public String deployableTexture;
@@ -224,7 +224,6 @@ public class GunType extends PaintableType implements IScope
 
 	//Model variables
 	/** For guns with 3D models */
-	@SideOnly(Side.CLIENT)
 	public ModelGun model;
 	/** For making detailed models and scaling down */
 	public float modelScale = 1F;

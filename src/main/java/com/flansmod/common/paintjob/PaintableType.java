@@ -1,6 +1,7 @@
 package com.flansmod.common.paintjob;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;

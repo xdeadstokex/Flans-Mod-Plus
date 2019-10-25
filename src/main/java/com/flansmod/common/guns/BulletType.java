@@ -11,6 +11,10 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BulletType extends ShootableType
 {
 	/** The number of flak particles to spawn upon exploding */
@@ -85,10 +89,13 @@ public class BulletType extends ShootableType
 	/** Time to remain after detonation */
 	public int smokeTime = 0;
 	/** Particles given off after detonation */
+	
 	public String smokeParticleType = "explode";
 	/** The effects to be given to people coming too close */
+	
 	public ArrayList<PotionEffect> smokeEffects = new ArrayList<PotionEffect>();
 	/** The radius for smoke effects to take place in */
+	
 	public float smokeRadius = 5F;
 	public boolean TVguide = true;
 	
@@ -104,6 +111,7 @@ public class BulletType extends ShootableType
 	public boolean torpedo = false;
 
 	/** The static bullets list */
+	
 	public static List<BulletType> bullets = new ArrayList<BulletType>();
 
 	public BulletType(TypeFile file)

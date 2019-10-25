@@ -21,15 +21,11 @@ import com.flansmod.common.types.TypeFile;
 public class GunBoxType extends InfoType
 {
 	public BlockGunBox block;
-	
 	public String topTexturePath;
 	public String sideTexturePath;
 	public String bottomTexturePath;
-	@SideOnly(Side.CLIENT)
 	public IIcon top;
-	@SideOnly(Side.CLIENT)
 	public IIcon side;
-	@SideOnly(Side.CLIENT)
 	public IIcon bottom;
 	public int nextGun = -1;
 

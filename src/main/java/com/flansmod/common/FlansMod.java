@@ -28,6 +28,10 @@ import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.sync.Sync;
+import com.flansmod.common.sync.SyncEventHandler;
+
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -108,6 +112,8 @@ public class FlansMod {
     public static final float soundRange = 50F;
     public static final float driveableUpdateRange = 400F;
     public static final int numPlayerSnapshots = 20;
+    public static int armourEnchantability = 0;
+    public static boolean kickNonMatchingHashes = false; 
 
 
     public static int armourSpawnRate = 20;
@@ -282,6 +288,7 @@ public class FlansMod {
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
         new ServerTickEvent();
+
         log("Loading complete.");
     }
 
@@ -294,6 +301,7 @@ public class FlansMod {
 
         hooks.hook();
 
+        FMLCommonHandler.instance().bus().register(new SyncEventHandler());
 		/* TODO : ICBM
 		isICBMSentryLoaded = Loader.instance().isModLoaded("ICBM|Sentry");
 
@@ -470,6 +478,7 @@ public class FlansMod {
                 try {
                     InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
                     infoType.read(typeFile);
+                    Sync.addHash(typeFile.lines.toString());
                     switch (type) {
                         case bullet:
                             bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
@@ -529,6 +538,8 @@ public class FlansMod {
             }
             log("Loaded " + type.name() + ".");
         }
+        Sync.getUnifiedHash();
+        log(Sync.cachedHash);
         Team.spectators = spectators;
     }
 
@@ -560,6 +571,8 @@ public class FlansMod {
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
         armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+        armourEnchantability = configFile.getInt("ArmourEnchantability", "Gameplay Settings (synced)", 0, 0, 25, "The quality of enchantments recieved for the same level of XP 0=UnEnchantable 25=Gold armor");
+        kickNonMatchingHashes = configFile.getBoolean("KickNonMatchingHashes", "Gameplay Settings (synced)", kickNonMatchingHashes, "Wether to kick clients connected to a dedicated server with non-identical packs.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -595,6 +608,9 @@ public class FlansMod {
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
         armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
+        armourEnchantability = configFile.getInt("ArmourEnchantability", "Gameplay Settings (synced)", 0, 0, 25, "The quality of enchantments recieved for the same level of XP 0=UnEnchantable 25=Gold armor");
+        kickNonMatchingHashes = configFile.getBoolean("KickNonMatchingHashes", "Gameplay Settings (synced)", kickNonMatchingHashes, "Wether to kick clients connected to a dedicated server with non-identical packs.");
+
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

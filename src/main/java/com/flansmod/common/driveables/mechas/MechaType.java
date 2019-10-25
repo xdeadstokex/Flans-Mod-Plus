@@ -73,12 +73,12 @@ public class MechaType extends DriveableType
 	public float rightHandModifierX = 0;
 	public float rightHandModifierY = 0;
 	public float rightHandModifierZ = 0;
-	
+
 	public ArrayList<LegNode> legNodes = new ArrayList<LegNode>();
-	
+		
 	public float legAnimSpeed = 0;
-	
-	public String stompSound = "";
+
+	public String stompSound = "";	
 	public int stompSoundLength = 0;
 	public float stompRangeLower = 0F;
 	public float stompRangeUpper = 0F;

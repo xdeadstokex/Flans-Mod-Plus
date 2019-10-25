@@ -28,6 +28,7 @@ import com.flansmod.common.parts.PartType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.sync.Sync;
 
 public class ItemMecha extends Item implements IPaintableItem
 {

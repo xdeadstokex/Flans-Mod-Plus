@@ -45,7 +45,6 @@ public class ArmourType extends InfoType
 	/** The durability for the piece of armor */
 	public int durability = 0;
 
-	@SideOnly(Side.CLIENT)
 	public ModelCustomArmour model;
 
 	public ArmourType(TypeFile file)

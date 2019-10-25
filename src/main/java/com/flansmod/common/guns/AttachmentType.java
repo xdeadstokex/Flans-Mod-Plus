@@ -101,6 +101,7 @@ public class AttachmentType extends PaintableType implements IScope
 	/** Model. Only applicable when the attachment is added to 3D guns */
 	public ModelAttachment model;
 	/** For making detailed models and scaling down mainly */
+	@SideOnly(Side.CLIENT)
 	public float modelScale = 1F;
 	
 	//Some more mundane variables

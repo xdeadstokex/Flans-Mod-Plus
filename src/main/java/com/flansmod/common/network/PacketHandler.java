@@ -165,6 +165,7 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         registerPacket(PacketModConfig.class);
         registerPacket(PacketGunRecoil.class);
         registerPacket(PacketGunState.class);
+        registerPacket(PacketHashSend.class);
     }
 
     /**
@@ -178,15 +179,16 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         modInitialised = true;
         //Define our comparator on the fly and apply it to our list
         Collections.sort(packets,
-                new Comparator<Class<? extends PacketBase>>() {
-                    @Override
-                    public int compare(Class<? extends PacketBase> c1, Class<? extends PacketBase> c2) {
-                        int com = String.CASE_INSENSITIVE_ORDER.compare(c1.getCanonicalName(), c2.getCanonicalName());
-                        if (com == 0)
-                            com = c1.getCanonicalName().compareTo(c2.getCanonicalName());
-                        return com;
-                    }
-                });
+            new Comparator<Class<? extends PacketBase>>() {
+                @Override
+                public int compare(Class<? extends PacketBase> c1, Class<? extends PacketBase> c2) {
+                    int com = String.CASE_INSENSITIVE_ORDER.compare(c1.getCanonicalName(), c2.getCanonicalName());
+                    if (com == 0)
+                        com = c1.getCanonicalName().compareTo(c2.getCanonicalName());
+                    return com;
+                }
+            }
+        );
     }
 
     @SideOnly(Side.CLIENT)
