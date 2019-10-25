@@ -40,8 +40,8 @@ public class PacketHashSend extends PacketBase
     @Override    
 	public void handleServerSide(EntityPlayerMP player) 
 	{
-		FlansMod.log("Recieved packet %s", hash);
-		if (!hash.equals(Sync.cachedHash)) {
+		FlansMod.log("Recieved pack hash from %s (%s)", player.getCommandSenderName(), hash);
+		if (!hash.equals(Sync.cachedHash) && FlansMod.kickNonMatchingHashes) {
 			player.playerNetServerHandler.kickPlayerFromServer("[Sync] Client-server mismatch.");
 		}
 	}
@@ -49,8 +49,10 @@ public class PacketHashSend extends PacketBase
 	@Override
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
-		FlansMod.log("Recieved packet %s", hash);
-		if (!hash.equals(Sync.cachedHash)) {
+		if (FlansMod.printDebugLog) {
+			FlansMod.log("Recieved packet %s", hash);
+		}
+		if (!hash.equals(Sync.cachedHash) && FlansMod.kickNonMatchingHashes) {
 			clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch detected."));
 		}
 		FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));

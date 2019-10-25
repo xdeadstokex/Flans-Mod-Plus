@@ -21,6 +21,7 @@ public class PacketModConfig extends PacketBase {
     public int gunCarryLimit;
     public boolean realisticRecoil;
     public int armourEnchantability;
+    public boolean hashKick;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -30,6 +31,7 @@ public class PacketModConfig extends PacketBase {
         gunCarryLimit = FlansMod.gunCarryLimit;
         realisticRecoil = FlansMod.realisticRecoil;
         armourEnchantability = FlansMod.armourEnchantability;
+        hashKick = FlansMod.kickNonMatchingHashes;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class PacketModConfig extends PacketBase {
         data.writeInt(gunCarryLimit);
         data.writeBoolean(realisticRecoil);
         data.writeInt(armourEnchantability);
+        data.writeBoolean(hashKick);
     }
 
     @Override
@@ -52,6 +55,7 @@ public class PacketModConfig extends PacketBase {
         gunCarryLimit = data.readInt();
         realisticRecoil = data.readBoolean();
         armourEnchantability = data.readInt();
+        hashKick = data.readBoolean();
     }
 
     @Override
@@ -69,6 +73,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.gunCarryLimit = gunCarryLimit;
         FlansMod.realisticRecoil = realisticRecoil;
         FlansMod.armourEnchantability = armourEnchantability;
+        FlansMod.kickNonMatchingHashes = hashKick;
         FlansMod.log("Config synced successfully");
     }
 }
