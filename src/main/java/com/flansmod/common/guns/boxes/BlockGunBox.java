@@ -3,10 +3,13 @@ package com.flansmod.common.guns.boxes;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.guns.BulletType;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -96,12 +99,12 @@ public class BlockGunBox extends Block {
     private GunBoxEntry searchFor(InfoType item) {
         for (GunPage page : type.gunPages) {
             for (GunBoxEntry entry : page.gunList) {
-                if (entry.type == item) {
+                if (entry.type != null && entry.type instanceof GunType && entry.type == item) {
                     return entry;
                 } else {
                     if (!entry.isAmmoNullOrEmpty()) {
                         for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
-                            if (ammoEntry.type == item)
+                            if (ammoEntry.type != null && ammoEntry.type instanceof BulletType && ammoEntry.type == item)
                                 return ammoEntry;
                         }
                     }
