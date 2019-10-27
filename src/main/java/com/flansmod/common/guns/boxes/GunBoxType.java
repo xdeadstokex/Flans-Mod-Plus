@@ -105,7 +105,7 @@ public class GunBoxType extends InfoType
 			}
 			if (split[0].equals("AddGun"))
 			{
-				if	(InfoType.getType(split[1]).item != null && InfoType.getType(split[1]) != null) {
+				if	(InfoType.getType(split[1]).item != null) {
 					nextGun++;
 					if(nextGun > gunEntries.length - 1)
 					{
