@@ -105,7 +105,7 @@ public class GunBoxType extends InfoType
 			}
 			if (split[0].equals("AddGun"))
 			{
-				if	(InfoType.getType(split[1]).item != null) {
+				if	(InfoType.getType(split[1]) != null && InfoType.getType(split[1]).item != null) {
 					nextGun++;
 					if(nextGun > gunEntries.length - 1)
 					{
@@ -117,7 +117,7 @@ public class GunBoxType extends InfoType
 				}
 			}
 			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo")) {
-				if	(InfoType.getType(split[1]).item != null) {
+				if	(InfoType.getType(split[1]).item != null && InfoType.getType(split[1]).item != null) {
 					gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
 				}
 			}

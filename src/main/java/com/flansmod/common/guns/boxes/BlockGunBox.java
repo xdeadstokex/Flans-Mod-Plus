@@ -96,16 +96,20 @@ public class BlockGunBox extends Block {
     private GunBoxEntry searchFor(InfoType item) {
         for (GunPage page : type.gunPages) {
             for (GunBoxEntry entry : page.gunList) {
-                if (entry.type == item) {
-                    return entry;
-                } else {
-                    if (!entry.isAmmoNullOrEmpty()) {
-                        for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
-                            if (ammoEntry.type == item)
-                                return ammoEntry;
+                try {
+                    if (entry.type != null) {
+                        if (entry.type == item) {
+                            return entry;
+                        } else {
+                            if (!entry.isAmmoNullOrEmpty()) {
+                                for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
+                                    if (ammoEntry.type == item)
+                                        return ammoEntry;
+                                }
+                            }
                         }
                     }
-                }
+                } catch(Exception e) {if (FlansMod.printDebugLog) {FlansMod.log("A gunbox entry appears to be null"); e.printStackTrace(); } }
             }
         }
 

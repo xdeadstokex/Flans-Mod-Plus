@@ -476,58 +476,62 @@ public class FlansMod {
             Class<? extends InfoType> typeClass = type.getTypeClass();
             for (TypeFile typeFile : TypeFile.files.get(type)) {
                 try {
-                    InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
-                    infoType.read(typeFile);
-                    Sync.addHash(typeFile.lines.toString());
-                    switch (type) {
-                        case bullet:
-                            bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case attachment:
-                            attachmentItems.add((ItemAttachment) new ItemAttachment((AttachmentType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case gun:
-                            gunItems.add((ItemGun) new ItemGun((GunType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case grenade:
-                            grenadeItems.add((ItemGrenade) new ItemGrenade((GrenadeType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case part:
-                            partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case plane:
-                            planeItems.add((ItemPlane) new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case vehicle:
-                            vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case aa:
-                            aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case mechaItem:
-                            mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case mecha:
-                            mechaItems.add((ItemMecha) new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case tool:
-                            toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case box:
-                            gunBoxBlocks.add((BlockGunBox) new BlockGunBox((GunBoxType) infoType).setBlockName(infoType.shortName));
-                            break;
-                        case armour:
-                            armourItems.add((ItemTeamArmour) new ItemTeamArmour((ArmourType) infoType).setUnlocalizedName(infoType.shortName));
-                            break;
-                        case armourBox:
-                            armourBoxBlocks.add((BlockArmourBox) new BlockArmourBox((ArmourBoxType) infoType).setBlockName(infoType.shortName));
-                            break;
-                        case playerClass:
-                        case team:
-                            break;
-                        default:
-                            log("Unrecognized type for " + infoType.shortName);
-                            break;
+                    if (!(typeFile.lines.size() == 0)){
+                        InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
+                        infoType.read(typeFile);
+                        if (infoType.shortName != null) {
+                            switch (type) {
+                                case bullet:
+                                    bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case attachment:
+                                    attachmentItems.add((ItemAttachment) new ItemAttachment((AttachmentType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case gun:
+                                    gunItems.add((ItemGun) new ItemGun((GunType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case grenade:
+                                    grenadeItems.add((ItemGrenade) new ItemGrenade((GrenadeType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case part:
+                                    partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case plane:
+                                    planeItems.add((ItemPlane) new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case vehicle:
+                                    vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case aa:
+                                    aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case mechaItem:
+                                    mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case mecha:
+                                    mechaItems.add((ItemMecha) new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case tool:
+                                    toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case box:
+                                    gunBoxBlocks.add((BlockGunBox) new BlockGunBox((GunBoxType) infoType).setBlockName(infoType.shortName));
+                                    break;
+                                case armour:
+                                    armourItems.add((ItemTeamArmour) new ItemTeamArmour((ArmourType) infoType).setUnlocalizedName(infoType.shortName));
+                                    break;
+                                case armourBox:
+                                    armourBoxBlocks.add((BlockArmourBox) new BlockArmourBox((ArmourBoxType) infoType).setBlockName(infoType.shortName));
+                                    break;
+                                case playerClass:
+                                case team:
+                                    break;
+                                default:
+                                    log("Unrecognized type for " + infoType.shortName);
+                                    break;
+                            }
+                        }
+                        Sync.addHash(typeFile.lines.toString());
                     }
                 } catch (Exception e) {
                     log("Failed to add " + type.name() + " : " + typeFile.name);
