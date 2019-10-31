@@ -105,7 +105,8 @@ public class GunBoxType extends InfoType
 			}
 			if (split[0].equals("AddGun"))
 			{
-				if	(InfoType.getType(split[1]) != null && InfoType.getType(split[1]).item != null) {
+				try {
+					List<ItemStack> parts = getRecipe(split);
 					nextGun++;
 					if(nextGun > gunEntries.length - 1)
 					{
@@ -113,12 +114,22 @@ public class GunBoxType extends InfoType
 						iteratePage("default " + (gunPages.size() + 2));
 						nextGun++;
 					}
-					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split));
+					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), parts);
+				} catch(Exception e) {
+					if (FlansMod.printDebugLog) {
+						FlansMod.log("Failed to add gun %s to box %s", split[1], shortName);
+					}
+					
 				}
+
 			}
 			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo")) {
-				if	(InfoType.getType(split[1]).item != null && InfoType.getType(split[1]).item != null) {
-					gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+				try {
+					if	(InfoType.getType(split[1]) != null && InfoType.getType(split[1]).item != null) {
+						gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+					}
+				} catch(Exception e) {
+					FlansMod.log("Failed to add ammo (%s) to box (%s)", split[1], shortName);
 				}
 			}
 
@@ -142,8 +153,9 @@ public class GunBoxType extends InfoType
 		catch (Exception e)
 		{
 			FlansMod.log("Reading gun box file failed : " + shortName);
-			if (FlansMod.printStackTrace)
-				e.printStackTrace();
+			if (FlansMod.printStackTrace) {
+				FlansMod.log(e.toString());
+			}
 		}
 	}
 

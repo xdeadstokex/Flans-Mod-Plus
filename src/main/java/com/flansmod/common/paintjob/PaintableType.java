@@ -72,8 +72,10 @@ public abstract class PaintableType extends InfoType
 		} 
 		catch (Exception e)
 		{
-			FlansMod.log("Reading file failed : " + shortName);
-			e.printStackTrace();
+			FlansMod.log("Reading paintable file failed : " + shortName);
+			if (FlansMod.printStackTrace) {
+				e.printStackTrace();
+			}
 		}
 		super.read(split, file);
 		try
