@@ -300,7 +300,6 @@ public class FlansMod {
 
 		log("ICBM hooking complete.");
 		*/
-		throw new Exception();
     }
 
     @SubscribeEvent
