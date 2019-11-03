@@ -2,14 +2,11 @@ package com.flansmod.common;
 
 import com.flansmod.client.AimType;
 import com.flansmod.client.FlanMouseButton;
+import com.flansmod.client.FlansCrash;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.driveables.*;
-import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.driveables.mechas.ItemMecha;
-import com.flansmod.common.driveables.mechas.ItemMechaAddon;
-import com.flansmod.common.driveables.mechas.MechaType;
-import com.flansmod.common.driveables.mechas.MechaItemType;
+import com.flansmod.common.driveables.mechas.*;
 import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
 import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
 import com.flansmod.common.eventhandlers.ServerTickEvent;
@@ -21,6 +18,8 @@ import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
+import com.flansmod.common.sync.Sync;
+import com.flansmod.common.sync.SyncEventHandler;
 import com.flansmod.common.teams.*;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
@@ -28,10 +27,6 @@ import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.sync.Sync;
-import com.flansmod.common.sync.SyncEventHandler;
-
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -75,7 +70,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
+@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate (Stability Edition)", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
     //Core mod stuff
     public static Logger logger = LogManager.getLogger("Flan's Mod Ultimate");
@@ -113,7 +108,7 @@ public class FlansMod {
     public static final float driveableUpdateRange = 400F;
     public static final int numPlayerSnapshots = 20;
     public static int armourEnchantability = 0;
-    public static boolean kickNonMatchingHashes = false; 
+    public static boolean kickNonMatchingHashes = false;
 
 
     public static int armourSpawnRate = 20;
@@ -139,20 +134,20 @@ public class FlansMod {
     public static BlockSpawner spawner;
     public static ItemOpStick opStick;
     public static ItemFlagpole flag;
-    public static ArrayList<BlockGunBox> gunBoxBlocks = new ArrayList<BlockGunBox>();
-    public static ArrayList<ItemBullet> bulletItems = new ArrayList<ItemBullet>();
-    public static ArrayList<ItemGun> gunItems = new ArrayList<ItemGun>();
-    public static ArrayList<ItemAttachment> attachmentItems = new ArrayList<ItemAttachment>();
-    public static ArrayList<ItemPart> partItems = new ArrayList<ItemPart>();
-    public static ArrayList<ItemPlane> planeItems = new ArrayList<ItemPlane>();
-    public static ArrayList<ItemVehicle> vehicleItems = new ArrayList<ItemVehicle>();
-    public static ArrayList<ItemMechaAddon> mechaToolItems = new ArrayList<ItemMechaAddon>();
-    public static ArrayList<ItemMecha> mechaItems = new ArrayList<ItemMecha>();
-    public static ArrayList<ItemAAGun> aaGunItems = new ArrayList<ItemAAGun>();
-    public static ArrayList<ItemGrenade> grenadeItems = new ArrayList<ItemGrenade>();
-    public static ArrayList<ItemTool> toolItems = new ArrayList<ItemTool>();
-    public static ArrayList<ItemTeamArmour> armourItems = new ArrayList<ItemTeamArmour>();
-    public static ArrayList<BlockArmourBox> armourBoxBlocks = new ArrayList<BlockArmourBox>();
+    public static ArrayList<BlockGunBox> gunBoxBlocks = new ArrayList<>();
+    public static ArrayList<ItemBullet> bulletItems = new ArrayList<>();
+    public static ArrayList<ItemGun> gunItems = new ArrayList<>();
+    public static ArrayList<ItemAttachment> attachmentItems = new ArrayList<>();
+    public static ArrayList<ItemPart> partItems = new ArrayList<>();
+    public static ArrayList<ItemPlane> planeItems = new ArrayList<>();
+    public static ArrayList<ItemVehicle> vehicleItems = new ArrayList<>();
+    public static ArrayList<ItemMechaAddon> mechaToolItems = new ArrayList<>();
+    public static ArrayList<ItemMecha> mechaItems = new ArrayList<>();
+    public static ArrayList<ItemAAGun> aaGunItems = new ArrayList<>();
+    public static ArrayList<ItemGrenade> grenadeItems = new ArrayList<>();
+    public static ArrayList<ItemTool> toolItems = new ArrayList<>();
+    public static ArrayList<ItemTeamArmour> armourItems = new ArrayList<>();
+    public static ArrayList<BlockArmourBox> armourBoxBlocks = new ArrayList<>();
     public static CreativeTabFlan tabFlanGuns = new CreativeTabFlan(0), tabFlanDriveables = new CreativeTabFlan(1),
             tabFlanParts = new CreativeTabFlan(2), tabFlanTeams = new CreativeTabFlan(3), tabFlanMechas = new CreativeTabFlan(4);
 
@@ -160,7 +155,7 @@ public class FlansMod {
     /**
      * Gun animation variables for each entity holding a gun. Currently only applicable to the player
      */
-    public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<EntityLivingBase, GunAnimations>(), gunAnimationsLeft = new HashMap<EntityLivingBase, GunAnimations>();
+    public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<>(), gunAnimationsLeft = new HashMap<>();
 
     public static boolean debugMode = true;
 
@@ -173,10 +168,6 @@ public class FlansMod {
         log("Pre-initializing Flan's mod.");
         configFile = new Configuration(event.getSuggestedConfigurationFile());
         syncConfig(event.getSide());
-
-        //TODO : Load properties
-        //configuration = new Configuration(event.getSuggestedConfigurationFile());
-        //loadProperties();
 
         flanDir = new File(event.getModConfigurationDirectory().getParentFile(), "/Flan/");
 
@@ -217,6 +208,8 @@ public class FlansMod {
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
         proxy.forceReload();
+
+        FMLCommonHandler.instance().registerCrashCallable(new FlansCrash());
 
         log("Pre-initializing complete.");
     }
@@ -296,7 +289,7 @@ public class FlansMod {
      * The mod post-initialisation method
      */
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    public void postInit(FMLPostInitializationEvent event) throws Exception {
         packetHandler.postInitialise();
 
         hooks.hook();
@@ -307,6 +300,7 @@ public class FlansMod {
 
 		log("ICBM hooking complete.");
 		*/
+		throw new Exception();
     }
 
     @SubscribeEvent
@@ -382,7 +376,7 @@ public class FlansMod {
                             String[] splitName = file.getName().split("/");
                             TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
                             for (; ; ) {
-                                String line = null;
+                                String line;
                                 try {
                                     line = reader.readLine();
                                 } catch (Exception e) {
@@ -393,8 +387,6 @@ public class FlansMod {
                                 typeFile.lines.add(line);
                             }
                             reader.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -445,6 +437,7 @@ public class FlansMod {
 
     /**
      * Reads Flan content packs.
+     *
      * @param event Forge PreInitialization event.
      */
     private void readContentPacks(FMLPreInitializationEvent event) {
@@ -476,7 +469,7 @@ public class FlansMod {
             Class<? extends InfoType> typeClass = type.getTypeClass();
             for (TypeFile typeFile : TypeFile.files.get(type)) {
                 try {
-                    if (!(typeFile.lines.size() == 0)){
+                    if (!(typeFile.lines.size() == 0)) {
                         InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
                         infoType.read(typeFile);
                         if (infoType.shortName != null) {
@@ -497,19 +490,19 @@ public class FlansMod {
                                     partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case plane:
-                                    planeItems.add((ItemPlane) new ItemPlane((PlaneType)infoType).setUnlocalizedName(infoType.shortName));
+                                    planeItems.add((ItemPlane) new ItemPlane((PlaneType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case vehicle:
-                                    vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType)infoType).setUnlocalizedName(infoType.shortName));
+                                    vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case aa:
-                                    aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType)infoType).setUnlocalizedName(infoType.shortName));
+                                    aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case mechaItem:
-                                    mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType)infoType).setUnlocalizedName(infoType.shortName));
+                                    mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case mecha:
-                                    mechaItems.add((ItemMecha) new ItemMecha((MechaType)infoType).setUnlocalizedName(infoType.shortName));
+                                    mechaItems.add((ItemMecha) new ItemMecha((MechaType) infoType).setUnlocalizedName(infoType.shortName));
                                     break;
                                 case tool:
                                     toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
@@ -569,7 +562,7 @@ public class FlansMod {
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
-        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", hitCrossHairEnable, "Changes recoil to be more realistic.");
+        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
@@ -606,7 +599,7 @@ public class FlansMod {
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
-        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", hitCrossHairEnable, "Changes recoil to be more realistic.");
+        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
@@ -680,9 +673,9 @@ public class FlansMod {
     }
 
     public static void log(String string) {
-		if(printDebugLog) {
+        if (printDebugLog) {
             logger.info(string);
-		}
+        }
     }
 
     public static void log(String format, Object... args) {
