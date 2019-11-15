@@ -88,8 +88,11 @@ public class ArmourBoxType extends InfoType
 						else
 							stack = getRecipeElement(lineSplit[j * 2 + 1], Integer.valueOf(lineSplit[j * 2 + 2]), 0, shortName);
 						
-						if(stack != null)
+						if(stack != null) {
 							entry.requiredStacks[i].add(stack);
+						} else {
+							if (FlansMod.printDebugLog) { FlansMod.log("Could not add part %s to %s in armourbox %s", lineSplit[j * 2 + 1], name, shortName); }
+						}
 					}
 				}
 				
