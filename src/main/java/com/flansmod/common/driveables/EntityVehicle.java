@@ -638,6 +638,10 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 						wheel.motionZ *= 0.9F;
 					}
 				}
+
+				if (!canThrustCreatively && TeamsManager.vehiclesNeedFuel) {
+					data.fuelInTank -= Math.abs(data.engine.fuelConsumption * throttle) * 0.1;
+				}
 			}
 			
 			wheel.moveEntity(wheel.motionX, wheel.motionY, wheel.motionZ);
