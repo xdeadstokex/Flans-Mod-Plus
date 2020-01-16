@@ -10,8 +10,8 @@ run/*
 .classpath
 .project
 .settings/
-eclipse/
 .idea/
+eclipse/*
 *.iml
 *.ipr
 *.iws
@@ -20,33 +20,6 @@ eclipse/
 # System
 Thumbs.db
 .DS_Store
-FM+_Client.launch
-FM+_Server.launch
 
 # Flan's Mod
-!run/Flan/
-run/Flan/Parts Pack/assets/flansmod/.DS_Store
-
-run/Flan/.DS_Store
-
-run/Flan/Modern Weapons Pack/.DS_Store
-
-run/Flan/Parts Pack/.DS_Store
-
-run/Flan/Parts Pack/assets/.DS_Store
-
-run/Flan/Parts Pack/assets/flansmod/textures/.DS_Store
-
-run/Flan/Utility Pack/.DS_Store
-
-run/Flan/WW2 Pack/.DS_Store
-
-run/Flan/WW2 Pack/boxes/.DS_Store
-upload.bat
-gradlew
-gradlew.bat
-classes/production/
-src/main/java/com/flansmod/client/model/dwfirearms/
-src/main/java/com/flansmod/client/model/mpp/
-src/main/java/com/flansmod/client/model/W44/
-src/main/java/com/flansmod/client/model/testmodels
+!eclipse/Flan/
