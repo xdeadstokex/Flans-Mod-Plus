@@ -12,6 +12,9 @@ public class CollisionBox
 	public int health;
 	/** The part this box is attached to */
 	public EnumDriveablePart part;
+
+	/** The resistance of the part to penetration by bullets */
+	public float penetrationResistance = 5;
 	
 	public CollisionBox(int health, int x, int y, int z, int w, int h, int d)
 	{
@@ -22,6 +25,12 @@ public class CollisionBox
 		this.w = w / 16F;
 		this.h = h / 16F;
 		this.d = d / 16F;
+	}
+
+	public CollisionBox(int health, int x, int y, int z, int w, int h, int d, float penResistance)
+	{
+		this(health, x, y, z, w, h, d);
+		penetrationResistance = penResistance;
 	}
 	
 	/** @return The centre (in global co-ordinates) */

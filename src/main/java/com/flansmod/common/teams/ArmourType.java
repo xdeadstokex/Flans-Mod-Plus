@@ -20,6 +20,8 @@ public class ArmourType extends InfoType
 	public int type;
 	/** The amount of damage to absorb. From 0 to 1. Stacks additively between armour pieces */
 	public double defence;
+	/** How good the armour is at stopping bullets. Same units as bullet penetration. Default 0 to emulate previous behaviour */
+	public float penetrationResistance = 0;
 	/** The name for the armour texture. Texture path/name is assets/flansmod/armor/<armourTextureName>_1.png or _2 for legs */
 	public String armourTextureName;
 	/** Modifiers for various player stats */
@@ -94,6 +96,8 @@ public class ArmourType extends InfoType
 				jumpModifier = Float.parseFloat(split[1]);
 			if(split[0].equals("KnockbackReduction") || split[0].equals("KnockbackModifier"))
 				knockbackModifier = Float.parseFloat(split[1]);
+			if(split[0].equals("PenetrationResistance"))
+				penetrationResistance = Float.parseFloat(split[1]);
 
 			if(split[0].equals("NightVision"))
 				nightVision = Boolean.parseBoolean(split[1]);

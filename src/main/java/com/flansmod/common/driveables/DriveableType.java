@@ -723,7 +723,12 @@ public class DriveableType extends PaintableType {
             //Health
             else if (split[0].equals("SetupPart")) {
                 EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-                CollisionBox box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
+                CollisionBox box;
+                if (split.length > 9) {
+                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Float.parseFloat(split[9]));
+                } else {
+                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
+                }
                 health.put(part, box);
             }
 

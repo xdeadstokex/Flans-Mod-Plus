@@ -2323,7 +2323,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     public float bulletHit(EntityBullet bullet, DriveableHit hit, float penetratingPower) {
         DriveablePart part = getDriveableData().parts.get(hit.part);
         if (bullet != null)
-            part.hitByBullet(bullet, hit);
+            penetratingPower = part.hitByBullet(bullet, hit, penetratingPower);
+        else
+            penetratingPower -= 5F;
 
         //This is server side bsns
         if (!worldObj.isRemote) {
@@ -2332,7 +2334,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
         }
 
-        return penetratingPower - 5F;
+        return penetratingPower;
     }
 
     /**

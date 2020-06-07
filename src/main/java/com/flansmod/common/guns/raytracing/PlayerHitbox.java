@@ -1,5 +1,7 @@
 package com.flansmod.common.guns.raytracing;
 
+import java.lang.Math;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -16,6 +18,8 @@ import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.common.teams.ArmourType;
+import com.flansmod.common.teams.ItemTeamArmour;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -147,7 +151,37 @@ public class PlayerHitbox {
         for (PotionEffect effect : bullet.type.hitEffects) {
             player.addPotionEffect(new PotionEffect(effect));
         }
-        float damageModifier = bullet.type.penetratingPower < 0.1F ? penetratingPower / bullet.type.penetratingPower : 1;
+
+        float headPenRes = (player.getCurrentArmor(3) == null) ? 1F : ((ItemTeamArmour)player.getCurrentArmor(3).getItem()).type.penetrationResistance;
+        float chestPenRes = (player.getCurrentArmor(2) == null) ? 0.5F : ((ItemTeamArmour)player.getCurrentArmor(2).getItem()).type.penetrationResistance;
+        float legsPenRes = (player.getCurrentArmor(1) == null) ? 0.35F : ((ItemTeamArmour)player.getCurrentArmor(1).getItem()).type.penetrationResistance;
+        float feetPenRes = (player.getCurrentArmor(0) == null) ? 0.15F : ((ItemTeamArmour)player.getCurrentArmor(0).getItem()).type.penetrationResistance;
+
+        FlansMod.log("%f", headPenRes);
+        FlansMod.log("%f", chestPenRes);
+        FlansMod.log("%f", legsPenRes);
+        FlansMod.log("%f", feetPenRes);
+
+
+        float totalPenetrationResistance = 0;
+
+        switch (type) {
+            case HEAD:
+                totalPenetrationResistance = headPenRes;
+                break;
+            default:
+                totalPenetrationResistance = chestPenRes + legsPenRes + feetPenRes;
+                break;
+            
+        }
+
+        float damageModifier = 1;
+
+        if (penetratingPower <= totalPenetrationResistance) {
+            damageModifier = (float)Math.pow((double)(penetratingPower/totalPenetrationResistance), 5/2);
+        }
+        FlansMod.log("%f", damageModifier);
+
         switch (type) {
             case BODY:
                 break;
@@ -189,7 +223,7 @@ public class PlayerHitbox {
                     //Yuck.
                     //PacketDispatcher.sendPacketToAllAround(posX, posY, posZ, 50, dimension, PacketPlaySound.buildSoundPacket(posX, posY, posZ, type.hitSound, true));
                 }
-                return penetratingPower - 1;
+                return penetratingPower - totalPenetrationResistance;
             }
             case RIGHTITEM: {
                 ItemStack currentStack = player.getCurrentEquippedItem();

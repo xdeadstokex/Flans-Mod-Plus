@@ -1,6 +1,7 @@
 package com.flansmod.common.driveables;
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -345,18 +346,22 @@ public class DriveablePart
 	}
 	
 	/** Called when the bullet decided that it hit this driveable part */
-	public void hitByBullet(EntityBullet bullet, DriveableHit hit)
+	public float hitByBullet(EntityBullet bullet, DriveableHit hit, float penetratingPower)
 	{
 		//Perform damage code
 		if(bullet != null)
 		{
+			float damageModifier = 1;
+			if (penetratingPower <= box.penetrationResistance)
+				damageModifier = (float)Math.pow((double)(penetratingPower/box.penetrationResistance), 5/2);
+				
 			if(hit.driveable instanceof EntityPlane)
 			{
-				health -= bullet.damage * bullet.type.damageVsPlanes;
+				health -= bullet.damage * bullet.type.damageVsPlanes * damageModifier;
 			}
 			else
 			{
-				health -= bullet.damage * bullet.type.damageVsVehicles;
+				health -= bullet.damage * bullet.type.damageVsVehicles * damageModifier;
 			}
 			if(bullet.type.setEntitiesOnFire)
 			{
@@ -364,6 +369,7 @@ public class DriveablePart
 				onFire = true;
 			}
 		}
+		return penetratingPower - box.penetrationResistance;
 	}
 	
 	/** Ray traces a single co-ordinate 
