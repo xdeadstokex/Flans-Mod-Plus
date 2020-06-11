@@ -77,7 +77,7 @@ public class FlansMod {
     public static boolean DEBUG = false;
     public static Configuration configFile;
     public static final String MODID = "flansmod";
-    public static final String VERSION = "1.33";
+    public static final String VERSION = "1.35";
     @Instance(MODID)
     public static FlansMod INSTANCE;
     public static boolean printDebugLog = true;
