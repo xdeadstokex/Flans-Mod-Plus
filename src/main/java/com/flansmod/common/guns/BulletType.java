@@ -146,7 +146,7 @@ public class BulletType extends ShootableType
 			else if(split[0].equals("HitSoundRange"))
 				hitSoundRange = Float.parseFloat(split[1]);
 			else if(split[0].equals("Penetrates"))
-				penetratingPower = (Boolean.parseBoolean(split[1].toLowerCase()) ? 1F : 0.25F);
+				penetratingPower = (Boolean.parseBoolean(split[1].toLowerCase()) ? 1F : 0.7F);
 			else if(split[0].equals("Penetration") || split[0].equals("PenetratingPower"))
 				penetratingPower = Float.parseFloat(split[1]);
 

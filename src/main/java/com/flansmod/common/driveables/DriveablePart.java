@@ -352,8 +352,8 @@ public class DriveablePart
 		if(bullet != null)
 		{
 			float damageModifier = 1;
-			if (penetratingPower <= box.penetrationResistance)
-				damageModifier = (float)Math.pow((double)(penetratingPower/box.penetrationResistance), 5/2);
+			if (penetratingPower <= 0.7F*box.penetrationResistance)
+				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*box.penetrationResistance)), 5/2);
 				
 			if(hit.driveable instanceof EntityPlane)
 			{
