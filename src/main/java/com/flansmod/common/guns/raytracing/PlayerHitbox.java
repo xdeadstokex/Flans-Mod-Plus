@@ -152,15 +152,23 @@ public class PlayerHitbox {
             player.addPotionEffect(new PotionEffect(effect));
         }
 
-        float headPenRes = (player.getCurrentArmor(3) == null) ? 1F : ((ItemTeamArmour)player.getCurrentArmor(3).getItem()).type.penetrationResistance;
-        float chestPenRes = (player.getCurrentArmor(2) == null) ? 0.5F : ((ItemTeamArmour)player.getCurrentArmor(2).getItem()).type.penetrationResistance;
-        float legsPenRes = (player.getCurrentArmor(1) == null) ? 0.35F : ((ItemTeamArmour)player.getCurrentArmor(1).getItem()).type.penetrationResistance;
-        float feetPenRes = (player.getCurrentArmor(0) == null) ? 0.15F : ((ItemTeamArmour)player.getCurrentArmor(0).getItem()).type.penetrationResistance;
+        float headPenRes = (player.getCurrentArmor(3) == null || !(player.getCurrentArmor(3).getItem()
+                instanceof ItemTeamArmour)) ? 1F : ((ItemTeamArmour) player.getCurrentArmor(3).getItem())
+                .type.penetrationResistance;
+        float chestPenRes = (player.getCurrentArmor(2) == null || !(player.getCurrentArmor(2).getItem()
+                instanceof ItemTeamArmour)) ? 0.5F : ((ItemTeamArmour) player.getCurrentArmor(2).getItem())
+                .type.penetrationResistance;
+        float legsPenRes = (player.getCurrentArmor(1) == null || !(player.getCurrentArmor(1).getItem()
+                instanceof ItemTeamArmour)) ? 0.35F : ((ItemTeamArmour) player.getCurrentArmor(1).getItem())
+                .type.penetrationResistance;
+        float feetPenRes = (player.getCurrentArmor(0) == null || !(player.getCurrentArmor(0).getItem()
+                instanceof ItemTeamArmour)) ? 0.15F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
+                .type.penetrationResistance;
 
-        FlansMod.log("%f", headPenRes);
-        FlansMod.log("%f", chestPenRes);
-        FlansMod.log("%f", legsPenRes);
-        FlansMod.log("%f", feetPenRes);
+//        FlansMod.log("%f", headPenRes);
+//        FlansMod.log("%f", chestPenRes);
+//        FlansMod.log("%f", legsPenRes);
+//        FlansMod.log("%f", feetPenRes);
 
 
         float totalPenetrationResistance = 0;
@@ -172,13 +180,13 @@ public class PlayerHitbox {
             default:
                 totalPenetrationResistance = chestPenRes + legsPenRes + feetPenRes;
                 break;
-            
+
         }
 
         float damageModifier = 1;
 
-        if (penetratingPower <= 0.7F*totalPenetrationResistance) {
-            damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*totalPenetrationResistance)), 5/2);
+        if (penetratingPower <= 0.7F * totalPenetrationResistance) {
+            damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 5 / 2);
         }
         FlansMod.log("%f", damageModifier);
 
