@@ -42,7 +42,8 @@ public class FlansModExplosion extends Explosion
     private World worldObj;
     public InfoType type;
     public EntityPlayer player;
-    private float radius;
+	private float radius;
+	private float power;
     private final float damageVsLiving;
     private final float damageVsPlayer;
     private final float damageVsPlane;
@@ -51,11 +52,12 @@ public class FlansModExplosion extends Explosion
     public boolean canceled = false;
 
 	public FlansModExplosion(World w, Entity e, EntityPlayer p, InfoType t,
-			double x, double y, double z, float r, boolean breakBlocks,
+			double x, double y, double z, float explosionRadius, float explosionPower, boolean breakBlocks,
 			 float damageLiving, float damagePlayer, float damagePlane, float damageVehicle, int smokeCount, int debrisCount)
 	{
-		super(w, e, x, y, z, r);
-		this.radius = r;
+		super(w, e, x, y, z, explosionRadius);
+		this.radius = explosionRadius;
+		power = explosionPower;
 		worldObj = w;
 		type = t;
 		player = p;
@@ -80,7 +82,7 @@ public class FlansModExplosion extends Explosion
             		EntityPlayerMP entityplayer = (EntityPlayerMP)playerEntity;
             		if (entityplayer.getDistanceSq(x, y, z) < 4096.0D)
             		{
-            			FlansMod.getPacketHandler().sendTo(new PacketExplosion(x, y, z, r), entityplayer);
+            			FlansMod.getPacketHandler().sendTo(new PacketExplosion(x, y, z, explosionRadius), entityplayer);
             		}
             	}
             }
@@ -125,7 +127,7 @@ public class FlansModExplosion extends Explosion
                             Block block = worldObj.getBlock(l, i1, j1);
 
                             float f3 = exploder != null ? exploder.func_145772_a(this, worldObj, l, i1, j1, block) : block.getExplosionResistance(exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
-                            f1 -= (f3 + 0.3F) * f2;
+                            f1 -= ((f3 + 0.3F) * f2) / power;
 
                             if (f1 > 0.0F && (exploder == null || exploder.func_145774_a(this, worldObj, l, i1, j1, block, f1)))
                             {
@@ -173,7 +175,7 @@ public class FlansModExplosion extends Explosion
                     double d10 = (1.0D - d7) * d9;
 
                     EntityDriveable entityDriveable = null;
-                    float damage = (float)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize + 1.0D);
+                    float damage = (float)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize * power + 1.0D);
                     if(entity instanceof EntityPlayer)      damage *= damageVsPlayer;
                     else if(entity instanceof EntityLivingBase) damage *= damageVsLiving;
                     else if(entity instanceof EntityPlane)      damage *= damageVsPlane;

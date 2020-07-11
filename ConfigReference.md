@@ -240,6 +240,7 @@ BAB
 | ExplodeOnImpact / DetonateOnImpact | Bool | false | Whether to explode when hitting a block or entity |
 | FireRadius / Fire | Float | 0 | The radius in which fire will be placed on impact |
 | ExplosionsRadius / Explosion | Float | 0 | The radius of the explosion to create on impact |
+| ExplosionPower | Float | 1 | Power of the explosive. (ability to take out blocks) 1 = vanilla. |
 | ExplosionBreaksBlocks | Bool | true | Whether the impact explosion breaks blocks |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |

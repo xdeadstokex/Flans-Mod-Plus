@@ -1049,7 +1049,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             if (type.explosionRadius > 0) {
                 if (owner instanceof EntityPlayer) {
                     new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
-                            type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks,
+                            type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
                             type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
                 } else {
                     worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions);
@@ -1141,7 +1141,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         if (!worldObj.isRemote && type.explosionRadius > 0.1F) {
             if ((owner instanceof EntityPlayer)) {
                 new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
-                        type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks,
+                        type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
                         type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
                 isDead = true;
             } else {
