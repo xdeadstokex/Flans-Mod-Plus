@@ -33,8 +33,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ExplosionEvent;
 
 public class FlansModExplosion extends Explosion
 {
@@ -72,9 +70,7 @@ public class FlansModExplosion extends Explosion
         doExplosionB(true);
         spawnParticle(smokeCount, debrisCount);
 
-        ExplosionEvent.Start event = new ExplosionEvent.Start(w, this);
-        MinecraftForge.EVENT_BUS.post(event);
-        canceled = event.isCanceled();
+        canceled = net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, this);
         
         if(!worldObj.isRemote)
         {
@@ -155,7 +151,8 @@ public class FlansModExplosion extends Explosion
         int l1 = MathHelper.floor_double(explosionY + explosionSize + 1.0D);
         int i2 = MathHelper.floor_double(explosionZ - explosionSize - 1.0D);
         int j2 = MathHelper.floor_double(explosionZ + explosionSize + 1.0D);
-        List list = worldObj.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+		List list = worldObj.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+		net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, this.explosionSize);
         Vec3 vec3 = Vec3.createVectorHelper(explosionX, explosionY, explosionZ);
 
         for (Object aList : list) {
@@ -301,46 +298,68 @@ public class FlansModExplosion extends Explosion
 		}
 	}
 
+	// [IMPORTANT] To get cauldron to fire the bukkit explosion events for plugins like worldguard, this cannot be overridden - it will negate
+	// the effects of the patch cauldron uses to add the bukkit events.
+
     /**
      * Does the second part of the explosion (sound, particles, drop spawn)
      */
-    @Override
-	public void doExplosionB(boolean par1)
-    {
-        worldObj.playSoundEffect(explosionX, explosionY, explosionZ, "random.explode", 4.0F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
+    // @Override
+	// public void doExplosionB(boolean par1)
+    // {
+    //     worldObj.playSoundEffect(explosionX, explosionY, explosionZ, "random.explode", 4.0F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
 
-        Iterator iterator;
-        ChunkPosition chunkposition;
-        int i;
-        int j;
-        int k;
-        Block block;
+    //     Iterator iterator;
+    //     ChunkPosition chunkposition;
+    //     int i;
+    //     int j;
+    //     int k;
+    //     Block block;
 
-        if (!worldObj.isRemote && breakBlocks)
-        {
-          worldObj.createExplosion((Entity) null, explosionX, explosionY, explosionZ, radius, true);
-        }
+    //     if (!worldObj.isRemote && breakBlocks && !canceled)
+    //     {
+    //         iterator = affectedBlockPositions.iterator();
 
-        if (!worldObj.isRemote && isFlaming)
-        {
-            iterator = affectedBlockPositions.iterator();
+    //         while (iterator.hasNext())
+    //         {
+    //             chunkposition = (ChunkPosition)iterator.next();
+    //             i = chunkposition.chunkPosX;
+    //             j = chunkposition.chunkPosY;
+    //             k = chunkposition.chunkPosZ;
+    //             block = worldObj.getBlock(i, j, k);
 
-            while (iterator.hasNext())
-            {
-                chunkposition = (ChunkPosition)iterator.next();
-                i = chunkposition.chunkPosX;
-                j = chunkposition.chunkPosY;
-                k = chunkposition.chunkPosZ;
-                block = worldObj.getBlock(i, j, k);
-                Block blockBelow = worldObj.getBlock(i, j - 1, k);
+    //             if (block.getMaterial() != Material.air)
+    //             {
+    //                 if (block.canDropFromExplosion(this))
+    //                 {
+    //                     block.dropBlockAsItemWithChance(worldObj, i, j, k, worldObj.getBlockMetadata(i, j, k), 1.0F / explosionSize, 0);
+    //                 }
 
-                if (block == null && blockBelow.isOpaqueCube() && explosionRNG.nextInt(3) == 0)
-                {
-                    worldObj.setBlock(i, j, k, Blocks.fire);
-                }
-            }
-        }
-    }
+    //                 block.onBlockExploded(worldObj, i, j, k, this);
+    //             }
+    //         }
+    //     }
+
+    //     if (!worldObj.isRemote && isFlaming)
+    //     {
+    //         iterator = affectedBlockPositions.iterator();
+
+    //         while (iterator.hasNext())
+    //         {
+    //             chunkposition = (ChunkPosition)iterator.next();
+    //             i = chunkposition.chunkPosX;
+    //             j = chunkposition.chunkPosY;
+    //             k = chunkposition.chunkPosZ;
+    //             block = worldObj.getBlock(i, j, k);
+    //             Block blockBelow = worldObj.getBlock(i, j - 1, k);
+
+    //             if (block == null && blockBelow.isOpaqueCube() && explosionRNG.nextInt(3) == 0)
+    //             {
+    //                 worldObj.setBlock(i, j, k, Blocks.fire);
+    //             }
+    //         }
+    //     }
+    // }
 
     @Override
 	public Map func_77277_b()
