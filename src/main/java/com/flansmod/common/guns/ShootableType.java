@@ -66,7 +66,7 @@ public abstract class ShootableType extends InfoType
 	public float fireRadius = 0F;
 	/** The radius of explosion upon detonation */
 	public float explosionRadius = 0F;
-	/** Power of explosion. 0 = useless, 1 = vanilla behaviour */
+	/** Power of explosion. Multiplier, 1 = vanilla behaviour */
 	public float explosionPower = 1F;
 	/** Whether the explosion can destroy blocks */
 	public boolean explosionBreaksBlocks = true;

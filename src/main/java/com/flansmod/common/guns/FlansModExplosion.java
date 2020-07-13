@@ -97,24 +97,26 @@ public class FlansModExplosion extends Explosion
         HashSet hashset = new HashSet();
         double d0;
         double d1;
-        double d2;
+		double d2;
+		
+		float largeRadius = radius * 2;
 
-        for(int i = 0; i < boomRadius; ++i)
+        for(int i = 0; i < largeRadius; ++i)
         {
-            for(int j = 0; j < boomRadius; ++j)
+            for(int j = 0; j < largeRadius; ++j)
             {
-                for(int k = 0; k < boomRadius; ++k)
+                for(int k = 0; k < largeRadius; ++k)
                 {
-                    if(i == 0 || i == boomRadius - 1 || j == 0 || j == boomRadius - 1 || k == 0 || k == boomRadius - 1)
+                    if(i == 0 || i == largeRadius - 1 || j == 0 || j == largeRadius - 1 || k == 0 || k == largeRadius - 1)
                     {
-                        double d3 = (i / (boomRadius - 1.0F) * 2.0F - 1.0F);
-                        double d4 = (j / (boomRadius - 1.0F) * 2.0F - 1.0F);
-                        double d5 = (k / (boomRadius - 1.0F) * 2.0F - 1.0F);
+                        double d3 = (i / (largeRadius - 1.0F) * 2.0F - 1.0F);
+                        double d4 = (j / (largeRadius - 1.0F) * 2.0F - 1.0F);
+                        double d5 = (k / (largeRadius - 1.0F) * 2.0F - 1.0F);
                         double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
                         d3 /= d6;
                         d4 /= d6;
                         d5 /= d6;
-                        float f1 = explosionSize * (0.7F + worldObj.rand.nextFloat() * 0.6F);
+                        float f1 = power * radius * (0.7F + worldObj.rand.nextFloat() * 0.6F);
                         d0 = explosionX;
                         d1 = explosionY;
                         d2 = explosionZ;
@@ -126,12 +128,18 @@ public class FlansModExplosion extends Explosion
                             int j1 = MathHelper.floor_double(d2);
                             Block block = worldObj.getBlock(l, i1, j1);
 
-                            float f3 = exploder != null ? exploder.func_145772_a(this, worldObj, l, i1, j1, block) : block.getExplosionResistance(exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
-                            f1 -= ((f3 + 0.3F) * f2) / power;
+							float f3 = exploder != null ? exploder.func_145772_a(this, worldObj, l, i1, j1, block) : block.getExplosionResistance(exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
+							double distFactor = Math.sqrt(Math.pow(d0 - explosionX, 2) + Math.pow(d1 - explosionY, 2) + Math.pow(d2 - explosionZ, 2));
+							if (distFactor + 0.5 < radius) {
+								f1 -= ((f3 + 0.3F) * f2);
+							} else {
+								// If we're outside the radius, make it extremely difficult for the explosion to proceed.
+								f1 -= (f3 + 0.3F) * f2 * Math.pow((distFactor - radius + 2), 3) * 20;
+							}
 
                             if (f1 > 0.0F && (exploder == null || exploder.func_145774_a(this, worldObj, l, i1, j1, block, f1)))
                             {
-                                hashset.add(new ChunkPosition(l, i1, j1));
+								hashset.add(new ChunkPosition(l, i1, j1));
                             }
 
                             d0 += d3 * f2;

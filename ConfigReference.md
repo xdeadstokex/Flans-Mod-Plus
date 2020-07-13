@@ -239,8 +239,8 @@ BAB
 | DespawnTime | Integer | 0 | Time until the grenade despawns, without exploding. 0 = no despawn |
 | ExplodeOnImpact / DetonateOnImpact | Bool | false | Whether to explode when hitting a block or entity |
 | FireRadius / Fire | Float | 0 | The radius in which fire will be placed on impact |
-| ExplosionsRadius / Explosion | Float | 0 | The radius of the explosion to create on impact |
-| ExplosionPower | Float | 1 | Power of the explosive. (ability to take out blocks) 1 = vanilla. |
+| ExplosionRadius / Explosion | Float | 0 | The radius of the explosion to create on impact |
+| ExplosionPower | Float | 1 | Multiplier for power of the explosive. (ability to take out blocks) 1 = vanilla. <1 will just reduce radius. |
 | ExplosionBreaksBlocks | Bool | true | Whether the impact explosion breaks blocks |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
 | ExplosionsDamageVsLiving | Float | 1 | The damage to do to X from the explosion |
