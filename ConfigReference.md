@@ -227,6 +227,7 @@ BAB
 | FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired |
 | ThrowSpeed / ShootSpeed | Float | 1 | The speed at which the projectile should be launched. 0 Will give it no velocity and drop instantly. |
 | HitBoxSize | Float | 0.5 | The size of the hitbox. Units are probably /16ths |
+| Damage | Float | 1 | Amount of damage to do when hit. Sets all values for all types below. |
 | DamageVsLiving | Float | 1 | Amount of damage to do when hit. |
 | DamageVsPlayer | Float | 1 | Amount of damage to do when hit. |
 | DamageVsEntity | Float | 1 | Amount of damage to do when hit. |

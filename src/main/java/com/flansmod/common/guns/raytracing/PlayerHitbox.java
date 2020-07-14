@@ -188,7 +188,6 @@ public class PlayerHitbox {
         if (penetratingPower <= 0.7F * totalPenetrationResistance) {
             damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 5 / 2);
         }
-        FlansMod.log("%f", damageModifier);
 
         switch (type) {
             case BODY:

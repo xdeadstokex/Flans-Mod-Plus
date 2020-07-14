@@ -159,6 +159,8 @@ public abstract class ShootableType extends InfoType
 			else if(split[0].equals("HitBoxSize"))
 				hitBoxSize = Float.parseFloat(split[1]);
 
+			else if(split[0].equals("Damage"))
+				damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = Float.parseFloat(split[1]);
 			//Hit stuff
 			else if(split[0].equals("DamageVsLiving"))
 				damageVsLiving = Float.parseFloat(split[1]);
