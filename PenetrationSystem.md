@@ -32,7 +32,7 @@ Body (1) = Chest (0.5) + Legs (0.35) + Feet (0.15)
 
 Vanilla armour will not modify these values, this is an area for future improvement.
 
-For each piece of Flansmod armour you can set the penetration resistance with the `PenetrationResistance` keyword. By default this is 0, so it is reccomended to set your own value.
+For each piece of Flansmod armour you can set the penetration resistance with the `PenetrationResistance` keyword. By default this is 0, so it is reccomended to set your own value. This does not add to the naked/default values, it will set the value instead.
 
 ## Damage infliction
 
