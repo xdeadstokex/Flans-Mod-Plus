@@ -27,8 +27,8 @@ BreaksGlass True
 //Size of box to check for entities to hit / detonate
 HitBoxSize 1.0
 HitSound bomb
-//Whether or not the bullet can travel through an entity having hit it
-Penetrates False
+//5 - will fully penetrate a vehicle
+Penetration 5
 SmokeTrail True
 //True if this is a bomb
 Bomb False
