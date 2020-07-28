@@ -9,7 +9,7 @@ Guide values for penetration:
 | Riot shield | 4 | ~ |
 | Jeep | 5 | 3.5 |
 | Light Tank | 10 | 7 |
-| Medium Tank | 20 14 |
+| Medium Tank | 20 | 14 |
 
 ## Bullet
 
