@@ -183,7 +183,7 @@ public class FlansModExplosion extends Explosion
                     double d10 = (1.0D - d7) * d9;
 
                     EntityDriveable entityDriveable = null;
-                    float damage = (float)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize * power + 1.0D);
+                    float damage = (float)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize + 1.0D);
                     if(entity instanceof EntityPlayer)      damage *= damageVsPlayer;
                     else if(entity instanceof EntityLivingBase) damage *= damageVsLiving;
                     else if(entity instanceof EntityPlane)      damage *= damageVsPlane;
