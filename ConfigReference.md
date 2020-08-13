@@ -140,7 +140,7 @@ BAB
 | AllowPumpAttachments | Bool | false | Allow x attachments to be used with this gun |
 | AllowAccessoryAttachments | Bool | false | Allow x attachments to be used with this gun |
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
-| shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Allow x attachments to be used with this gun |
+| Shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Shield setup for riot shields |
 
 ### [AAGunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/AAGunType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
