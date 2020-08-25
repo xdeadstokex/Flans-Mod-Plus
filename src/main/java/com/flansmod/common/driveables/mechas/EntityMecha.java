@@ -314,6 +314,8 @@ public class EntityMecha extends EntityDriveable
 			}
 			case 10 : //Change control mode : Do nothing
 			{
+				FlansMod.proxy.changeControlMode((EntityPlayer)seats[0].riddenByEntity);
+				seats[0].playerLooking = new RotatedAxes(0,0,0);
 				return true;
 			}
 			case 11 : //Roll left : Do nothing
