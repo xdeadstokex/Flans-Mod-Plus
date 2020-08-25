@@ -77,6 +77,7 @@ public class PacketGunState extends PacketBase
 				player.removePotionEffect(Potion.nightVision.id);
 				ServerTickEvent.nightVisionPlayers.remove(player);
 			}
+			itemGun.isScoped = isScoped;
 		}
 	}
 

@@ -44,7 +44,6 @@ import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.utils.MathUtils;
 
 import com.google.common.collect.Multimap;
 
@@ -53,7 +52,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ibxm.Player;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -92,6 +90,9 @@ public class ItemGun extends Item implements IPaintableItem {
     public static boolean crouching = false;
     public static boolean sprinting = false;
     public static boolean shooting = false;
+
+    // This is a bodge - the server needs to hold state that is held on the client.
+    public boolean isScoped = false;
     public int soundDelay;
     public int lockOnSoundDelay;
 
@@ -489,7 +490,7 @@ public class ItemGun extends Item implements IPaintableItem {
         }
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
-        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && FlansModClient.zoomProgress > 0.5F) || !sprinting || gunType.hipFireWhileSprinting)) {
+        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || gunType.hipFireWhileSprinting)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
@@ -616,6 +617,7 @@ public class ItemGun extends Item implements IPaintableItem {
                 if (player.inventory.getCurrentItem() == null || player.inventory.getCurrentItem().getItem() == null || !(player.inventory.getCurrentItem().getItem() instanceof ItemGun)) {
                     data.isShootingRight = data.isShootingLeft = false;
                     data.offHandGunSlot = 0;
+                    isScoped = false;
                     (new PacketSelectOffHandGun(0)).handleServerSide(player);
                 }
                 return;
@@ -1001,7 +1003,7 @@ public class ItemGun extends Item implements IPaintableItem {
     private boolean canClick = true;
 
     public ItemStack tryToShoot(ItemStack gunStack, GunType gunType, World world, EntityPlayerMP entityplayer, boolean left) {
-
+        sprinting = entityplayer.isSprinting();
         if (type.deployable || !type.usableByPlayers)
             return gunStack;
         PlayerData data = PlayerHandler.getPlayerData(entityplayer);
@@ -1076,7 +1078,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
             }
             //A bullet stack was found, so try shooting with it
-            else if (bulletStack.getItem() instanceof ItemShootable && (sprinting && FlansModClient.zoomProgress > 0.5F) || !sprinting || gunType.hipFireWhileSprinting) {
+            else if (bulletStack.getItem() instanceof ItemShootable && (sprinting && isScoped) || !sprinting || gunType.hipFireWhileSprinting) {
                 //Shoot
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;
