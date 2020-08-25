@@ -1043,7 +1043,7 @@ public class ItemGun extends Item implements IPaintableItem {
                     //Set both gun delays to avoid reloading two guns at once
                     //data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
 
-                    float reloadTime = singlesReload ? (type.reloadTime / maxAmmo) * reloadCount : type.reloadTime;
+                    float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
                     data.shootTimeRight = data.shootTimeLeft = reloadTime;
 
                     if (left) {

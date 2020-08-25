@@ -102,7 +102,7 @@ public class PacketReload extends PacketBase
 
     		if(((ItemGun)gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left))
     		{
-    			float reloadTime = singlesReload ? (type.reloadTime / maxAmmo) * reloadCount : type.reloadTime;
+    			float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
     			data.shootTimeRight = data.shootTimeLeft = reloadTime;
     			    			
     			//Set the reload delay
