@@ -18,6 +18,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.ContainerDriveableInventory;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.driveables.Seat;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.BulletType;
@@ -36,7 +37,7 @@ public class GuiDriveableInventory extends GuiContainer
 	public int numItems;
 	public int maxScroll;
 	public EntityDriveable driveable;
-	public int screen; //0 = Guns, 1 = Bombs, 2 = Cargo
+	public int screen; //0 = Guns, 1 = Bombs, 2 = Cargo 3 = missiles
 
     public GuiDriveableInventory(InventoryPlayer inventoryplayer, World world1, EntityDriveable entPlane, int i)
     {
@@ -145,6 +146,24 @@ public class GuiDriveableInventory extends GuiContainer
 				}
 			}
 		}
+		else if(screen == 1)
+		{
+			if( x >= this.guiLeft+10 && x < this.guiLeft+180-10 &&
+				y >= this.guiTop +20 && y < this.guiTop +90)
+			{
+				if(driveable.getDriveableType().ammo.size() > 0)
+				{
+					listHoveringText.add("[Bombs]");
+					for(BulletType ammo : driveable.getDriveableType().ammo)
+					{
+						if(ammo!=null && ammo.weaponType == EnumWeaponType.BOMB)
+						{
+							listHoveringText.add("> "+ammo.name);
+						}
+					}
+				}
+			}
+		}
 		else if(screen == 3)
 		{
 			if( x >= this.guiLeft+10 && x < this.guiLeft+180-10 &&
@@ -157,7 +176,10 @@ public class GuiDriveableInventory extends GuiContainer
 					{
 						if(ammo!=null)
 						{
+							if(ammo!=null && ammo.weaponType != EnumWeaponType.BOMB)
+						{
 							listHoveringText.add("> "+ammo.name);
+						}
 						}
 					}
 				}
