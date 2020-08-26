@@ -512,7 +512,7 @@ BAB
 | DriverLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
 | PassengerLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
 | DriverTraverseSounds | Boolean | ? | Play sounds while rotating to aim | 
-| PassengerTraverseSounds | Boolean | ? | Play sounds while rotating to aim | 
+| PassengerTraverseSounds | SeatID Boolean | ? | Play sounds while rotating to aim | 
 | Passenger | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) (gunType) (gunName) | ~ | Add a passenger with or without guns and viewing limits. | 
 | GunOrigin | ID X Y Z | ~ | Set the gun origin for the gun with specified ID | 
 | YOffset | Float | 0 | Change the level of Y somehow for a model. |
@@ -527,16 +527,16 @@ BAB
 | SoundTime | Integer | 0 | The length in ticks of the ? sound | 
 | YawSoundLength | Integer | ~ | The length in ticks of the sound | 
 | PitchSoundLength | Integer | ~ | The length in ticks of the sound | 
-| PassengerYawSoundLength | ID soundLength | ~ | The length in ticks of the sound | 
-| PassengerPitchSoundLength | ID soundLength | ~ | The length in ticks of the sound |
+| PassengerYawSoundLength | SeatID soundLength | ~ | The length in ticks of the sound | 
+| PassengerPitchSoundLength | SeatID soundLength | ~ | The length in ticks of the sound |
 | StartSound | String | ~ | The name of the sound to play | 
 | EngineSound | String | ~ | The name of the sound to play | 
 | IdleSound | String | ~ | The name of the sound to play | 
 | BackSound | String | ~ | The name of the sound to play | 
 | YawSound | String | ~ | The name of the sound to play | 
 | PitchSound | String | ~ | The name of the sound to play | 
-| PassengerYawSound | ID String | ~ | The name of the sound to play | 
-| PassengerPitchSound | ID String | ~ | The name of the sound to play | 
+| PassengerYawSound | SeatID String | ~ | The name of the sound to play | 
+| PassengerPitchSound | SeatID String | ~ | The name of the sound to play | 
 | ShootMainSound | String | ~ | The name of the sound to play | 
 | ShootReloadSound | String | ~ | The name of the sound to play | 
 | ShootSecondarySound / ShootSoundSecondary | String | ~ | The name of the sound to play | 
