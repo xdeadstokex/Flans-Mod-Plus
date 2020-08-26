@@ -3,6 +3,7 @@ package com.flansmod.common.driveables;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.lwjgl.opengl.GL11;
 
@@ -1071,8 +1072,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (type.lockOnToLivings || type.lockOnToMechas || type.lockOnToPlanes || type.lockOnToPlayers || type.lockOnToVehicles) {
             if (!worldObj.isRemote && this.seats.length > 0 && lockOnSoundDelay <= 0) {
                 if (this.seats[0] != null && this.seats[0].riddenByEntity instanceof EntityPlayer) {
-                    int currentGun = getCurrentGun(false);
-                    Vector3f playerVec = getOrigin(type.shootPoints(false).get(currentGun));
+                    // int currentGun = getCurrentGun(false);
+                    // Vector3f playerVec = getOrigin(type.shootPoints(false).get(currentGun));
+                    Vector3f playerVecRelToVehicle = seats[0].playerLooking.findGlobalVectorLocally(new Vector3f(-1, 0, 0));
+                    Vector3f playerVec = axes.findGlobalVectorLocally(playerVecRelToVehicle);
 
                     for (Object obj : worldObj.loadedEntityList) {
                         Entity entity = (Entity) obj;
@@ -1081,10 +1084,14 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                                 (type.lockOnToPlanes && entity instanceof EntityPlane) ||
                                 (type.lockOnToPlayers && entity instanceof EntityPlayer) ||
                                 (type.lockOnToLivings && entity instanceof EntityLivingBase)) {
-                            double dXYZ = getDistanceToEntity(entity);
                             if (getDistanceSqToEntity(entity) < type.maxRangeLockOn * type.maxRangeLockOn) {
-                                Vector3f relPosVec = new Vector3f(entity.posX - this.posX, entity.posY - this.posY, entity.posZ - this.posZ);
+                                FlansMod.log(entity.toString());
+                                // Some heckery with vectors rotating about themselves or something
+                                Vector3f relPosVec = new Vector3f(-entity.posX + seats[0].posX, -entity.posY + seats[0].posY, entity.posZ - seats[0].posZ);
                                 float angle = Math.abs(Vector3f.angle(playerVec, relPosVec));
+                                FlansMod.log(Float.toString(angle));
+                                FlansMod.log("Player: " + playerVec.toString());
+                                FlansMod.log("Vehicle: " + relPosVec.toString());
                                 if (angle < Math.toRadians(type.canLockOnAngle)) {
                                     PacketPlaySound.sendSoundPacket(seats[0].posX, seats[0].posY, seats[0].posZ, 10, dimension, type.lockOnSound, false);
                                     if (entity instanceof EntityDriveable)
