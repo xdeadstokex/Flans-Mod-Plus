@@ -1085,13 +1085,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                                 (type.lockOnToPlayers && entity instanceof EntityPlayer) ||
                                 (type.lockOnToLivings && entity instanceof EntityLivingBase)) {
                             if (getDistanceSqToEntity(entity) < type.maxRangeLockOn * type.maxRangeLockOn) {
-                                FlansMod.log(entity.toString());
                                 // Some heckery with vectors rotating about themselves or something
                                 Vector3f relPosVec = new Vector3f(-entity.posX + seats[0].posX, -entity.posY + seats[0].posY, entity.posZ - seats[0].posZ);
                                 float angle = Math.abs(Vector3f.angle(playerVec, relPosVec));
-                                FlansMod.log(Float.toString(angle));
-                                FlansMod.log("Player: " + playerVec.toString());
-                                FlansMod.log("Vehicle: " + relPosVec.toString());
                                 if (angle < Math.toRadians(type.canLockOnAngle)) {
                                     PacketPlaySound.sendSoundPacket(seats[0].posX, seats[0].posY, seats[0].posZ, 10, dimension, type.lockOnSound, false);
                                     if (entity instanceof EntityDriveable)
