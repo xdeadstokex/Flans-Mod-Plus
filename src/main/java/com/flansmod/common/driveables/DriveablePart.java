@@ -352,7 +352,7 @@ public class DriveablePart
 		if(bullet != null)
 		{
 			float damageModifier = 1;
-			if (penetratingPower <= 0.7F*box.penetrationResistance)
+			if (penetratingPower <= 0.7F*box.penetrationResistance && FlansMod.useNewPenetrationSystem)
 				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*box.penetrationResistance)), 5/2);
 				
 			if(hit.driveable instanceof EntityPlane)
@@ -369,7 +369,11 @@ public class DriveablePart
 				onFire = true;
 			}
 		}
-		return penetratingPower - box.penetrationResistance;
+		if (FlansMod.useNewPenetrationSystem) {
+			return penetratingPower - box.penetrationResistance;
+		} else {
+			return penetratingPower - 5F;
+		}
 	}
 	
 	/** Ray traces a single co-ordinate 

@@ -23,6 +23,7 @@ public class PacketModConfig extends PacketBase {
     public int armourEnchantability;
     public boolean hashKick;
     public boolean disableSprintHipFireByDefault;
+    public boolean useNewPenSystem;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -34,6 +35,7 @@ public class PacketModConfig extends PacketBase {
         armourEnchantability = FlansMod.armourEnchantability;
         hashKick = FlansMod.kickNonMatchingHashes;
         disableSprintHipFireByDefault= FlansMod.disableSprintHipFireByDefault;
+        useNewPenSystem = FlansMod.useNewPenetrationSystem;
     }
 
     @Override
@@ -47,6 +49,7 @@ public class PacketModConfig extends PacketBase {
         data.writeInt(armourEnchantability);
         data.writeBoolean(hashKick);
         data.writeBoolean(disableSprintHipFireByDefault);
+        data.writeBoolean(useNewPenSystem);
     }
 
     @Override
@@ -60,6 +63,7 @@ public class PacketModConfig extends PacketBase {
         armourEnchantability = data.readInt();
         hashKick = data.readBoolean();
         disableSprintHipFireByDefault = data.readBoolean();
+        useNewPenSystem = data.readBoolean();
     }
 
     @Override
@@ -79,6 +83,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.armourEnchantability = armourEnchantability;
         FlansMod.kickNonMatchingHashes = hashKick;
         FlansMod.disableSprintHipFireByDefault = disableSprintHipFireByDefault;
+        FlansMod.useNewPenetrationSystem = useNewPenSystem;
         FlansMod.log("Config synced successfully");
     }
 }

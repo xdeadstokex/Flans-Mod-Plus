@@ -185,8 +185,10 @@ public class PlayerHitbox {
 
         float damageModifier = 1;
 
-        if (penetratingPower <= 0.7F * totalPenetrationResistance) {
+        if (penetratingPower <= 0.7F * totalPenetrationResistance && FlansMod.useNewPenetrationSystem) {
             damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 5 / 2);
+        } else if (!FlansMod.useNewPenetrationSystem) {
+            damageModifier = bullet.type.penetratingPower < 0.1F ? penetratingPower / bullet.type.penetratingPower : 1;
         }
 
         switch (type) {
@@ -230,7 +232,11 @@ public class PlayerHitbox {
                     //Yuck.
                     //PacketDispatcher.sendPacketToAllAround(posX, posY, posZ, 50, dimension, PacketPlaySound.buildSoundPacket(posX, posY, posZ, type.hitSound, true));
                 }
-                return penetratingPower - totalPenetrationResistance;
+                if (FlansMod.useNewPenetrationSystem) {
+                    return penetratingPower - totalPenetrationResistance;
+                } else {
+                    return penetratingPower - 1;
+                }
             }
             case RIGHTITEM: {
                 ItemStack currentStack = player.getCurrentEquippedItem();
