@@ -117,7 +117,7 @@ public class GunType extends PaintableType implements IScope
 	/** Whether Gun makes players to be EnumAction.bow */
 	public EnumAction itemUseAction = EnumAction.bow;
 	/** Whether the gun can be hipfired while sprinting */
-	public boolean hipFireWhileSprinting = false;
+	public boolean hipFireWhileSprinting = !FlansMod.disableSprintHipFireByDefault;
 	
 	//Launcher variables
 	public int canLockOnAngle = 5;
