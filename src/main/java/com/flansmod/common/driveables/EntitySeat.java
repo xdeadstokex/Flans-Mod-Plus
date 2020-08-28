@@ -791,17 +791,19 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 	@Override
 	public void setDead()
 	{
-		if (worldObj.isRemote) {
-			if (driveable == null || driveable.isDead) {
-				// Print.spam(1, "Received 'setDead()' call, but ignoring it since it wasn't
-				// sent from the server.");
-				super.setDead();
-			} else {
-				super.setDead();
-			}
-		} else {
-			super.setDead();
-		}
+		// This whole thing can be simplied down to.. whatever happens, set dead
+		// if (worldObj.isRemote) {
+		// 	if (driveable == null || driveable.isDead) {
+		// 		// Print.spam(1, "Received 'setDead()' call, but ignoring it since it wasn't
+		// 		// sent from the server.");
+		// 		super.setDead();
+		// 	} else {
+		// 		super.setDead();
+		// 	}
+		// } else {
+		// 	super.setDead();
+		// }
+		super.setDead();
 	}
 
 	/**
