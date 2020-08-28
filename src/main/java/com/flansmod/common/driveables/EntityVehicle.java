@@ -701,6 +701,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 				boolean test1 = worldObj.isAirBlock(Math.round(test1Pos.x), Math.round(test1Pos.y), Math.round(test1Pos.z));
 				boolean test2 = worldObj.isAirBlock(Math.round(test1Pos.x), Math.round(test1Pos.y + type.wheelStepHeight), Math.round(test1Pos.z));
 				if(!test1 && !test2){
+					// Tests to see if we are ascending tall terrain, or stuck in the ground.
 					throttle *= 0.6;
 					for(EntityWheel wheel2 : wheels){
 						Vector3f wheelPos3 = axes.findLocalVectorGlobally(type.wheelPositions[wheel2.ID].position);
@@ -740,6 +741,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 					float dist = (float)Math.sqrt(dx + dz);
 					diff = diff/dist;
 					throttle *= (1F - (diff/60));
+					// Slows down the vehicle when going uphill.
 				}
 			}
 			
@@ -929,7 +931,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 			animFrameRight = type.animFrames;
 		}
 		
-		
+		// Decrease throttle each tick.
 		if(throttle > 0)
 		{
 			throttle -= 0.0035;
