@@ -5,9 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,6 +21,7 @@ public class PacketModConfig extends PacketBase {
     public boolean hashKick;
     public boolean disableSprintHipFireByDefault;
     public boolean useNewPenSystem;
+    public boolean gunsWorkInDeadParts;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -36,6 +34,7 @@ public class PacketModConfig extends PacketBase {
         hashKick = FlansMod.kickNonMatchingHashes;
         disableSprintHipFireByDefault= FlansMod.disableSprintHipFireByDefault;
         useNewPenSystem = FlansMod.useNewPenetrationSystem;
+        gunsWorkInDeadParts = FlansMod.gunsInDeadPartsWork;
     }
 
     @Override
@@ -50,6 +49,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(hashKick);
         data.writeBoolean(disableSprintHipFireByDefault);
         data.writeBoolean(useNewPenSystem);
+        data.writeBoolean(gunsWorkInDeadParts);
     }
 
     @Override
@@ -64,6 +64,7 @@ public class PacketModConfig extends PacketBase {
         hashKick = data.readBoolean();
         disableSprintHipFireByDefault = data.readBoolean();
         useNewPenSystem = data.readBoolean();
+        gunsWorkInDeadParts = data.readBoolean();
     }
 
     @Override
@@ -84,6 +85,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.kickNonMatchingHashes = hashKick;
         FlansMod.disableSprintHipFireByDefault = disableSprintHipFireByDefault;
         FlansMod.useNewPenetrationSystem = useNewPenSystem;
+        FlansMod.gunsInDeadPartsWork = gunsWorkInDeadParts;
         FlansMod.log("Config synced successfully");
     }
 }
