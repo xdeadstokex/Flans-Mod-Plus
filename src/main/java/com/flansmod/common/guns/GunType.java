@@ -996,7 +996,14 @@ public class GunType extends PaintableType implements IScope
 				control *= attachment.recoilControlMultiplier;
 			}
 		}
-		return control;
+
+		if (control > 1) {
+			return 1;
+		} else if (control < 0) {
+			return 0;
+		} else {
+			return control;
+		}
 	}
 
 	public void setFireMode(ItemStack stack, int fireMode)
