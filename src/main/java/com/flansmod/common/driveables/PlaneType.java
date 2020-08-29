@@ -22,6 +22,8 @@ public class PlaneType extends DriveableType
 	public float turnLeftModifier = 1F, turnRightModifier = 1F;
 	/** Co-efficient of lift which determines how the plane flies */
 	public float lift = 1F;
+
+	public boolean heliThrottlePull = true;
 	
 	/** The point at which bomb entities spawn */
 	public Vector3f bombPosition;
@@ -132,6 +134,9 @@ public class PlaneType extends DriveableType
 			//Lift
 			if(split[0].equals("Lift"))
 				lift = Float.parseFloat(split[1]);
+
+			if (split[0].equals("HeliThrottlePull"))
+				heliThrottlePull = Boolean.parseBoolean(split[1]);
 				
 			//Propellers and Armaments
 
