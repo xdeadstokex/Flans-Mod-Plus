@@ -22,6 +22,9 @@ public class VehicleType extends DriveableType
 	/** Tank movement system. Uses track collision box for thrust, rather than the wheels */
 	public boolean tank = false;
 
+	/** Amount to decrease throttle by each tick. */
+	public float throttleDecay = 0.0035F;
+
 	/** Shoot delays */
 	public int vehicleShootDelay, vehicleShellDelay;
 	/** Aesthetic door variable */
@@ -88,7 +91,9 @@ public class VehicleType extends DriveableType
             if(split[0].equals("FourWheelDrive"))
             	fourWheelDrive = Boolean.parseBoolean(split[1].toLowerCase());
             if(split[0].equals("Tank") || split[0].equals("TankMode"))
-            	tank = Boolean.parseBoolean(split[1].toLowerCase());
+				tank = Boolean.parseBoolean(split[1].toLowerCase());
+			if(split[0].equals("ThrottleDecay"))
+				throttleDecay = Float.parseFloat(split[1]);
 
             //Visuals
             if(split[0].equals("HasDoor"))

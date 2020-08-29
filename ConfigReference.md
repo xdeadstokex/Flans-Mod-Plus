@@ -691,6 +691,7 @@ BAB
 | SquashMobs | Boolean | false | Whether to squash/kill livings under the wheels |
 | FourWheelDrive | Boolean | false | Apply power to all four wheels, or just two |
 | Tank / TankMode | Boolean | false | This has tracks instead of wheels |
+| ThrottleDecay | Float | 0.0035F | Amount to decrease the throttle by each tick |
 | HasDoor | Boolean | false | Whether this has openable doors |
 | ShootWithOpenDoor | Boolean | false | Whether the vehicle can shoot while the door is open |
 | RotateWheels | Boolean | false | Whether to animate rotating wheels |

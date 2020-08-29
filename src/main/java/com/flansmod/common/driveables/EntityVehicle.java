@@ -934,10 +934,10 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 		// Decrease throttle each tick.
 		if(throttle > 0)
 		{
-			throttle -= 0.0035;
+			throttle -= type.throttleDecay;
 		}
 		else if(throttle < 0)
-			throttle += 0.0035;
+			throttle += type.throttleDecay;
 		
 		
 		//if(seats[0].riddenByEntity == null) throttle = 1F;
