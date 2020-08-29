@@ -638,6 +638,7 @@ BAB
 | RollRightSpeed | Float | 1 | Modifier for turn speed |
 | Lift | Float | 1 | Coefficient of lift |
 | HeliThrottlePull | Boolean | true | Whether throttle will "pull" itself to 50% in a helicopter. | 
+| EmptyDrag | Float | 1 | Extra drag given to the plane when there is no driver. |
 | ShootDelay | Integer | ~ | Number of ticks between shots of the guns |
 | BombDelay | Integer | ~ | Number of ticks between bombs dropping |
 | Propeller | (Int)ID (Int)X Y Z part partType | ~ | Add a propeller to the plane |

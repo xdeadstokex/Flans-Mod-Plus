@@ -643,6 +643,11 @@ public class EntityPlane extends EntityDriveable
 			motionX *= 10 / motion;
 			motionY *= 10 / motion;
 			motionZ *= 10 / motion;
+		} else if (!(seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer)) {
+			// Slow down the plane/heli if its empty. We take 1 off emptyDrag, as FlightController applies a drag of 1 to it already.
+			motionX *= 1F - (0.05F * (type.emptyDrag - 1));
+			motionZ *= 1F - (0.05F * (type.emptyDrag - 1));
+
 		}
 
 		for(EntityWheel wheel : wheels)
