@@ -541,8 +541,8 @@ public class ItemGun extends Item implements IPaintableItem {
 					FlansModClient.playerRecoilYaw += gunType.getRecoilYaw(stack) / gunType.decreaseRecoilYaw;
 				}*/
                 if (left)
-                    FlansModClient.shootTimeLeft = gunType.getShootDelay(stack);
-                else FlansModClient.shootTimeRight = gunType.getShootDelay(stack);
+                    FlansModClient.shootTimeLeft += gunType.getShootDelay(stack);
+                else FlansModClient.shootTimeRight += gunType.getShootDelay(stack);
                 if (gunType.consumeGunUponUse)
                     return true;
 
