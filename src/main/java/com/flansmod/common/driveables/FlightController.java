@@ -258,6 +258,7 @@ public class FlightController {
 
 		data.fuelInTank -= thrust * fuelConsumptionMultiplier * data.engine.fuelConsumption;
 		
+		// Turbulence at high speed
 		if(plane.getSpeedXYZ() > 2){
 			plane.axes.rotateLocalPitch(((float)Math.random()-0.5F)/4);
 			plane.axes.rotateLocalYaw(((float)Math.random()-0.5F)/4);
