@@ -26,12 +26,15 @@ public class DriveablePart
 	/** Keeps track of whether death code has been called or not */
 	public boolean dead;
 	public EntityDriveable owner;
+	public float penRes;
 	
 	public DriveablePart(EnumDriveablePart e, CollisionBox b)
 	{
 		type = e;
 		box = b;
 		health = maxHealth = b == null ? 0 : b.health;
+		// Copy over pen. If the part doesn't have a collision box, set it to 0. (There was some bug about the collision system recognising null collision boxes)
+		penRes = b == null ? 0 : b.penetrationResistance;
 	}
 	
 	public void update(EntityDriveable driveable)
@@ -351,10 +354,17 @@ public class DriveablePart
 		//Perform damage code
 		if(bullet != null)
 		{
+			EntityBullet.penAmount = 1;
+			EntityBullet.headshot = false;
 			float damageModifier = 1;
-			if (penetratingPower <= 0.7F*box.penetrationResistance && FlansMod.useNewPenetrationSystem)
-				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*box.penetrationResistance)), 5/2);
-				
+			if (penetratingPower <= 0.7F*penRes && FlansMod.useNewPenetrationSystem) {
+				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*penRes)), 2.5);
+				EntityBullet.penAmount = damageModifier;
+				FlansMod.log("DMG Mod: " + damageModifier);
+				FlansMod.log("Pen Power: " + penetratingPower);
+				FlansMod.log("Pen res:" + penRes);
+				FlansMod.log("Type: " + type);
+			}
 			if(hit.driveable instanceof EntityPlane)
 			{
 				health -= bullet.damage * bullet.type.damageVsPlanes * damageModifier;

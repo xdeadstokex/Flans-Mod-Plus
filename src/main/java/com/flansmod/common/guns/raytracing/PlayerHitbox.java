@@ -18,7 +18,6 @@ import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.teams.ArmourType;
 import com.flansmod.common.teams.ItemTeamArmour;
 
 import cpw.mods.fml.relauncher.Side;
@@ -184,18 +183,20 @@ public class PlayerHitbox {
         }
 
         float damageModifier = 1;
-
+        EntityBullet.penAmount = 1;
         if (penetratingPower <= 0.7F * totalPenetrationResistance && FlansMod.useNewPenetrationSystem) {
-            damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 5 / 2);
+            damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 2.5);
+            EntityBullet.penAmount = damageModifier;
         } else if (!FlansMod.useNewPenetrationSystem) {
             damageModifier = bullet.type.penetratingPower < 0.1F ? penetratingPower / bullet.type.penetratingPower : 1;
         }
-
+        EntityBullet.headshot = false;
         switch (type) {
             case BODY:
                 break;
             case HEAD:
                 damageModifier *= 2F;
+                EntityBullet.headshot = true;
                 break;
             case LEFTARM:
                 damageModifier *= 0.6F;

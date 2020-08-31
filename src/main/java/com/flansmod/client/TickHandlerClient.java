@@ -346,11 +346,45 @@ public class TickHandlerClient {
                 GL11.glDisable(2929 /* GL_DEPTH_TEST */);
                 GL11.glDepthMask(false);
                 GL11.glBlendFunc(770, 771);
-                GL11.glColor4f(
+                // Rendering of fancy crosshair.
+                if (FlansMod.fancyCrosshair) {
+                    if (EntityBullet.headshot) {
+                        // Headshot - blue.
+                        GL11.glColor4f(
+                            0,
+                            0.5F,
+                            1,
+                            FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                        );
+                    } else {
+                        // Two stage transition between red and green, to avoid going into yellow.
+                        // Green = full pen.
+                        // Red = 0 .
+                        if (EntityBullet.penAmount < 0.5) {
+                            GL11.glColor4f(
+                                1,
+                                2 * EntityBullet.penAmount,
+                                0,
+                                FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                            );
+                        } else {
+                            GL11.glColor4f(
+                                2 * (1-EntityBullet.penAmount),
+                                1,
+                                0,
+                                FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                            );
+                        }
+
+                    }
+                } else {
+                    GL11.glColor4f(
                         FlansMod.hitCrossHairColor[1],
                         FlansMod.hitCrossHairColor[2],
                         FlansMod.hitCrossHairColor[3],
                         FlansMod.hitCrossHairColor[0] * (float) tickcount / 20);
+                }
+
                 GL11.glDisable(3008 /* GL_ALPHA_TEST */);
                 //Custom hit marker GUI if set in gun config
                 if (gunType.hitTexture != null) {

@@ -114,7 +114,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public boolean isFirstPositionSetting = false;
     public boolean isPositionUpper = true;
 
+    // For rendering - this applies to the last fired bullet, just before render. (Gets reset at render)
+    // This isn't really an optimal place for putting these variables, I can't think of anywhere better though.
     public static boolean hitCrossHair;
+    public static float penAmount;
+    public static boolean headshot;
 
     public float penetratingPower;
 
@@ -580,6 +584,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         if (owner instanceof EntityPlayer) {
                             if (FlansMod.proxy.isThePlayer((EntityPlayer) owner)) {
                                 hitCrossHair = true;
+                                // Reset crosshair rendering
+                                penAmount = 1;
+                                headshot = false;
                             }
                         }
                     }
