@@ -219,7 +219,10 @@ public class FlansModExplosion extends Explosion
                 }
             }
         }
-        explosionSize = f;
+		explosionSize = f;
+		if (!breakBlocks) {
+			affectedBlockPositions.clear();
+		}
     }
 
 	public void spawnParticle(int numSmoke, int numDebris)
