@@ -372,12 +372,6 @@ public class DriveablePart
 			if (penetratingPower <= 0.7F*penRes && FlansMod.useNewPenetrationSystem) {
 				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*penRes)), 2.5);
 				EntityBullet.penAmount = damageModifier;
-				FlansMod.log("DMG Mod: " + damageModifier);
-				FlansMod.log("Pen Power: " + penetratingPower);
-				FlansMod.log("Pen res:" + penRes);
-				FlansMod.log("Type: " + type);
-				FlansMod.log("BLT dmg: " + bullet.damage);
-				FlansMod.log("Health: " + health);
 			}
 			if(hit.driveable instanceof EntityPlane)
 			{
