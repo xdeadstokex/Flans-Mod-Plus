@@ -85,7 +85,7 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
 	        NBTTagCompound tags = CompressedStreamTools.readCompressed(fileinputstream).getCompoundTag("data");
 	    	for(EnumDriveablePart part : EnumDriveablePart.values())
 	    	{
-	    		tags.setInteger(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
+	    		tags.setFloat(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
 	    		tags.setBoolean(part.getShortName() + "_Fire", false);
 	    	}
 	        fileinputstream.close();
@@ -225,7 +225,7 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
     		tags.setString("Engine", PartType.defaultEngines.get(EnumType.vehicle).shortName);
     	for(EnumDriveablePart part : EnumDriveablePart.values())
     	{
-    		tags.setInteger(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
+    		tags.setFloat(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
     		tags.setBoolean(part.getShortName() + "_Fire", false);
     	}
     	planeStack.stackTagCompound = tags;

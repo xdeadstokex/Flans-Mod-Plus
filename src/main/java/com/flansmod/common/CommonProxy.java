@@ -297,7 +297,7 @@ public class CommonProxy {
         tags.setString("Engine", ((ItemPart) bestEngineStack.getItem()).type.shortName);
         tags.setString("Type", type.shortName);
         for (EnumDriveablePart part : EnumDriveablePart.values()) {
-            tags.setInteger(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
+            tags.setFloat(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
             tags.setBoolean(part.getShortName() + "_Fire", false);
         }
         driveableStack.stackTagCompound = tags;

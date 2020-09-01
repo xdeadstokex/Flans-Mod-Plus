@@ -19,9 +19,9 @@ public class DriveablePart
 {
 	public EnumDriveablePart type;
 	public CollisionBox box;
-	public int maxHealth;
-	public int health;
-	public int fireTime;
+	public float maxHealth;
+	public float health;
+	public float fireTime;
 	public boolean onFire;
 	/** Keeps track of whether death code has been called or not */
 	public boolean dead;
@@ -54,7 +54,7 @@ public class DriveablePart
 	
 	public void writeToNBT(NBTTagCompound tags)
 	{
-		tags.setInteger(type.getShortName() + "_Health", health);
+		tags.setFloat(type.getShortName() + "_Health", health);
 		tags.setBoolean(type.getShortName() + "_Fire", onFire);
 	}
 	
@@ -66,7 +66,7 @@ public class DriveablePart
 			onFire = false;
 			return;
 		}
-		health = tags.getInteger(type.getShortName() + "_Health");
+		health = tags.getFloat(type.getShortName() + "_Health");
 		onFire = tags.getBoolean(type.getShortName() + "_Fire");
 	}
 	
@@ -376,6 +376,8 @@ public class DriveablePart
 				FlansMod.log("Pen Power: " + penetratingPower);
 				FlansMod.log("Pen res:" + penRes);
 				FlansMod.log("Type: " + type);
+				FlansMod.log("BLT dmg: " + bullet.damage);
+				FlansMod.log("Health: " + health);
 			}
 			if(hit.driveable instanceof EntityPlane)
 			{

@@ -138,7 +138,7 @@ public class ItemMecha extends Item implements IPaintableItem
     		tags.setString("Engine", PartType.defaultEngines.get(EnumType.mecha).shortName);
     	for(EnumDriveablePart part : EnumDriveablePart.values())
     	{
-    		tags.setInteger(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
+    		tags.setFloat(part.getShortName() + "_Health", type.health.get(part) == null ? 0 : type.health.get(part).health);
     		tags.setBoolean(part.getShortName() + "_Fire", false);
     	}
     	mechaStack.stackTagCompound = tags;
