@@ -39,7 +39,7 @@ BAB
 | CounterRecoilForce | Float | 0.8 | Constant to determine how quickly the gun returns to centre after firing. Higher = longer |
 | CounterRecoilForceSneaking | Float | 0.7 | ~ |
 | CounterRecoilForceSprinting | Float | 0.9 | ~ |
-| CanHipFireWhileSprinting | Boolean | false | Whether the gun can fire when a player is sprinting and in hip position |
+| CanHipFireWhileSprinting | Boolean | true (can be changed in flansmod.cfg) | Whether the gun can fire when a player is sprinting and in hip position |
 | CanForceReload | Bool | true | Whether R can be used to reload the gun |
 | AllowRearm | Bool | true | Ammo bags give ammo when right clicked with the gun |
 | ReloadTime | Integer | ~ | Ticks taken to reload the gun |
