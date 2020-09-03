@@ -399,7 +399,8 @@ public class ItemGun extends Item implements IPaintableItem {
 
                             //Send ads spread packet to server
                             sendSpreadToServer(itemstack);
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
+                            isScoped = FlansModClient.currentScope != null;
+                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         } else {
                             //if(type.allowNightVision)
                             //isNightVision = false;
@@ -410,7 +411,8 @@ public class ItemGun extends Item implements IPaintableItem {
 
                             //Send default spread packet to server
                             FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
+                            isScoped = FlansModClient.currentScope != null;
+                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         }
                         FlansModClient.scopeTime = 10;
                     }
@@ -431,7 +433,8 @@ public class ItemGun extends Item implements IPaintableItem {
 
                             //Send ads spread packet to server
                             sendSpreadToServer(itemstack);
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
+                            isScoped = FlansModClient.currentScope != null;
+                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         }
                         FlansModClient.scopeTime = 10;
                     } else {
@@ -444,7 +447,8 @@ public class ItemGun extends Item implements IPaintableItem {
 
                                 //Send default spread packet to server
                                 FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
-                                FlansMod.getPacketHandler().sendToServer(new PacketGunState(FlansModClient.currentScope != null));
+                                isScoped = FlansModClient.currentScope != null;
+                                FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                             }
                         }
                     }
@@ -490,7 +494,8 @@ public class ItemGun extends Item implements IPaintableItem {
         }
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
-        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || gunType.hipFireWhileSprinting)) {
+        boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
+        if (FlansModClient.shootTime(left) <= 0 && (sprinting && isScoped) || !sprinting || canActuallyHipFire) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
@@ -1019,7 +1024,7 @@ public class ItemGun extends Item implements IPaintableItem {
                     break;
                 }
             }
-
+            boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
             //If no bullet stack was found, reload
             if (bulletStack == null) {
                 int maxAmmo = type.getNumAmmoItemsInGun(gunStack);
@@ -1078,7 +1083,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
             }
             //A bullet stack was found, so try shooting with it
-            else if (bulletStack.getItem() instanceof ItemShootable && (sprinting && isScoped) || !sprinting || gunType.hipFireWhileSprinting) {
+            else if (bulletStack.getItem() instanceof ItemShootable && (sprinting && isScoped) || !sprinting || canActuallyHipFire) {
                 //Shoot
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;

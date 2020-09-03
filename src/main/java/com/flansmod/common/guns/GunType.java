@@ -117,7 +117,8 @@ public class GunType extends PaintableType implements IScope
 	/** Whether Gun makes players to be EnumAction.bow */
 	public EnumAction itemUseAction = EnumAction.bow;
 	/** Whether the gun can be hipfired while sprinting */
-	public boolean hipFireWhileSprinting = !FlansMod.disableSprintHipFireByDefault;
+	/** 0=use flansmod.cfg default, 1=force allow, 2=force deny **/
+	public int hipFireWhileSprinting = 0;
 	
 	//Launcher variables
 	public int canLockOnAngle = 5;
@@ -361,7 +362,7 @@ public class GunType extends PaintableType implements IScope
 			else if(split[0].equals("ItemUseAction"))
 				itemUseAction = EnumAction.valueOf(split[1].toLowerCase());
 			else if(split[0].equals("HipFireWhileSprinting"))
-				hipFireWhileSprinting = Boolean.parseBoolean(split[1].toLowerCase());
+				hipFireWhileSprinting = Boolean.parseBoolean(split[1].toLowerCase()) ? 1 : 2;
 			else if(split[0].equals("MaxRangeLockOn"))
 				maxRangeLockOn = Integer.parseInt(split[1]);
 
