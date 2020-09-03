@@ -76,6 +76,12 @@ idea {
 task outputJar(type: Jar) {
     destinationDir = new File("build/output/mods/")
     from(zipTree("build/libs/${archiveName}")) {
+        exclude '**/mw/'
+        exclude '**/nerf/'
+        exclude '**/titan/'
+        exclude '**/ww2/'
+        exclude '**/yeolde/'
+        exclude '**/zombie/'
     }
 }
 
