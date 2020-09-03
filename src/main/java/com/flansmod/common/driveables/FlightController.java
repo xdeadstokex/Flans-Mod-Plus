@@ -33,7 +33,11 @@ public class FlightController {
 		UpdateParams(plane);
 		SetAxes(plane);
 
-		thrust = 0.01F * (type.maxThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
+		if (throttle > 0) {
+			thrust = 0.01F * (type.maxThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
+		} else {
+			thrust = 0.01F * (type.maxNegativeThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
+		}
 		gravity = 0.98F / 10F;
 		drag = 1F - (0.05F * type.drag);
 
@@ -203,7 +207,7 @@ public class FlightController {
 		float newSpeed = lastTickSpeed + thrust * 2F;
 
 		//Calculate the amount to alter motion by
-		float proportionOfMotionToCorrect = 2F * throttle;
+		float proportionOfMotionToCorrect = 2F * Math.abs(throttle);
 		if(proportionOfMotionToCorrect < 0F)
 			proportionOfMotionToCorrect = 0F;
 		if(proportionOfMotionToCorrect > 1.5F)
