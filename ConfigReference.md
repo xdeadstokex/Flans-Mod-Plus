@@ -508,8 +508,8 @@ BAB
 | RotatedDriverOffset | X Y Z | ? | ? | 
 | RotatedPassengerOffset | ID X Y Z | ? | ? | 
 | DriverAimSpeed | X Y Z | ? | The speed of which the driver can aim | 
-| PassengerAimSpeed | X Y Z | ? | The speed of which the passenger can aim | 
-| DriverLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
+| PassengerAimSpeed | ID X Y Z | ? | The speed of which the passenger can aim | 
+| DriverLegacyAiming | Boolean | ? | Something to do with legacy. Don't touch probably | 
 | PassengerLegacyAiming | ID Boolean | ? | Something to do with legacy. Don't touch probably | 
 | DriverTraverseSounds | Boolean | ? | Play sounds while rotating to aim | 
 | PassengerTraverseSounds | SeatID Boolean | ? | Play sounds while rotating to aim | 
