@@ -485,7 +485,7 @@ BAB
 | RecoilDistance | Float | 5 | ? |
 | RecoilTime | Float | 5 | ? |
 | ShootPointPrimary | (float) X Y Z (partName) (gunName) | ~ | Add a shootpoint. Other ways of entering this are available. partName and gunName are entirely optional. Will default to core if not defined. |
-| ShootPointSecondary | (float) X Y Z (partName) | ~ | Add a shootpoint. Other ways of entering this are available. partName is entirely optional. Will default to core if not defined. |
+| ShootPointSecondary | (float) X Y Z (partName) (gunName) | ~ | Add a shootpoint. Other ways of entering this are available. partName is entirely optional. Will default to core if not defined. |
 | EnableReloadTime | Boolean | flase | Enable reload time? |
 | ShootParticlesPrimary | particleName (float) X Y Z | ~ | Add shoot particles |
 | ShootParticlesSecondary | particleName (float) X Y Z | ~ | Add shoot particles |
