@@ -7,9 +7,14 @@ Please don't redistribute any code without permission.
 
 This version of Flansmod Plus aims to be the most recent and stable.
 
+## Useful stuff for Content Pack makers / Server Owners:
+
 [Config reference](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/ConfigReference.md)
+
 [Vehicle Guns Guide](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/VehicleGuns.md)
+
 [Penetration System Guide](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/PenetrationSystem.md)
 
+## Download finished builds:
 
 [Curseforge Page](https://www.curseforge.com/minecraft/mc-mods/flans-mod-ultimate-stability-edition)
