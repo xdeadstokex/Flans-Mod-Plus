@@ -501,7 +501,7 @@ BAB
 | AddRecipeParts | partName quantity itemName| ~ | Add a part to the recipe. Damaged parts can be added, but I don't know how to do that. | 
 | AddDye | quantity dyeName | ~ | Add a dye to the recipe. I am unsure if it is a name or an ID. | 
 | SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required| 
-| Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) (gunType) (gunName) | ~ | Set driver position. Part will default to core. | 
+| Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) | ~ | Set driver position. Part will default to core. | 
 | DriverPart | String | Core | Set part that the driver is on/in | 
 | DriverGun / PilotGun | String | ~ | Set gun name that the pilot controls | 
 | DriverGunOrigin | X Y Z | 0 0 0 | Set the place where bullets spawn from for driver gun. | 
