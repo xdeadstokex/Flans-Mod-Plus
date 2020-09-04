@@ -721,7 +721,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 									}
 								}
 								//Reset the shoot delay
-								gunDelay = gun.shootDelay;
+								gunDelay += gun.getShootDelay();
 							}
 						}
 					}
