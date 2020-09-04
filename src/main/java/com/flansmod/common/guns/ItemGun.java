@@ -495,7 +495,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
-        if (FlansModClient.shootTime(left) <= 0 && (sprinting && isScoped) || !sprinting || canActuallyHipFire) {
+        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
@@ -1052,7 +1052,6 @@ public class ItemGun extends Item implements IPaintableItem {
 
                     float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
                     data.shootTimeRight = data.shootTimeLeft = reloadTime;
-
                     if (left) {
                         data.reloadingLeft = true;
                         data.burstRoundsRemainingLeft = 0;
