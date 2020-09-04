@@ -86,7 +86,11 @@ public class DriveableType extends PaintableType {
     /**
      * Delays. Can override gun delays
      */
-    public int shootDelayPrimary = 1, shootDelaySecondary = 1;
+    public float shootDelayPrimary = -1, shootDelaySecondary = -1;
+    /**
+     * Damage multiplies for primary and secondary guns.
+     */
+    public float damageMultiplierPrimary = 1, damageMultiplierSecondary = 1;
     /**
      * Firing modes for primary and secondary guns. Minigun also an option
      */
@@ -551,6 +555,14 @@ public class DriveableType extends PaintableType {
                 shootDelayPrimary = Integer.parseInt(split[1]);
             else if (split[0].equals("ShootDelaySecondary"))
                 shootDelaySecondary = Integer.parseInt(split[1]);
+            else if (split[0].equals("DamageMultiplierPrimary"))
+                damageMultiplierPrimary = Float.parseFloat(split[1]);
+            else if (split[0].equals("DamageMultiplierSecondary"))
+                damageMultiplierSecondary = Float.parseFloat(split[1]);
+            else if (split[0].equals("RoundsPerMinPrimary"))
+                shootDelayPrimary = Float.parseFloat(split[1]) < 1200 ? 1200F / Float.parseFloat(split[1]) : 1;
+            else if (split[0].equals("RoundsPerMinSecondary"))
+                shootDelaySecondary = Float.parseFloat(split[1]) < 1200 ? 1200F / Float.parseFloat(split[1]) : 1;
             else if (split[0].equals("PlaceTimePrimary"))
                 placeTimePrimary = Integer.parseInt(split[1]);
             else if (split[0].equals("PlaceTimeSecondary"))
@@ -677,9 +689,9 @@ public class DriveableType extends PaintableType {
                 else if (split.length == 7)
                     shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
             } else if (split[0].equals("ShootDelay"))
-                shootDelaySecondary = Integer.parseInt(split[1]);
+                shootDelaySecondary = Float.parseFloat(split[1]);
             else if (split[0].equals("ShellDelay") || split[0].equals("BombDelay"))
-                shootDelayPrimary = Integer.parseInt(split[1]);
+                shootDelayPrimary = Float.parseFloat(split[1]);
 
                 //Recipe
             else if (split[0].equals("AddRecipeParts")) {
@@ -992,7 +1004,7 @@ public class DriveableType extends PaintableType {
         return s ? secondary : primary;
     }
 
-    public int shootDelay(boolean s) {
+    public float shootDelay(boolean s) {
         return s ? shootDelaySecondary : shootDelayPrimary;
     }
 

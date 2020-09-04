@@ -78,6 +78,15 @@ The rate of fire can be set using:
 
 `ShootDelaySecondary ticks`
 
+Where ticks can be a decimal.
+
+Alternatively:
+
+`RoundsPerMinPrimary RPM`
+`RoundsPerMinSecondary RPM`
+
+Where RPM can be as high as 1200.
+
 The delay between the driveable being placed and the guns being able to fire:
 
 `PlaceTimePrimary ticks`
@@ -191,6 +200,15 @@ which adds them to the turret to rotate? (not sure)
 
 This will add the guns to the guns menu - and will copy a lot of the functionality/specs from the gun, such as spread.
 
+In order to copy shootdelay/RPM from the gun, you need to set:
+
+`ShootDelayPrimary -1`
+
+or 
+
+`ShootDelaySecondary -1`
+
+Depending if the gun is primary or secondary. This tells FM to use the gun's RPM, and no the vehicle's.
 
 
 gunName is optional. If you're not adding a gun, that's fine, `ShootPointPrimary X Y Z partName` will still work.

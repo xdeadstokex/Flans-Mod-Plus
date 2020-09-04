@@ -468,8 +468,12 @@ BAB
 | AllowAllAmmo / AcceptAllAmmo | Boolean | false | Allow any type of ammunition to be shot (Please dont do this) |
 | Primary | String | None | Set the primary to weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
 | Secondary | String | None | Set the secondary to weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
-| ShootDelayPrimary | Integer | 1 | The number of ticks to wait between shooting |
-| ShootDelaySecondary | Integer | 1 | The number of ticks to wait between shooting |
+| ShootDelayPrimary | Float | -1 | The number of ticks to wait between shooting. -1 is use gun RPM or 1. |
+| ShootDelaySecondary | Float | -1 | The number of ticks to wait between shooting. -1 is use gun RPM or 1. |
+| RoundsPerMinPrimary | Float | ~ | Sets ShootDelay using RPM |
+| RoundsPerMinSecondary | Float | ~ | Sets ShootDelay using RPM |
+| DamageMultiplierPrimary | Float | 1 | Multiplies projectile damage |
+| DamageMultiplierSecondary | Float | 1 | Multiplies projectile damage |
 | PlaceTimePrimary | Integer | 5| ? |
 | PlaceTimeSecondary | Integer | 5 | ? |
 | ReloadTimePrimary | Integer | 0 | Ticks taken to reload the primary gun |

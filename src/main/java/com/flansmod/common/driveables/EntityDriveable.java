@@ -126,7 +126,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     /**
      * Shoot delay variables
      */
-    public int shootDelayPrimary, shootDelaySecondary;
+    public float shootDelayPrimary, shootDelaySecondary;
     /**
      * Minigun speed variables
      */
@@ -685,7 +685,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (!isPartIntact(shootPoint.rootPos.part)) return;
 
         if (disabled) return;
-
+        float damageMultiplier = secondary ? type.damageMultiplierSecondary : type.damageMultiplierPrimary;
         //If its a pilot gun, then it is using a gun type, so do the following
         if (shootPoint.rootPos instanceof PilotGun) {
             PilotGun pilotGun = (PilotGun) shootPoint.rootPos;
@@ -703,7 +703,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                     spawnParticle(type.shootParticle(secondary), shootPoint, gunVec);
                     //Spawn a new bullet item
-                    worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(new Vector3f(posX, posY, posZ), gunVec, null), lookVector, (EntityLivingBase) seats[0].riddenByEntity, gunType.bulletSpread / 2, gunType.damage, shellSpeed, bulletItemStack.getItemDamage(), type));
+                    worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(new Vector3f(posX, posY, posZ), gunVec, null), lookVector, (EntityLivingBase) seats[0].riddenByEntity, gunType.bulletSpread / 2, gunType.damage * damageMultiplier, shellSpeed, bulletItemStack.getItemDamage(), type));
                     //Play the shoot sound
                     PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound(secondary), false);
                     //Get the bullet item damage and increment it
@@ -722,8 +722,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                             driveableData.setInventorySlotContents(getDriveableType().numPassengerGunners + currentGun, bulletItemStack);
                         }
                     }
+                    if (type.shootDelay(secondary) == -1) {
+                        setShootDelay(gunType.getShootDelay(), secondary);
+                    } else {
+                        setShootDelay(type.shootDelay(secondary), secondary);
+                    }
                     //Reset the shoot delay
-                    setShootDelay(type.shootDelay(secondary), secondary);
                 }
             }
         } else //One of the other modes
@@ -741,7 +745,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                         if (slot != -1) {
                             int spread = 0;
-                            int damageMultiplier = 1;
                             float shellSpeed = 0F;
 
                             ItemStack bulletStack = driveableData.getStackInSlot(slot);
@@ -772,7 +775,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                                 }
                                 driveableData.setInventorySlotContents(slot, bulletStack);
                             }
-                            setShootDelay(type.shootDelay(secondary), secondary);
+                            if (type.shootDelay(secondary) == -1) {
+                                setShootDelay(1, secondary);
+                            } else {
+                                setShootDelay(type.shootDelay(secondary), secondary);
+                            }
                         }
                     }
                     break;
@@ -800,7 +807,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                         if (slot != -1) {
                             //int spread = 0;
-                            int damageMultiplier = 1;
                             //float shellSpeed = 3F;
                             float spread = type.bulletSpread;
                             float shellSpeed = type.bulletSpeed;
@@ -827,7 +833,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                                 }
                                 driveableData.setInventorySlotContents(slot, bulletStack);
                             }
-                            setShootDelay(type.shootDelay(secondary), secondary);
+                            if (type.shootDelay(secondary) == -1) {
+                                setShootDelay(1, secondary);
+                            } else {
+                                setShootDelay(type.shootDelay(secondary), secondary);
+                            }
                             canFireIT1 = false;
                         }
                     }
@@ -2511,7 +2521,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     // Getters and setters for dual fields
     //-------------------------------------
 
-    public int getShootDelay(boolean secondary) {
+    public float getShootDelay(boolean secondary) {
         return secondary ? shootDelaySecondary : shootDelayPrimary;
     }
 
@@ -2527,12 +2537,13 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         return secondary ? currentGunSecondary : currentGunPrimary;
     }
 
-    public void setShootDelay(int i, boolean secondary) {
+    public void setShootDelay(float i, boolean secondary) {
         setRecoilTimer();
+        // If current delay is greater than i, use that. If current delay is less than 0, add that to new shoot delay
         if (secondary)
-            shootDelaySecondary = i > shootDelaySecondary ? i : shootDelaySecondary;
+            shootDelaySecondary = i > shootDelaySecondary ? (shootDelaySecondary < 0 ? i + shootDelaySecondary : i) : shootDelaySecondary;
         else
-            shootDelayPrimary = i > shootDelayPrimary ? i : shootDelayPrimary;
+            shootDelayPrimary = i > shootDelayPrimary ? (shootDelayPrimary < 0 ? i + shootDelayPrimary : i) : shootDelayPrimary;
     }
 
     public void setMinigunSpeed(float f, boolean secondary) {
@@ -2704,6 +2715,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
 
         if (recoilTimer <= 0 && slot != -1)
-            recoilTimer = getDriveableType().shootDelayPrimary;
+            recoilTimer = (int)getDriveableType().shootDelayPrimary;
     }
 }

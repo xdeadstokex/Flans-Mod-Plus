@@ -951,7 +951,15 @@ public class GunType extends PaintableType implements IScope
     		
     		return fireRate = fireTicks;
     	}
-    }
+	}
+	
+	public float getShootDelay() {
+		if (shootDelay != 0) {
+			return shootDelay;
+		} else {
+			return roundsPerMin > 1200 ? 1 : 1200/roundsPerMin;
+		}
+	}
 
 	/** Get the number of bullets fired per shot of a specific gun */
 	public int getNumBullets(ItemStack stack)
