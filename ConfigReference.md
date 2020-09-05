@@ -142,6 +142,14 @@ BAB
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | Shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Shield setup for riot shields |
 
+Special note for guns - all animation variables that you might change in the gun's model file can be changed from here as well. Simply:
+`animVARIABLENAME` in this style `variableVariableNameA` for variableNameA. anim always lower case, first letters of any other word upper case. For vector3fs, 
+`animSomeVariable 0 -4 4`
+for animation types:
+`animAnimationType BOTTOM_CLIP`
+
+This will override the variable set in the gun's model!
+
 ### [AAGunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/AAGunType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
 |----------------------|----------|------|--------------------------------------------------|

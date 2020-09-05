@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
+import com.flansmod.client.model.EnumAnimationType;
+import com.flansmod.client.model.EnumMeleeAnimation;
 import com.flansmod.client.model.ModelAttachment;
 import com.flansmod.client.model.ModelCasing;
 import com.flansmod.client.model.ModelFlash;
@@ -614,6 +617,10 @@ public class GunType extends PaintableType implements IScope
 				shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
 			}
 
+			else if(FMLCommonHandler.instance().getSide().isClient()) {
+				processAnimationConfigs(split);
+			}
+
 		}
 		catch (Exception e)
 		{
@@ -634,6 +641,352 @@ public class GunType extends PaintableType implements IScope
 		}
 
 
+	}
+
+	public void processAnimationConfigs(String[] split) {
+		if (split[0].equals("animMinigunBarrelOrigin"))
+			model.minigunBarrelOrigin = parseVector3f(split);
+		else if (split[0].equals("animBarrelAttachPoint"))
+			model.barrelAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animBarrelAttachPoint"))
+			model.barrelAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animScopeAttachPoint"))
+			model.scopeAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animStockAttachPoint"))
+			model.stockAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animGripAttachPoint"))
+			model.gripAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animGadgetAttachPoint"))
+			model.gadgetAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animSlideAttachPoint"))
+			model.slideAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animPumpAttachPoint"))
+			model.pumpAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animAccessoryAttachPoint"))
+			model.accessoryAttachPoint = parseVector3f(split);
+		
+		else if (split[0].equals("animDefaultBarrelFlashPoint"))
+			model.defaultBarrelFlashPoint = parseVector3f(split);
+		else if (split[0].equals("animMuzzleFlashPoint"))
+			model.muzzleFlashPoint = parseVector3f(split);
+		
+		else if (split[0].equals("animHasFlash"))
+			model.hasFlash = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animHasArms"))
+			model.hasArms = Boolean.parseBoolean(split[1]);
+
+		else if (split[0].equals("animLeftArmPos"))
+			model.leftArmPos = parseVector3f(split);
+		else if (split[0].equals("animLeftArmRot"))
+			model.leftArmRot = parseVector3f(split);
+		else if (split[0].equals("animLeftArmScale"))
+			model.leftArmScale = parseVector3f(split);
+		else if (split[0].equals("animRightArmPos"))
+			model.rightArmPos = parseVector3f(split);
+		else if (split[0].equals("animRightArmRot"))
+			model.rightArmRot = parseVector3f(split);
+		else if (split[0].equals("animRightArmScale"))
+			model.rightArmScale = parseVector3f(split);
+		
+		else if (split[0].equals("animRightArmReloadPos"))
+			model.rightArmReloadPos = parseVector3f(split);
+		else if (split[0].equals("animRightArmReloadRot"))
+			model.rightArmReloadRot = parseVector3f(split);
+		else if (split[0].equals("animLeftArmReloadPos"))
+			model.leftArmReloadPos = parseVector3f(split);
+		else if (split[0].equals("animLeftArmReloadRot"))
+			model.leftArmReloadRot = parseVector3f(split);
+
+		else if (split[0].equals("animRightArmChargePos"))
+			model.rightArmChargePos = parseVector3f(split);
+		else if (split[0].equals("animRightArmChargeRot"))
+			model.rightArmChargeRot = parseVector3f(split);
+		else if (split[0].equals("animLeftArmChargePos"))
+			model.leftArmChargePos = parseVector3f(split);
+		else if (split[0].equals("animLeftArmChargeRot"))
+			model.leftArmChargeRot = parseVector3f(split);
+
+		else if (split[0].equals("animStagedRightArmReloadPos"))
+			model.stagedrightArmReloadPos = parseVector3f(split);
+		else if (split[0].equals("animStagedRightArmReloadRot"))
+			model.stagedrightArmReloadRot = parseVector3f(split);
+		else if (split[0].equals("animStagedLeftArmReloadPos"))
+			model.stagedleftArmReloadPos = parseVector3f(split);
+		else if (split[0].equals("animStagedLeftArmReloadRot"))
+			model.stagedleftArmReloadRot = parseVector3f(split);
+
+		else if (split[0].equals("animRightHandAmmo"))
+			model.rightHandAmmo = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animLeftHandAmmo"))
+			model.leftHandAmmo = Boolean.parseBoolean(split[1]);
+		
+		else if (split[0].equals("animGunSlideDistance"))
+			model.gunSlideDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animAltGunSlideDistance"))
+			model.altgunSlideDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animRecoilSlideDistance"))
+			model.RecoilSlideDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animRotatedSlideDistance"))
+			model.RotateSlideDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animShakeDistance"))
+			model.ShakeDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animRecoilAmount"))
+			model.recoilAmount = Float.parseFloat(split[1]);
+		
+		else if (split[0].equals("animCasingAnimDistance"))
+			model.casingAnimDistance = parseVector3f(split);
+		else if (split[0].equals("animCasingAnimSpread"))
+			model.casingAnimSpread = parseVector3f(split);
+		else if (split[0].equals("animCasingAnimTime"))
+			model.casingAnimTime = Integer.parseInt(split[1]);
+		else if (split[0].equals("animCasingRotateVector"))
+			model.casingRotateVector = parseVector3f(split);
+		else if (split[0].equals("animCasingAttachPoint"))
+			model.casingAttachPoint = parseVector3f(split);
+		else if (split[0].equals("animCasingDelay"))
+			model.casingDelay = Integer.parseInt(split[1]);
+		else if (split[0].equals("animCasingScale"))
+			model.caseScale = Float.parseFloat(split[1]);
+		else if (split[0].equals("animFlashScale"))
+			model.flashScale = Float.parseFloat(split[1]);
+		
+		else if (split[0].equals("animChargeHandleDistance"))
+			model.chargeHandleDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animChargeDelay"))
+			model.chargeDelay = Integer.parseInt(split[1]);
+		else if (split[0].equals("animChargeDelayAfterReload"))
+			model.chargeDelayAfterReload = Integer.parseInt(split[1]);
+		else if (split[0].equals("animChargeTime"))
+			model.chargeTime = Integer.parseInt(split[1]);
+		else if (split[0].equals("animCountOnRightHandSide"))
+			model.countOnRightHandSide = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animIsBulletCounterActive"))
+			model.isBulletCounterActive = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animIsAdvBulletCounterActive"))
+			model.isAdvBulletCounterActive = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animAnimationType")) {
+			if (split[1].equals("NONE"))
+				model.animationType = EnumAnimationType.NONE;
+			else if (split[1].equals("BOTTOM_CLIP"))
+				model.animationType = EnumAnimationType.BOTTOM_CLIP;
+			else if (split[1].equals("CUSTOMBOTTOM_CLIP"))
+				model.animationType = EnumAnimationType.CUSTOMBOTTOM_CLIP;
+			else if (split[1].equals("PISTOL_CLIP"))
+				model.animationType = EnumAnimationType.PISTOL_CLIP;
+			else if (split[1].equals("CUSTOMPISTOL_CLIP"))
+				model.animationType = EnumAnimationType.CUSTOMPISTOL_CLIP;
+			else if (split[1].equals("TOP_CLIP"))
+				model.animationType = EnumAnimationType.TOP_CLIP;
+			else if (split[1].equals("CUSTOMTOP_CLIP"))
+				model.animationType = EnumAnimationType.CUSTOMTOP_CLIP;
+			else if (split[1].equals("SIDE_CLIP"))
+				model.animationType = EnumAnimationType.SIDE_CLIP;
+			else if (split[1].equals("CUSTOMSIDE_CLIP"))
+				model.animationType = EnumAnimationType.CUSTOMSIDE_CLIP;
+			else if (split[1].equals("P90"))
+				model.animationType = EnumAnimationType.P90;
+			else if (split[1].equals("CUSTOMP90"))
+				model.animationType = EnumAnimationType.CUSTOMP90;
+			else if (split[1].equals("SHOTGUN"))
+				model.animationType = EnumAnimationType.SHOTGUN;
+			else if (split[1].equals("CUSTOMSHOTGUN"))
+				model.animationType = EnumAnimationType.CUSTOMSHOTGUN;
+			else if (split[1].equals("RIFLE"))
+				model.animationType = EnumAnimationType.RIFLE;
+			else if (split[1].equals("CUSTOMRIFLE"))
+				model.animationType = EnumAnimationType.CUSTOMRIFLE;
+			else if (split[1].equals("REVOLVER"))
+				model.animationType = EnumAnimationType.REVOLVER;
+			else if (split[1].equals("CUSTOMREVOLVER"))
+				model.animationType = EnumAnimationType.CUSTOMREVOLVER;
+			else if (split[1].equals("REVOLVER2"))
+				model.animationType = EnumAnimationType.REVOLVER;
+			else if (split[1].equals("CUSTOMREVOLVER2"))
+				model.animationType = EnumAnimationType.CUSTOMREVOLVER;
+			else if (split[1].equals("END_LOADED"))
+				model.animationType = EnumAnimationType.END_LOADED;
+			else if (split[1].equals("CUSTOMEND_LOADED"))
+				model.animationType = EnumAnimationType.CUSTOMEND_LOADED;
+			else if (split[1].equals("RIFLE_TOP"))
+				model.animationType = EnumAnimationType.RIFLE_TOP;
+			else if (split[1].equals("CUSTOMRIFLE_TOP"))
+				model.animationType = EnumAnimationType.CUSTOMRIFLE_TOP;
+			else if (split[1].equals("BULLPUP"))
+				model.animationType = EnumAnimationType.BULLPUP;
+			else if (split[1].equals("CUSTOMBULLPUP"))
+				model.animationType = EnumAnimationType.CUSTOMBULLPUP;
+			else if (split[1].equals("ALT_PISTOL_CLIP"))
+				model.animationType = EnumAnimationType.ALT_PISTOL_CLIP;
+			else if (split[1].equals("CUSTOMALT_PISTOL_CLIP"))
+				model.animationType = EnumAnimationType.CUSTOMALT_PISTOL_CLIP;
+			else if (split[1].equals("GENERIC"))
+				model.animationType = EnumAnimationType.GENERIC;
+			else if (split[1].equals("CUSTOMGENERIC"))
+				model.animationType = EnumAnimationType.CUSTOMGENERIC;
+			else if (split[1].equals("BACK_LOADED"))
+				model.animationType = EnumAnimationType.BACK_LOADED;
+			else if (split[1].equals("CUSTOMBACK_LOADED"))
+				model.animationType = EnumAnimationType.CUSTOMBACK_LOADED;
+			else if (split[1].equals("STRIKER"))
+				model.animationType = EnumAnimationType.STRIKER;
+			else if (split[1].equals("CUSTOMSTRIKER"))
+				model.animationType = EnumAnimationType.CUSTOMSTRIKER;
+			else if (split[1].equals("BREAK_ACTION"))
+				model.animationType = EnumAnimationType.BREAK_ACTION;
+			else if (split[1].equals("CUSTOMBREAK_ACTION"))
+				model.animationType = EnumAnimationType.CUSTOMBREAK_ACTION;
+			else if (split[1].equals("CUSTOM"))
+				model.animationType = EnumAnimationType.CUSTOM;
+		}
+		else if (split[0].equals("animMeleeAnimation")) {
+			if (split[1].equals("DEFAULT"))
+				model.meleeAnimation = EnumMeleeAnimation.DEFAULT;
+			else if (split[1].equals("NONE"))
+				model.meleeAnimation = EnumMeleeAnimation.NONE;
+			else if (split[1].equals("BLUNT_SWING"))
+				model.meleeAnimation = EnumMeleeAnimation.BLUNT_SWING;
+			else if (split[1].equals("BLUNT_BASH"))
+				model.meleeAnimation = EnumMeleeAnimation.BLUNT_BASH;
+			else if (split[1].equals("STAB_UNDERARM"))
+				model.meleeAnimation = EnumMeleeAnimation.STAB_UNDERARM;
+			else if (split[1].equals("STAB_OVERARM"))
+				model.meleeAnimation = EnumMeleeAnimation.STAB_OVERARM;
+		}
+		else if (split[0].equals("animTiltGunTime"))
+			model.tiltGunTime = Float.parseFloat(split[1]);
+		else if (split[0].equals("animUnloadClipTime"))
+			model.unloadClipTime = Float.parseFloat(split[1]);
+		else if (split[0].equals("animLoadClipTime"))
+			model.loadClipTime = Float.parseFloat(split[1]);
+
+		else if (split[0].equals("animScopeIsOnSlide"))
+			model.scopeIsOnSlide = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animScopeIsOnBreakAction"))
+			model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+
+		else if (split[0].equals("animNumBulletsInReloadAnimation"))
+			model.numBulletsInReloadAnimation = Float.parseFloat(split[1]);
+
+		else if (split[0].equals("animPumpDelay"))
+			model.pumpDelay = Integer.parseInt(split[1]);
+		else if (split[0].equals("animPumpDelayAfterReload"))
+			model.pumpDelayAfterReload = Integer.parseInt(split[1]);
+		else if (split[0].equals("animPumpTime"))
+			model.pumpTime = Integer.parseInt(split[1]);
+		else if (split[0].equals("animHammerDelay"))
+			model.hammerDelay = Integer.parseInt(split[1]);
+
+		else if (split[0].equals("animPumpHandleDistance"))
+			model.pumpHandleDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animEndLoadedAmmoDistance"))
+			model.endLoadedAmmoDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animBreakActionAmmoDistance"))
+			model.breakActionAmmoDistance = Float.parseFloat(split[1]);
+		else if (split[0].equals("animScopeIsOnBreakAction"))
+			model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+
+		else if (split[0].equals("animGripIsOnPump"))
+			model.gripIsOnPump = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animGadgetsOnPump"))
+			model.gripIsOnPump = Boolean.parseBoolean(split[1]);
+		
+		else if (split[0].equals("animBarrelBreakPoint"))
+			model.barrelBreakPoint = parseVector3f(split);
+		else if (split[0].equals("animAltBarrelBreakPoint"))
+			model.altbarrelBreakPoint = parseVector3f(split);
+
+		else if (split[0].equals("animRevolverFlipAngle"))
+			model.revolverFlipAngle = Float.parseFloat(split[1]);
+		else if (split[0].equals("animRevolver2FlipAngle"))
+			model.revolver2FlipAngle = Float.parseFloat(split[1]);
+		
+		else if (split[0].equals("animRevolverFlipPoint"))
+			model.revolverFlipPoint = parseVector3f(split);
+		else if (split[0].equals("animRevolver2FlipPoint"))
+			model.revolver2FlipPoint = parseVector3f(split);
+		
+		else if (split[0].equals("animBreakAngle"))
+			model.breakAngle = Float.parseFloat(split[1]);
+		else if (split[0].equals("animAltBreakAngle"))
+			model.altbreakAngle = Float.parseFloat(split[1]);
+		
+		else if (split[0].equals("animSpinningCocking"))
+			model.spinningCocking = Boolean.parseBoolean(split[1]);
+
+		else if (split[0].equals("animSpinPoint"))
+			model.spinPoint = parseVector3f(split);
+		else if (split[0].equals("animHammerSpinPoint"))
+			model.hammerSpinPoint = parseVector3f(split);
+		else if (split[0].equals("animAltHammerSpinPoint"))
+			model.althammerSpinPoint = parseVector3f(split);
+		else if (split[0].equals("animHammerAngle"))
+			model.hammerAngle = Float.parseFloat(split[1]);
+		else if (split[0].equals("animAltHammerAngle"))
+			model.althammerAngle = Float.parseFloat(split[1]);
+
+		else if (split[0].equals("animIsSingleAction"))
+			model.isSingleAction = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animSlideLockOnEmpty"))
+			model.slideLockOnEmpty = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animLeftHandPump"))
+			model.lefthandPump = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animRightHandPump"))
+			model.righthandPump = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animLeftHandCharge"))
+			model.leftHandCharge = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animRightHandCharge"))
+			model.rightHandCharge = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animLeftHandBolt"))
+			model.leftHandBolt = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animRightHandBolt"))
+			model.rightHandBolt = Boolean.parseBoolean(split[1]);
+		
+		else if (split[0].equals("animPumpModifier"))
+			model.pumpModifier = Float.parseFloat(split[1]);
+		else if (split[0].equals("animChargeModifier"))
+			model.chargeModifier = parseVector3f(split);
+		else if (split[0].equals("animGunOffset"))
+			model.gunOffset = Float.parseFloat(split[1]);
+		else if (split[0].equals("animCrouchZoom"))
+			model.crouchZoom = Float.parseFloat(split[1]);
+		else if (split[0].equals("animFancyStance"))
+			model.fancyStance = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animStanceTranslate"))
+			model.stanceTranslate = parseVector3f(split);
+		else if (split[0].equals("animStanceRotate"))
+			model.stanceRotate = parseVector3f(split);
+
+		else if (split[0].equals("animRotateGunVertical"))
+			model.rotateGunVertical= Float.parseFloat(split[1]);
+		else if (split[0].equals("animRotateGunHorizontal"))
+			model.rotateGunHorizontal = Float.parseFloat(split[1]);
+		else if (split[0].equals("animTiltGun"))
+			model.tiltGun = Float.parseFloat(split[1]);
+		else if (split[0].equals("animTranslateGun"))
+			model.translateGun = parseVector3f(split);
+		else if (split[0].equals("animRotateClipVertical"))
+			model.rotateClipVertical = Float.parseFloat(split[1]);
+		else if (split[0].equals("animStagedRotateClipVertical"))
+			model.stagedrotateClipVertical= Float.parseFloat(split[1]);
+		else if (split[0].equals("animRotateClipHorizontal"))
+			model.rotateClipVertical = Float.parseFloat(split[1]);
+		else if (split[0].equals("animStagedRotateClipHorizontal"))
+			model.stagedrotateClipVertical = Float.parseFloat(split[1]);
+		else if (split[0].equals("animTiltClip"))
+			model.tiltClip = Float.parseFloat(split[1]);
+		else if (split[0].equals("animStagedTiltClip"))
+			model.stagedtiltClip = Float.parseFloat(split[1]);
+		else if (split[0].equals("animTranslateClip"))
+			model.translateClip = parseVector3f(split);
+		else if (split[0].equals("animStagedTranslateClip"))
+			model.stagedtranslateClip = parseVector3f(split);
+		else if (split[0].equals("animStagedReload"))
+			model.stagedReload = Boolean.parseBoolean(split[1]);
+
+		else if (split[0].equals("animThirdPersonOffset"))
+			model.thirdPersonOffset = parseVector3f(split);
+		else if (split[0].equals("animItemFrameOffset"))
+			model.itemFrameOffset = parseVector3f(split);
 	}
 
 	/** Used only for driveables */
@@ -659,6 +1012,10 @@ public class GunType extends PaintableType implements IScope
 		}
 
 		return result;
+	}
+
+	public Vector3f parseVector3f(String[] inp) {
+		return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
 	}
 
 	public boolean isAmmo(ItemStack stack)
