@@ -13,9 +13,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
+
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 
 /**
  * Implemented from old source.
@@ -60,12 +65,56 @@ public class ItemBullet extends ItemShootable implements IFlanItem {
     @SuppressWarnings("unchecked")
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean b) {
-        if (!type.packName.isEmpty()) {
-            lines.add(type.packName);
+        if (type.fancyDescription) {
+            KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
+
+            if (!type.packName.isEmpty()) {
+                lines.add("\u00a7o" + type.packName);
+            }
+            if (type.description != null) {
+                Collections.addAll(lines, type.description.split("_"));
+            }
+            //Reveal all the bullet stats when holding down the sneak key
+            if (!GameSettings.isKeyDown(shift)) {
+                lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
+            } else {
+                lines.add("");
+                lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.damageVsLiving, 2));
+                lines.add("\u00a79Penetration" + "\u00a77: " + roundFloat(type.penetratingPower, 2));
+                lines.add("\u00a79Rounds" + "\u00a77: " + type.roundsPerItem);
+                lines.add("\u00a79Fall Speed" + "\u00a77: " + roundFloat(type.fallSpeed, 2));
+
+                if (type.explosionRadius > 0) {
+                    lines.add("\u00a79Explosion Radius" + "\u00a77: " + roundFloat(type.explosionRadius, 2));
+                    lines.add("\u00a79Explosion Power" + "\u00a77: " + roundFloat(type.explosionPower, 2));
+                }
+                if (type.numBullets > -1) {
+                    lines.add("\u00a79Shot" + "\u00a77: " + type.numBullets);
+                }
+
+                if (type.bulletSpread > -1) {
+                    lines.add("\u00a79Spread" + "\u00a77: " + type.bulletSpread);
+                }
+                if (type.lockOnToLivings || type.lockOnToMechas || type.lockOnToPlanes || type.lockOnToPlayers || type.lockOnToVehicles) {
+                    lines.add("\u00a79Guidance:" + "\u00a77: " + "LockOn");
+                } else if (type.manualGuidance) {
+                    lines.add("\u00a79Guidance:" + "\u00a77: " + "Manual");
+                } else if (type.weaponType == EnumWeaponType.MISSILE) {
+                    lines.add("\u00a79Guidance:" + "\u00a77: " + "Unguided");
+                }
+
+                lines.add("");
+
+            }
+        } else {
+            if (!type.packName.isEmpty()) {
+                lines.add(type.packName);
+            }
+            if (type.description != null) {
+                Collections.addAll(lines, type.description.split("_"));
+            }
         }
-        if (type.description != null) {
-            Collections.addAll(lines, type.description.split("_"));
-        }
+        
     }
 
     //Can be overriden to allow new types of bullets to be created, for planes
@@ -98,5 +147,14 @@ public class ItemBullet extends ItemShootable implements IFlanItem {
     @Override
     public InfoType getInfoType() {
         return type;
+    }
+    
+    public static float roundFloat(float value, int points) {
+        int pow = 10;
+        for (int i = 1; i < points; i++)
+            pow *= 10;
+        float result = value * pow;
+
+        return (float) (int) ((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
     }
 }

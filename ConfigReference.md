@@ -326,6 +326,7 @@ This will override the value set in the gun's model!
 | ManualGuidance | Boolean | false | Whether this is manually guided |
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
+| FancyDescription | Boolean | true | Whether to display information about the bullet/mag in the description, like a gun. |
 
 ### [GrenadeType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GrenadeType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |

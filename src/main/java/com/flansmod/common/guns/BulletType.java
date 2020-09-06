@@ -11,9 +11,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 
 public class BulletType extends ShootableType
 {
@@ -109,6 +107,8 @@ public class BulletType extends ShootableType
 	public float trackPhaseTurn = 0.2F;
 	
 	public boolean torpedo = false;
+
+	public boolean fancyDescription = true;
 
 	/** The static bullets list */
 	
@@ -259,6 +259,9 @@ public class BulletType extends ShootableType
 				lockOnFuse = Integer.parseInt(split[1]);
 			else if(split[0].equals("MaxRange"))
 				maxRange = Integer.parseInt(split[1]);
+			
+			else if(split[0].equals("FancyDescription"))
+				fancyDescription = Boolean.parseBoolean(split[1]);
 		}
 		catch (Exception e)
 		{
