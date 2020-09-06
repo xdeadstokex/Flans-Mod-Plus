@@ -498,10 +498,14 @@ public class EntityMecha extends EntityDriveable
 		// Play a sound if the previous sound has finished
 		if((left ? soundDelayLeft : soundDelayRight) <= 0 && gunType.shootSound != null)
 		{
-			PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, gunType.shootSound, gunType.distortSound);
+			PacketPlaySound.sendSoundPacket(posX, posY, posZ, gunType.gunSoundRange, dimension, gunType.shootSound, gunType.distortSound);
 			if(left)
 				soundDelayLeft = gunType.shootSoundLength;
 			else soundDelayRight = gunType.shootSoundLength;
+			if (gunType.distantShootSound != null) {
+				FlansMod.packetHandler.sendToDonut(new PacketPlaySound(posX, posY, posZ, gunType.distantShootSound), posX,
+						posY, posZ, gunType.gunSoundRange, gunType.distantSoundRange, dimension);
+			}
 		}		
 	}
 	

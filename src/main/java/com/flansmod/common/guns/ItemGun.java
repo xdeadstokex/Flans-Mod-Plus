@@ -1235,6 +1235,11 @@ public class ItemGun extends Item implements IPaintableItem {
             if (soundToPlay != null)
                 PacketPlaySound.sendSoundPacket(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, type.gunSoundRange, entityPlayer.dimension, soundToPlay, gunType.distortSound, silenced);
             soundDelay = gunType.shootSoundLength;
+            if (type.distantShootSound != null) {
+                FlansMod.packetHandler.sendToDonut(new PacketPlaySound(entityPlayer.posX, entityPlayer.posY,
+                        entityPlayer.posZ, type.distantShootSound), entityPlayer.posX, entityPlayer.posY,
+                        entityPlayer.posZ, type.gunSoundRange, type.distantSoundRange, entityPlayer.dimension);
+            }
         }
         if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable) {
             // Spawn the bullet entities

@@ -282,4 +282,24 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
     public void sendToAllAround(PacketBase packet, double x, double y, double z, float range, int dimension) {
         sendToAllAround(packet, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
     }
+
+    public void sendToDonut(PacketBase packet, double x, double y, double z, float minRange, float maxRange, int dimension) {
+        List players;
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            players = Minecraft.getMinecraft().theWorld.playerEntities;
+        } else {
+            players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        }
+        for (Object p : players) {
+            if (p instanceof EntityPlayerMP) {
+                EntityPlayerMP pl = (EntityPlayerMP) p;
+                if (pl.dimension == dimension) {
+                    double dist = Math.sqrt((pl.posX - x) * (pl.posX - x) + (pl.posY - y) * (pl.posY - y) + (pl.posZ - z) * (pl.posZ - z));
+                    if (dist > minRange && dist < maxRange) {
+                        sendTo(packet, pl);
+                    }
+                }
+            }
+        }
+    }
 }

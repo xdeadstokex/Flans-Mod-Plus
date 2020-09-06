@@ -93,6 +93,8 @@ BAB
 | LoopedSoundLength / SpinSoundLength | String | ~ |  |
 | CooldownSound | String | ~ |  |
 | LockOnSound | String | ~ |  |
+| DistantSound | String | ~ | Sound to use for players outside of GunSoundRange but within DistantSoundRange |
+| DistantSoundRange | Int | 100 | Range to play distant shooting sound around the gun. |
 | Mode | String | FULLAUTO | The mode of the gun. (fullauto, minigun, burst, semiauto) |
 | Scope | String | ~ | None = NoScope, otherwise scopeTexture |
 | AllowNightVision | Bool | false | Gives night vision effect when scoped |
@@ -141,6 +143,7 @@ BAB
 | AllowAccessoryAttachments | Bool | false | Allow x attachments to be used with this gun |
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | Shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Shield setup for riot shields |
+
 
 Special note for guns - all animation variables that you can change in the gun's model file can be changed from here as well. Simply:
 `animVARIABLENAME` in this style `variableVariableNameA` for variableNameA. anim always lower case, first letters of any other word upper case. For vector3fs, 

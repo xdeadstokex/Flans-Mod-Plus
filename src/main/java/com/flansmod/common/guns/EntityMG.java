@@ -191,7 +191,11 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 			if (soundDelay <= 0)
 			{
 				soundDelay = type.shootSoundLength;
-				PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound, type.distortSound);
+				PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.gunSoundRange, dimension, type.shootSound, type.distortSound);
+				if (type.distantShootSound != null) {
+					FlansMod.packetHandler.sendToDonut(new PacketPlaySound(posX, posY, posZ, type.distantShootSound),
+							posX, posY, posZ, type.gunSoundRange, type.distantSoundRange, dimension);
+				}
 			}
 		}
 		if (soundDelay > 0)
@@ -248,8 +252,11 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 				{
 					float distortion = type.distortSound ? 1.0F / (rand.nextFloat() * 0.4F + 0.8F) : 1F;
 					//worldObj.playSoundAtEntity(this, type.shootSound, 1.0F, distortion);
-					PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.shootSound, type.distortSound);
-
+					PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.gunSoundRange, dimension, type.shootSound, type.distortSound);
+					if (type.distantShootSound != null) {
+						FlansMod.packetHandler.sendToDonut(new PacketPlaySound(posX, posY, posZ, type.distantShootSound),
+								posX, posY, posZ, type.gunSoundRange, type.distantSoundRange, dimension);
+					}
 					soundDelay = type.shootSoundLength;
 				}
 			} else if(gunner != null)

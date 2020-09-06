@@ -179,6 +179,11 @@ public class GunType extends PaintableType implements IScope
 	public int reloadSoundRange = 50;
 	/** The block range for gunshots sounds  */
 	public int gunSoundRange = 50;
+	
+	/** Sound to be played outside of normal range */
+	public String distantShootSound = "";
+	/** Max range for the sound to be played */
+	public int distantSoundRange = 100;
 
 	//Looping sounds
 	/** Whether the looping sounds should be used. Automatically set if the player sets any one of the following sounds */
@@ -465,6 +470,11 @@ public class GunType extends PaintableType implements IScope
 			{
 				lockOnSound = split[1];
 				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			} else if(split[0].equals("DistantSound")) {
+				distantShootSound = split[1];
+				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+			} else if (split[0].equals("DistantSoundRange")) {
+				distantSoundRange = Integer.parseInt(split[1]);
 			}
 
 			//Modes and zoom settings
