@@ -39,6 +39,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
@@ -58,11 +62,7 @@ import com.flansmod.common.network.PacketTeamSelect;
 import com.flansmod.common.network.PacketVoting;
 import com.flansmod.common.types.InfoType;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-
+@SuppressWarnings("unchecked")
 public class TeamsManager {
     /**
      * Overall switch for teams mod
@@ -75,9 +75,9 @@ public class TeamsManager {
 
     //Configuration variables
     // Player changeable stuff
-    public static boolean voting = false, explosions = true, driveablesBreakBlocks = true,
+    public static boolean voting = false, explosions = false, driveablesBreakBlocks = true,
             bombsEnabled = true, shellsEnabled = true, missilesEnabled = true, bulletsEnabled = true, forceAdventureMode = true, canBreakGuns = true, canBreakGlass = true,
-            armourDrops = true, vehiclesNeedFuel = true, overrideHunger = true, allowVehicleZoom = false;
+            armourDrops = true, vehiclesNeedFuel = true, overrideHunger = true;
 
     public static int weaponDrops = 1; //0 = no drops, 1 = drops, 2 = smart drops
     //Life of certain entity types. 0 is eternal.
@@ -139,6 +139,9 @@ public class TeamsManager {
      * Time between autobalance attempts
      */
     public static int autoBalanceInterval;
+    public static boolean allowVehicleZoom;
+    public static int bulletSnapshotMin = 0;
+    public static int bulletSnapshotDivisor = 50;
 
     //Disused. Delete when done
     //public Gametype currentGametype;
@@ -146,8 +149,6 @@ public class TeamsManager {
     //public Team[] teams;
     //public List<RotationEntry> rotation;
     //public int currentRotationEntry;
-    public static int bulletSnapshotMin = 0;
-    public static int bulletSnapshotDivisor = 50;
 
     public TeamsManager() {
         instance = this;
@@ -155,10 +156,10 @@ public class TeamsManager {
         FMLCommonHandler.instance().bus().register(this);
 
         //Init arrays
-        bases = new ArrayList<ITeamBase>();
-        objects = new ArrayList<ITeamObject>();
-        maps = new HashMap<String, TeamsMap>();
-        rounds = new ArrayList<TeamsRound>();
+        bases = new ArrayList<>();
+        objects = new ArrayList<>();
+        maps = new HashMap<>();
+        rounds = new ArrayList<>();
 
         //rotation = new ArrayList<RotationEntry>();
         //currentMap = TeamsMap.def;
@@ -181,10 +182,10 @@ public class TeamsManager {
 
         currentRound = null;
 
-        bases = new ArrayList<ITeamBase>();
-        objects = new ArrayList<ITeamObject>();
-        maps = new HashMap<String, TeamsMap>();
-        rounds = new ArrayList<TeamsRound>();
+        bases = new ArrayList<>();
+        objects = new ArrayList<>();
+        maps = new HashMap<>();
+        rounds = new ArrayList<>();
 
         //rotation = new ArrayList<RotationEntry>();
     }
@@ -219,7 +220,7 @@ public class TeamsManager {
                     ((EntityPlayer) player).getFoodStats().addStats(20, 10F);
 
         //Check round timer
-        //If in between rounds
+        //If inbetween rounds
         if (interRoundTimeLeft > 0) {
             interRoundTimeLeft--;
             //If we're done showing scores, show the voting box
@@ -241,20 +242,7 @@ public class TeamsManager {
             }
             //If the timer is finished, start the next round
             if (interRoundTimeLeft == 0) {
-                if (currentRound.isNextRoundOn) {
-                    startNextRound();
-                } else {
-					/*try{
-						if(FMLClientHandler.instance().getSide().equals(Side.CLIENT)){
-							GuiTeamSelect.teamChoices = null;
-						}
-					}catch(NoClassDefFoundError e){
-						FlansMod.log("Round is successfully finished!");
-					}*/
-                    //enabled = false;
-					/*enabled = true;
-					enabled = false;*/
-                }
+                startNextRound();
             }
         }
 
@@ -295,9 +283,8 @@ public class TeamsManager {
             return false;
         int membersTeamA = currentRound.teams[0].members.size();
         int membersTeamB = currentRound.teams[1].members.size();
-        if (Math.abs(membersTeamA - membersTeamB) > 1)
-            return true;
-        return false;
+
+        return Math.abs(membersTeamA - membersTeamB) > 1;
     }
 
     public void autobalance() {
@@ -309,14 +296,14 @@ public class TeamsManager {
             for (int i = 0; i < (membersTeamA - membersTeamB) / 2; i++) {
                 //My goodness this is convoluted...
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[1].addPlayer(currentRound.teams[0].removeWorstPlayer()));
-                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
+                messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
                 sendClassMenuToPlayer(playerToKick);
             }
         }
         if (membersTeamB - membersTeamA > 1) {
             for (int i = 0; i < (membersTeamB - membersTeamA) / 2; i++) {
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[0].addPlayer(currentRound.teams[1].removeWorstPlayer()));
-                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
+                messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
                 sendClassMenuToPlayer(playerToKick);
             }
         }
@@ -551,16 +538,13 @@ public class TeamsManager {
 
                 //Final case. Either the two players are not in the game (in which case, ignore) or they are both in the game.
                 //At this point, we pass over to the gametype
-                if (attackerData.team != null && data.team != null) {
+                if (attackerData.team != null) {
                     //The roundTimeLeft check ensures that players do not fight during the cooldown period
                     if (roundTimeLeft > 0 && !currentRound.gametype.playerCanAttack(attacker, attackerData.team, player, data.team)) {
                         event.setCanceled(true);
                     }
                 }
-            } else {
-                //Not being attacked by a player, so this is fine
-            }
-
+            }  //Not being attacked by a player, so this is fine
         }
     }
 
@@ -616,7 +600,7 @@ public class TeamsManager {
     public void playerInteracted(PlayerInteractEvent event) {
         if (!enabled)
             return;
-        if (event.action == Action.LEFT_CLICK_BLOCK && !event.entityPlayer.capabilities.allowEdit /*&& !event.entityPlayer.capabilities.isCreativeMode*/) {
+        if (event.action == Action.LEFT_CLICK_BLOCK && !event.entityPlayer.capabilities.allowEdit && !event.entityPlayer.capabilities.isCreativeMode) {
             event.setCanceled(true);
             return;
         }
@@ -642,7 +626,7 @@ public class TeamsManager {
 
     @SubscribeEvent
     public void playerDrops(PlayerDropsEvent event) {
-        ArrayList<EntityItem> dropsToThrow = new ArrayList<EntityItem>();
+        ArrayList<EntityItem> dropsToThrow = new ArrayList<>();
         //First collect together guns and ammo if smart drops are enabled
         if (weaponDrops == 2) {
             for (EntityItem entity : event.drops) {
@@ -672,7 +656,7 @@ public class TeamsManager {
                 ItemStack ammoItemstack = ammoEntity.getEntityItem();
                 if (ammoItemstack != null && ammoItemstack.getItem() instanceof ItemShootable) {
                     ShootableType bulletType = ((ItemShootable) ammoItemstack.getItem()).type;
-                    if (gunType.isAmmo(bulletType, gunEntity.getEntityItem())) {
+                    if (gunType.isAmmo(bulletType)) {
                         gunEntity.ammoStacks.add(ammoItemstack.copy());
                         ammoItemstack.stackSize = 0;
                     }
@@ -861,8 +845,10 @@ public class TeamsManager {
         boolean isValid = selectedTeam == Team.spectators;
         Team[] validTeams = currentRound.gametype.getTeamsCanSpawnAs(currentRound, player);
         for (Team validTeam : validTeams) {
-            if (selectedTeam == validTeam)
+            if (selectedTeam == validTeam) {
                 isValid = true;
+                break;
+            }
         }
         //Default to spectator
         if (!isValid) {

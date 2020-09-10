@@ -13,8 +13,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 import com.flansmod.common.FlansMod;
 
+@SuppressWarnings("rawtypes")
 public class CommandTeams extends CommandBase {
-    private static TeamsManager teamsManager = TeamsManager.getInstance();
+    private static final TeamsManager teamsManager = TeamsManager.getInstance();
 
     @Override
     public String getCommandName() {
@@ -362,7 +363,7 @@ public class CommandTeams extends CommandBase {
                 teams[i] = Team.getTeam(split[3 + i]);
             }
             sender.addChatMessage(new ChatComponentText("Added map (" + map.shortName + ") to rotation"));
-            TeamsManager.getInstance().rounds.add(new TeamsRound(map, gametype, teams, Integer.parseInt(split[3 + gametype.numTeamsRequired]), Integer.parseInt(split[4 + gametype.numTeamsRequired]), Boolean.getBoolean(split[5 + gametype.numTeamsRequired])));
+            TeamsManager.getInstance().rounds.add(new TeamsRound(map, gametype, teams, Integer.parseInt(split[3 + gametype.numTeamsRequired]), Integer.parseInt(split[4 + gametype.numTeamsRequired])));
             return;
         }
         if (split[0].equals("start") || split[0].equals("begin")) {
