@@ -14,7 +14,6 @@ import net.minecraft.util.EnumChatFormatting;
 import com.flansmod.common.FlansMod;
 
 public class CommandTeams extends CommandBase {
-
     private static TeamsManager teamsManager = TeamsManager.getInstance();
 
     @Override
