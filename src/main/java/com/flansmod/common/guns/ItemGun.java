@@ -495,7 +495,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
-        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire)) {
+        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
@@ -971,7 +971,7 @@ public class ItemGun extends Item implements IPaintableItem {
         PlayerData data = PlayerHandler.getPlayerData(player);
         if (data != null && data.shootClickDelay == 0) {
             //Drivers can't shoot
-            if (player.ridingEntity instanceof EntitySeat && ((EntitySeat) player.ridingEntity).seatInfo.id == 0)
+            if (player.ridingEntity instanceof EntitySeat)
                 return;
             if (left && data.offHandGunSlot != 0) {
                 ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
@@ -1082,7 +1082,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
             }
             //A bullet stack was found, so try shooting with it
-            else if (bulletStack.getItem() instanceof ItemShootable && (sprinting && isScoped) || !sprinting || canActuallyHipFire) {
+            else if (bulletStack.getItem() instanceof ItemShootable && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(entityplayer.ridingEntity instanceof EntitySeat)) {
                 //Shoot
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;
