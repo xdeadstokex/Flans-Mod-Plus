@@ -25,6 +25,8 @@ public class PartType extends InfoType {
 	public float engineSpeed = 1.0F;
 	/** (Engine) Rate at which this engine consumes fuel */
 	public float fuelConsumption = 1.0F;
+	/** (Engine) Power output of the engine - if using realistic acceleration. */
+	public float enginePower = 10F;
 	/** (Fuel) The amount of fuel this fuel tank gives */
 	public int fuel = 0;
 	/** The types of driveables that this engine works with. Used to designate some engines as mecha CPUs and whatnot */
@@ -89,6 +91,8 @@ public class PartType extends InfoType {
 				engineSpeed = Float.parseFloat(split[1]);
 			else if(split[0].equals("FuelConsumption"))
 				fuelConsumption = Float.parseFloat(split[1]);
+			else if(split[0].equals("EnginePower"))
+				enginePower = Float.parseFloat(split[1]);
 			else if(split[0].equals("Fuel"))
 				fuel = Integer.parseInt(split[1]);
 			//Recipe

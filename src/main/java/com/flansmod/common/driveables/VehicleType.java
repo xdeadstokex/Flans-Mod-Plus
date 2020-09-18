@@ -28,7 +28,11 @@ public class VehicleType extends DriveableType
 	/** Shoot delays */
 	public int vehicleShootDelay, vehicleShellDelay;
 	/** Aesthetic door variable */
-    public boolean hasDoor = false;
+	public boolean hasDoor = false;
+	/** Mass of the vehicle, for use in realistic acceleration calculation */
+	 public float mass = 1000F;
+	 
+	 public boolean useRealisticAcceleration = false;
     
     
     
@@ -94,7 +98,10 @@ public class VehicleType extends DriveableType
 				tank = Boolean.parseBoolean(split[1].toLowerCase());
 			if(split[0].equals("ThrottleDecay"))
 				throttleDecay = Float.parseFloat(split[1]);
-
+			if (split[0].equals("Mass"))
+				mass = Float.parseFloat(split[1]);
+			if (split[0].equals("UseRealisticAcceleration"))
+				useRealisticAcceleration = Boolean.parseBoolean(split[1]);
             //Visuals
             if(split[0].equals("HasDoor"))
                 hasDoor = Boolean.parseBoolean(split[1].toLowerCase());

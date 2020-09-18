@@ -411,6 +411,7 @@ This will override the value set in the gun's model!
 | ItemVacuum | Boolean | false | Pickup mined items and put into inventory rather than dropping. |
 | LightLevel | Integer | 0 | Light level to emit (0-15) |
 | Nanorepair | Boolean | false | Slowly repair mecha |
+| NanorepairAmount | Float | 1 | The amount to repair the mecha per tick if nanorepair is on |
 | RedstoneMultiplier | Float | 1 | Redstone pickup multiplier |
 | RocketPack | Boolean | false | Do rocket type stuff |
 | SoundEffect | String | ~ | Sound effect for rocket firing |
@@ -711,6 +712,8 @@ This will override the value set in the gun's model!
 | SquashMobs | Boolean | false | Whether to squash/kill livings under the wheels |
 | FourWheelDrive | Boolean | false | Apply power to all four wheels, or just two |
 | Tank / TankMode | Boolean | false | This has tracks instead of wheels |
+| Mass | Float | 1000 | The mass of the vehicle, for realistic acceleration. Roughly in KG? |
+| UseRealisticAcceleration | Boolean | false | Use a system which uses vehicle mass and engine power to calculate acceleration. |
 | ThrottleDecay | Float | 0.0035F | Amount to decrease the throttle by each tick |
 | HasDoor | Boolean | false | Whether this has openable doors |
 | ShootWithOpenDoor | Boolean | false | Whether the vehicle can NOT shoot while the door is open. True = CANNOT fly with door open False = CAN fly with door open (it's inverted) |
@@ -760,6 +763,7 @@ This will override the value set in the gun's model!
 | Category | String | ~ | Generic string marking category. In theory is part of a set that I haven't looked for |
 | StackSize | Integer | ~ | The maximum stack size of the item |
 | EngineSpeed | Float | 1 | Speed modifier to the attached vehicle |
+| EnginePower | Float | 10 | Engine power for realistic acceleration |
 | FuelConsumption | Float | 1 | Rate at which the engine consumes fuel |
 | Fuel | Integer | 0 | If this is a fuel tank, the amount of fuel that it gives |
 | PartBoxRecipe | ~ | ~ | Part box is unused |

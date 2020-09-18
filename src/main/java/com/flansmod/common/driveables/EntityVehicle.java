@@ -229,7 +229,8 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
     @Override
 	public boolean pressKey(int key, EntityPlayer player)
 	{
-    	VehicleType type = getVehicleType();
+		VehicleType type = getVehicleType();
+		DriveableData data = getDriveableData();
     	//Send keys which require server side updates to the server
     	if(worldObj.isRemote && (key == 6 || key == 8 || key == 9))
     	{
@@ -240,7 +241,11 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable
 		{
 			case 0 : //Accelerate : Increase the throttle, up to 1.
 			{
-				throttle += 0.01F;
+				if (type.useRealisticAcceleration) {
+					throttle += data.engine.enginePower / type.mass;
+				} else {
+					throttle += 0.01F;
+				}
 				if(throttle > 1F)
 					throttle = 1F;
 				return true;
