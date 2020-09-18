@@ -74,7 +74,7 @@ public class GuiGunBox extends GuiContainer
 		//List gun item entries
 		for(int i = 0; i < entries.length && i < 8; i++)
 		{
-			if(entries[i] != null)
+			if(entries[i] != null && entries[i].type != null && entries[i].type.name != null)
 			{
 				String label = entries[i].type.name;
 
