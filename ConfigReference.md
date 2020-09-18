@@ -711,7 +711,7 @@ This will override the value set in the gun's model!
 | Tank / TankMode | Boolean | false | This has tracks instead of wheels |
 | ThrottleDecay | Float | 0.0035F | Amount to decrease the throttle by each tick |
 | HasDoor | Boolean | false | Whether this has openable doors |
-| ShootWithOpenDoor | Boolean | false | Whether the vehicle can shoot while the door is open |
+| ShootWithOpenDoor | Boolean | false | Whether the vehicle can NOT shoot while the door is open. True = CANNOT fly with door open False = CAN fly with door open (it's inverted) |
 | RotateWheels | Boolean | false | Whether to animate rotating wheels |
 | FixTrackLink | Integer | 5 | ? Something to do with track animations |
 | FlipLinkFix | Boolean | false | ? Something to do with track animations |
