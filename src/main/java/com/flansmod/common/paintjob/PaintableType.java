@@ -77,7 +77,6 @@ public abstract class PaintableType extends InfoType
 				e.printStackTrace();
 			}
 		}
-		super.read(split, file);
 		try
 		{
 			//Paintjobs
