@@ -725,7 +725,7 @@ public class EntityMecha extends EntityDriveable
 		
 		//Autorepair. Like a Boss.
 		
-		if(toggleTimer == 0 && autoRepair())
+		if(toggleTimer == 0 && autoRepair() > 0)
 		{
 			for(EnumDriveablePart part: EnumDriveablePart.values())
 			{
@@ -733,7 +733,7 @@ public class EntityMecha extends EntityDriveable
 				boolean hasCreativePlayer = seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer)seats[0].riddenByEntity).capabilities.isCreativeMode;
 				if(thisPart != null && thisPart.health != 0 && thisPart.health < thisPart.maxHealth && (hasCreativePlayer || data.fuelInTank >= 10F))
 				{
-					thisPart.health += 1;
+					thisPart.health += autoRepair();
 					if(!hasCreativePlayer)
 						data.fuelInTank -= 10F;
 				}
@@ -1360,14 +1360,14 @@ public class EntityMecha extends EntityDriveable
 	}
 	
 	/** Automatically repair damage? */
-	public boolean autoRepair()
+	public float autoRepair()
 	{
 		for(MechaItemType type : getUpgradeTypes())
 		{
 			if(type.autoRepair)
-				return true;
+				return type.autoRepairAmount;
 		}
-		return false;
+		return -1;
 	}
 	
 	/** Float in water? */
