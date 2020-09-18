@@ -166,7 +166,11 @@ public class ClientProxy extends CommonProxy {
             FlansModClient.doneTutorial = true;
 
             player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.inventoryKey.getKeyCode()) + " to open the menu"));
-            player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) + " to get out"));
+            if (Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode() >= 0 && Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode() < Keyboard.KEYBOARD_SIZE) {
+                player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) + " to get out"));
+            } else {
+                player.addChatComponentMessage(new ChatComponentText("Press <undefined> to get out"));
+            }
             player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.controlSwitchKey.getKeyCode()) + " to switch controls"));
             if (entityType instanceof EntityPlane) {
                 if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasGear)
