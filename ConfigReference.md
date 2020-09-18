@@ -672,6 +672,8 @@ This will override the value set in the gun's model!
 | HasWing | Boolean | false | Whether the plane has retractable wings |
 | FoldWingForLand | Boolean | false | Whether to retract the wings when close enough to the ground |
 | FlyWithOpenDoor | Boolean | false | Whether the plane can fly with the door open |
+| AutoOpenDoorsNearGround | Boolean | true | Wether to auto deploy landing gear near the ground or not |
+| AutoDeployLandingGearNearGround | Boolean | true | Wether to auto open the door near the ground or not |
 | RestingPitch | Float | 0 | The angle when parked. Angle that it will spawn in at |
 | SpinWithoutTail | Boolean | false | Whether the helicopter should spin if no tail is present |
 | Valkyrie | Boolean | false | Whether this plane is a valkyrie |

@@ -557,7 +557,7 @@ public class EntityPlane extends EntityDriveable
 		}
 
 		if(!worldObj.isAirBlock((int)posX, (int)(posY-10), (int)posZ) && throttle <= 0.4){
-			if(!varGear && (EntityPlayer)seats[0].riddenByEntity != null){
+			if(!varGear && (EntityPlayer)seats[0].riddenByEntity != null && type.autoDeployLandingGearNearGround){
 				((EntityPlayer)seats[0].riddenByEntity).addChatMessage(new ChatComponentText("Deploying landing gear"));
 			}
 			varGear = true;
@@ -569,7 +569,7 @@ public class EntityPlane extends EntityDriveable
 			}
 		}
 
-		if(!worldObj.isAirBlock((int)posX, (int)(posY-3), (int)posZ) && throttle <= 0.05){
+		if(!worldObj.isAirBlock((int)posX, (int)(posY-3), (int)posZ) && throttle <= 0.05 && type.autoOpenDoorsNearGround){
 			if(!doorsHaveShut){
 				varDoor = true;
 			}

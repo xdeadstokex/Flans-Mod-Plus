@@ -83,7 +83,9 @@ public class PlaneType extends DriveableType
 	/** Aesthetic features */
     public boolean hasGear = false, hasDoor = false, hasWing = false;
     public boolean foldWingForLand = false;
-    public boolean flyWithOpenDoor = false;
+	public boolean flyWithOpenDoor = false;
+	public boolean autoOpenDoorsNearGround = true;
+	public boolean autoDeployLandingGearNearGround = true;
     /** Default pitch for when parked. Will implement better system soon */
     public float restingPitch = 0F;
     
@@ -216,7 +218,11 @@ public class PlaneType extends DriveableType
             if(split[0].equals("FoldWingForLand"))
                 foldWingForLand = split[1].equals("True");
             if(split[0].equals("FlyWithOpenDoor"))
-                flyWithOpenDoor = split[1].equals("True");
+				flyWithOpenDoor = split[1].equals("True");
+			if(split[0].equals("AutoOpenDoorsNearGround"))
+				autoOpenDoorsNearGround = Boolean.parseBoolean(split[1]);
+			if (split[0].equals("AutoDeployLandingGearNearGround"))
+				autoDeployLandingGearNearGround = Boolean.parseBoolean(split[1]);
             if(split[0].equals("RestingPitch"))
                 restingPitch = Float.parseFloat(split[1]);
             if(split[0].equals("SpinWithoutTail"))
