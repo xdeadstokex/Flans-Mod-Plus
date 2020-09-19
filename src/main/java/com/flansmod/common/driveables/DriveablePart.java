@@ -360,17 +360,21 @@ public class DriveablePart
 		return null;
 	}
 	
+	public float hitByBullet(EntityBullet bullet, DriveableHit hit, float penetratingPower) {
+		return hitByBullet(bullet, hit, penetratingPower, 1F);
+	}
+
 	/** Called when the bullet decided that it hit this driveable part */
-	public float hitByBullet(EntityBullet bullet, DriveableHit hit, float penetratingPower)
+	public float hitByBullet(EntityBullet bullet, DriveableHit hit, float penetratingPower, float damageMod)
 	{
 		//Perform damage code
 		if(bullet != null)
 		{
 			EntityBullet.penAmount = 1;
 			EntityBullet.headshot = false;
-			float damageModifier = 1;
+			float damageModifier = damageMod;
 			if (penetratingPower <= 0.7F*penRes && FlansMod.useNewPenetrationSystem) {
-				damageModifier = (float)Math.pow((double)(penetratingPower/(0.7F*penRes)), 2.5);
+				damageModifier *= (float)Math.pow((double)(penetratingPower/(0.7F*penRes)), 2.5);
 				EntityBullet.penAmount = damageModifier;
 			}
 			if(hit.driveable instanceof EntityPlane)

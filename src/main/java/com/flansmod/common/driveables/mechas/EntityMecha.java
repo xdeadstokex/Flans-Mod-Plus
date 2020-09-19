@@ -50,12 +50,14 @@ import com.flansmod.common.driveables.PilotGun;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EntityShootable;
 import com.flansmod.common.guns.EnumFireMode;
+import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.InventoryHelper;
 import com.flansmod.common.guns.ItemBullet;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.ItemShootable;
 import com.flansmod.common.guns.ShootableType;
+import com.flansmod.common.guns.raytracing.DriveableHit;
 import com.flansmod.common.network.PacketDriveableDamage;
 import com.flansmod.common.network.PacketDriveableGUI;
 import com.flansmod.common.network.PacketDriveableKey;
@@ -582,7 +584,26 @@ public class EntityMecha extends EntityDriveable
         	driveableData.parts.get(EnumDriveablePart.core).attack(i * vulnerability(), damagesource.isFireDamage());
         }
         return true;
-    }
+	}
+	
+	@Override
+	public float bulletHit(EntityBullet bullet, DriveableHit hit, float penetratingPower) {
+		DriveablePart part = getDriveableData().parts.get(hit.part);
+		if (bullet != null)
+			penetratingPower = part.hitByBullet(bullet, hit, penetratingPower, vulnerability());
+		else
+			penetratingPower -= 5F;
+
+		// This is server side bsns
+		if (!worldObj.isRemote) {
+			checkParts();
+			// If it hit, send a damage update packet
+			FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100,
+					dimension);
+		}
+
+		return penetratingPower;
+	}
 	
 	@Override
 	public void onUpdate()
