@@ -241,7 +241,7 @@ public class ItemGun extends Item implements IPaintableItem {
             String sneakingControl = String.format("%s%s", EnumChatFormatting.GREEN, roundFloat(1 - type.getRecoilControl(stack, false, true), 2));
             String normalControl = String.format("%s%s", EnumChatFormatting.AQUA, roundFloat(1 - type.getRecoilControl(stack, false, false), 2));
             lines.add("\u00a79Recoil Control" + "\u00a77: " + String.format("%s %s %s", sprintingControl, normalControl, sneakingControl));
-            lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack), 2));
+            lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack, false, false), 2));
             lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
             //TODO Convert to stack values so this works with attachments
             if (type.shootDelay != 0) {
@@ -398,7 +398,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             FlansModClient.originalFOV = gameSettings.fovSetting;
 
                             //Send ads spread packet to server
-                            sendSpreadToServer(itemstack);
+                            sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
                             isScoped = FlansModClient.currentScope != null;
                             FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         } else {
@@ -432,7 +432,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             gameSettings.thirdPersonView = 0;
 
                             //Send ads spread packet to server
-                            sendSpreadToServer(itemstack);
+                            sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
                             isScoped = FlansModClient.currentScope != null;
                             FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         }
@@ -462,10 +462,10 @@ public class ItemGun extends Item implements IPaintableItem {
         }
     }
 
-    public void sendSpreadToServer(ItemStack stack) {
+    public void sendSpreadToServer(ItemStack stack, boolean sneaking, boolean sprinting) {
         //Send ads spread packet to server
         float f = type.numBullets == 1 ? 0.2F : 0.8F;
-        FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(stack, type.getSpread(stack) * f));
+        FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(stack, type.getSpread(stack, sneaking, sprinting) * f));
     }
 
     /**
@@ -1264,16 +1264,7 @@ public class ItemGun extends Item implements IPaintableItem {
             }
 
             if (spread <= 0) {
-                float result = gunType.getSpread(stack);
-
-                //If crouch/sneak, then lower spread by 10%
-                if (entityPlayer.isSneaking())
-                    result = result * 0.9F;
-
-                //If running, then increase spread by 75%
-                if (entityPlayer.isSprinting())
-                    result = result * 1.75F;
-
+                float result = gunType.getSpread(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting());
                 spread = result;
             }
 
@@ -1281,7 +1272,7 @@ public class ItemGun extends Item implements IPaintableItem {
                 world.spawnEntityInWorld(itemShootable.getEntity(
                         world,
                         entityPlayer,
-                        (entityPlayer.isSneaking() ? 0.7F : 1F) * spread,
+                        spread,
                         gunType.getDamage(stack),
                         gunType.getBulletSpeed(stack),
                         numBullets > 1,

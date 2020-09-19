@@ -90,7 +90,7 @@ public class GuiGunModTable extends GuiContainer {
 
 
             fontRendererObj.drawString(String.valueOf(roundFloat( gunType.getDamage(gunStack))), 241, 62, 0x404040);
-            fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getSpread(gunStack))), 241, 74, 0x404040);
+            fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getSpread(gunStack, false, false))), 241, 74, 0x404040);
             fontRendererObj.drawString(String.valueOf(roundFloat(gunType.getRecoilDisplay(gunStack))), 241, 86, 0x404040);
             fontRendererObj.drawString(roundFloat(reload / 20) + "s", 241, 98, 0x404040);
             Float sprinting = roundFloat(1 - gunType.getRecoilControl(gunStack, true, false), 2);
@@ -126,7 +126,7 @@ public class GuiGunModTable extends GuiContainer {
             GunType gunType = ((ItemGun) gunStack.getItem()).type;
             int reload = Math.round(gunType.getReloadTime(gunStack));
             //Calculates yellow stat bar
-            int[] stats = {Math.round(gunType.getDamage(gunStack)) * 4, Math.round(gunType.getSpread(gunStack)) * 4,
+            int[] stats = {Math.round(gunType.getDamage(gunStack)) * 4, Math.round(gunType.getSpread(gunStack, false, false)) * 4,
                     Math.round(gunType.getRecoilPitch(gunStack)) * 4, (reload / 20) * 8, 0};
             displayGunValues(stats);
             boolean[] allowBooleans = {gunType.allowBarrelAttachments, gunType.allowScopeAttachments, gunType.allowStockAttachments,

@@ -76,6 +76,8 @@ public class GunType extends PaintableType implements IScope
 	//Projectile Mechanic Variables
 	/** The amount that bullets spread out when fired from this gun */
 	public float bulletSpread;
+	public float sneakSpreadMultiplier = 0.63F;
+	public float sprintSpreadMultiplier = 1.75F;
 	/** If true, spread determined by loaded ammo type */
 	public boolean allowSpreadByBullet = false;
 	/** Damage inflicted by this gun. Multiplied by the bullet damage. */
@@ -312,6 +314,10 @@ public class GunType extends PaintableType implements IScope
 				recoilCounterCoefficientSneaking = Float.parseFloat(split[1]);
 			else if(split[0].equals("CounterRecoilForceSprinting"))
 				recoilCounterCoefficientSprinting = Float.parseFloat(split[1]);
+			else if(split[0].equals("SneakSpreadModifier"))
+				sneakSpreadMultiplier = Float.parseFloat(split[1]);
+			else if (split[0].equals("SprintSpreadModifier"))
+				sprintSpreadMultiplier = Float.parseFloat(split[1]);
 			else if(split[0].equals("CanForceReload"))
 				canForceReload = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("AllowRearm"))
@@ -1201,7 +1207,7 @@ public class GunType extends PaintableType implements IScope
 	}
 
 	/** Get the bullet spread of a specific gun, taking into account attachments */
-	public float getSpread(ItemStack stack)
+	public float getSpread(ItemStack stack, boolean sneaking, boolean sprinting)
 	{
 		float stackSpread = bulletSpread;
 
@@ -1211,6 +1217,11 @@ public class GunType extends PaintableType implements IScope
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackSpread *= attachment.spreadMultiplier;
+		}
+		if (sprinting) {
+			stackSpread *= sprintSpreadMultiplier;
+		} else if (sneaking) {
+			stackSpread *= sneakSpreadMultiplier;
 		}
 		return stackSpread;
 	}
