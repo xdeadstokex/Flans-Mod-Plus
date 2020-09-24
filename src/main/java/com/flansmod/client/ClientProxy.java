@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public class ClientProxy extends CommonProxy {
@@ -104,7 +105,7 @@ public class ClientProxy extends CommonProxy {
     public List<File> getContentList(Method method, ClassLoader classloader) {
         contentPacks = new ArrayList<File>();
         File[] files = FlansMod.flanDir.listFiles();
-        if(files != null) {
+        if (files != null) {
             for (File file : files) {
                 if (file.isDirectory() || zipJar.matcher(file.getName()).matches()) {
                     try {
@@ -172,14 +173,18 @@ public class ClientProxy extends CommonProxy {
                 player.addChatComponentMessage(new ChatComponentText("Press <undefined> to get out"));
             }
             player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.controlSwitchKey.getKeyCode()) + " to switch controls"));
+
             if (entityType instanceof EntityPlane) {
-                if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasGear)
+                PlaneType type = PlaneType.getPlane(entityType.driveableType);
+                Objects.requireNonNull(type, "Could not retrieve plane type!");
+
+                if (type.hasGear)
                     player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.gearKey.getKeyCode()) + " to switch the gear"));
-                if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasDoor)
+                if (type.hasDoor)
                     player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode()) + " to switch the doors"));
-                if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).mode == EnumPlaneMode.VTOL)
+                if (type.mode == EnumPlaneMode.VTOL)
                     player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.modeKey.getKeyCode()) + " to switch VTOL mode"));
-                if (PlaneType.getPlane(((EntityPlane) entityType).driveableType).hasWing)
+                if (type.hasWing)
                     player.addChatComponentMessage(new ChatComponentText("Press " + Keyboard.getKeyName(KeyInputHandler.modeKey.getKeyCode()) + " to switch the wings"));
             }
         }
