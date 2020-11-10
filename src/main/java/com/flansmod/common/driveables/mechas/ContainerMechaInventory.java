@@ -15,12 +15,14 @@ public class ContainerMechaInventory extends Container
 	public int numItems;
 	public int maxScroll;
 	public int scroll;
+	public MechaType type;
 	
 	public ContainerMechaInventory(InventoryPlayer inv, World w, EntityMecha em)
 	{
 		inventory = inv;
 		world = w;
 		mecha = em;
+		type = (MechaType)mecha.getDriveableType();
 		numItems = mecha.getDriveableType().numCargoSlots;
 		int numRows = ((numItems + 7) / 8);
 		maxScroll = (numRows > 3 ? numRows - 3 : 0);
@@ -34,7 +36,7 @@ public class ContainerMechaInventory extends Container
 				yPos = 25 + 19 * (row - scroll);
 			for(int col = 0; col < ((row + scroll + 1) * 8 <= numItems ? 8 : numItems % 8); col++)
 			{
-				addSlotToContainer(new Slot(mecha.driveableData, startSlot + row * 8 + col, 186 + 18 * col, yPos));
+				addSlotToContainer(new SlotMechaInventory(mecha.driveableData, startSlot + row * 8 + col, 186 + 18 * col, yPos, type.restrictInventoryInput));
 			}
 		}
 		
@@ -224,3 +226,4 @@ public class ContainerMechaInventory extends Container
 		return flag;
 	}
 }
+

@@ -645,6 +645,7 @@ This will override the value set in the gun's model!
 | RightHandModifier | (float) X Y Z | 0 0 0 | Modifier for weapons in hand. in 16ths of a block |
 | LegNode | (Integer)rotation (Float)lowerBound (Float)upperBound (Integer)speed (Integer)legPart | ~ | Add a leg node |
 | LegAnimSpeed | Float | 0 | The speed at which to animate leg movement |
+| RestrictInventoryInput | Bool | false | Whether to only allow ammunition and fuel to be put into the inventory by the player (item pickup by mecha with item vacuum still works) |
 
 ### [PlaneType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/PlaneType.java) extends [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java)
 | Keyword | Type | Default | Purpose |

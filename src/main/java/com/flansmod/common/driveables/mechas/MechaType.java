@@ -83,6 +83,8 @@ public class MechaType extends DriveableType
 	public float stompRangeLower = 0F;
 	public float stompRangeUpper = 0F;
 
+	public boolean restrictInventoryInput = false;
+
 	public static ArrayList<MechaType> types = new ArrayList<MechaType>();
 
 	public MechaType(TypeFile file)
@@ -191,6 +193,8 @@ public class MechaType extends DriveableType
 			}
 			else if(split[0].equals("LegAnimSpeed"))
 				legAnimSpeed = Float.parseFloat(split[1]);
+			else if(split[0].equals("RestrictInventoryInput"))
+				restrictInventoryInput = Boolean.parseBoolean(split[1]);
 		}
 		catch (Exception ignored)
 		{
