@@ -49,6 +49,10 @@ public class DriveablePart
 		{
 			dead = true;
 		}
+
+		if (health > maxHealth) {
+			health = maxHealth;
+		}
 		this.owner = driveable;
 	}
 	
