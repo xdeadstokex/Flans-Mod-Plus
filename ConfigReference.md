@@ -478,6 +478,7 @@ This will override the value set in the gun's model!
 | CargoSlots | Integer | ~ | The number of cargo slots the driveable has |
 | BombSlots / MineS;ots | Integer | ~ | The number of slots for bombs in the driveable |
 | MissileSlots / ShellSlots | Integer | ~ | The number of slots for missiles in the driveable |
+| RestrictAmmunitionInput | Bool | false | Whether to only allow bullet types/grenade types in gun/bomb/missile slots in the vehicle. |
 | FuelTankSize | Integer | 100 | Possibly buckets? Not sure. |
 | BulletDetectionRadius | Integer | 5 | The radius (in blocks) to check for bullets |
 | AddAmmo | String | ~ | Add an ammo type by shortname |

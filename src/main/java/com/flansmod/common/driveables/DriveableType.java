@@ -131,6 +131,8 @@ public class DriveableType extends PaintableType {
 
     public float vehicleGunModelScale = 1f;
 
+    public boolean filterAmmunition = false;
+
     public class ShootParticle {
         public ShootParticle(String s, float x1, float y1, float z1) {
             x = x1;
@@ -536,6 +538,8 @@ public class DriveableType extends PaintableType {
                 numMissileSlots = Integer.parseInt(split[1]);
             else if (split[0].equals("FuelTankSize"))
                 fuelTankSize = Integer.parseInt(split[1]);
+            else if (split[0].equals("FilterAmmunitionInput"))
+                filterAmmunition = Boolean.parseBoolean(split[1]);
 
             else if (split[0].equals("BulletDetection"))
                 bulletDetectionRadius = Integer.parseInt(split[1]);
