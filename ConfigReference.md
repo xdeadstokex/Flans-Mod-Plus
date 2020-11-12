@@ -48,8 +48,7 @@ BAB
 | RandomRecoilRange | Float | 0.5 | Maximum divergence of the recoil vertically |
 | RandomRecoilYawRange | Float | 0.5 | ~ Horizontally |
 | Knockback | Float | 0 | Amount of knockback to push the player when shot |
-| Accuracy / 
-| Float | 0 | Amount that the bullets spread out. Higher = wider cone |
+| Accuracy / Spread | Float | 0 | Amount that the bullets spread out. Higher = wider cone |
 | SprintSpreadMultiplier | Float | 1.75 | Multiplier for spread applied when player is sprinting. |
 | SneakSpreadMultiplier | Float | 0.63 | Multiplier for spread applied when player is sneaking. |
 | NumBullets | Integer | 1 | The number of bullets created by each shot |
