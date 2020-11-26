@@ -4,16 +4,11 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.ArrayList;
-
-import java.io.PrintWriter;
+import java.util.Collections;
 
 import com.flansmod.common.FlansMod;
 
-import com.flansmod.common.network.PacketHashSend;
-
-import net.minecraft.entity.player.EntityPlayer;
 
 
 public class Sync {
@@ -36,6 +31,7 @@ public class Sync {
 
 	public static String getUnifiedHash() {
 		String str = "";
+		Collections.sort(hashes);
 		for (String hash : hashes) {
 			str += hash;
 		}
