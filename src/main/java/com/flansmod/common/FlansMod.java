@@ -526,8 +526,9 @@ public class FlansMod {
                                     log("Unrecognized type for " + infoType.shortName);
                                     break;
                             }
+                            Sync.addHash(typeFile.lines.toString());
                         }
-                        Sync.addHash(typeFile.lines.toString());
+                        
                     }
                 } catch (Exception e) {
                     log("Failed to add " + type.name() + " : " + typeFile.name);
@@ -539,7 +540,7 @@ public class FlansMod {
             log("Loaded " + type.name() + ".");
         }
         Sync.getUnifiedHash();
-        log(Sync.cachedHash);
+        log("Client Hash: " + Sync.cachedHash);
         Team.spectators = spectators;
     }
 
