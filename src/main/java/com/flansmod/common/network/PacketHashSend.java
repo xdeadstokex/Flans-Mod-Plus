@@ -44,6 +44,13 @@ public class PacketHashSend extends PacketBase {
         }
         if (!hash.equals(Sync.cachedHash) && FlansMod.kickNonMatchingHashes) {
             clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch detected."));
+            FlansMod.log("Kicked from server, invalid hash. Make sure your packs are the same as the server's.");
+            FlansMod.log("S: " + hash);
+            FlansMod.log("C: " + Sync.cachedHash);
+            FlansMod.log("Individual hashes: ");
+            for (String item : Sync.hashes) {
+                FlansMod.log(item);
+            }
         }
         FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));
     }
