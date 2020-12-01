@@ -93,7 +93,7 @@ public class BlockGunBox extends Block {
         }
     }
 
-    private GunBoxEntry searchFor(InfoType item) {
+    public GunBoxEntry searchFor(InfoType item) {
         for (GunPage page : type.gunPages) {
             for (GunBoxEntry entry : page.gunList) {
                 try {

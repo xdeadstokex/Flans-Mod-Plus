@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 import com.flansmod.client.model.ModelGun;
 import com.flansmod.client.model.ModelMG;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.InfoType;
@@ -273,6 +274,9 @@ public class GunType extends PaintableType implements IScope
 	public float knockbackModifier = 0F;
 	/** Default spread of the gun. Do not modify. */
 	private float defaultSpread = 0F;
+
+	// Cached gunbox value - so we don't have to search through the gunboxes every single time gui is rendered.
+	private String gunBoxName = "";
 
 	public GunType(TypeFile file)
 	{
@@ -1442,6 +1446,21 @@ public class GunType extends PaintableType implements IScope
 
 		setFireMode(stack, mode.ordinal());
 		return mode;
+	}
+
+	public String getGunBox() {
+		if (gunBoxName != "") {
+			return gunBoxName;
+		} else {
+			for (BlockGunBox box : FlansMod.gunBoxBlocks) {
+				if (box.searchFor(this) != null) {
+					gunBoxName = box.getLocalizedName();
+					return gunBoxName;
+				}
+			}
+			gunBoxName = "none";
+			return gunBoxName;
+		}
 	}
 
 	/** Set the secondary or primary fire mode */

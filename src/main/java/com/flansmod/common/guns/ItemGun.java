@@ -227,6 +227,10 @@ public class ItemGun extends Item implements IPaintableItem {
             lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
         } else {
             lines.add("");
+            
+            if (type.getGunBox() != "none") {
+                lines.add("\u00a79Box" + "\u00a77: " + type.getGunBox());
+            }
 
             AttachmentType barrel = type.getBarrel(stack);
             if (barrel != null && barrel.silencer)
