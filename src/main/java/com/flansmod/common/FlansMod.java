@@ -526,7 +526,7 @@ public class FlansMod {
                                     log("Unrecognized type for " + infoType.shortName);
                                     break;
                             }
-                            Sync.addHash(typeFile.lines.toString());
+                            Sync.addHash(typeFile.lines.toString(), infoType.shortName);
                         }
                         
                     }

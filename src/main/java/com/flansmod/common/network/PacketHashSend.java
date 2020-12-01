@@ -47,10 +47,6 @@ public class PacketHashSend extends PacketBase {
             FlansMod.log("Kicked from server, invalid hash. Make sure your packs are the same as the server's.");
             FlansMod.log("S: " + hash);
             FlansMod.log("C: " + Sync.cachedHash);
-            FlansMod.log("Individual hashes: ");
-            for (String item : Sync.hashes) {
-                FlansMod.log(item);
-            }
         }
         FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));
     }

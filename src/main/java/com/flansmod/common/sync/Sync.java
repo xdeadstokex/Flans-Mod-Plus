@@ -4,15 +4,15 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.flansmod.common.FlansMod;
 
 
 
 public class Sync {
-	public static ArrayList<String> hashes = new ArrayList<String>();
+	public static TreeMap<String, String> hashes = new TreeMap<String, String>();
 
 	public static String cachedHash = "";
 
@@ -20,7 +20,7 @@ public class Sync {
 		String hash = "";
 		try {
 			MessageDigest digester = MessageDigest.getInstance("SHA-512");
-			byte[] encodedhash = digester.digest(str.getBytes(StandardCharsets.UTF_8));
+			byte[] encodedhash = digester.digest(validateString(str).getBytes(StandardCharsets.US_ASCII));
 			hash =  Hex.encodeHexString(encodedhash);
 		} catch (Exception e) {
 			FlansMod.log("[Sync] Error has occured.");
@@ -31,15 +31,27 @@ public class Sync {
 
 	public static String getUnifiedHash() {
 		String str = "";
-		Collections.sort(hashes);
-		for (String hash : hashes) {
-			str += hash;
+		for (Map.Entry<String, String> hash : hashes.entrySet()) {
+			str += hash.getKey();
+			FlansMod.log(hash.getKey() + " " +hash.getValue());
 		}
+
 		cachedHash = getStringHash(str);
 		return cachedHash;
 	}
 
-	public static void addHash(String str) {
-		hashes.add(getStringHash(str));
+	public static void addHash(String str, String shortname) {
+		hashes.put(getStringHash(str), shortname);
+	}
+
+	private static String validateString(String e) {
+		String out = "";
+		for (char c : e.toCharArray()) {
+			if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ+=-()[]{}#%^&$£@?.,<>0123456789".contains("" + Character.toUpperCase(c))) {
+				out += c;
+			}
+		}
+		return out;
+
 	}
 }
