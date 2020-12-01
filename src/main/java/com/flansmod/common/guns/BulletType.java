@@ -10,6 +10,7 @@ import net.minecraft.potion.PotionEffect;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.common.guns.boxes.BlockGunBox;
 
 
 
@@ -109,6 +110,9 @@ public class BulletType extends ShootableType
 	public boolean torpedo = false;
 
 	public boolean fancyDescription = true;
+
+	// Cached gunbox name, for fancy description
+	public String gunBoxName = "";
 
 	/** The static bullets list */
 	
@@ -291,6 +295,21 @@ public class BulletType extends ShootableType
 				return bullet;
 		}
 		return null;
+	}
+
+	public String getGunBox() {
+		if (gunBoxName != "") {
+			return gunBoxName;
+		} else {
+			for (BlockGunBox box : FlansMod.gunBoxBlocks) {
+				if (box.searchFor(this) != null) {
+					gunBoxName = box.getLocalizedName();
+					return gunBoxName;
+				}
+			}
+			gunBoxName = "none";
+			return gunBoxName;
+		}
 	}
 
 	/** To be overriden by subtypes for model reloading */
