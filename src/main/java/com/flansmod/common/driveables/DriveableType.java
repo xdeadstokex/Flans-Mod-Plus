@@ -4,26 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 
-import com.flansmod.client.model.AnimTankTrack;
 import com.flansmod.client.model.ModelDriveable;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EnumFireMode;
-import com.flansmod.common.guns.GunType;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.parts.PartType;
-import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.driveables.ShootPoint;
 import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -179,7 +173,7 @@ public class DriveableType extends PaintableType {
      * Generic movement modifiers, no longer repeated for plane and vehicle
      */
     public float maxThrottle = 1F, maxNegativeThrottle = 0F;
-    public float ClutchBrake = 0F;
+    public float clutchBrake = 0F;
     /**
      * The origin of the tank turret
      */
@@ -401,7 +395,7 @@ public class DriveableType extends PaintableType {
             else if (split[0].equals("MaxNegativeThrottle"))
                 maxNegativeThrottle = Float.parseFloat(split[1]);
             else if (split[0].equals("ClutchBrake"))
-                ClutchBrake = Float.parseFloat(split[1]);
+                clutchBrake = Float.parseFloat(split[1]);
             else if (split[0].equals("MaxThrottleInWater"))
                 maxThrottleInWater = Float.parseFloat(split[1]);
             else if (split[0].equals("MaxDepth"))

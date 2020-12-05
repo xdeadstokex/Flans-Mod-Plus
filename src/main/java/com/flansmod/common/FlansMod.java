@@ -369,10 +369,21 @@ public class FlansMod {
     private void getTypeFiles(List<File> contentPacks) {
         for (File contentPack : contentPacks) {
             if (contentPack.isDirectory()) {
+                File mainConfig = new File(contentPack, "pack.txt");
+                if (mainConfig.exists()) {
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader(mainConfig));
+
+                    } catch (IOException e) {
+                        FlansMod.logger.error("Could not read pack configuration", e);
+                    }
+                }
+
                 for (EnumType typeToCheckFor : EnumType.values()) {
                     File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
                     if (!typesDir.exists())
                         continue;
+
                     for (File file : typesDir.listFiles()) {
                         try {
                             BufferedReader reader = new BufferedReader(new FileReader(file));

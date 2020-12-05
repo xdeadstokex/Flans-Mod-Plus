@@ -217,7 +217,7 @@ public class TickHandlerClient {
 
             PacketTeamInfo teamInfo = FlansModClient.teamInfo;
 
-            if (teamInfo != null && FlansModClient.minecraft.thePlayer != null && (teamInfo.numTeams > 0 || !teamInfo.sortedByTeam) && teamInfo.getPlayerScoreData(FlansModClient.minecraft.thePlayer.getCommandSenderName()) != null) {
+            if (teamInfo != null && FlansModClient.minecraft.thePlayer != null && (PacketTeamInfo.numTeams > 0 || !PacketTeamInfo.sortedByTeam) && PacketTeamInfo.getPlayerScoreData(FlansModClient.minecraft.thePlayer.getCommandSenderName()) != null) {
                 GL11.glEnable(3042 /* GL_BLEND */);
                 GL11.glDisable(2929 /* GL_DEPTH_TEST */);
                 GL11.glDepthMask(false);
@@ -235,9 +235,9 @@ public class TickHandlerClient {
                 tessellator.draw();
 
                 //If we are in a two team gametype, draw the team scores at the top of the screen
-                if (teamInfo.numTeams == 2 && teamInfo.sortedByTeam) {
+                if (PacketTeamInfo.numTeams == 2 && PacketTeamInfo.sortedByTeam) {
                     //Draw team 1 colour bit
-                    int colour = teamInfo.teamData[0].team.teamColour;
+                    int colour = PacketTeamInfo.teamData[0].team.teamColour;
                     GL11.glColor4f(((colour >> 16) & 0xff) / 256F, ((colour >> 8) & 0xff) / 256F, (colour & 0xff) / 256F, 1.0F);
                     tessellator.startDrawingQuads();
                     tessellator.addVertexWithUV(i / 2 - 43, 27, -90D, 0D / 256D, 125D / 256D);
@@ -246,7 +246,7 @@ public class TickHandlerClient {
                     tessellator.addVertexWithUV(i / 2 - 43, 0D, -90D, 0D / 256D, 98D / 256D);
                     tessellator.draw();
                     //Draw team 2 colour bit
-                    colour = teamInfo.teamData[1].team.teamColour;
+                    colour = PacketTeamInfo.teamData[1].team.teamColour;
                     GL11.glColor4f(((colour >> 16) & 0xff) / 256F, ((colour >> 8) & 0xff) / 256F, (colour & 0xff) / 256F, 1.0F);
                     tessellator.startDrawingQuads();
                     tessellator.addVertexWithUV(i / 2 + 19, 27, -90D, 62D / 256D, 125D / 256D);
@@ -261,18 +261,18 @@ public class TickHandlerClient {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
                     //Draw the team scores
-                    mc.fontRenderer.drawString(teamInfo.teamData[0].score + "", i / 2 - 35, 9, 0x000000);
-                    mc.fontRenderer.drawString(teamInfo.teamData[0].score + "", i / 2 - 36, 8, 0xffffff);
-                    mc.fontRenderer.drawString(teamInfo.teamData[1].score + "", i / 2 + 35 - mc.fontRenderer.getStringWidth(teamInfo.teamData[1].score + ""), 9, 0x000000);
-                    mc.fontRenderer.drawString(teamInfo.teamData[1].score + "", i / 2 + 34 - mc.fontRenderer.getStringWidth(teamInfo.teamData[1].score + ""), 8, 0xffffff);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", i / 2 - 35, 9, 0x000000);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", i / 2 - 36, 8, 0xffffff);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", i / 2 + 35 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 9, 0x000000);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", i / 2 + 34 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 8, 0xffffff);
                 }
 
-                mc.fontRenderer.drawString(teamInfo.gametype + "", i / 2 + 48, 9, 0x000000);
-                mc.fontRenderer.drawString(teamInfo.gametype + "", i / 2 + 47, 8, 0xffffff);
-                mc.fontRenderer.drawString(teamInfo.map + "", i / 2 - 47 - mc.fontRenderer.getStringWidth(teamInfo.map + ""), 9, 0x000000);
-                mc.fontRenderer.drawString(teamInfo.map + "", i / 2 - 48 - mc.fontRenderer.getStringWidth(teamInfo.map + ""), 8, 0xffffff);
+                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", i / 2 + 48, 9, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", i / 2 + 47, 8, 0xffffff);
+                mc.fontRenderer.drawString(PacketTeamInfo.map + "", i / 2 - 47 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 9, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.map + "", i / 2 - 48 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 8, 0xffffff);
 
-                int secondsLeft = teamInfo.timeLeft / 20;
+                int secondsLeft = PacketTeamInfo.timeLeft / 20;
                 int minutesLeft = secondsLeft / 60;
                 secondsLeft = secondsLeft % 60;
                 String timeLeft = minutesLeft + ":" + (secondsLeft < 10 ? "0" + secondsLeft : secondsLeft);
@@ -286,9 +286,9 @@ public class TickHandlerClient {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 String playerUsername = FlansModClient.minecraft.thePlayer.getCommandSenderName();
 
-                mc.fontRenderer.drawString(teamInfo.getPlayerScoreData(playerUsername).score + "", i / 2 - 7, 1, 0x000000);
-                mc.fontRenderer.drawString(teamInfo.getPlayerScoreData(playerUsername).kills + "", i / 2 - 7, 9, 0x000000);
-                mc.fontRenderer.drawString(teamInfo.getPlayerScoreData(playerUsername).deaths + "", i / 2 - 7, 17, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).score + "", i / 2 - 7, 1, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).kills + "", i / 2 - 7, 9, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).deaths + "", i / 2 - 7, 17, 0x000000);
             }
             for (KillMessage killMessage : killMessages) {
                 mc.fontRenderer.drawString("\u00a7" + killMessage.killerName + "     " + "\u00a7" + killMessage.killedName, i - mc.fontRenderer.getStringWidth(killMessage.killerName + "     " + killMessage.killedName) - 6, j - 32 - killMessage.line * 16, 0xffffff);
@@ -351,10 +351,10 @@ public class TickHandlerClient {
                     if (EntityBullet.headshot) {
                         // Headshot - blue.
                         GL11.glColor4f(
-                            0,
-                            0.5F,
-                            1,
-                            FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                                0,
+                                0.5F,
+                                1,
+                                FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
                         );
                     } else {
                         // Two stage transition between red and green, to avoid going into yellow.
@@ -362,27 +362,27 @@ public class TickHandlerClient {
                         // Red = 0 .
                         if (EntityBullet.penAmount < 0.5) {
                             GL11.glColor4f(
-                                1,
-                                2 * EntityBullet.penAmount,
-                                0,
-                                FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                                    1,
+                                    2 * EntityBullet.penAmount,
+                                    0,
+                                    FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
                             );
                         } else {
                             GL11.glColor4f(
-                                2 * (1-EntityBullet.penAmount),
-                                1,
-                                0,
-                                FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
+                                    2 * (1 - EntityBullet.penAmount),
+                                    1,
+                                    0,
+                                    FlansMod.hitCrossHairColor[0] * (float) tickcount / 20
                             );
                         }
 
                     }
                 } else {
                     GL11.glColor4f(
-                        FlansMod.hitCrossHairColor[1],
-                        FlansMod.hitCrossHairColor[2],
-                        FlansMod.hitCrossHairColor[3],
-                        FlansMod.hitCrossHairColor[0] * (float) tickcount / 20);
+                            FlansMod.hitCrossHairColor[1],
+                            FlansMod.hitCrossHairColor[2],
+                            FlansMod.hitCrossHairColor[3],
+                            FlansMod.hitCrossHairColor[0] * (float) tickcount / 20);
                 }
 
                 GL11.glDisable(3008 /* GL_ALPHA_TEST */);
@@ -442,28 +442,43 @@ public class TickHandlerClient {
 
             //DEBUG vehicles
             if (mc.thePlayer.ridingEntity instanceof EntitySeat) {
-                EntityDriveable ent = ((EntitySeat) mc.thePlayer.ridingEntity).driveable;
-                float speed = (float) (ent.motionX * ent.motionX + ent.motionY * ent.motionY + ent.motionZ * ent.motionZ);
-                int healthP = (int) ((float) ent.getDriveableData().parts.get(EnumDriveablePart.core).health / (float) ent.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth * 100);
-                int colour = 0;
+                EntityDriveable driveable = ((EntitySeat) mc.thePlayer.ridingEntity).driveable;
+                EntitySeat playerSeat = ((EntitySeat) mc.thePlayer.ridingEntity);
+
+                //Vehicle motion is apparently always zero on the client side. TODO: Fix and maybe calculate from x/y/z position.
+                float speed = (float) (driveable.motionX * driveable.motionX + driveable.motionY * driveable.motionY + driveable.motionZ * driveable.motionZ);
+
+                int healthP = (int) (driveable.getDriveableData().parts.get(EnumDriveablePart.core).health / driveable.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth * 100);
+                int healthColor;
                 if (healthP > 75) {
-                    colour = 0xffffff;
+                    healthColor = 0xffffff;
                 } else if (healthP < 75 && healthP > 50) {
-                    colour = 0x00ff00;
+                    healthColor = 0x00ff00;
                 } else if (healthP < 50 && healthP > 25) {
-                    colour = 0xdaa520;
+                    healthColor = 0xdaa520;
                 } else {
-                    colour = 0xff0000;
+                    healthColor = 0xff0000;
                 }
-                mc.fontRenderer.drawString(String.format("Throttle : %.0f%%", ent.throttle * 100), 2, 2, 0xffffff);
-//				mc.fontRenderer.drawString("Throttle : " + ent.throttle, 2, 2, 0xffffff);
-                //mc.fontRenderer.drawString("Health : " + ent.getDriveableData().parts.get(EnumDriveablePart.core).health+ " / " +ent.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth, 2, 12, 0xffffff);
-                mc.fontRenderer.drawString("Health : " + healthP + "%", 2, 12, colour);
+
+                float fuelP = driveable.driveableData.fuelInTank / driveable.getDriveableType().fuelTankSize * 100;
+                int fuelColor = 0xffffff;
+                if (fuelP < 50)
+                    fuelColor = 0xffe100;
+                if (fuelP < 15)
+                    fuelColor = 0xff9900;
+                if (fuelP <= 2)
+                    fuelColor = 0xff0000;
+
+                mc.fontRenderer.drawString(String.format("Throttle : %.0f%%", driveable.throttle * 100), 2, 2, 0xffffff);
+//				mc.fontRenderer.drawString("Throttle : " + driveable.throttle, 2, 2, 0xffffff);
+                //mc.fontRenderer.drawString("Health : " + driveable.getDriveableData().parts.get(EnumDriveablePart.core).health+ " / " +driveable.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth, 2, 12, 0xffffff);
+                mc.fontRenderer.drawString("Health : " + healthP + "%", 2, 12, healthColor);
                 mc.fontRenderer.drawString(String.format("Speed : %.2f", Math.sqrt(speed)), 2, 22, 0xffffff);
-                mc.fontRenderer.drawString(String.format("Yaw : %.0f%%", ((EntitySeat) mc.thePlayer.ridingEntity).looking.getYaw()), 92, 2, 0xffffff);
-                mc.fontRenderer.drawString(String.format("Pitch : %.0f%%", ((EntitySeat) mc.thePlayer.ridingEntity).looking.getPitch()), 92, 12, 0xffffff);
-                if (ent instanceof EntityPlane) {
-                    EntityDriveable entP = (EntityDriveable) ent;
+                mc.fontRenderer.drawString(String.format("Yaw : %.0f%%", playerSeat.looking.getYaw()), 92, 2, 0xffffff);
+                mc.fontRenderer.drawString(String.format("Pitch : %.0f%%", playerSeat.looking.getPitch()), 92, 12, 0xffffff);
+                mc.fontRenderer.drawString(String.format("Fuel : %.0f%%", fuelP), 92, 22, fuelColor);
+                if (driveable instanceof EntityPlane) {
+                    EntityDriveable entP = driveable;
                     if (entP.getDriveableType().hasFlare) {
                         if (entP.ticksFlareUsing <= 0 && entP.flareDelay <= 0)
                             mc.fontRenderer.drawString("Flare : READY", 2, 32, 0x00ff00);
@@ -478,8 +493,8 @@ public class TickHandlerClient {
                     mc.fontRenderer.drawString(String.format("Lift : %.0f%%", (float) entP.getSpeedXYZ() * (float) entP.getSpeedXYZ() * up2.y), 92, 22, 0xffffff);
 
                 }
-                if (ent instanceof EntityVehicle) {
-                    EntityDriveable entP = (EntityDriveable) ent;
+                if (driveable instanceof EntityVehicle) {
+                    EntityDriveable entP = driveable;
                     if (entP.getDriveableType().hasFlare) {
                         if (entP.ticksFlareUsing <= 0 && entP.flareDelay <= 0)
                             mc.fontRenderer.drawString("Smoke : READY", 2, 32, 0x00ff00);
@@ -491,13 +506,13 @@ public class TickHandlerClient {
                             mc.fontRenderer.drawString("Smoke : Reloading", 2, 52, 0xdaa520);
                     }
 
-                    if (((EntityVehicle) ent).getVehicleType().shootWithOpenDoor) {
-                        if (((EntityVehicle) ent).varDoor) {
+                    if (((EntityVehicle) driveable).getVehicleType().shootWithOpenDoor) {
+                        if (((EntityVehicle) driveable).varDoor) {
                             mc.fontRenderer.drawString("Weapon : READY", 2, 62, 0x00ff00);
                             mc.fontRenderer.drawString("[" + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode()) + " to disable]", 100, 62, 0x00ff00);
                         }
 
-                        if (!((EntityVehicle) ent).varDoor) {
+                        if (!((EntityVehicle) driveable).varDoor) {
                             mc.fontRenderer.drawString("Weapon : DISABLED", 2, 62, 0xff0000);
                             mc.fontRenderer.drawString("[" + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode()) + " to activate]", 100, 62, 0xff0000);
                         }
@@ -505,9 +520,9 @@ public class TickHandlerClient {
                 }
 
                 if (FlansMod.DEBUG) {
-                    mc.fontRenderer.drawString("MotionX : " + ent.motionX, 2, 32, 0xffffff);
-                    mc.fontRenderer.drawString("MotionY : " + ent.motionY, 2, 42, 0xffffff);
-                    mc.fontRenderer.drawString("MotionZ : " + ent.motionZ, 2, 52, 0xffffff);
+                    mc.fontRenderer.drawString("MotionX : " + driveable.motionX, 2, 32, 0xffffff);
+                    mc.fontRenderer.drawString("MotionY : " + driveable.motionY, 2, 42, 0xffffff);
+                    mc.fontRenderer.drawString("MotionZ : " + driveable.motionZ, 2, 52, 0xffffff);
                     mc.fontRenderer.drawString("Break Blocks : " + TeamsManager.driveablesBreakBlocks, 2, 62, 0xffffff);
                 }
             }
@@ -815,8 +830,8 @@ public class TickHandlerClient {
         killMessages.add(new KillMessage(headshot, infoType, killer, killed));
     }
 
-    private static RenderItem itemRenderer = new RenderItem();
-    private static List<KillMessage> killMessages = new ArrayList<KillMessage>();
+    private static final RenderItem itemRenderer = new RenderItem();
+    private static final List<KillMessage> killMessages = new ArrayList<KillMessage>();
 
     private static class KillMessage {
         public KillMessage(boolean head, InfoType infoType, String killer, String killed) {

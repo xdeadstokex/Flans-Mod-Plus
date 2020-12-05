@@ -13,7 +13,7 @@ public class TypeFile {
     private int readerPosition = 0;
 
     static {
-        files = new HashMap<EnumType, ArrayList<TypeFile>>();
+        files = new HashMap<>();
         for (EnumType type : EnumType.values()) {
             files.put(type, new ArrayList<TypeFile>());
         }
@@ -24,13 +24,13 @@ public class TypeFile {
         this(t, s, packName, true);
     }
 
-    public TypeFile(EnumType t, String s, String packName, boolean addToTypeFileList) {
-        type = t;
-        name = s;
+    public TypeFile(EnumType type, String name, String packName, boolean addToTypeFileList) {
+        this.type = type;
+        this.name = name;
         pack = packName;
-        lines = new ArrayList<String>();
+        lines = new ArrayList<>();
         if (addToTypeFileList)
-            files.get(type).add(this);
+            files.get(this.type).add(this);
     }
 
     public String readLine() {
@@ -39,6 +39,7 @@ public class TypeFile {
         return lines.get(readerPosition++);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String s : lines) {
