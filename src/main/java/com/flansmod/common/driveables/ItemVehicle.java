@@ -211,11 +211,16 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
     @SideOnly(Side.CLIENT)
     public IIcon getIconIndex(ItemStack stack)
     {
-		if (stack.getItemDamage() > icons.length) {
-			return icons[0];
+		if (stack != null) {
+			if (stack.getItemDamage() > icons.length) {
+				return icons[0];
+			} else {
+				return icons[stack.getItemDamage()];
+			}
 		} else {
-			return icons[stack.getItemDamage()];
+			return icons[0];
 		}
+
     }
 
     /** Make sure that creatively spawned planes have nbt data */
