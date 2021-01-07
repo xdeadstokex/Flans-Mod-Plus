@@ -87,7 +87,7 @@ public class DriveablePart
 		if(maxHealth == 0)
 			return damage;
 		//As standard, take half damage and return the other half
-		health -= (int)(damage / 2F);
+		health -= damage / 2F;
 		return damage / 2F;
 	}
 		
