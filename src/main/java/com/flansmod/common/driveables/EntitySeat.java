@@ -44,7 +44,6 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
     /**
      * Set this to true when the client has found the parent driveable and connected them
      */
-    @SideOnly(Side.CLIENT)
     public boolean foundDriveable;
     private int driveableID;
     private int seatID;
