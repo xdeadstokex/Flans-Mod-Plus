@@ -127,6 +127,8 @@ public class DriveableType extends PaintableType {
 
     public boolean filterAmmunition = false;
 
+    public boolean worksUnderWater = false;
+
     public class ShootParticle {
         public ShootParticle(String s, float x1, float y1, float z1) {
             x = x1;
@@ -455,6 +457,8 @@ public class DriveableType extends PaintableType {
                 placeableOnLand = Boolean.parseBoolean(split[1]);
             else if (split[0].equals("PlaceableOnWater"))
                 placeableOnWater = Boolean.parseBoolean(split[1]);
+            else if (split[0].equals("WorksUnderwater"))
+                worksUnderWater = Boolean.parseBoolean(split[1]);
             else if (split[0].equals("PlaceableOnSponge"))
                 placeableOnSponge = Boolean.parseBoolean(split[1]);
             else if (split[0].equals("FloatOnWater"))

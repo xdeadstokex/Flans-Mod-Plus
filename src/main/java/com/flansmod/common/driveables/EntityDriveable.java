@@ -1065,15 +1065,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         checkInventoryChanged();
 
         if (worldObj.isAnyLiquid(this.boundingBox) && !hugeBoat) {
-            if (throttle >= type.maxThrottleInWater) {
-                throttle = type.maxThrottleInWater;
-            }
-
-            if (throttle <= -type.maxThrottleInWater) {
-                throttle = -type.maxThrottleInWater;
-            }
-
-            if (worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, type.maxDepth, 0))) {
+            if (worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, type.maxDepth, 0)) && !type.worksUnderWater) {
                 throttle = 0;
                 //this.driveableData.parts.get(EnumDriveablePart.core).health -= 1;
                 disabled = true;

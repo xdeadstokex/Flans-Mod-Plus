@@ -575,8 +575,15 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                     float turningDrag = 0.02F;
                     wheel.motionX *= 1F - (Math.abs(wheelsYaw) * turningDrag);
                     wheel.motionZ *= 1F - (Math.abs(wheelsYaw) * turningDrag);
+                    float velocityScale = 0;
+                    if (worldObj.isAnyLiquid(boundingBox)) {
+                        velocityScale = 0.04F * (throttle > 0 ? type.maxThrottleInWater : type.maxNegativeThrottle)
+                                * data.engine.engineSpeed;
+                    } else {
+                        velocityScale = 0.04F * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle)
+                            * data.engine.engineSpeed;
 
-                    float velocityScale = 0.04F * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle) * data.engine.engineSpeed;
+                    }
                     float steeringScale = 0.1F * (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier);
                     float effectiveWheelSpeed = (throttle + (wheelsYaw * (left ? 1 : -1) * steeringScale)) * velocityScale;
                     wheel.motionX += effectiveWheelSpeed * Math.cos(wheel.rotationYaw * 3.14159265F / 180F);
@@ -585,7 +592,17 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                 } else {
                     //if(getVehicleType().fourWheelDrive || wheel.ID == 0 || wheel.ID == 1)
                     {
-                        float velocityScale = 0.1F * throttle * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle) * data.engine.engineSpeed;
+                        float velocityScale = 0;
+                        if (worldObj.isAnyLiquid(boundingBox)) {
+                            velocityScale = 0.1F * throttle
+                                * (throttle > 0 ? type.maxThrottleInWater : type.maxNegativeThrottle)
+                                * data.engine.engineSpeed;
+                        } else {
+                            velocityScale = 0.1F * throttle
+                                * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle)
+                                * data.engine.engineSpeed;
+
+                        }
                         wheel.motionX += Math.cos(wheel.rotationYaw * 3.14159265F / 180F) * velocityScale;
                         wheel.motionZ += Math.sin(wheel.rotationYaw * 3.14159265F / 180F) * velocityScale;
                     }
