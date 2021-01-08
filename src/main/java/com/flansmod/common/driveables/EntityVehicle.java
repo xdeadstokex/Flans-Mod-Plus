@@ -576,7 +576,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                     wheel.motionX *= 1F - (Math.abs(wheelsYaw) * turningDrag);
                     wheel.motionZ *= 1F - (Math.abs(wheelsYaw) * turningDrag);
                     float velocityScale = 0;
-                    if (worldObj.isAnyLiquid(boundingBox)) {
+                    if (isUnderWater()) {
                         velocityScale = 0.04F * (throttle > 0 ? type.maxThrottleInWater : type.maxNegativeThrottle)
                                 * data.engine.engineSpeed;
                     } else {
@@ -593,7 +593,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                     //if(getVehicleType().fourWheelDrive || wheel.ID == 0 || wheel.ID == 1)
                     {
                         float velocityScale = 0;
-                        if (worldObj.isAnyLiquid(boundingBox)) {
+                        if (isUnderWater()) {
                             velocityScale = 0.1F * throttle
                                 * (throttle > 0 ? type.maxThrottleInWater : type.maxNegativeThrottle)
                                 * data.engine.engineSpeed;

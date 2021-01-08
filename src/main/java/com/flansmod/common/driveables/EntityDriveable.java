@@ -610,7 +610,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         if (type.IT1 && !canFireIT1 && type.weaponType(secondary) == EnumWeaponType.MISSILE) return;
 
-        if (!canFire) return;
+        if (!canFire || (isUnderWater() && !type.worksUnderWater)) return;
 
         //Check shoot delay
         if (getShootDelay(secondary) <= 0) {
@@ -1064,12 +1064,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         checkInventoryChanged();
 
-        if (worldObj.isAnyLiquid(this.boundingBox) && !hugeBoat) {
-            if (worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, type.maxDepth, 0)) && !type.worksUnderWater) {
-                throttle = 0;
-                //this.driveableData.parts.get(EnumDriveablePart.core).health -= 1;
-                disabled = true;
-            }
+        if (isUnderWater() && !type.worksUnderWater && !hugeBoat) {
+            throttle = 0;
+            //this.driveableData.parts.get(EnumDriveablePart.core).health -= 1;
+            disabled = true;
         } else disabled = false;
 
 
@@ -2712,5 +2710,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         if (recoilTimer <= 0 && slot != -1)
             recoilTimer = (int) getDriveableType().shootDelayPrimary;
+    }
+
+    // Returns if the bounding box is under the 
+    public boolean isUnderWater() {
+        return worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, getDriveableType().maxDepth, 0));
     }
 }

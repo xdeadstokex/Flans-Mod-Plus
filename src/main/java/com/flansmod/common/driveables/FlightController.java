@@ -34,7 +34,8 @@ public class FlightController {
 		SetAxes(plane);
 
 		if (throttle > 0) {
-			thrust = 0.01F * (type.maxThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
+			
+			thrust = 0.01F * ((plane.isUnderWater() ? type.maxThrottleInWater : type.maxThrottle) + (data.engine == null ? 0 : data.engine.engineSpeed));
 		} else {
 			thrust = 0.01F * (type.maxNegativeThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
 		}
