@@ -735,9 +735,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 float bubbleMotion = 0.25F;
                 worldObj.spawnParticle("bubble", posX - motionX * bubbleMotion, posY - motionY * bubbleMotion, posZ - motionZ * bubbleMotion, motionX, motionY + 0.1F, motionZ);
             }
+            FlansMod.log("Dog has died.");
             drag = type.dragInWater;
         }
-        if (!isInWater() || !type.torpedo) {
+        if (!type.torpedo) {
             motionX *= drag;
             motionY *= drag;
             motionZ *= drag;
