@@ -476,7 +476,7 @@ public class TickHandlerClient {
                 mc.fontRenderer.drawString(String.format("Speed : %.2f", Math.sqrt(speed)), 2, 22, 0xffffff);
                 mc.fontRenderer.drawString(String.format("Yaw : %.0f%%", playerSeat.looking.getYaw()), 92, 2, 0xffffff);
                 mc.fontRenderer.drawString(String.format("Pitch : %.0f%%", playerSeat.looking.getPitch()), 92, 12, 0xffffff);
-                mc.fontRenderer.drawString(String.format("Fuel : %.0f%%", fuelP), 92, 22, fuelColor);
+                mc.fontRenderer.drawString(String.format("Fuel : %.0f%%", fuelP), 2, 32, fuelColor);
                 if (driveable instanceof EntityPlane) {
                     EntityDriveable entP = driveable;
                     if (entP.getDriveableType().hasFlare) {
