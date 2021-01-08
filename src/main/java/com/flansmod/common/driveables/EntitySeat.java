@@ -648,7 +648,9 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
 
         if (key == 9) //Shoot
         {
-            if (driveable.isPartIntact(seatInfo.part) || FlansMod.gunsInDeadPartsWork) {
+            if ((driveable.isPartIntact(seatInfo.part) || FlansMod.gunsInDeadPartsWork) &&
+                (!driveable.isUnderWater() || driveable.getDriveableType().worksUnderWater)
+                ) {
                 //Get the gun from the plane type and the ammo from the data
                 GunType gun = seatInfo.gunType;
 
