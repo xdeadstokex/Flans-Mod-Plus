@@ -57,6 +57,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -360,6 +361,13 @@ public class FlansMod {
                 if (team.shoes != null)
                     event.entityLiving.setCurrentItemOrArmor(4, team.shoes.copy());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onAnvilUsedEvent(AnvilUpdateEvent e) {
+        if (e.left != null && e.left.getItem() instanceof ItemTeamArmour && armourEnchantability == 0 && e.right != null) {
+            e.setCanceled(true);
         }
     }
 
