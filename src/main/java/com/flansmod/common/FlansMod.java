@@ -114,6 +114,7 @@ public class FlansMod {
     public static boolean useNewPenetrationSystem = false;
     public static boolean gunsInDeadPartsWork = false;
     public static boolean fancyCrosshair = true;
+    public static boolean showDistanceInKillMessage = true;
 
 
     public static int armourSpawnRate = 20;
@@ -596,6 +597,7 @@ public class FlansMod {
         disableSprintHipFireByDefault = configFile.getBoolean("DisableSprintHipFireByDefault", "Gameplay Settings (synced)", disableSprintHipFireByDefault, "Wether to disallow players to fire the gun when sprinting and not aiming by default (content packs override).");
         useNewPenetrationSystem = configFile.getBoolean("UseNewPenetrationSystem", "Gameplay Settings (synced)", useNewPenetrationSystem, "Whether to use new penetration system (only content packs designed to work with this system will work as intended with this on).");
         gunsInDeadPartsWork = configFile.getBoolean("GunsInDeadPartsStillWork", "Gameplay Settings (synced)", gunsInDeadPartsWork, "Wether passenger guns should still work after the part of the vehicle they are on dies.");
+        showDistanceInKillMessage = configFile.getBoolean("ShowDistanceInKillMessage", "Gameplay Settings (synced)", showDistanceInKillMessage, "List distance between killer and killed in kill message.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -637,6 +639,7 @@ public class FlansMod {
         disableSprintHipFireByDefault = configFile.getBoolean("DisableSprintHipFireByDefault", "Gameplay Settings (synced)", disableSprintHipFireByDefault, "Wether to disallow players to fire the gun when sprinting and not aiming by default (content packs override).");
         useNewPenetrationSystem = configFile.getBoolean("UseNewPenetrationSystem", "Gameplay Settings (synced)", useNewPenetrationSystem, "Whether to use new penetration system (only content packs designed to work with this system will work as intended with this on).");
         gunsInDeadPartsWork = configFile.getBoolean("GunsInDeadPartsStillWork", "Gameplay Settings (synced)", gunsInDeadPartsWork, "Wether passenger guns should still work after the part of the vehicle they are on dies.");
+        showDistanceInKillMessage = configFile.getBoolean("ShowDistanceInKillMessage", "Gameplay Settings (synced)", showDistanceInKillMessage, "List distance between killer and killed in kill message.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

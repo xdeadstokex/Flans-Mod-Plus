@@ -22,6 +22,7 @@ public class PacketModConfig extends PacketBase {
     public boolean disableSprintHipFireByDefault;
     public boolean useNewPenSystem;
     public boolean gunsWorkInDeadParts;
+    public boolean showDistanceInKillMessage;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -35,6 +36,7 @@ public class PacketModConfig extends PacketBase {
         disableSprintHipFireByDefault= FlansMod.disableSprintHipFireByDefault;
         useNewPenSystem = FlansMod.useNewPenetrationSystem;
         gunsWorkInDeadParts = FlansMod.gunsInDeadPartsWork;
+        showDistanceInKillMessage = FlansMod.showDistanceInKillMessage;
     }
 
     @Override
@@ -50,6 +52,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(disableSprintHipFireByDefault);
         data.writeBoolean(useNewPenSystem);
         data.writeBoolean(gunsWorkInDeadParts);
+        data.writeBoolean(showDistanceInKillMessage);
     }
 
     @Override
@@ -65,6 +68,7 @@ public class PacketModConfig extends PacketBase {
         disableSprintHipFireByDefault = data.readBoolean();
         useNewPenSystem = data.readBoolean();
         gunsWorkInDeadParts = data.readBoolean();
+        showDistanceInKillMessage = data.readBoolean();
     }
 
     @Override
@@ -86,6 +90,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.disableSprintHipFireByDefault = disableSprintHipFireByDefault;
         FlansMod.useNewPenetrationSystem = useNewPenSystem;
         FlansMod.gunsInDeadPartsWork = gunsWorkInDeadParts;
+        FlansMod.showDistanceInKillMessage = showDistanceInKillMessage;
         FlansMod.log("Config synced successfully");
     }
 }

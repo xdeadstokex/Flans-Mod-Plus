@@ -58,7 +58,8 @@ public class PlayerDeathEventListener {
 				new PacketKillMessage(false,
 					info,
 					(killedTeam == null ? "f" : killedTeam.textColour) + killed.getDisplayName(),
-					(killerTeam == null ? "f" : killedTeam.textColour) + killer.getDisplayName()),
+					(killerTeam == null ? "f" : killedTeam.textColour) + killer.getDisplayName(),
+					killed.getDistanceToEntity(killer)),
 				DamageEvent.entityLiving.dimension);
 			// FlansMod.log("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());
 			// FlansMod.log("Weapon:"+((EntityBullet)souceEntity).type+" victim:"+killed.getDisplayName()+" Murderer:"+killer.getDisplayName());

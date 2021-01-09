@@ -4,6 +4,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.IChatComponent;
 
@@ -39,14 +41,26 @@ public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
         Team killedTeam = PlayerHandler.getPlayerData(player).team;
         Team killerTeam = PlayerHandler.getPlayerData(shooter).team;
 
+        float dist = player.getDistanceToEntity(shooter);
+
         FlansMod.getPacketHandler().sendToDimension(
                 new PacketKillMessage(
                         headshot,
                         weapon,
-                        (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName(),
-                        (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
+                        ((killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName()),
+                        ((killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
+                        dist
+                    ),
                 living.dimension);
-//        return new ChatComponentText("#flansmod");//flanDeath." + weapon.shortName + "." + (killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName() + "." + (killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName());
-        return new ChatComponentText("#flansmod");
+        return new ChatComponentText(
+            EnumChatFormatting.DARK_GRAY + "[" + EnumChatFormatting.RED + "Flansmod" + EnumChatFormatting.DARK_GRAY + "] "
+            + EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_RED + player.getCommandSenderName() +
+            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " Was killed by " +
+            EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_GREEN + shooter.getCommandSenderName() +
+            (FlansMod.showDistanceInKillMessage ? 
+            "" + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " from " +
+            EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_AQUA + String.format("%.1f", dist) + "m" +
+            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " away" : "")
+            );
     }
 }

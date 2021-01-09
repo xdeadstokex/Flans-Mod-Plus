@@ -16,18 +16,20 @@ public class PacketKillMessage extends PacketBase
 	public String killerName;
 	public String killedName;
 	public boolean headshot;
+	public float distance;
 	
 	public PacketKillMessage()
 	{
 		
 	}
 	
-	public PacketKillMessage(boolean head, InfoType weapon, String victim, String murderer)
+	public PacketKillMessage(boolean head, InfoType weapon, String victim, String murderer, Float dist)
 	{
 		killedBy = weapon;
 		killerName = murderer;
 		killedName = victim;
 		headshot = head;
+		distance = dist;
 	}
 	
 	@Override
@@ -37,6 +39,7 @@ public class PacketKillMessage extends PacketBase
 		writeUTF(data, killedBy.shortName);
 		writeUTF(data, killerName);
 		writeUTF(data, killedName);
+		data.writeFloat(distance);
 	}
 
 	@Override
@@ -46,12 +49,14 @@ public class PacketKillMessage extends PacketBase
 		killedBy = InfoType.getType(readUTF(data));
 		killerName = readUTF(data);
 		killedName = readUTF(data);
+		distance = data.readFloat();
 	}
 
 	@Override
 	public void handleServerSide(EntityPlayerMP playerEntity) 
 	{
-		FlansMod.log("Received kill message packet on the server. Skipping.");
+		FlansMod.log("Player kill Killer: " + killerName + " Killed " + killedName + " using: " + killedBy.shortName + " Headshot: " + headshot);
+		FlansMod.log("Distance " + distance);
 	}
 
 	@Override
