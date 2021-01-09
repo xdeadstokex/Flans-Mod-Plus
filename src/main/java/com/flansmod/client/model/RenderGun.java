@@ -659,7 +659,6 @@ public class RenderGun implements IItemRenderer {
 			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
 					GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 					model.renderPump(f);
 					if (gripAttachment == null && model.gripIsOnPump)
