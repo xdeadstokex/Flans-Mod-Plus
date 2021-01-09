@@ -1315,7 +1315,7 @@ public class RenderGun implements IItemRenderer {
 	//TODO
 	private float getNumBulletsInReload(GunAnimations animations, AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
-		return animations.reloadAmmoCount;
+		return (gun.model.numBulletsInReloadAnimation > animations.reloadAmmoCount) ? gun.model.numBulletsInReloadAnimation : animations.reloadAmmoCount;
 		/*if (grip != null && gun.getSecondaryFire(gunStack))
 			return grip.model.numBulletsInReloadAnimation;
 		else
