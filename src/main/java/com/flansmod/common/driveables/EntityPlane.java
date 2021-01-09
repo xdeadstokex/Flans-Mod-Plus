@@ -594,6 +594,16 @@ public class EntityPlane extends EntityDriveable {
         if (seats[0] != null && seats[0].riddenByEntity != null && mode == EnumPlaneMode.HELI && canThrust && type.heliThrottlePull)
             throttle = (throttle - 0.5F) * throttlePull + 0.5F;
 
+        if (!canThrust) {
+            throttle *= 0.99;
+            if (throttle > 0.8) {
+                throttle -= 0.001;
+            }
+
+            if (throttle > 0) {
+                throttle -= 0.001;
+            }
+        }
         control.fly(this);
 
         double motion = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);

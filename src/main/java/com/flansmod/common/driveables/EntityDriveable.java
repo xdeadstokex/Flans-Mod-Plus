@@ -631,7 +631,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
     }
 
-    private boolean driverIsCreative() {
+    public boolean driverIsCreative() {
         return seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode;
     }
 

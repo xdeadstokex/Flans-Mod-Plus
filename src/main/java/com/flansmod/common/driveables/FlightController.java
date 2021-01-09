@@ -17,6 +17,8 @@ public class FlightController {
 	public float lift = 0;
 	public Vector3f angularMomentum = new Vector3f(0,0,0);
 
+	public float fuelConsumptionMultiplier = 2F;
+
 	public void UpdateParams(EntityPlane plane)
 	{
 		throttle = plane.throttle;
@@ -34,7 +36,6 @@ public class FlightController {
 		SetAxes(plane);
 
 		if (throttle > 0) {
-			
 			thrust = 0.01F * ((plane.isUnderWater() ? type.maxThrottleInWater : type.maxThrottle) + (data.engine == null ? 0 : data.engine.engineSpeed));
 		} else {
 			thrust = 0.01F * (type.maxNegativeThrottle + (data.engine == null ? 0 : data.engine.engineSpeed));
@@ -177,13 +178,13 @@ public class FlightController {
 	}
 
 	public void PlaneModeFly(EntityPlane plane)
-	{	
-		if(plane.mode == EnumPlaneMode.HELI) return;
+	{
 		PlaneType type = plane.getPlaneType();
 		DriveableData data = plane.getDriveableData();
+
+		if(plane.mode == EnumPlaneMode.HELI) return;
 		int numPropsWorking = 0;
 		int numProps = 0;
-		float fuelConsumptionMultiplier = 2F;
 		float flap = angularMomentum.length();
 		drag -=flap/100;
 		throttle -= - flap/500;
@@ -260,8 +261,15 @@ public class FlightController {
 		plane.motionZ *= drag;
 
 		plane.lastPos = new Vector3f(plane.motionX, plane.motionY, plane.motionZ);
+		if (!plane.driverIsCreative()) {
+			if (data.fuelInTank >= thrust * fuelConsumptionMultiplier * data.engine.fuelConsumption) {
+				data.fuelInTank -= thrust * fuelConsumptionMultiplier * data.engine.fuelConsumption;
+			} else {
+				data.fuelInTank = 0;
+			}
+		}
 
-		data.fuelInTank -= thrust * fuelConsumptionMultiplier * data.engine.fuelConsumption;
+		
 		
 		// Turbulence at high speed
 		if(plane.getSpeedXYZ() > 2){
@@ -276,9 +284,9 @@ public class FlightController {
 	{
 		PlaneType type = plane.getPlaneType();
 		DriveableData data = plane.getDriveableData();
+		
 		int numPropsWorking = 0;
 		int numProps = 0;
-		float fuelConsumptionMultiplier = 2F;
 
 		//Count the number of working propellers
 		for(Propeller prop : type.heliPropellers)
@@ -331,7 +339,13 @@ public class FlightController {
 
 		plane.lastPos = new Vector3f(plane.motionX, plane.motionY, plane.motionZ);
 
-		data.fuelInTank -= upwardsForce * fuelConsumptionMultiplier * data.engine.fuelConsumption;
+		if (!plane.driverIsCreative()) {
+			if (data.fuelInTank >= upwardsForce * fuelConsumptionMultiplier * data.engine.fuelConsumption) {
+				data.fuelInTank -= upwardsForce * fuelConsumptionMultiplier * data.engine.fuelConsumption;
+			} else {
+				data.fuelInTank = 0;
+			}
+		}
 	}
 
 }
