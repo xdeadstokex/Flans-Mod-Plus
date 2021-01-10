@@ -917,9 +917,31 @@ public class RenderGun implements IItemRenderer {
 					//TODO
 					case SHOTGUN: case STRIKER: case CUSTOMSHOTGUN: case CUSTOMSTRIKER:
 					{
-						float ammoPosition = clipPosition * getNumBulletsInReload(animations, gripAttachment, type, item);
+						float maxBullets = getNumBulletsInReload(animations, gripAttachment, type, item);
+						float ammoPosition = clipPosition * maxBullets;
 						int bulletNum = MathHelper.floor_float(ammoPosition);
 						float bulletProgress = ammoPosition - bulletNum;
+
+						if (maxBullets > 1) {
+							if (type.getNumAmmoItemsInGun(item) > 1 && type.bulletInsert != null && FlansModClient.lastBulletReload != -2) {
+								if (maxBullets == 2 && FlansModClient.lastBulletReload != -1) {
+									int time = (int) (animations.reloadAnimationTime / maxBullets);
+									Minecraft.getMinecraft().getSoundHandler() .playDelayedSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F), time);
+									FlansModClient.lastBulletReload = -1;
+								} else if ((bulletNum == (int) maxBullets || bulletNum == FlansModClient.lastBulletReload - 1)) {
+									FlansModClient.lastBulletReload = bulletNum;
+									Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord
+											.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F));
+								}
+
+								if ((ammoPosition < 0.03 && bulletProgress > 0)) {
+									FlansModClient.lastBulletReload = -2;
+									Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord
+											.func_147674_a(FlansModResourceHandler.getSound(type.bulletInsert), 1.0F));
+								}
+							}
+						}
+
 
 						GL11.glRotatef(bulletProgress * -30F, 0F, 0F, 1F);
 						GL11.glTranslatef(bulletProgress * -0.5F * 1 / type.modelScale, bulletProgress * -1F * 1 / type.modelScale, 0F);

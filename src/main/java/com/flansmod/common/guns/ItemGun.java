@@ -1078,8 +1078,10 @@ public class ItemGun extends Item implements IPaintableItem {
                     else if (gunType.reloadSound != null)
                         soundToPlay = gunType.reloadSound;
 
-                    if (soundToPlay != null && type.getNumAmmoItemsInGun(gunStack) == 1)
-                        PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
+                    if (soundToPlay != null && type.getNumAmmoItemsInGun(gunStack) == 1) {
+                        PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ,
+                                type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
+                    }
                 } else if ((gunType.clickSoundOnEmpty != null) && canClick) {
                     PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
                     canClick = false;

@@ -113,7 +113,7 @@ public class PacketReload extends PacketBase {
                 else if (type.reloadSound != null)
                     soundToPlay = type.reloadSound;
 
-                if (soundToPlay != null && maxAmmo == 1)
+                if (soundToPlay != null)
                     PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true);
             }
         }
