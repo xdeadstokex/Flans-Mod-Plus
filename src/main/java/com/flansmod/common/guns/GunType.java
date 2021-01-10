@@ -47,7 +47,7 @@ public class GunType extends PaintableType implements IScope
 	/** Modifier for setting the maximum pitch divergence when randomizing recoil (Recoil 2 + rndRecoil 0.5 == 1.5-2.5 Recoil range) */
 	public float rndRecoilPitchRange = 0.5F;
 	/** Modifier for setting the maximum yaw divergence when randomizing recoil (Recoil 2 + rndRecoil 0.5 == 1.5-2.5 Recoil range) */
-	public float rndRecoilYawRange = 0.5F;
+	public float rndRecoilYawRange = 0.3F;
 	/** Modifier for decreasing the final pitch recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range) */
 	public float decreaseRecoilPitch = 0.5F;
 	/** Modifier for decreasing the final yaw recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range) */
@@ -115,7 +115,7 @@ public class GunType extends PaintableType implements IScope
 	/** For one shot items like a panzerfaust */
 	public boolean consumeGunUponUse = false;
 	/** Show the crosshair when holding this weapon */
-	public boolean showCrosshair = false;
+	public boolean showCrosshair = true;
 	/** Item to drop on shooting */
 	public String dropItemOnShoot = null;
 	/** Set these to make guns only usable by a certain type of entity */
