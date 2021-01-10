@@ -434,6 +434,7 @@ This will override the value set in the gun's model!
 | MaxThrottle | Float | 1 | Maximum throttle in generic units? |
 | MaxNegativeThrottle | Float | 0 | Maximum negative throttle, aka reversing |
 | ClutchBrake | Float | 0 | Clutch braking modifier |
+| WorksUnderwater | Boolean | False | Whether this driveable can still work when submerged |
 | MaxThrottleInWater | Float | 0.5 | Maximum throttle when the vehicle is in water |
 | MaxDepth | Integer | 3 | Blocks of water deep before the vehicle stops moving |
 | Drag | Float | 1 | Coefficient of drag |
