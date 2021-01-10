@@ -581,12 +581,20 @@ public class RenderGun implements IItemRenderer {
 
 			// Render various shoot / reload animated parts
 			// Render the slide and charge action
-			if (slideAttachment == null && !type.getSecondaryFire(item))
+			if (slideAttachment == null)
 			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing) * model.gunSlideDistance, 0F, 0F);
-					GL11.glTranslatef(-(1 - Math.abs(animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing)) * model.chargeHandleDistance, 0F, 0F);
+					if (!type.getSecondaryFire(item)) {
+						GL11.glTranslatef(
+								-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing)
+										* model.gunSlideDistance,
+								0F, 0F);
+						GL11.glTranslatef(-(1 - Math.abs(
+								animations.lastCharged + (animations.charged - animations.lastCharged) * smoothing))
+								* model.chargeHandleDistance, 0F, 0F);
+
+					}
 					model.renderSlide(f);
 					if (scopeAttachment == null && model.scopeIsOnSlide)
 						model.renderDefaultScope(f);
@@ -595,15 +603,18 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Render the alternate slide
-			if (slideAttachment == null && !type.getSecondaryFire(item))
+			if (slideAttachment == null)
 			{
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslatef(
-							-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing)
-									* model.altgunSlideDistance,
-							0F, 0F);
-					model.renderaltSlide(f);
+					if (!type.getSecondaryFire(item)) {
+						GL11.glTranslatef(
+								-(animations.lastGunSlide + (animations.gunSlide - animations.lastGunSlide) * smoothing)
+										* model.altgunSlideDistance,
+								0F, 0F);
+						model.renderaltSlide(f);
+					}
+
 					// if(scopeAttachment == null && model.scopeIsOnSlide)
 					// model.renderDefaultScope(f);
 				}
