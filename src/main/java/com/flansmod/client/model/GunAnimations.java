@@ -2,6 +2,7 @@ package com.flansmod.client.model;
 
 import java.util.Random;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.vector.Vector3f;
 
@@ -44,6 +45,8 @@ public class GunAnimations {
     public float reloadAnimationTime = 0;
     public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
     public int reloadAmmoCount = 1;
+
+    public boolean singlesReload = false;
 
     public float minigunBarrelRotation = 0F;
     public float minigunBarrelRotationSpeed = 0F;
@@ -224,7 +227,7 @@ public class GunAnimations {
         }
     }
 
-    public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount) {
+    public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount, boolean single) {
         reloading = true;
         lastReloadAnimationProgress = reloadAnimationProgress = 0F;
         reloadAnimationTime = reloadTime;
@@ -233,6 +236,7 @@ public class GunAnimations {
         timeUntilCharge = chargeDelay;
         timeToChargeFor = chargeTime;
         reloadAmmoCount = ammoCount;
+        singlesReload = single;
         FlansModClient.lastBulletReload = ammoCount - 1;
     }
 

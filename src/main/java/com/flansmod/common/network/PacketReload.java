@@ -21,6 +21,7 @@ public class PacketReload extends PacketBase {
     public boolean left;
     public Integer amount = 0;
     public Integer reloadTime = 0;
+    public Boolean singlesReload = false;
 
     public PacketReload() {
     }
@@ -29,10 +30,11 @@ public class PacketReload extends PacketBase {
         left = l;
     }
 
-    public PacketReload(boolean l, int count, int reload) {
+    public PacketReload(boolean l, int count, int reload, boolean single) {
         left = l;
         amount = count;
         reloadTime = reload;
+        singlesReload = single;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class PacketReload extends PacketBase {
         data.writeBoolean(left);
         data.writeInt(amount);
         data.writeInt(reloadTime);
+        data.writeBoolean(singlesReload);
     }
 
     @Override
@@ -47,6 +50,7 @@ public class PacketReload extends PacketBase {
         left = data.readBoolean();
         amount = data.readInt();
         reloadTime = data.readInt();
+        singlesReload = data.readBoolean();
     }
 
     @Override
@@ -96,7 +100,7 @@ public class PacketReload extends PacketBase {
                 else data.reloadingRight = true;
                 //Send reload packet to induce reload effects client side
 
-                FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount, (int) reloadTime), playerEntity);
+                FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount, (int) reloadTime, singlesReload), playerEntity);
 
                 //Play reload sound, empty variant if not null
                 String soundToPlay = null;
@@ -149,7 +153,7 @@ public class PacketReload extends PacketBase {
             int pumpTime = type.model == null ? 1 : type.model.pumpTime;
             int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
             int chargeTime = type.model == null ? 1 : type.model.chargeTime;
-            animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount);
+            animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
 
             //Iterate over all inventory slots and find the magazine / bullet item with the most bullets
             int bestSlot = -1;
