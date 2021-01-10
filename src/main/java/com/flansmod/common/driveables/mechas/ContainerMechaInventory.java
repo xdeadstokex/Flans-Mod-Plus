@@ -36,7 +36,7 @@ public class ContainerMechaInventory extends Container
 				yPos = 25 + 19 * (row - scroll);
 			for(int col = 0; col < ((row + scroll + 1) * 8 <= numItems ? 8 : numItems % 8); col++)
 			{
-				addSlotToContainer(new SlotMechaInventory(mecha.driveableData, startSlot + row * 8 + col, 186 + 18 * col, yPos, type.restrictInventoryInput));
+				addSlotToContainer(new SlotMechaInventory(mecha.driveableData, startSlot + row * 8 + col, 186 + 18 * col, yPos, type));
 			}
 		}
 		

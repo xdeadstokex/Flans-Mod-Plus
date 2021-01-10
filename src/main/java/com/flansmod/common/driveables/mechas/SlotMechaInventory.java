@@ -12,23 +12,25 @@ import com.flansmod.common.parts.ItemPart;
 public class SlotMechaInventory extends Slot 
 {
 	int slotd = 0;
-	boolean restrictInput = false;
-	public SlotMechaInventory(IInventory inv, int e, int x, int y, boolean filterInput) 
+	MechaType mechatype;
+	public SlotMechaInventory(IInventory inv, int e, int x, int y, MechaType type) 
 	{
 		super(inv, e, x, y);
 		slotd = e;
-		restrictInput = filterInput;
+		mechatype = type;
 	}
 	
 	@Override
 	public boolean isItemValid(ItemStack stack) {
 		if (stack == null || stack.getItem() == null)
 			return true;
-		if (!restrictInput)
+		if (!mechatype.restrictInventoryInput)
 			return true;
 
 		Item item = stack.getItem();
-		return ((item instanceof ItemPart) && ((ItemPart) item).type.fuel > 0) || item instanceof ItemBullet || item instanceof ItemGrenade;
+		return ((item instanceof ItemPart) && ((ItemPart) item).type.fuel > 0) || 
+		item instanceof ItemBullet || item instanceof ItemGrenade || 
+		(item instanceof ItemMechaAddon && mechatype.allowMechaToolsInRestrictedInv);
 	}
 	
 	@Override
