@@ -231,7 +231,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         axes = new RotatedAxes();
         prevAxes = new RotatedAxes();
         preventEntitySpawning = true;
-        setSize(1F, 1F);
+        if (FlansMod.driveableHitboxes) {
+            setSize(1F, 1F);
+        } else {
+            setSize(0.0F, 0.0F);
+        }
         yOffset = 6F / 16F;
         ignoreFrustumCheck = true;
         renderDistanceWeight = 200D;
