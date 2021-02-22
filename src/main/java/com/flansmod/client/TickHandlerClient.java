@@ -444,9 +444,11 @@ public class TickHandlerClient {
             if (mc.thePlayer.ridingEntity instanceof EntitySeat) {
                 EntityDriveable driveable = ((EntitySeat) mc.thePlayer.ridingEntity).driveable;
                 EntitySeat playerSeat = ((EntitySeat) mc.thePlayer.ridingEntity);
+                float dx = (float) (driveable.posX - driveable.lastTickPosX);
+                float dy = (float) (driveable.posY - driveable.lastTickPosY);
+                float dz = (float) (driveable.posZ - driveable.lastTickPosZ);
 
-                //Vehicle motion is apparently always zero on the client side. TODO: Fix and maybe calculate from x/y/z position.
-                float speed = (float) (driveable.motionX * driveable.motionX + driveable.motionY * driveable.motionY + driveable.motionZ * driveable.motionZ);
+                float speed = (float) Math.sqrt(dx * dx + dy * dy + dz * dz) * 20F;
 
                 int healthP = (int) (driveable.getDriveableData().parts.get(EnumDriveablePart.core).health / driveable.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth * 100);
                 int healthColor;
@@ -473,21 +475,28 @@ public class TickHandlerClient {
 //				mc.fontRenderer.drawString("Throttle : " + driveable.throttle, 2, 2, 0xffffff);
                 //mc.fontRenderer.drawString("Health : " + driveable.getDriveableData().parts.get(EnumDriveablePart.core).health+ " / " +driveable.getDriveableData().parts.get(EnumDriveablePart.core).maxHealth, 2, 12, 0xffffff);
                 mc.fontRenderer.drawString("Health : " + healthP + "%", 2, 12, healthColor);
-                mc.fontRenderer.drawString(String.format("Speed : %.2f", Math.sqrt(speed)), 2, 22, 0xffffff);
-                mc.fontRenderer.drawString(String.format("Yaw : %.0f%%", playerSeat.looking.getYaw()), 92, 2, 0xffffff);
-                mc.fontRenderer.drawString(String.format("Pitch : %.0f%%", playerSeat.looking.getPitch()), 92, 12, 0xffffff);
+                mc.fontRenderer.drawString(String.format("Speed : %.2f blocks/s", speed), 2, 22, 0xffffff);
+                if (driveable instanceof EntityVehicle) {
+                    mc.fontRenderer.drawString(String.format("Yaw : %.0f%%", playerSeat.looking.getYaw()), 92, 2,
+                            0xffffff);
+                    mc.fontRenderer.drawString(String.format("Pitch : %.0f%%", playerSeat.looking.getPitch()), 92, 12,
+                            0xffffff);
+                } else {
+                    mc.fontRenderer.drawString(String.format("Yaw : %.2f", driveable.prevRotationYaw), 92, 2, 0xffffff);
+                    mc.fontRenderer.drawString(String.format("Pitch : %.2f", -driveable.prevRotationPitch), 92, 12, 0xffffff);
+                }
                 mc.fontRenderer.drawString(String.format("Fuel : %.0f%%", fuelP), 2, 32, fuelColor);
                 if (driveable instanceof EntityPlane) {
                     EntityDriveable entP = driveable;
                     if (entP.getDriveableType().hasFlare) {
                         if (entP.ticksFlareUsing <= 0 && entP.flareDelay <= 0)
-                            mc.fontRenderer.drawString("Flare : READY", 2, 32, 0x00ff00);
+                            mc.fontRenderer.drawString("Flare : READY", 2, 42, 0x00ff00);
 
                         if (entP.ticksFlareUsing > 0)
-                            mc.fontRenderer.drawString("Flare : Deploying", 2, 42, 0xff0000);
+                            mc.fontRenderer.drawString("Flare : Deploying", 2, 52, 0xff0000);
 
                         if (entP.flareDelay > 0)
-                            mc.fontRenderer.drawString("Flare : Reloading", 2, 52, 0xdaa520);
+                            mc.fontRenderer.drawString("Flare : Reloading", 2, 62, 0xdaa520);
                     }
                     Vector3f up2 = (Vector3f) entP.axes.getYAxis().normalise();
                     mc.fontRenderer.drawString(String.format("Lift : %.0f%%", (float) entP.getSpeedXYZ() * (float) entP.getSpeedXYZ() * up2.y), 92, 22, 0xffffff);
@@ -497,18 +506,18 @@ public class TickHandlerClient {
                     EntityDriveable entP = driveable;
                     if (entP.getDriveableType().hasFlare) {
                         if (entP.ticksFlareUsing <= 0 && entP.flareDelay <= 0)
-                            mc.fontRenderer.drawString("Smoke : READY", 2, 32, 0x00ff00);
+                            mc.fontRenderer.drawString("Smoke : READY", 2, 42, 0x00ff00);
 
                         if (entP.ticksFlareUsing > 0)
-                            mc.fontRenderer.drawString("Smoke : Deploying", 2, 42, 0xff0000);
+                            mc.fontRenderer.drawString("Smoke : Deploying", 2, 52, 0xff0000);
 
                         if (entP.flareDelay > 0)
-                            mc.fontRenderer.drawString("Smoke : Reloading", 2, 52, 0xdaa520);
+                            mc.fontRenderer.drawString("Smoke : Reloading", 2, 62, 0xdaa520);
                     }
 
                     if (((EntityVehicle) driveable).getVehicleType().shootWithOpenDoor) {
                         if (((EntityVehicle) driveable).varDoor) {
-                            mc.fontRenderer.drawString("Weapon : READY", 2, 62, 0x00ff00);
+                            mc.fontRenderer.drawString("Weapon : READY", 2, 72, 0x00ff00);
                             mc.fontRenderer.drawString("[" + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode()) + " to disable]", 100, 62, 0x00ff00);
                         }
 
@@ -517,13 +526,6 @@ public class TickHandlerClient {
                             mc.fontRenderer.drawString("[" + Keyboard.getKeyName(KeyInputHandler.doorKey.getKeyCode()) + " to activate]", 100, 62, 0xff0000);
                         }
                     }
-                }
-
-                if (FlansMod.DEBUG) {
-                    mc.fontRenderer.drawString("MotionX : " + driveable.motionX, 2, 32, 0xffffff);
-                    mc.fontRenderer.drawString("MotionY : " + driveable.motionY, 2, 42, 0xffffff);
-                    mc.fontRenderer.drawString("MotionZ : " + driveable.motionZ, 2, 52, 0xffffff);
-                    mc.fontRenderer.drawString("Break Blocks : " + TeamsManager.driveablesBreakBlocks, 2, 62, 0xffffff);
                 }
             }
         }
