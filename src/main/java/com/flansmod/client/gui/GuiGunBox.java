@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.boxes.ContainerGunBox;
 import com.flansmod.common.guns.boxes.GunBoxEntry;
@@ -261,7 +262,18 @@ public class GuiGunBox extends GuiContainer
 					itemY = 87;
 				}
 				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
-					recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName() : entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
+					try {
+						recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName()
+								: entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
+
+					} catch (Exception e) {
+						recipeTooltip = null;
+						if (entry != null && entry.type.shortName != null) {
+							FlansMod.log("Require part(s) null! Contact content pack author. " + entry.type.shortName);
+						} else {
+							FlansMod.log("Entry is null!");
+						}
+					}
 			}
 
 
