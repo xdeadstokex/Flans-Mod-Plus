@@ -435,6 +435,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
                             gameSettings.thirdPersonView = 0;
+                            FlansModClient.originalFOV = gameSettings.fovSetting;
 
                             //Send ads spread packet to server
                             sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
