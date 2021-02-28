@@ -258,10 +258,10 @@ public class GuiGunBox extends GuiContainer
 				int itemY = 68;
 				if (i >= 4)
 				{
-					itemX = 127;
+					itemX = 127 + ((i-4) * 19);
 					itemY = 87;
 				}
-				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16)
+				if(mouseXInGUI >= itemX && mouseXInGUI < itemX + 16 && mouseYInGUI >= itemY && mouseYInGUI < itemY + 16) {
 					try {
 						recipeTooltip = (!tabToAmmo) ? entry.requiredParts.get(i).getDisplayName()
 								: entry.ammoEntryList.get(selectedAmmoitem).requiredParts.get(i).getDisplayName();
@@ -274,6 +274,7 @@ public class GuiGunBox extends GuiContainer
 							FlansMod.log("Entry is null!");
 						}
 					}
+				}
 			}
 
 
