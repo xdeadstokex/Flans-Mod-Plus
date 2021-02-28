@@ -400,7 +400,16 @@ public class ItemGun extends Item implements IPaintableItem {
                             gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
                             gameSettings.thirdPersonView = 0;
-                            FlansModClient.originalFOV = gameSettings.fovSetting;
+
+
+                            // This fixes some of the issues with FOV getting changed by repeated scoping
+                            // and unscoping.
+                            // In effect, it says that we should only set the 'original' zoom of the client
+                            // if we know the FOV is
+                            // unaffected from scoping.
+                            if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
+                                FlansModClient.originalFOV = gameSettings.fovSetting;
+                            }
 
                             //Send ads spread packet to server
                             sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
@@ -435,7 +444,13 @@ public class ItemGun extends Item implements IPaintableItem {
                             gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
                             gameSettings.thirdPersonView = 0;
-                            FlansModClient.originalFOV = gameSettings.fovSetting;
+
+                            // This fixes some of the issues with FOV getting changed by repeated scoping and unscoping.
+                            // In effect, it says that we should only set the 'original' zoom of the client if we know the FOV is
+                            // unaffected from scoping.
+                            if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
+                                FlansModClient.originalFOV = gameSettings.fovSetting;
+                            }
 
                             //Send ads spread packet to server
                             sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
