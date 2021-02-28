@@ -251,7 +251,7 @@ public class GuiGunModTable extends GuiContainer {
             } else if (k == 4) {
                 drawTexturedModalRect(xOrigin + 239, yOrigin + 60 + (12 * k), 340, 80, 32, 10);
                 drawTexturedModalRect(xOrigin + 239 + 26, yOrigin + 60 + (12 * k), 341, 90, 28, 10);
-                drawTexturedModalRect(xOrigin + 239 + 26 + 28, yOrigin + 60 + (12 * k), 394, 70, 388, 10);
+                drawTexturedModalRect(xOrigin + 239 + 26 + 28, yOrigin + 60 + (12 * k), 394, 70, 32, 10);
             } else //every other stat. Works in reverse (i.e to show low spread being good accuracy)
             {
                 difference = (80 - stats[k]) - lastStats[k];
