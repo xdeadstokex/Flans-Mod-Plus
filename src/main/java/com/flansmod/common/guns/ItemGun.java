@@ -100,6 +100,8 @@ public class ItemGun extends Item implements IPaintableItem {
     public int impactY = 0;
     public int impactZ = 0;
 
+    public boolean hasBeenCheckedForInvalidNBT = false;
+
     @Override
     public InfoType getInfoType() {
         return type;
@@ -589,7 +591,16 @@ public class ItemGun extends Item implements IPaintableItem {
     }
 
     public void onUpdateServer(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-        if (itemstack.getTagCompound() == null) {
+        boolean needsNBTRedoing = false;
+        if (!hasBeenCheckedForInvalidNBT) {
+            try {
+                itemstack.copy();
+            } catch (NullPointerException e) {
+                FlansMod.log("Invalid NBT detected! Populating!");
+                needsNBTRedoing = true;
+            }
+        }
+        if (itemstack.getTagCompound() == null || needsNBTRedoing) {
             GunType gunType = this.type;
             NBTTagCompound tags = new NBTTagCompound();
             tags.setString("Paint", gunType.defaultPaintjob.iconName);
