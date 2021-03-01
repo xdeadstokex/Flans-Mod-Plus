@@ -1,5 +1,6 @@
 package com.flansmod.common.parts;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -35,11 +36,14 @@ public class ItemPart extends Item implements IFlanItem
 	}
 	
 	@Override
-	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
+	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List lines, boolean par4)
 	{
+		if (type.description != null) {
+			Collections.addAll(lines, type.description.split("_"));
+		}
 		if(type.category == 9)
 		{
-			par3List.add("Fuel Stored: " + (type.fuel - par1ItemStack.getItemDamage()) + " / " + type.fuel);
+			lines.add("Fuel Stored: " + (type.fuel - par1ItemStack.getItemDamage()) + " / " + type.fuel);
 		}
 	}
 
