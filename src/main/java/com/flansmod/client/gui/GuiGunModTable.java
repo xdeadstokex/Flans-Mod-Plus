@@ -305,8 +305,6 @@ public class GuiGunModTable extends GuiContainer {
                         continue;
 
                     Paintjob paintjob = gunType.paintjobs.get(2 * j + i);
-                    ItemStack stack = gunStack.copy();
-                    stack.stackTagCompound.setString("Paint", paintjob.iconName);
                     int slotX = 181 + i * 18;
                     int slotY = 150 + j * 18;
                     if (mouseXInGUI >= slotX && mouseXInGUI < slotX + 18 && mouseYInGUI >= slotY && mouseYInGUI < slotY + 18)
