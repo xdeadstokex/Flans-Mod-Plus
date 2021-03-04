@@ -1158,7 +1158,7 @@ public class GunType extends PaintableType implements IScope
 	}
 
 	/** Method to check for null tags and assign default empty tags in that case */
-	private void checkForTags(ItemStack gun)
+	public void checkForTags(ItemStack gun)
 	{
 		//If the gun has no tags, give it some
 		if(!gun.hasTagCompound())
