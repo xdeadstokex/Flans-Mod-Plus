@@ -332,8 +332,18 @@ public class PlaneType extends DriveableType
     	{
     		if(propeller.planePart == part.type)
     		{
-	    		stacks.add(new ItemStack(propeller.itemType.item));
-	    		stacks.add(new ItemStack(engine.item));
+				if (propeller.itemType != null && propeller.itemType != null) {
+					stacks.add(new ItemStack(propeller.itemType.item));
+
+				} else {
+					FlansMod.log("Couldn't drop propeller!");
+				}
+
+				if (engine.item != null) {
+					stacks.add(new ItemStack(engine.item));
+				} else {
+					FlansMod.log("Couldn't drop engine!");
+				}
     		}
     	}
     	return stacks;
