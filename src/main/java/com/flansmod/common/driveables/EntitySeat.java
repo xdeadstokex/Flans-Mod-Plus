@@ -586,8 +586,6 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
             if ((driveable instanceof EntityVehicle && ((EntityVehicle) driveable).target == null) || !(driveable instanceof EntityVehicle))
                 looking.setAngles(newYaw, newPitch, 0F);
 
-            FlansMod.getPacketHandler().sendToServer(new PacketSeatUpdates(this));
-
             if (signDeltaX != 0 && seatInfo.traverseSounds == true) {
                 playYawSound = true;
             } else {
@@ -607,7 +605,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
                 playYawSound = false;
             }
 
-            //Play traverse sounds
+            FlansMod.getPacketHandler().sendToServer(new PacketSeatUpdates(this));
         }
     }
 

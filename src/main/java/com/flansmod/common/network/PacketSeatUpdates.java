@@ -44,6 +44,11 @@ public class PacketSeatUpdates extends PacketBase {
         data.writeFloat(pitch);
         data.writeFloat(playerYaw);
         data.writeFloat(playerPitch);
+
+        data.writeBoolean(playYawSound);
+        data.writeBoolean(playPitchSound);
+        data.writeInt(yawSoundDelay);
+        data.writeInt(pitchSoundDelay);
     }
 
     @Override
@@ -54,6 +59,11 @@ public class PacketSeatUpdates extends PacketBase {
         pitch = data.readFloat();
         playerYaw = data.readFloat();
         playerPitch = data.readFloat();
+        
+        playYawSound = data.readBoolean();
+        playPitchSound = data.readBoolean();
+        yawSoundDelay = data.readInt();
+        pitchSoundDelay = data.readInt();
     }
 
     @Override
@@ -70,6 +80,10 @@ public class PacketSeatUpdates extends PacketBase {
             driveable.seats[seatId].looking.setAngles(yaw, pitch, 0F);
             driveable.seats[seatId].prevPlayerLooking = driveable.seats[seatId].playerLooking.clone();
             driveable.seats[seatId].playerLooking.setAngles(playerYaw, playerPitch, 0F);
+            driveable.seats[seatId].playYawSound = playYawSound;
+            driveable.seats[seatId].playPitchSound = playPitchSound;
+            driveable.seats[seatId].yawSoundDelay = yawSoundDelay;
+            driveable.seats[seatId].pitchSoundDelay = pitchSoundDelay;
             //If on the server, update all surrounding players with these new angles
             FlansMod.getPacketHandler().sendToAllAround(this, driveable.posX, driveable.posY, driveable.posZ, FlansMod.driveableUpdateRange, driveable.dimension);
         }
@@ -95,6 +109,10 @@ public class PacketSeatUpdates extends PacketBase {
             driveable.seats[seatId].looking.setAngles(yaw, pitch, 0F);
             driveable.seats[seatId].prevPlayerLooking = driveable.seats[seatId].playerLooking.clone();
             driveable.seats[seatId].playerLooking.setAngles(playerYaw, playerPitch, 0F);
+            driveable.seats[seatId].playYawSound = playYawSound;
+            driveable.seats[seatId].playPitchSound = playPitchSound;
+            driveable.seats[seatId].yawSoundDelay = yawSoundDelay;
+            driveable.seats[seatId].pitchSoundDelay = pitchSoundDelay;
         }
     }
 }
