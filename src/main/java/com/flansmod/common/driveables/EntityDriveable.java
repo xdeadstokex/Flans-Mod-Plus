@@ -1323,6 +1323,22 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
         }
+        if (seats[0] != null && seats[0].riddenByEntity != null && seats[0].riddenByEntity instanceof EntityPlayer && worldObj.isRemote) {
+            EntityPlayer p = (EntityPlayer) seats[0].riddenByEntity;
+            if (this.ticksExisted < getDriveableType().placeTimePrimary && (getShootDelay(false) % 100) == 0 ) {
+                p.addChatComponentMessage(new ChatComponentText("Primary gun ready to use in " + getShootDelay(false)/20 + " seconds."));
+            } else if (this.ticksExisted == getDriveableType().placeTimePrimary) {
+                p.addChatComponentMessage(new ChatComponentText("Primary gun ready to use!"));
+            }
+
+            if (this.ticksExisted < getDriveableType().placeTimeSecondary && (getShootDelay(true) % 100) == 0) {
+                p.addChatComponentMessage(
+                        new ChatComponentText("Secondary gun ready to use in " + getShootDelay(true)/20 + " seconds."));
+            } else if (this.ticksExisted == getDriveableType().placeTimeSecondary) {
+                p.addChatComponentMessage(new ChatComponentText("Secondary gun ready to use!"));
+            }
+        }
+
         if (!worldObj.isRemote) {
             if (leftMouseHeld && getDriveableType().modePrimary == EnumFireMode.FULLAUTO)
                 shoot(false);
