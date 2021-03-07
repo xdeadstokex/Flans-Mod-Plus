@@ -15,17 +15,19 @@ import com.flansmod.common.network.PacketKillMessage;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 
-public class EntityDamageSourceGun extends EntityDamageSourceIndirect {
+public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
 
     public InfoType weapon;
     private EntityPlayer shooter;
     private boolean headshot;
+    public boolean melee;
 
-    public EntityDamageSourceGun(String s, Entity entity, EntityPlayer player, InfoType wep, boolean head) {
+    public EntityDamageSourceFlans(String s, Entity entity, EntityPlayer player, InfoType wep, boolean head, boolean isMelee) {
         super(s, entity, player);
         weapon = wep;
         shooter = player;
         headshot = head;
+        melee = isMelee;
     }
 
     public Entity getDamageSourceEntity() {

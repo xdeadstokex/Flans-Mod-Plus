@@ -367,7 +367,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (obj instanceof EntityLivingBase && getDistanceToEntity((Entity) obj) < type.livingProximityTrigger) {
                         //If we are in a gametype and both thrower and triggerer are playing, check for friendly fire
                         if (TeamsManager.getInstance() != null && TeamsManager.getInstance().currentRound != null && obj instanceof EntityPlayerMP && owner instanceof EntityPlayer) {
-                            if (!TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) obj, new EntityDamageSourceGun(type.shortName, this, (EntityPlayer) owner, type, false)))
+                            if (!TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) obj, new EntityDamageSourceFlans(type.shortName, this, (EntityPlayer) owner, type, false, false)))
                                 continue;
                         }
                         if (type.damageToTriggerer > 0)
@@ -382,7 +382,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                          if(TeamsManager.getInstance() != null && TeamsManager.getInstance().currentRound != null && ((EntityDriveable)obj).seats[0].riddenByEntity instanceof EntityPlayerMP && owner instanceof EntityPlayer)
                          {
                          EntityPlayerMP player = (EntityPlayerMP)((EntityDriveable)obj).seats[0].riddenByEntity;
-                         if(!TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP)obj, new EntityDamageSourceGun(type.shortName, this, (EntityPlayer)owner, type, false)))
+                         if(!TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP)obj, new EntityDamageSourceFlans(type.shortName, this, (EntityPlayer)owner, type, false)))
                          continue;
                          }
                          */
@@ -1023,7 +1023,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     public DamageSource getBulletDamage(boolean headshot) {
         if (owner instanceof EntityPlayer)
-            return (new EntityDamageSourceGun(type.shortName, this, (EntityPlayer) owner, firedFrom, headshot)).setProjectile();
+            return (new EntityDamageSourceFlans(type.shortName, this, (EntityPlayer) owner, firedFrom, headshot, false)).setProjectile();
         else return (new EntityDamageSourceIndirect(type.shortName, this, owner)).setProjectile();
     }
 

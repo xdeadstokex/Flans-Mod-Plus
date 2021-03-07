@@ -3,7 +3,7 @@ package com.flansmod.common;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityDamageSourceGun;
+import com.flansmod.common.guns.EntityDamageSourceFlans;
 import com.flansmod.common.guns.EntityGrenade;
 import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.network.PacketRequestDebug;
@@ -55,8 +55,8 @@ public class PlayerHandler {
     @SubscribeEvent
     public void onLivingHurtEvent(LivingHurtEvent event) {
         float damage = event.ammount;
-        if (damage > 0 && event.source instanceof EntityDamageSourceGun) {
-            EntityDamageSourceGun source = (EntityDamageSourceGun) event.source;
+        if (damage > 0 && event.source instanceof EntityDamageSourceFlans) {
+            EntityDamageSourceFlans source = (EntityDamageSourceFlans) event.source;
 
             ShootableType shootableType = null;
             Entity damageSouceEntity = source.getDamageSourceEntity();

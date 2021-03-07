@@ -999,7 +999,7 @@ public class ItemGun extends Item implements IPaintableItem {
     }
 
     public DamageSource getMeleeDamage(EntityPlayer attacker) {
-        return new EntityDamageSourceGun(type.shortName, attacker, attacker, type, false);
+        return new EntityDamageSourceFlans(type.shortName, attacker, attacker, type, false, true);
     }
 
     public void onMouseHeld(ItemStack stack, World world, EntityPlayerMP player, boolean left, boolean isShooting) {

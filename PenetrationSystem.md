@@ -45,3 +45,9 @@ This means, if the bullet does not have the power to penetrate 70% of the way, i
 The graph shows `(bullet/armour)` against the damage modifier.
 
 ![Graph](https://i.ibb.co/S5QCJfY/Screenshot-from-2020-07-17-23-04-18.png)
+
+Remember! The armour's defence will apply afterwards, as normal. To decrease the damage reduction from defence for bullets and keep melee behaviour the same, you can set in the armour config:
+`BulletDefence 0.1`
+`OtherDefence 0.5` which gives much higher defence for non-bullet inflicted damage.
+This replaces:
+`Defence 0.5`

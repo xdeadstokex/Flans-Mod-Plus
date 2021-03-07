@@ -47,7 +47,7 @@ import com.flansmod.common.driveables.collisions.CollisionTest;
 import com.flansmod.common.driveables.collisions.RidingEntityPosition;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityDamageSourceGun;
+import com.flansmod.common.guns.EntityDamageSourceFlans;
 import com.flansmod.common.guns.EntityShootable;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.guns.GunType;
@@ -1944,7 +1944,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         DriveableType type = getDriveableType();
         EntityLivingBase owner = (EntityLivingBase) seats[0].riddenByEntity;
         if (owner instanceof EntityPlayer)
-            return (new EntityDamageSourceGun(getDriveableType().shortName, this, (EntityPlayer) owner, type, headshot)).setProjectile();
+            return (new EntityDamageSourceFlans(getDriveableType().shortName, this, (EntityPlayer) owner, type, headshot, false)).setProjectile();
         else return (new EntityDamageSourceIndirect(type.shortName, this, owner)).setProjectile();
     }
 

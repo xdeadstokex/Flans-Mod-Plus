@@ -16,11 +16,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.guns.EntityDamageSourceFlans;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
 import com.google.common.collect.Multimap;
@@ -51,7 +54,12 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
-        return new ArmorProperties(1, type.defence, Integer.MAX_VALUE);
+        if (source instanceof EntityDamageSourceFlans && !((EntityDamageSourceFlans) source).melee) {
+            return new ArmorProperties(1, type.bulletDefence, Integer.MAX_VALUE);
+        } else {
+            return new ArmorProperties(1, type.defence, Integer.MAX_VALUE);
+
+        }
     }
 
     @Override

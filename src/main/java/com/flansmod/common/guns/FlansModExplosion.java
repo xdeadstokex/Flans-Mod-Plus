@@ -202,7 +202,7 @@ public class FlansModExplosion extends Explosion
 
                     if( damage > 0.5F)
                     {
-                    	boolean b = entity.attackEntityFrom(player == null || type == null ? DamageSource.setExplosionSource(this) : new EntityDamageSourceGun(type.shortName, entity, player, type, false), damage);
+                    	boolean b = entity.attackEntityFrom(player == null || type == null ? DamageSource.setExplosionSource(this) : new EntityDamageSourceFlans(type.shortName, entity, player, type, false, false), damage);
                     	if(b)
                     	{
                     		EntityBullet.hitCrossHair = true;

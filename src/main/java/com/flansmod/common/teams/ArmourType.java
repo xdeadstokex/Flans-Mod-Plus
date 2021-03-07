@@ -23,6 +23,13 @@ public class ArmourType extends InfoType {
      * The amount of damage to absorb. From 0 to 1. Stacks additively between armour pieces
      */
     public double defence;
+
+    /**
+     * The amount of damage to absorb. From 0 to 1. Stacks additively between armour
+     * pieces. For bullet damage specifically.
+     */
+    public double bulletDefence;
+
     /**
      * How good the armour is at stopping bullets. Same units as bullet penetration. Default 0 to emulate previous behaviour
      */
@@ -111,7 +118,16 @@ public class ArmourType extends InfoType {
             }
 
             if (split[0].equals("DamageReduction") || split[0].equals("Defence"))
+            {
                 defence = Double.parseDouble(split[1]);
+                bulletDefence = defence;
+            }
+            if (split[0].equals("BulletDefence")) {
+                bulletDefence = Double.parseDouble(split[1]);
+            }
+            if (split[0].equals("OtherDefence")) {
+                defence = Double.parseDouble(split[1]);
+            }
             if (split[0].equals("MoveSpeedModifier") || split[0].equals("Slowness"))
                 moveSpeedModifier = Float.parseFloat(split[1]);
             if (split[0].equals("JumpModifier"))

@@ -807,7 +807,9 @@ This will override the value set in the gun's model!
 |---------|------|---------|---------|
 | Model | String | ~ | The model file to use |
 | Type | String | ~ | Hat/Helmet Chest/Body Legs/Pants Shoes/Boots |
-| DamageReduction / Defence | Double | ~ | Damage modifier between 0 and 1 that stacks with other armours |
+| DamageReduction / Defence | Double | ~ | Damage modifier between 0 and 1 that stacks with other armours. Sets both BulletDefence and OtherDefence |
+| BulletDefence | ~ | Double | Damage modifier between 0 and 1 that stacks with other armours. For bullet damage specifically. |
+| OtherDefence | ~ | Double | Damage modifier between 0 and 1 that stacks with other armours. For NON-bullet damage specifically. |
 | Penetration Resistance | Float | 0 | Resistance to penetration of a bullet. Same units as bullet penetration. | 
 | MoveSpeedModifier / Slowness | Float | 1 | Modifier for player movement speed |
 | JumpModifier | Float | 1 | Modifier for player jump height |
