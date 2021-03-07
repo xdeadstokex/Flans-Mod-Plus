@@ -947,6 +947,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 motionY *= 0.3F;
                 motionX = motion.x * 1;
                 motionZ = motion.z * 1;
+            } else {
+                motionY -= gravity * type.fallSpeed;
             }
         }
 
