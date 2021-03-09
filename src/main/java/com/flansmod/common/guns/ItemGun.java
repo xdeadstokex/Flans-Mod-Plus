@@ -1329,9 +1329,6 @@ public class ItemGun extends Item implements IPaintableItem {
         if (left)
             PlayerHandler.getPlayerData(entityPlayer).shootTimeLeft = gunType.getShootDelay(stack);
         else PlayerHandler.getPlayerData(entityPlayer).shootTimeRight = gunType.getShootDelay(stack);
-        if (gunType.knockback > 0) {
-            //TODO : Apply knockback
-        }
     }
 
     /**

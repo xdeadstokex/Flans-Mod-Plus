@@ -225,7 +225,7 @@ public class PlayerHitbox {
                 //When the damage is 0 (such as with Nerf guns) the entityHurt Forge hook is not called, so this hacky thing is here
                 if (!player.worldObj.isRemote && hitDamage == 0 && TeamsManager.getInstance().currentRound != null)
                     TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) player, damagesource);
-
+                Vector3f motBefore = new Vector3f(player.motionX, player.motionY, player.motionZ);
                 //Attack the entity!
                 if (player.attackEntityFrom(damagesource, hitDamage)) {
                     //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
@@ -234,6 +234,19 @@ public class PlayerHitbox {
                     //Yuck.
                     //PacketDispatcher.sendPacketToAllAround(posX, posY, posZ, 50, dimension, PacketPlaySound.buildSoundPacket(posX, posY, posZ, type.hitSound, true));
                 }
+
+                // Handle knockback by finding entity motion before and after, and reapplying to negate effect of vanilla code.
+                Vector3f motAfter = new Vector3f(player.motionX, player.motionY, player.motionZ);
+                Vector3f deltav = new Vector3f();
+                Vector3f.sub(motAfter, motBefore, deltav);
+                deltav.scale(1-bullet.type.knockbackModifier);
+                if (bullet.type.knockbackModifier > 2) {
+                    deltav.y = (float) Math.sqrt(deltav.y);
+                }
+                player.motionX -= deltav.x;
+                player.motionY -= deltav.y;
+                player.motionZ -= deltav.z;
+
                 if (FlansMod.useNewPenetrationSystem) {
                     return penetratingPower - totalPenetrationResistance;
                 } else {

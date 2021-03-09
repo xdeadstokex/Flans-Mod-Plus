@@ -105,8 +105,6 @@ public class GunType extends PaintableType implements IScope
 	public float minigunStartSpeed = 15F;
 	/** Whether this gun can be used underwater */
 	public boolean canShootUnderwater = true;
-	/** The amount of knockback to impact upon the player per shot */
-	public float knockback = 0F;
 	/** The secondary function of this gun. By default, the left mouse button triggers this */
 	public EnumSecondaryFunction secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
 	public EnumSecondaryFunction secondaryFunctionWhenShoot = null;
@@ -340,8 +338,6 @@ public class GunType extends PaintableType implements IScope
 				decreaseRecoilPitch = Float.parseFloat(split[1]);
 			else if(split[0].equals("DecreaseRecoilYaw"))
 				decreaseRecoilYaw = Float.parseFloat(split[1]) > 0 ? Float.parseFloat(split[1]) : 0.5F;
-			else if(split[0].equals("Knockback"))
-				knockback = Float.parseFloat(split[1]);
 			else if(split[0].equals("Accuracy") || split[0].equals("Spread"))
 				defaultSpread = bulletSpread = Float.parseFloat(split[1]);
 			else if(split[0].equals("NumBullets"))

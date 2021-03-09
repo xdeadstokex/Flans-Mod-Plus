@@ -46,6 +46,8 @@ public class BulletType extends ShootableType
 
 	public boolean hasLight = false;
 	public float penetratingPower = 1F;
+	// Knocback modifier. less gives less kb, more gives more kb, 1 = normal kb.
+	public float knockbackModifier;
 	/** Lock on variables. If true, then the bullet will search for a target at the moment it is fired */
 	public boolean lockOnToPlanes = false, lockOnToVehicles = false, lockOnToMechas = false, lockOnToPlayers = false, lockOnToLivings = false;
 	/** Lock on maximum angle for finding a target */
@@ -252,6 +254,8 @@ public class BulletType extends ShootableType
 				shootForSettingPosHeight = Integer.parseInt(split[1]);
 			else if(split[0].equals("IsDoTopAttack"))
 				isDoTopAttack = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("KnockbackModifier"))
+				knockbackModifier = Float.parseFloat(split[1]);
 
 
 
