@@ -68,19 +68,19 @@ public class PlayerDeathEventListener {
 				" KillerPos(X:" + (int)(killer.posX) + " Y:" + (int)(killer.posY) + " Z:" + (int)(killer.posZ) + ")");
 
 			if(killed.getCurrentArmor(2) != null) {
-				FlansMod.log("KilledPlayer:" + killed + " wear a " + killed.getCurrentArmor(2).getUnlocalizedName());
+				FlansMod.log("KilledPlayer:" + killed + " wore " + killed.getCurrentArmor(2).getUnlocalizedName());
 			} else {
-				FlansMod.log("KilledPlayer:" + killed + " wear nothing.");
+				FlansMod.log("KilledPlayer:" + killed + " wears nothing.");
 			}
 
 			if(killer.getCurrentArmor(2) != null) {
-				FlansMod.log("Killer:" + killer + " wear a " + killer.getCurrentArmor(2).getUnlocalizedName());
+				FlansMod.log("Killer:" + killer + " wore " + killer.getCurrentArmor(2).getUnlocalizedName());
 			} else {
-				FlansMod.log("Killer:" + killer + " wear nothing.");
+				FlansMod.log("Killer:" + killer + " wears nothing.");
 			}
 
 			if(killed.ticksExisted / 20 < FlansMod.noticeSpawnKillTime) {
-				FlansMod.log("Warning! PlayerName:" + killer.getCommandSenderName() + " may do SPAWN KILL. Time:" + killed.ticksExisted / 20 + " " + killed.getCommandSenderName() + " was killed.");
+				FlansMod.log("Warning! PlayerName:" + killer.getCommandSenderName() + " may have SPAWN KILLED. Time:" + killed.ticksExisted / 20 + " " + killed.getCommandSenderName() + " was killed.");
 			}
 			// FlansMod.log(killed.getCurrentArmor(2));
 		}

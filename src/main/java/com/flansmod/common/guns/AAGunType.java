@@ -178,7 +178,7 @@ public class AAGunType extends InfoType
 				
 		} catch (Exception e)
 		{
-			FlansMod.log("" + e);
+			FlansMod.log("Failed to read AA Gun file " + e);
 		}
 	}
 

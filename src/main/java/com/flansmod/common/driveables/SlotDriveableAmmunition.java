@@ -29,7 +29,6 @@ public class SlotDriveableAmmunition extends Slot
 			return true;
 
 		Item item = stack.getItem();
-		FlansMod.log("E %b", item instanceof ItemBullet || item instanceof ItemGrenade);
 		return item instanceof ItemBullet || item instanceof ItemGrenade;
 	}
 	

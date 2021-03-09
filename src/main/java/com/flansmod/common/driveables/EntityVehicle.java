@@ -1214,8 +1214,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
     }
 
     private float averageAngles(float a, float b) {
-        FlansMod.log("Pre  " + a + " " + b);
-
         float pi = (float) Math.PI;
         for (; a > b + pi; a -= 2 * pi) ;
         for (; a < b - pi; a += 2 * pi) ;
@@ -1225,7 +1223,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         for (; avg > pi; avg -= 2 * pi) ;
         for (; avg < -pi; avg += 2 * pi) ;
 
-        FlansMod.log("Post " + a + " " + b + " " + avg);
 
         return avg;
     }

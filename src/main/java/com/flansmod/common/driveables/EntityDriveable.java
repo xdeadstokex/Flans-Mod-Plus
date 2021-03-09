@@ -1476,14 +1476,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         DriveableType type = getDriveableType();
         if (!secondary) {
             if (type.reloadTimePrimary > 0 && getShootDelay(secondary) <= 0) {
-                FlansMod.log("EntityDriveable Reload Primary " + type.reloadTimePrimary + " tick");
                 setShootDelay(type.reloadTimePrimary, secondary);
                 PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension,
                         getDriveableType().reloadSoundPrimary, false);
             }
         } else {
             if (type.reloadTimeSecondary > 0 && getShootDelay(secondary) <= 0) {
-                FlansMod.log("EntityDriveable Reload Secondary " + type.reloadTimeSecondary + " tick");
                 setShootDelay(type.reloadTimeSecondary, secondary);
                 PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension,
                         getDriveableType().reloadSoundSecondary, false);
