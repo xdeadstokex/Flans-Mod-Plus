@@ -106,7 +106,7 @@ public class FlansMod {
     public static long lastTime;
     public static File flanDir;
     public static final float soundRange = 50F;
-    public static final float driveableUpdateRange = 400F;
+    public static float driveableUpdateRange = 400F;
     public static final int numPlayerSnapshots = 20;
     public static int armourEnchantability = 0;
     public static boolean kickNonMatchingHashes = false;
@@ -600,6 +600,7 @@ public class FlansMod {
         gunsInDeadPartsWork = configFile.getBoolean("GunsInDeadPartsStillWork", "Gameplay Settings (synced)", gunsInDeadPartsWork, "Wether passenger guns should still work after the part of the vehicle they are on dies.");
         showDistanceInKillMessage = configFile.getBoolean("ShowDistanceInKillMessage", "Gameplay Settings (synced)", showDistanceInKillMessage, "List distance between killer and killed in kill message.");
         driveableHitboxes = configFile.getBoolean("Driveable hitboxes", "Gameplay Settings (synced)", driveableHitboxes, "Make a hitbox for the main driveable entity.");
+        driveableUpdateRange = configFile.getFloat("Driveable update range", "Gameplay Settings (synced)", driveableUpdateRange, 0, 1000, "Range in blocks for vehicles and planes to be updated.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -643,6 +644,7 @@ public class FlansMod {
         gunsInDeadPartsWork = configFile.getBoolean("GunsInDeadPartsStillWork", "Gameplay Settings (synced)", gunsInDeadPartsWork, "Wether passenger guns should still work after the part of the vehicle they are on dies.");
         showDistanceInKillMessage = configFile.getBoolean("ShowDistanceInKillMessage", "Gameplay Settings (synced)", showDistanceInKillMessage, "List distance between killer and killed in kill message.");
         driveableHitboxes = configFile.getBoolean("Driveable hitboxes", "Gameplay Settings (synced)", driveableHitboxes, "Make a hitbox for the main driveable entity.");
+        driveableUpdateRange = configFile.getFloat("Driveable update range", "Gameplay Settings (synced)", driveableUpdateRange, 0, 1000, "Range in blocks for vehicles and planes to be updated.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
