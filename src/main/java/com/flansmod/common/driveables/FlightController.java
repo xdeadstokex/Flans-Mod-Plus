@@ -81,7 +81,6 @@ public class FlightController {
 		} else {
 			
 			// Plane mode.
-			FlansMod.log("Speed " + speed);
 			// main sensitivity.
 			if (speed < 0.5F) {
 				sensitivityAdjust = 0;
