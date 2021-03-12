@@ -1,5 +1,6 @@
 package com.flansmod.common.driveables;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.vector.Vector3f;
 
 public class FlightController {
@@ -68,20 +69,46 @@ public class FlightController {
 	{
 		PlaneType type = plane.getPlaneType();
 		//Set angles
-		float sensitivityAdjust = ((float)plane.getSpeedXYZ()/2 > 0.5F ? 1.5F - (float)plane.getSpeedXYZ()/2 : 4F * (float)plane.getSpeedXYZ()/2 - 1F);
+		float sensitivityAdjust = 0;
+		float yawSensitivity = 0;
+		float speed = (float)plane.getSpeedXYZ();
 		if(mode == EnumPlaneMode.HELI){
-			sensitivityAdjust = (throttle > 0.5F ? 1.5F - throttle : 4F * throttle - 1F);	
+			// Heli mode
+			sensitivityAdjust = (throttle > 0.5F ? 1.5F - throttle : 4F * throttle - 1F);
+			if (sensitivityAdjust < 0F)
+				sensitivityAdjust = 0F;
+			yawSensitivity = sensitivityAdjust;
+		} else {
+			
+			// Plane mode.
+			FlansMod.log("Speed " + speed);
+			// main sensitivity.
+			if (speed < 0.5F) {
+				sensitivityAdjust = 0;
+			}  else if (speed < 1) {
+				sensitivityAdjust = (2 * speed) - 1;
+			} else if (speed < 3){
+				sensitivityAdjust = 1.5F - (speed/2);
+			} else {
+				sensitivityAdjust = 0;
+			}
+
+			// If 0<speed<0.625, we'll call this taxi mode. Yaw sensitivity will work differently to main sensitivity.
+			if (plane.getSpeedXZ() < 0.7) {
+				yawSensitivity = 5 * (0.5F * speed)/(float)Math.sqrt(type.turnRightModifier);
+			} else {
+				yawSensitivity = sensitivityAdjust;
+			}
 		}
-		if((float)plane.getSpeedXYZ() < 0.5)
-		//sensitivityAdjust *= (float)plane.getSpeedXYZ()*2;
-		if(sensitivityAdjust < 0F)
-			sensitivityAdjust = 0F;
-		//Scalar
+
 		sensitivityAdjust *= 0.125F;
-		float yaw = yawControl * (yawControl > 0 ? type.turnLeftModifier : type.turnRightModifier) * sensitivityAdjust;
+		yawSensitivity *= 0.125F;
+
+		float yaw = yawControl * (yawControl > 0 ? type.turnLeftModifier : type.turnRightModifier) * yawSensitivity;
 		float pitch = pitchControl * (pitchControl > 0 ? type.lookUpModifier : type.lookDownModifier) * sensitivityAdjust;
 		float roll = rollControl * (rollControl > 0 ? type.rollLeftModifier : type.rollRightModifier) * sensitivityAdjust;
-		if(plane.axes.getPitch() <= 60 && plane.getSpeedXYZ() < 0.2 && mode == EnumPlaneMode.PLANE && throttle >= 0.1F){pitch = -1;}
+
+
 		//Damage modifiers
 		if(mode == EnumPlaneMode.PLANE)
 		{
@@ -101,6 +128,29 @@ public class FlightController {
 				yaw = 10*throttle;
 			}
 		}
+		// // Correct the sitting to be "Flat" when the plane is moving slowly
+		// if (speed < 0.5) {
+		// 	if (Math.abs(plane.axes.getRoll()) > 1) {
+		// 		if (plane.axes.getRoll() < 0) {
+		// 			roll -= 0.1F;
+		// 		} else {
+		// 			roll += 0.1F;
+		// 		}
+		// 	} else {
+		// 		angularMomentum.z *= 0.9F;
+		// 	}
+
+		// 	if (Math.abs(plane.axes.getPitch()) > 1) {
+		// 		if (plane.axes.getPitch() < 0) {
+		// 			pitch -= 0.1F;
+		// 		} else {
+		// 			pitch += 0.1F;
+		// 		}
+		// 	} else {
+		// 		angularMomentum.y *= 0.9F;
+		// 	}
+
+		// }
 
 		angularMomentum.x = moveToTarget(angularMomentum.x, yaw, 1);
 		angularMomentum.y = moveToTarget(angularMomentum.y, pitch, 1);
@@ -203,8 +253,10 @@ public class FlightController {
 
 		//Sanity limiter
 		float lastTickSpeed = (float)plane.getSpeedXYZ();
-		if(lastTickSpeed > 2F)
+		if(lastTickSpeed > 2F) {
 			lastTickSpeed = 2F;
+		}
+		// This basically limits plane speed to 2F.
 
 		float newSpeed = lastTickSpeed + thrust * 2F;
 
@@ -225,6 +277,7 @@ public class FlightController {
 		Vector3f up2 = (Vector3f)plane.axes.getYAxis().normalise();
 		lift *= Math.sqrt(up2.y*up2.y);
 		if(lift > gravity){
+			// This literally stops the plane teleporting itself to brazil, vertically....
 			lift = gravity;
 		}
 	
@@ -240,9 +293,14 @@ public class FlightController {
 		plane.motionZ += proportionOfMotionToCorrect * newSpeed * forwards.z;
 		
 		plane.motionY += lift;
-		plane.motionY -= gravity;
-		if(plane.axes.getPitch() <= 60 && plane.getSpeedXYZ() < 0.2){plane.motionY -= gravity;}
-	
+
+		// Wheels are actually broken, only two of them will be 'on the ground'.
+		// If we don't do this, the gravity will keep being applied, giving a speed of 0.3 with no motion.
+		if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
+			plane.motionY = -0.01;
+		} else {
+			plane.motionY -= gravity;
+		}
 
 		if(!plane.isPartIntact(EnumDriveablePart.rightWing) && !plane.isPartIntact(EnumDriveablePart.rightWing)){
 			plane.motionY += -1;

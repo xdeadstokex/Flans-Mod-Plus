@@ -1762,6 +1762,14 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         return Math.sqrt(motionX * motionX + motionZ * motionZ);
     }
 
+    public double getHackySpeedXYZ() {
+        double dx = (posX - lastTickPosX);
+        double dy = (posY - lastTickPosY);
+        double dz = (posZ - lastTickPosZ);
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+        // Blocks per tick.
+    }
+
     /**
      * To be overriden by vehicles to get alternate collision system
      */
