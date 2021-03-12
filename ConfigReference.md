@@ -330,6 +330,7 @@ This will override the value set in the gun's model!
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 | FancyDescription | Boolean | true | Whether to display information about the bullet/mag in the description, like a gun. |
 | KnockbackModifier | Float | 1 | Modifier for knockback. Smaller = less knockback, bigger = more knockback, 1 = default knockback. Applies to players only. |
+| BulletSpeedMultiplier | Float | 1 | Multiplier for bullet speed. Stacks with gun bullet speed. |
 
 ### [GrenadeType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GrenadeType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |

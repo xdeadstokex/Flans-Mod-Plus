@@ -16,6 +16,7 @@ import com.flansmod.common.guns.boxes.BlockGunBox;
 
 public class BulletType extends ShootableType
 {
+	public float speedMultiplier = 1F;
 	/** The number of flak particles to spawn upon exploding */
 	public int flak = 0;
 	/** The type of flak particles to spawn */
@@ -270,6 +271,8 @@ public class BulletType extends ShootableType
 			
 			else if(split[0].equals("FancyDescription"))
 				fancyDescription = Boolean.parseBoolean(split[1]);
+			else if(split[0].equals("BulletSpeedMultiplier"))
+				speedMultiplier = Float.parseFloat(split[1]);
 		}
 		catch (Exception e)
 		{

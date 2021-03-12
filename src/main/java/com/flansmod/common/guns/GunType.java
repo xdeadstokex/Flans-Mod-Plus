@@ -1274,15 +1274,34 @@ public class GunType extends PaintableType implements IScope
 	
 
 	/** Get the bullet speed of a specific gun, taking into account attachments */
-	public float getBulletSpeed(ItemStack stack)
+	public float getBulletSpeed(ItemStack stack, ItemStack bulletStack)
 	{
-		float stackBulletSpeed = bulletSpeed;
+		float stackBulletSpeed = 0;
+		if (bulletStack != null && bulletStack.getItem() != null) {
+			stackBulletSpeed = bulletSpeed * ((ItemBullet) bulletStack.getItem()).type.speedMultiplier;
+		} else {
+			stackBulletSpeed = bulletSpeed;
+		}
 
 		if(getGrip(stack) != null && getSecondaryFire(stack))
 			stackBulletSpeed = getGrip(stack).secondarySpeed;
 
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
+			stackBulletSpeed *= attachment.bulletSpeedMultiplier;
+		}
+		return stackBulletSpeed;
+	}
+	
+	/** Get the bullet speed of a specific gun, taking into account attachments */
+	public float getBulletSpeed(ItemStack stack) {
+
+		float stackBulletSpeed = bulletSpeed;
+
+		if (getGrip(stack) != null && getSecondaryFire(stack))
+			stackBulletSpeed = getGrip(stack).secondarySpeed;
+
+		for (AttachmentType attachment : getCurrentAttachments(stack)) {
 			stackBulletSpeed *= attachment.bulletSpeedMultiplier;
 		}
 		return stackBulletSpeed;

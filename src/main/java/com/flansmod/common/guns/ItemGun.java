@@ -1311,7 +1311,7 @@ public class ItemGun extends Item implements IPaintableItem {
                         entityPlayer,
                         spread,
                         gunType.getDamage(stack),
-                        gunType.getBulletSpeed(stack),
+                        gunType.getBulletSpeed(stack, bulletStack),
                         numBullets > 1,
                         bulletStack.getItemDamage(),
                         gunType));
