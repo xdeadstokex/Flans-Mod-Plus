@@ -1061,7 +1061,8 @@ public class ItemGun extends Item implements IPaintableItem {
             }
             boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
             //If no bullet stack was found, reload
-            if (bulletStack == null) {
+
+            if (bulletStack == null && FlansMod.reloadOnRightClick) {
                 int maxAmmo = type.getNumAmmoItemsInGun(gunStack);
                 boolean singlesReload = maxAmmo > 1;
                 int reloadCount;
@@ -1119,7 +1120,7 @@ public class ItemGun extends Item implements IPaintableItem {
 
             }
             //A bullet stack was found, so try shooting with it
-            else if (bulletStack.getItem() instanceof ItemShootable && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(entityplayer.ridingEntity instanceof EntitySeat)) {
+            else if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(entityplayer.ridingEntity instanceof EntitySeat)) {
                 //Shoot
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;

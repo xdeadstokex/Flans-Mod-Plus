@@ -25,6 +25,7 @@ public class PacketModConfig extends PacketBase {
     public boolean showDistanceInKillMessage;
     public boolean driveableHitboxes;
     public float driveableUpdateRange;
+    public boolean reloadOnRightClick;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -41,6 +42,7 @@ public class PacketModConfig extends PacketBase {
         showDistanceInKillMessage = FlansMod.showDistanceInKillMessage;
         driveableHitboxes = FlansMod.driveableHitboxes;
         driveableUpdateRange = FlansMod.driveableUpdateRange;
+        reloadOnRightClick = FlansMod.reloadOnRightClick;
     }
 
     @Override
@@ -59,6 +61,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(showDistanceInKillMessage);
         data.writeBoolean(driveableHitboxes);
         data.writeFloat(driveableUpdateRange);
+        data.writeBoolean(reloadOnRightClick);
     }
 
     @Override
@@ -77,6 +80,7 @@ public class PacketModConfig extends PacketBase {
         showDistanceInKillMessage = data.readBoolean();
         driveableHitboxes = data.readBoolean();
         driveableUpdateRange = data.readFloat();
+        reloadOnRightClick = data.readBoolean();
     }
 
     @Override
@@ -101,6 +105,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.showDistanceInKillMessage = showDistanceInKillMessage;
         FlansMod.driveableHitboxes = driveableHitboxes;
         FlansMod.driveableUpdateRange = driveableUpdateRange;
+        FlansMod.reloadOnRightClick = reloadOnRightClick;
         FlansMod.log("Config synced successfully");
     }
 }
