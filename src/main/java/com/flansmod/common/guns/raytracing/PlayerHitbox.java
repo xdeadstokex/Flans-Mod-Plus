@@ -199,11 +199,8 @@ public class PlayerHitbox {
                 EntityBullet.headshot = true;
                 break;
             case LEFTARM:
-            // Increased multiplier from 0.6, as the detection was janky af...
-                damageModifier *= 0.8F;
                 break;
             case RIGHTARM:
-                damageModifier *= 0.8F;
                 break;
             case LEFTITEM:
                 break;
