@@ -28,6 +28,7 @@ Vehicle hitboxes by default have a penetration resistance of 5, you can change t
 The head and body are handled seperately. Their penetration resistance values both add up to one individually by default.
 
 Head (1) = Helmet (1)
+
 Body (1) = Chest (0.5) + Legs (0.35) + Feet (0.15)
 
 Vanilla armour will not modify these values, this is an area for future improvement.
