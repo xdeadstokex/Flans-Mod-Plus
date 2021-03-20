@@ -10,7 +10,7 @@ import net.minecraft.util.Vec3;
 
 import com.flansmod.common.PlayerData;
 
-public class GametypeCTF extends Gametype 
+public class GameTypeCTF extends GameType
 {
 	public boolean friendlyFire = false;
 	public boolean autoBalance = true;
@@ -18,7 +18,7 @@ public class GametypeCTF extends Gametype
 	public int autoBalanceInterval = 1200;
 	public int flagReturnTime = 60;
 
-	public GametypeCTF() 
+	public GameTypeCTF()
 	{
 		super("Capture the Flag", "CTF", 2);
 	}

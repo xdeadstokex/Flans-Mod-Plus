@@ -26,7 +26,6 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -144,11 +143,11 @@ public class TeamsManager {
     public static int bulletSnapshotDivisor = 50;
 
     //Disused. Delete when done
-    //public Gametype currentGametype;
-    //public TeamsMap currentMap;
-    //public Team[] teams;
-    //public List<RotationEntry> rotation;
-    //public int currentRotationEntry;
+    public GameType currentGameType;
+    public TeamsMap currentMap;
+    public Team[] teams;
+    public List<RotationEntry> rotation;
+    public int currentRotationEntry;
 
     public TeamsManager() {
         instance = this;
@@ -161,24 +160,24 @@ public class TeamsManager {
         maps = new HashMap<>();
         rounds = new ArrayList<>();
 
-        //rotation = new ArrayList<RotationEntry>();
-        //currentMap = TeamsMap.def;
+        rotation = new ArrayList<>();
+        currentMap = null;
 
 
         //Testing stuff. TODO : Replace with automatic Gametype loader
-        new GametypeTDM();
-        new GametypeZombies();
-        //new GametypeConquest();
-        new GametypeDM();
-        new GametypeCTF();
+        new GameTypeTDM();
+        new GameTypeZombies();
+//        new GameTypeConquest();
+        new GameTypeDM();
+        new GameTypeCTF();
         //new GametypeNerf();
         //-----
     }
 
     public void reset() {
-        //currentGametype = null;
+        currentGameType = null;
         //currentMap = TeamsMap.def;
-        //teams = null;
+        teams = null;
 
         currentRound = null;
 
@@ -187,7 +186,7 @@ public class TeamsManager {
         maps = new HashMap<>();
         rounds = new ArrayList<>();
 
-        //rotation = new ArrayList<RotationEntry>();
+        rotation = new ArrayList<>();
     }
 
     public static TeamsManager getInstance() {
@@ -278,6 +277,19 @@ public class TeamsManager {
         }
     }
 
+    public void switchToNextGameType() {
+        PlayerHandler.roundEnded();
+        currentRotationEntry = (currentRotationEntry + 1) % rotation.size();
+        RotationEntry entry = rotation.get(currentRotationEntry);
+        if (currentGameType != null && currentGameType != entry.gametype) {
+            currentGameType.roundEnd();
+        }
+        currentGameType = entry.gametype;
+        currentMap = entry.map;
+        teams = entry.teams;
+        currentGameType.roundStart();
+    }
+
     public boolean needAutobalance() {
         if (!autoBalance() || currentRound == null || currentRound.teams.length != 2)
             return false;
@@ -310,7 +322,7 @@ public class TeamsManager {
     }
 
     public String randomTimeOutString() {
-        switch (Gametype.rand.nextInt(4)) {
+        switch (GameType.rand.nextInt(4)) {
             case 0:
                 return "That's time!";
             case 1:
@@ -347,7 +359,7 @@ public class TeamsManager {
         }
 
         //Wildcard option!
-        voteOptions[Gametype.rand.nextInt(voteOptions.length)] = rounds.get(Gametype.rand.nextInt(rounds.size()));
+        voteOptions[GameType.rand.nextInt(voteOptions.length)] = rounds.get(GameType.rand.nextInt(rounds.size()));
     }
 
     public void start() {
@@ -359,7 +371,6 @@ public class TeamsManager {
         //	return;
 
         if (currentRound != null) {
-
             currentRound.gametype.roundCleanup();
             resetScores();
         }
@@ -746,7 +757,7 @@ public class TeamsManager {
         setPlayersNextSpawnpoint(playerMP);
 
         if (forceAdventureMode)
-            player.setGameType(GameType.ADVENTURE);
+            player.setGameType(net.minecraft.world.WorldSettings.GameType.ADVENTURE);
         resetInventory(player);
         currentRound.gametype.playerRespawned((EntityPlayerMP) player);
     }
@@ -778,7 +789,7 @@ public class TeamsManager {
         player.inventory.mainInventory = new ItemStack[36];
         player.heal(9001);
         if (forceAdventureMode)
-            player.setGameType(GameType.ADVENTURE);
+            player.setGameType(net.minecraft.world.WorldSettings.GameType.ADVENTURE);
         respawnPlayer(player, true);
     }
 
@@ -1108,7 +1119,7 @@ public class TeamsManager {
             if (currentRound != null)
                 tags.setInteger("CurrentRound", rounds.indexOf(currentRound));
             //Save gametype settings to memory
-            for (Gametype gametype : Gametype.gametypes.values()) {
+            for (GameType gametype : GameType.gameTypes.values()) {
                 gametype.saveToNBT(tags);
             }
 
@@ -1234,5 +1245,17 @@ public class TeamsManager {
                 return map;
         }
         return null;
+    }
+
+    public static class RotationEntry {
+        public TeamsMap map;
+        public GameType gametype;
+        public Team[] teams;
+
+        public RotationEntry(TeamsMap m, GameType g, Team[] t) {
+            map = m;
+            gametype = g;
+            teams = t;
+        }
     }
 }

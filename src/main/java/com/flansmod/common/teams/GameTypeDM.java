@@ -10,13 +10,13 @@ import net.minecraft.util.Vec3;
 
 import com.flansmod.common.PlayerData;
 
-public class GametypeDM extends Gametype 
+public class GameTypeDM extends GameType
 {
 	public int scoreLimit = 25;
 	public int newRoundTimer = 0;
 	public int time;
 
-	public GametypeDM() 
+	public GameTypeDM()
 	{
 		super("Free For All", "DM", 2);
 	}

@@ -2,6 +2,8 @@ package com.flansmod.common.teams;
 
 import java.util.List;
 
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -86,57 +88,48 @@ public class CommandTeams extends CommandBase {
         if (split[0].equals("listGametypes")) {
             sender.addChatMessage(new ChatComponentText("\u00a72Showing all available gametypes"));
             sender.addChatMessage(new ChatComponentText("\u00a72To pick a gametype, use \"/teams setGametype <gametype>\" with the name in brackets"));
-            for (Gametype gametype : Gametype.gametypes.values()) {
+            for (GameType gametype : GameType.gameTypes.values()) {
                 sender.addChatMessage(new ChatComponentText("\u00a7f" + gametype.name + " (" + gametype.shortName + ")"));
             }
             return;
         }
 		/*
-		No longer used
-		if(split[0].equals("setGametype"))
-		{
-			if(split.length != 2)
-			{
-				sender.addChatMessage(new ChatComponentText("\u00a74To set the gametype, use \"/teams setGametype <gametype>\" with a valid gametype."));
-				return;
-			}
-			if(split[1].toLowerCase().equals("none"))
-			{
-				if(teamsManager.currentGametype != null)
-					teamsManager.currentGametype.stopGametype();
-				teamsManager.currentGametype = null;
-				for(PlayerData data : PlayerHandler.serverSideData.values())
-				{
-					if(data != null)
-						data.team = null;
-				}
-				return;
-			}
-			Gametype gametype = Gametype.getGametype(split[1]);
-			if(gametype == null)
-			{
-				sender.addChatMessage(new ChatComponentText("\u00a74Invalid gametype. To see gametypes available type \"/teams listGametypes\""));
-				return;
-			}
-			if(teamsManager.currentGametype != null)
-			{
-				teamsManager.currentGametype.stopGametype();
-			}
-			teamsManager.currentGametype = gametype;
+		No longer used */
+        if (split[0].equals("setGametype")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("\u00a74To set the gametype, use \"/teams setGametype <gametype>\" with a valid gametype."));
+                return;
+            }
+            if (split[1].equalsIgnoreCase("none")) {
+                if (teamsManager.currentGameType != null)
+                    teamsManager.currentGameType.roundEnd();
+                teamsManager.currentGameType = null;
+                for (PlayerData data : PlayerHandler.serverSideData.values()) {
+                    if (data != null)
+                        data.team = null;
+                }
+                return;
+            }
+            GameType gametype = GameType.getGameType(split[1]);
+            if (gametype == null) {
+                sender.addChatMessage(new ChatComponentText("\u00a74Invalid gametype. To see gametypes available type \"/teams listGametypes\""));
+                return;
+            }
+            if (teamsManager.currentGameType != null) {
+                teamsManager.currentGameType.roundEnd();
+            }
+            teamsManager.currentGameType = gametype;
 
-			TeamsManager.messageAll("\u00a72" + sender.getCommandSenderName() + "\u00a7f changed the gametype to \u00a72" + gametype.name);
-			if(teamsManager.teams != null && gametype.numTeamsRequired == teamsManager.teams.length)
-			{
-				TeamsManager.messageAll("\u00a7fTeams will remain the same unless altered by an op.");
-			}
-			else
-			{
-				teamsManager.teams = new Team[gametype.numTeamsRequired];
-				TeamsManager.messageAll("\u00a7fTeams must be reassigned for this gametype. Please wait for an op to do so.");
-			}
-			gametype.initGametype();
-			return;
-		}*/
+            TeamsManager.messageAll("\u00a72" + sender.getCommandSenderName() + "\u00a7f changed the gametype to \u00a72" + gametype.name);
+            if (teamsManager.teams != null && gametype.numTeamsRequired == teamsManager.teams.length) {
+                TeamsManager.messageAll("\u00a7fTeams will remain the same unless altered by an op.");
+            } else {
+                teamsManager.teams = new Team[gametype.numTeamsRequired];
+                TeamsManager.messageAll("\u00a7fTeams must be reassigned for this gametype. Please wait for an op to do so.");
+            }
+            gametype.roundStart();
+            return;
+        }
         if (split[0].equals("listMaps")) {
             if (teamsManager.maps == null) {
                 sender.addChatMessage(new ChatComponentText("The map list is null"));
@@ -188,79 +181,66 @@ public class CommandTeams extends CommandBase {
             }
             return;
         }
-		/*
-		if(split[0].equals("listTeams"))
-		{
-			if(teamsManager.currentGametype == null || teamsManager.teams == null)
-			{
-				sender.addChatMessage(new ChatComponentText("\u00a74The gametype is not yet set. Set it by \"/teams setGametype <gametype>\""));
-				return;
-			}
-			sender.addChatMessage(new ChatComponentText("\u00a72Showing currently in use teams"));
-			for(int i = 0; i < teamsManager.teams.length; i++)
-			{
-				Team team = teamsManager.teams[i];
-				if(team == null)
-					sender.addChatMessage(new ChatComponentText("\u00a7f" + i + " : No team"));
-				else
-					sender.addChatMessage(new ChatComponentText("\u00a7" + team.textColour + i + " : " + team.name + " (" + team.shortName + ")"));
-			}
-			return;
-		}
-		*/
-        if (split[0].equals("listTeams") || split[0].equals("listAllTeams")) {
+
+        if (split[0].equals("listTeams")) {
+            if (teamsManager.currentGameType == null || teamsManager.teams == null) {
+                sender.addChatMessage(new ChatComponentText("\u00a74The gametype is not yet set. Set it by \"/teams setGametype <gametype>\""));
+                return;
+            }
+            sender.addChatMessage(new ChatComponentText("\u00a72Showing currently in use teams"));
+            for (int i = 0; i < teamsManager.teams.length; i++) {
+                Team team = teamsManager.teams[i];
+                if (team == null)
+                    sender.addChatMessage(new ChatComponentText("\u00a7f" + i + " : No team"));
+                else
+                    sender.addChatMessage(new ChatComponentText("\u00a7" + team.textColour + i + " : " + team.name + " (" + team.shortName + ")"));
+            }
+            return;
+        }
+
+        if (split[0].equals("listAllTeams")) {
             if (Team.teams.size() == 0) {
                 sender.addChatMessage(new ChatComponentText("\u00a74No teams available. You need a content pack that has some teams with it"));
                 return;
             }
-            sender.addChatMessage(new ChatComponentText("\u00a72Showing all avaliable teams"));
+            sender.addChatMessage(new ChatComponentText("\u00a72Showing all available teams"));
             sender.addChatMessage(new ChatComponentText("\u00a72To pick these teams, use /teams setTeams <team1> <team2> with the names in brackets"));
             for (Team team : Team.teams) {
                 sender.addChatMessage(new ChatComponentText("\u00a7" + team.textColour + team.name + " (" + team.shortName + ")"));
             }
             return;
         }
-		/*
-		 * No longer used
-		if(split[0].equals("setTeams"))
-		{
-			if(teamsManager.currentGametype == null || teamsManager.teams == null)
-			{
-				sender.addChatMessage(new ChatComponentText("\u00a74No gametype selected. Please select the gametype with the setGametype command"));
-				return;
-			}
-			if(split.length - 1 != teamsManager.teams.length)
-			{
-				sender.addChatMessage(new ChatComponentText("\u00a74Wrong number of teams given. This gametype requires " + teamsManager.teams.length + " teams to work"));
-				return;
-			}
-			Team[] teams = new Team[teamsManager.teams.length];
-			String teamList = "";
-			for(int i = 0; i < split.length - 1; i++)
-			{
-				Team team = Team.getTeam(split[i + 1]);
-				if(team == null)
-				{
-					sender.addChatMessage(new ChatComponentText("\u00a74" + split[i + 1] + " is not a valid team"));
-					return;
-				}
-				for(int j = 0; j < i; j++)
-				{
-					if(team == teams[j])
-					{
-						sender.addChatMessage(new ChatComponentText("\u00a74You may not add " + split[i + 1] + " twice"));
-						return;
-					}
-				}
-				teams[i] = team;
-				teamList += (i == 0 ? "" : (i == split.length - 2 ? " and " : ", ")) + "\u00a7" + team.textColour + team.name + "\u00a7f";
-			}
-			teamsManager.teams = teams;
-			teamsManager.currentGametype.teamsSet();
-			TeamsManager.messageAll("\u00a72" + sender.getCommandSenderName() + "\u00a7f changed the teams to be " + teamList);
-			return;
-		}
-		*/
+        if (split[0].equals("setTeams")) {
+            if (teamsManager.currentGameType == null || teamsManager.teams == null) {
+                sender.addChatMessage(new ChatComponentText("\u00a74No gametype selected. Please select the gametype with the setGametype command"));
+                return;
+            }
+            if (split.length - 1 != teamsManager.teams.length) {
+                sender.addChatMessage(new ChatComponentText("\u00a74Wrong number of teams given. This gametype requires " + teamsManager.teams.length + " teams to work"));
+                return;
+            }
+            Team[] teams = new Team[teamsManager.teams.length];
+            StringBuilder teamList = new StringBuilder();
+            for (int i = 0; i < split.length - 1; i++) {
+                Team team = Team.getTeam(split[i + 1]);
+                if (team == null) {
+                    sender.addChatMessage(new ChatComponentText("\u00a74" + split[i + 1] + " is not a valid team"));
+                    return;
+                }
+                for (int j = 0; j < i; j++) {
+                    if (team == teams[j]) {
+                        sender.addChatMessage(new ChatComponentText("\u00a74You may not add " + split[i + 1] + " twice"));
+                        return;
+                    }
+                }
+                teams[i] = team;
+                teamList.append(i == 0 ? "" : (i == split.length - 2 ? " and " : ", ")).append("\u00a7").append(team.textColour).append(team.name).append("\u00a7f");
+            }
+            teamsManager.teams = teams;
+//			teamsManager.currentGameType.teamsSet();
+            TeamsManager.messageAll("\u00a72" + sender.getCommandSenderName() + "\u00a7f changed the teams to be " + teamList);
+            return;
+        }
         if (split[0].equals("getSticks") || split[0].equals("getOpSticks") || split[0].equals("getOpKit")) {
             EntityPlayerMP player = getPlayer(sender.getCommandSenderName());
             if (player != null) {
@@ -276,7 +256,7 @@ public class CommandTeams extends CommandBase {
             }
             return;
         }
-        if (split[0].toLowerCase().equals("autobalance")) {
+        if (split[0].equalsIgnoreCase("autobalance")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
                 return;
@@ -349,7 +329,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("Could not find map : " + split[1]));
                 return;
             }
-            Gametype gametype = Gametype.getGametype(split[2]);
+            GameType gametype = GameType.getGameType(split[2]);
             if (gametype == null) {
                 sender.addChatMessage(new ChatComponentText("Could not find gametype : " + split[2]));
                 return;
@@ -375,23 +355,18 @@ public class CommandTeams extends CommandBase {
             teamsManager.roundTimeLeft = 1;
             return;
         }
-		/*
-		 * Ignore
-		if(split[0].equals("goToMap"))
-		{
-			if(split.length != 2)
-			{
-				sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <ID>"));
-				return;
-			}
-			int prevRotation = Integer.parseInt(split[1]) - 1;
-			if(prevRotation == -1)
-				prevRotation = teamsManager.rotation.size() - 1;
-			teamsManager.currentRotationEntry = prevRotation;
-			teamsManager.switchToNextGametype();
-			return;
-		}
-		*/
+        if (split[0].equals("goToMap")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <ID>"));
+                return;
+            }
+            int prevRotation = Integer.parseInt(split[1]) - 1;
+            if (prevRotation == -1)
+                prevRotation = teamsManager.rotation.size() - 1;
+            teamsManager.currentRotationEntry = prevRotation;
+            teamsManager.switchToNextGameType();
+            return;
+        }
         if (split[0].equals("forceAdventure") || split[0].equals("forceAdventureMode")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
@@ -585,7 +560,7 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Voting menu will appear for " + TeamsManager.votingTime / 20 + " seconds"));
             return;
         }
-        if (split[0].toLowerCase().equals("autobalancetime")) {
+        if (split[0].equalsIgnoreCase("autobalancetime")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <time>"));
                 return;
@@ -725,7 +700,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams survival"));
                 sender.addChatMessage(new ChatComponentText("/teams getSticks"));
                 sender.addChatMessage(new ChatComponentText("/teams listGametypes"));
-                //sender.addChatMessage(new ChatComponentText("/teams setGametype <name>"));
+                sender.addChatMessage(new ChatComponentText("/teams setGametype <name>"));
                 //sender.addChatMessage(new ChatComponentText("/teams listAllTeams"));
                 sender.addChatMessage(new ChatComponentText("/teams listTeams"));
                 //sender.addChatMessage(new ChatComponentText("/teams setTeams <teamName1> <teamName2>"));
@@ -735,7 +710,6 @@ public class CommandTeams extends CommandBase {
                 break;
             }
             case 2: {
-
                 //sender.addChatMessage(new ChatComponentText("/teams setMap <shortName>"));
                 sender.addChatMessage(new ChatComponentText("/teams useRotation <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams voting <true / false>"));

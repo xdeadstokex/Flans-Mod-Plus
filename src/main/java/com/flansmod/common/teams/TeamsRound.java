@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * players vote on which rounds to play or there is a rotation
  */
 public class TeamsRound implements Comparable<TeamsRound> {
-    public Gametype gametype;
+    public GameType gametype;
     public TeamsMap map;
     /**
      * The teams available. This does not include spectators
@@ -33,9 +33,9 @@ public class TeamsRound implements Comparable<TeamsRound> {
     public int roundsSincePlayed;
 
 
-    public TeamsRound(TeamsMap map2, Gametype gametype2, Team[] teams2, int timeLimit, int scoreLimit) {
+    public TeamsRound(TeamsMap map2, GameType gameType2, Team[] teams2, int timeLimit, int scoreLimit) {
         map = map2;
-        gametype = gametype2;
+        gametype = gameType2;
         teams = teams2;
         this.timeLimit = timeLimit;
         this.scoreLimit = scoreLimit;
@@ -45,7 +45,7 @@ public class TeamsRound implements Comparable<TeamsRound> {
 
     public TeamsRound(NBTTagCompound tags) {
         map = TeamsManager.getInstance().maps.get(tags.getString("Map"));
-        gametype = Gametype.getGametype(tags.getString("Gametype"));
+        gametype = GameType.getGameType(tags.getString("Gametype"));
         timeLimit = tags.getInteger("TimeLimit");
         scoreLimit = tags.getInteger("ScoreLimit");
 
