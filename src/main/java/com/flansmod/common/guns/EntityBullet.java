@@ -633,7 +633,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (type.breaksGlass && mat == Material.glass) {
                         if (TeamsManager.canBreakGlass) {
                             worldObj.setBlockToAir(xTile, yTile, zTile);
-                            FlansMod.proxy.playBlockBreakSound(xTile, yTile, zTile, block);
+                            FlansMod.proxy.playBlockBreakSound(xTile, yTile, zTile, block, this.dimension);
                         }
                     }
 

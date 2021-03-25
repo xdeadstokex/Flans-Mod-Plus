@@ -163,8 +163,8 @@ public class CommonProxy {
     /**
      * Play a block break sound here
      */
-    public void playBlockBreakSound(int x, int y, int z, Block blockHit) {
-        FlansMod.packetHandler.sendToAll(new PacketBreakSound(x, y, z, blockHit));
+    public void playBlockBreakSound(int x, int y, int z, Block blockHit, int dimension) {
+        FlansMod.packetHandler.sendToAllAround(new PacketBreakSound(x, y, z, blockHit), x, y, z, 32, dimension);
     }
 
     public void addItem(EntityPlayer player, int id) {
