@@ -1277,7 +1277,7 @@ public class GunType extends PaintableType implements IScope
 	public float getBulletSpeed(ItemStack stack, ItemStack bulletStack)
 	{
 		float stackBulletSpeed = 0;
-		if (bulletStack != null && bulletStack.getItem() != null) {
+		if (bulletStack != null && bulletStack.getItem() != null && bulletStack.getItem() instanceof ItemBullet) {
 			stackBulletSpeed = bulletSpeed * ((ItemBullet) bulletStack.getItem()).type.speedMultiplier;
 		} else {
 			stackBulletSpeed = bulletSpeed;
