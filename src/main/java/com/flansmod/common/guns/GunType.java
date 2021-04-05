@@ -1343,8 +1343,6 @@ public class GunType extends PaintableType implements IScope
     			fireRate = getGrip(stack).secondaryShootDelay;
     		
     		float fireTicks = 1200 / fireRate;
-    		if(fireTicks < 1)
-    			fireTicks = 1;
     		
     		return fireRate = fireTicks;
     	}
@@ -1354,7 +1352,7 @@ public class GunType extends PaintableType implements IScope
 		if (shootDelay != 0) {
 			return shootDelay;
 		} else {
-			return roundsPerMin > 1200 ? 1 : 1200/roundsPerMin;
+			return 1200/roundsPerMin;
 		}
 	}
 

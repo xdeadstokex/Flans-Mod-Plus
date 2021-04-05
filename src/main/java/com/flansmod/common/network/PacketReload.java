@@ -92,8 +92,8 @@ public class PacketReload extends PacketBase {
 
             if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left)) {
                 float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
-                data.shootTimeRight = data.shootTimeLeft = reloadTime;
-
+                data.shootTimeRight += reloadTime;
+                data.shootTimeLeft += reloadTime;
                 //Set the reload delay
                 if (left)
                     data.reloadingLeft = true;
@@ -129,8 +129,8 @@ public class PacketReload extends PacketBase {
         if (stack != null && stack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) stack.getItem()).type;
             if (left)
-                FlansModClient.shootTimeLeft = (int) type.getReloadTime(stack);
-            else FlansModClient.shootTimeRight = (int) type.getReloadTime(stack);
+                FlansModClient.shootTimeLeft += (int) type.getReloadTime(stack);
+            else FlansModClient.shootTimeRight += (int) type.getReloadTime(stack);
 
             //Apply animations
             GunAnimations animations = null;

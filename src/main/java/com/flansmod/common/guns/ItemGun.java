@@ -1049,6 +1049,7 @@ public class ItemGun extends Item implements IPaintableItem {
         PlayerData data = PlayerHandler.getPlayerData(entityplayer);
         //Shoot delay ticker is at (or below) 0. Try and shoot the next bullet
         if ((left && data.shootTimeLeft <= 0) || (!left && data.shootTimeRight <= 0)) {
+            FlansMod.log("Shooting");
             //Go through the bullet stacks in the gun and see if any of them are not null
             int bulletID = 0;
             ItemStack bulletStack = null;
@@ -1087,7 +1088,8 @@ public class ItemGun extends Item implements IPaintableItem {
                     //data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
 
                     float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
-                    data.shootTimeRight = data.shootTimeLeft = reloadTime;
+                    data.shootTimeRight += reloadTime;
+                    data.shootTimeLeft += reloadTime;
                     if (left) {
                         data.reloadingLeft = true;
                         data.burstRoundsRemainingLeft = 0;
@@ -1141,6 +1143,8 @@ public class ItemGun extends Item implements IPaintableItem {
                 if (gunType.consumeGunUponUse)
                     return null;
             }
+        } else {
+            FlansMod.log("Not");
         }
         return gunStack;
     }
@@ -1328,8 +1332,8 @@ public class ItemGun extends Item implements IPaintableItem {
                 dropItem(world, entityPlayer, gunType.dropItemOnShoot);
         }
         if (left)
-            PlayerHandler.getPlayerData(entityPlayer).shootTimeLeft = gunType.getShootDelay(stack);
-        else PlayerHandler.getPlayerData(entityPlayer).shootTimeRight = gunType.getShootDelay(stack);
+            PlayerHandler.getPlayerData(entityPlayer).shootTimeLeft += gunType.getShootDelay(stack);
+        else PlayerHandler.getPlayerData(entityPlayer).shootTimeRight += gunType.getShootDelay(stack);
     }
 
     /**
