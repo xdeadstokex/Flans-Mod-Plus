@@ -266,6 +266,7 @@ public class EntityPlane extends EntityDriveable {
             case 6: //Exit : Get out
             {
                 if (seats[0].riddenByEntity != null)
+                    seats[0].riddenByEntity.setInvisible(false);
                     seats[0].riddenByEntity.mountEntity(null);
                 return true;
             }
@@ -451,6 +452,9 @@ public class EntityPlane extends EntityDriveable {
         boolean thePlayerIsDrivingThis = worldObj.isRemote && seats[0] != null
                 && seats[0].riddenByEntity instanceof EntityPlayer
                 && FlansMod.proxy.isThePlayer((EntityPlayer) seats[0].riddenByEntity);
+
+        if (type.setPlayerInvisible && !this.worldObj.isRemote && seats[0].riddenByEntity != null)
+            seats[0].riddenByEntity.setInvisible(true);
 
         //Despawning
         ticksSinceUsed++;
