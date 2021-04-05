@@ -70,7 +70,7 @@ BAB
 | ItemUseAction | EnumAction | EnumAction.bow | The type of action MC thinks you're doing. |
 | MaxRangeLockOn | Integer | 80 | Max range in... blocks? That lockon will work. |
 | ShootDelay | Float | 0 | Ticks between shots (Supposedly outdated?) |
-| RoundsPerMin | Float | 0 | Fire rate of the gun in rounds per minute. 1200 is supposedly the max (60*20). |
+| RoundsPerMin | Float | 0 | Fire rate of the gun in rounds per minute. 1200 is the max (60 seconds*20 ticks). |
 | SoundLength | Integer | ~ | Length of the shoot sound for looping |
 | DistortSound | Bool | true | Whether to distort the sound played |
 | IdleSoundRange | Integer | 50 | Block range that players can hear the idle sound (minigun spin) |
@@ -489,8 +489,8 @@ This will override the value set in the gun's model!
 | Secondary | String | None | Set the secondary to weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
 | ShootDelayPrimary | Float | -1 | The number of ticks to wait between shooting. -1 is use gun RPM or 1. |
 | ShootDelaySecondary | Float | -1 | The number of ticks to wait between shooting. -1 is use gun RPM or 1. |
-| RoundsPerMinPrimary | Float | ~ | Sets ShootDelay using RPM |
-| RoundsPerMinSecondary | Float | ~ | Sets ShootDelay using RPM |
+| RoundsPerMinPrimary | Float | ~ | Sets ShootDelay using RPM. Max is 1200 |
+| RoundsPerMinSecondary | Float | ~ | Sets ShootDelay using RPM Max is 1200 |
 | DamageMultiplierPrimary | Float | 1 | Multiplies projectile damage |
 | DamageMultiplierSecondary | Float | 1 | Multiplies projectile damage |
 | PlaceTimePrimary | Integer | 5| ? |
