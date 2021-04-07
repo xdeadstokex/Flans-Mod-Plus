@@ -96,11 +96,6 @@ public class PlayerData
 	
 	public void tick(EntityPlayer player)
 	{
-		if (!player.worldObj.isRemote && (shootTimeLeft != 0 || shootTimeRight != 0)) {
-			FlansMod.log(">>");
-			FlansMod.log("Shoot time l " + shootTimeLeft);
-			FlansMod.log("Shoot time r " + shootTimeRight);
-		}
 		if(player.worldObj.isRemote)
 			clientTick(player);
 		if(shootTimeRight > 0)
@@ -112,11 +107,6 @@ public class PlayerData
 			shootTimeLeft--;
 		if(shootTimeLeft <= 0)
 			reloadingLeft = false;
-
-		if (!player.worldObj.isRemote && (shootTimeLeft != 0 || shootTimeRight != 0)) {
-			FlansMod.log("Shoot time l " + shootTimeLeft);
-			FlansMod.log("Shoot time r " + shootTimeRight);
-		}
 
 		if(shootClickDelay > 0)
 			shootClickDelay--;

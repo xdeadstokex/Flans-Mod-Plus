@@ -1049,7 +1049,6 @@ public class ItemGun extends Item implements IPaintableItem {
         PlayerData data = PlayerHandler.getPlayerData(entityplayer);
         //Shoot delay ticker is at (or below) 0. Try and shoot the next bullet
         if ((left && data.shootTimeLeft <= 0) || (!left && data.shootTimeRight <= 0)) {
-            FlansMod.log("Shooting");
             //Go through the bullet stacks in the gun and see if any of them are not null
             int bulletID = 0;
             ItemStack bulletStack = null;
@@ -1143,8 +1142,6 @@ public class ItemGun extends Item implements IPaintableItem {
                 if (gunType.consumeGunUponUse)
                     return null;
             }
-        } else {
-            FlansMod.log("Not");
         }
         return gunStack;
     }
@@ -1309,6 +1306,7 @@ public class ItemGun extends Item implements IPaintableItem {
                 float result = gunType.getSpread(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting());
                 spread = result;
             }
+            FlansMod.log("Spread " + spread);
 
             for (int k = 0; k < numBullets; k++) {
                 world.spawnEntityInWorld(itemShootable.getEntity(
