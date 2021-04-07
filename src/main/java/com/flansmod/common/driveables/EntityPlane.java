@@ -522,12 +522,12 @@ public class EntityPlane extends EntityDriveable {
         }
 
         if (!worldObj.isAirBlock((int) posX, (int) (posY - 10), (int) posZ) && throttle <= 0.4) {
-            if (!varGear && seats[0].riddenByEntity != null && type.autoDeployLandingGearNearGround) {
+            if (!varGear && seats[0] != null && seats[0].riddenByEntity != null && type.autoDeployLandingGearNearGround) {
                 ((EntityPlayer) seats[0].riddenByEntity).addChatMessage(new ChatComponentText("Deploying landing gear"));
             }
             varGear = true;
             if (type.foldWingForLand) {
-                if (varWing && seats[0].riddenByEntity != null) {
+                if (varWing && seats[0] != null && seats[0].riddenByEntity != null) {
                     ((EntityPlayer) seats[0].riddenByEntity).addChatMessage(new ChatComponentText("Extending wings"));
                 }
                 varWing = false;
