@@ -413,7 +413,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             }
 
                             //Send ads spread packet to server
-                            sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
+                            sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
                             isScoped = FlansModClient.currentScope != null;
                             FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         } else {
@@ -454,7 +454,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             }
 
                             //Send ads spread packet to server
-                            sendSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
+                            sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
                             isScoped = FlansModClient.currentScope != null;
                             FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         }
@@ -484,10 +484,18 @@ public class ItemGun extends Item implements IPaintableItem {
         }
     }
 
-    public void sendSpreadToServer(ItemStack stack, boolean sneaking, boolean sprinting) {
+    public void sendADSSpreadToServer(ItemStack stack, boolean sneaking, boolean sprinting) {
         //Send ads spread packet to server
-        float f = type.numBullets == 1 ? 0.2F : 0.8F;
-        FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(stack, type.getSpread(stack, sneaking, sprinting) * f));
+        float spread = type.getSpread(stack, sneaking, sprinting);
+        if (type.numBullets == 1) {
+            // Single shot
+            spread *= (type.adsSpreadModifier == -1 ? FlansMod.defaultADSSpreadMultiplier : type.adsSpreadModifier);
+        } else {
+            // Shotgun
+            spread *= (type.adsSpreadModifierShotgun == -1 ? FlansMod.defaultADSSpreadMultiplierShotgun : type.adsSpreadModifierShotgun);
+        }
+
+        FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(stack, spread));
     }
 
     /**
@@ -1303,10 +1311,8 @@ public class ItemGun extends Item implements IPaintableItem {
             }
 
             if (spread <= 0) {
-                float result = gunType.getSpread(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting());
-                spread = result;
+                spread = gunType.getSpread(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting());
             }
-            FlansMod.log("Spread " + spread);
 
             for (int k = 0; k < numBullets; k++) {
                 world.spawnEntityInWorld(itemShootable.getEntity(

@@ -272,6 +272,11 @@ public class GunType extends PaintableType implements IScope
 	public float knockbackModifier = 0F;
 	/** Default spread of the gun. Do not modify. */
 	private float defaultSpread = 0F;
+	// Modifier for (usually decreasing) spread when gun is ADS. -1 uses default values from flansmod.cfg
+	public float adsSpreadModifier = -1F;
+	// Modifier for (usually decreasing) spread when gun is ADS. -1 uses default values from flansmod.cfg. For shotguns.
+	public float adsSpreadModifierShotgun = -1F;
+
 
 	// Cached gunbox value - so we don't have to search through the gunboxes every single time gui is rendered.
 	private String gunBoxName = "";
@@ -340,6 +345,10 @@ public class GunType extends PaintableType implements IScope
 				decreaseRecoilYaw = Float.parseFloat(split[1]) > 0 ? Float.parseFloat(split[1]) : 0.5F;
 			else if(split[0].equals("Accuracy") || split[0].equals("Spread"))
 				defaultSpread = bulletSpread = Float.parseFloat(split[1]);
+			else if(split[0].equals("ADSSpreadModifier"))
+				adsSpreadModifier = Float.parseFloat(split[1]);
+			else if(split[0].equals("ADSSpreadModifierShotgun"))
+				adsSpreadModifierShotgun = Float.parseFloat(split[1]);
 			else if(split[0].equals("NumBullets"))
 				numBullets = Integer.parseInt(split[1]);
 			else if(split[0].equals("AllowNumBulletsByBulletType"))
