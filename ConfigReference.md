@@ -51,6 +51,8 @@ BAB
 | Accuracy / Spread | Float | 0 | Amount that the bullets spread out. Higher = wider cone |
 | SprintSpreadMultiplier | Float | 1.75 | Multiplier for spread applied when player is sprinting. |
 | SneakSpreadMultiplier | Float | 0.63 | Multiplier for spread applied when player is sneaking. |
+| ADSSpreadModifier | Float | -1 | Modifier for spread when ADS. -1 means use the FlansMod.cfg default (0.2). Anything other overrides it. |
+| ADSSpreadModifierShotgun | Float | -1 | Modifier for spread when ADS. -1 means use the FlansMod.cfg default (0.2). Anything other overrides it. For shotguns/multibullet guns. |
 | NumBullets | Integer | 1 | The number of bullets created by each shot |
 | AllowNumBulletsByBulletType | Bool | false | The NumBullets of the ammo overrides the guns NumBullets. |
 | AllowSpreadByBullet | Bool | false | The Spread of the ammo overrides the guns Spread. |
