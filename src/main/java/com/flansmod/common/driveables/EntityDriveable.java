@@ -224,6 +224,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     public Entity lastAtkEntity = null;
 
+    public Float collisionHardness = 0F;
+
     //public ArrayList<EntityPlayer> playerIDs = new ArrayList<EntityPlayer>();
 
     public EntityDriveable(World world) {
@@ -1580,6 +1582,41 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
 
+        }
+
+        if (FlansMod.seatCollisions) {
+            // This is for preventing vehicle glitching. It makes seats collideable, and stops their motion if 
+            for (EntitySeat seat : seats) {
+                if (seat == null || wheels == null ||wheels[0] == null || wheels[1] == null)
+                    continue;
+                DriveablePosition p = seat.getAsDriveablePosition();
+                if (driveableData.parts.get(p.part).dead)
+                    continue;
+                Vector3f fwd = axes.getXAxis();
+                float a = 0F;
+                if (getSpeedXZ() > 1) {
+                    if (getSpeedXZ() > 2) {
+                        a = 6F;
+                    } else {
+                        a = 3F;
+                    }
+                }
+                Vec3 seatPos = Vec3.createVectorHelper(seat.posX + fwd.x * a, seat.posY + fwd.y * a, seat.posZ + fwd.z * a);
+
+                Vec3 wheelMidPos = Vec3.createVectorHelper((wheels[0].posX + wheels[1].posX)/2F, seatPos.yCoord, (wheels[0].posZ + wheels[1].posZ)/2F);
+
+                MovingObjectPosition hit = worldObj.rayTraceBlocks(seatPos, wheelMidPos, crashInWater);
+                if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK) {
+                    int x = hit.blockX;
+                    int y = hit.blockY;
+                    int z = hit.blockZ;
+                    Block blockHit = worldObj.getBlock(x, y, z);
+
+                    float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
+
+                    collisionHardness = blockHardness;
+                }
+            }
         }
 
         if (damagePart) {

@@ -119,6 +119,7 @@ public class FlansMod {
     public static boolean reloadOnRightClick = true;
     public static float defaultADSSpreadMultiplier = 0.2F;
     public static float defaultADSSpreadMultiplierShotgun = 0.8F;
+    public static boolean seatCollisions = true;
 
 
     public static int armourSpawnRate = 20;
@@ -607,6 +608,7 @@ public class FlansMod {
         reloadOnRightClick = configFile.getBoolean("Reload on right click", "Gameplay Settings (synced)", reloadOnRightClick, "Whether to reload a gun using right click, forces use of R.");
         defaultADSSpreadMultiplier = configFile.getFloat("Default ADS Spread Modifier", "Gameplay Settings (synced)", defaultADSSpreadMultiplier, 0, 10, "Modifier for spread when the player is aiming.");
         defaultADSSpreadMultiplierShotgun = configFile.getFloat("Default ADS Spread Modifier (Shotguns)", "Gameplay Settings (synced)", defaultADSSpreadMultiplierShotgun, 0, 10, "Modifier for spread when the player is aiming. (Multishot guns only).");
+        seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
         
 
         //Client Side Settings
@@ -655,6 +657,7 @@ public class FlansMod {
         reloadOnRightClick = configFile.getBoolean("Reload on right click", "Gameplay Settings (synced)", reloadOnRightClick, "Whether to reload a gun using right click, forces use of R.");
         defaultADSSpreadMultiplier = configFile.getFloat("Default ADS Spread Modifier", "Gameplay Settings (synced)", defaultADSSpreadMultiplier, 0, 10, "Modifier for spread when the player is aiming.");
         defaultADSSpreadMultiplierShotgun = configFile.getFloat("Default ADS Spread Modifier (Shotguns)", "Gameplay Settings (synced)", defaultADSSpreadMultiplierShotgun, 0, 10, "Modifier for spread when the player is aiming. (Multishot guns only).");
+        seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

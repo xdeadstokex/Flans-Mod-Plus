@@ -44,23 +44,40 @@ public class FlightController {
 		gravity = 0.98F / 10F;
 		drag = 1F - (0.05F * type.drag);
 
-		switch(mode)
-		{
-		case PLANE :
-		{
+		boolean doSpeedKick = false;
+		if (plane.collisionHardness > 0.2F) {
+			thrust = 0F;
+			throttle = 0F;
+			drag = 0.8F - ((float)plane.getSpeedXYZ()) < 0 ? 0 : 0.8F - ((float) plane.getSpeedXYZ());
+			doSpeedKick = plane.getSpeedXYZ() > 0.1;
+			plane.collisionHardness = 0F;
+		}
+		
+		switch (mode) {
+		case PLANE: {
 			PlaneModeFly(plane);
 			break;
 		}
-		case HELI :
-		{
+		case HELI: {
 			HeliModeFly(plane);
 			break;
 		}
-		
-		// TODO: Look into other flight controllers
-		case SIXDOF: break;
-		case VTOL: break;
 
+		// TODO: Look into other flight controllers
+		case SIXDOF:
+			break;
+		case VTOL:
+			break;
+
+		}
+
+		if (doSpeedKick) {
+			// double speed = plane.getSpeedXYZ() * 2F;
+			// plane.motionX -= plane.axes.getXAxis().x * speed;
+			// plane.motionY -= plane.axes.getXAxis().y * speed;
+			// plane.motionZ -= plane.axes.getXAxis().z * speed;
+			plane.motionX = 0F;
+			plane.motionZ = 0F;
 		}
 
 	}

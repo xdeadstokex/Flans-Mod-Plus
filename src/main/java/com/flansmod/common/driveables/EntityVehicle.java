@@ -697,7 +697,10 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
         double bmy = this.motionY;
         this.motionY = amountToMoveCar.y;
-
+        if (collisionHardness > 0.2F) {
+            amountToMoveCar.x = -axes.getXAxis().x*(float)getSpeedXZ()*0.1F;
+            amountToMoveCar.z = -axes.getXAxis().z*(float)getSpeedXZ()*0.1F;
+        }
         moveEntity(amountToMoveCar.x, amountToMoveCar.y, amountToMoveCar.z);
 
         this.motionY = bmy;
@@ -982,7 +985,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
          }
          */
 
-        //rotateYaw(10);
+        //rotateYaw(10);        
     }
 
     public Entity getValidTarget() {

@@ -845,4 +845,9 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
         return minigunSpeed;
     }
 
+    public DriveablePosition getAsDriveablePosition() {
+        // This is in LOCAL space.
+        return new DriveablePosition(new Vector3f(((float)seatInfo.x) / 16F, ((float)seatInfo.y)/16F, ((float)seatInfo.y)/16F), seatInfo.part);
+    }
+
 }

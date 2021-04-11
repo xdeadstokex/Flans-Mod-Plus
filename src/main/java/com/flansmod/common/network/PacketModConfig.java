@@ -26,6 +26,9 @@ public class PacketModConfig extends PacketBase {
     public boolean driveableHitboxes;
     public float driveableUpdateRange;
     public boolean reloadOnRightClick;
+    public float defaultADSSpreadMultiplier;
+    public float defaultADSSpreadMultiplierShotgun;
+    public boolean seatCollisions;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -43,6 +46,10 @@ public class PacketModConfig extends PacketBase {
         driveableHitboxes = FlansMod.driveableHitboxes;
         driveableUpdateRange = FlansMod.driveableUpdateRange;
         reloadOnRightClick = FlansMod.reloadOnRightClick;
+        defaultADSSpreadMultiplier = FlansMod.defaultADSSpreadMultiplier;
+        defaultADSSpreadMultiplierShotgun = FlansMod.defaultADSSpreadMultiplierShotgun;
+        seatCollisions = FlansMod.seatCollisions;
+
     }
 
     @Override
@@ -62,6 +69,9 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(driveableHitboxes);
         data.writeFloat(driveableUpdateRange);
         data.writeBoolean(reloadOnRightClick);
+        data.writeFloat(defaultADSSpreadMultiplier);
+        data.writeFloat(defaultADSSpreadMultiplierShotgun);
+        data.writeBoolean(seatCollisions);
     }
 
     @Override
@@ -81,6 +91,9 @@ public class PacketModConfig extends PacketBase {
         driveableHitboxes = data.readBoolean();
         driveableUpdateRange = data.readFloat();
         reloadOnRightClick = data.readBoolean();
+        defaultADSSpreadMultiplier = data.readFloat();
+        defaultADSSpreadMultiplierShotgun = data.readFloat();
+        seatCollisions = data.readBoolean();
     }
 
     @Override
@@ -106,6 +119,9 @@ public class PacketModConfig extends PacketBase {
         FlansMod.driveableHitboxes = driveableHitboxes;
         FlansMod.driveableUpdateRange = driveableUpdateRange;
         FlansMod.reloadOnRightClick = reloadOnRightClick;
+        FlansMod.defaultADSSpreadMultiplier = defaultADSSpreadMultiplier;
+        FlansMod.defaultADSSpreadMultiplierShotgun = defaultADSSpreadMultiplierShotgun;
+        FlansMod.seatCollisions = seatCollisions;
         FlansMod.log("Config synced successfully");
     }
 }
