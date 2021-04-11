@@ -45,7 +45,10 @@ public class BulletType extends ShootableType
 	public boolean hitSoundEnable = false;
 	public boolean entityHitSoundEnable = false;
 
+	// hasLight controls whether it has full luminescence.
+	// hasDynamicLight controls if it lights up the area around it.
 	public boolean hasLight = false;
+	public boolean hasDynamicLight = false;
 	public float penetratingPower = 1F;
 	// Knocback modifier. less gives less kb, more gives more kb, 1 = normal kb.
 	public float knockbackModifier;
@@ -221,6 +224,8 @@ public class BulletType extends ShootableType
 
 			else if(split[0].equals("HasLight"))
 				hasLight = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("HasDynamicLight"))
+				hasDynamicLight = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("LockOnToDriveables"))
 				lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("LockOnToVehicles"))

@@ -629,22 +629,20 @@ public class TickHandlerClient {
             for (Object obj : mc.theWorld.loadedEntityList) {
                 if (obj instanceof EntityBullet) {
                     EntityBullet bullet = (EntityBullet) obj;
-                    //IDynamicLightSource iDynamicLightSource = new AddFlansLightSource((Entity)bullet,15);
-                    if (!bullet.isDead && bullet.type.hasLight) {
-						/*int x = MathHelper.floor_double(bullet.posX);
-						int y = MathHelper.floor_double(bullet.posY);
-						int z = MathHelper.floor_double(bullet.posZ);
-						blockLightOverrides.add(new Vector3i(x, y, z));
-						mc.theWorld.setLightValue(EnumSkyBlock.Block, x, y, z, 15);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y + 1, z);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y - 1, z);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x + 1, y, z);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x - 1, y, z);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y, z + 1);
-						mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y, z - 1);*/
-                        //DynamicLights.addLightSource(iDynamicLightSource);
-                    } else if (bullet.isDead && bullet.type.hasLight) {
-                        //DynamicLights.removeLightSource(iDynamicLightSource);
+                    if (!bullet.isDead && bullet.type.hasDynamicLight) {
+                        int x = (int)bullet.posX;
+                        int y = (int)bullet.posY;
+                        int z = (int)bullet.posZ;
+                        blockLightOverrides.add(new Vector3i(bullet.posX, bullet.posY, bullet.posZ));
+
+                        mc.theWorld.setLightValue(EnumSkyBlock.Block, x, y, z,
+                                Math.max(mc.theWorld.getBlockLightValue(x, y, z), 10));
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x + 1, y, z);
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x - 1, y + 1, z);
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y + 1, z);
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y - 1, z);
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y, z + 1);
+                        mc.theWorld.updateLightByType(EnumSkyBlock.Block, x, y, z - 1);
                     }
                 } else if (obj instanceof EntityMecha) {
                     EntityMecha mecha = (EntityMecha) obj;
