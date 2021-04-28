@@ -180,10 +180,6 @@ public abstract class GameType {
             if (source.getEntity() instanceof EntityPlayerMP)
                 attacker = (EntityPlayerMP) source.getEntity();
         }
-        if (source instanceof EntityDamageSourceIndirect) {
-            if (source.getSourceOfDamage() instanceof EntityPlayerMP)
-                attacker = (EntityPlayerMP) source.getSourceOfDamage();
-        }
         return attacker;
     }
 
