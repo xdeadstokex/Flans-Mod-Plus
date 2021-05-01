@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -47,6 +48,7 @@ public class GuiDriveableRepair extends GuiScreen {
 
     public GuiDriveableRepair(EntityPlayer player) {
         driver = player;
+        if (!((EntitySeat) player.ridingEntity).foundDriveable) {Minecraft.getMinecraft().thePlayer.closeScreen();}
         driving = ((EntitySeat) player.ridingEntity).driveable;
         for (DriveablePart part : driving.getDriveableData().parts.values()) {
             //Check to see if the part is actually damageable
