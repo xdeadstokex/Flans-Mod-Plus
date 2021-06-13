@@ -681,21 +681,28 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
                                     }
                                     soundDelay = gun.shootSoundLength;
                                 }
+
                                 //Get the bullet item damage and increment it
                                 int damage = bulletItemStack.getItemDamage();
                                 if (!((EntityPlayer) riddenByEntity).capabilities.isCreativeMode)
                                     bulletItemStack.setItemDamage(damage + 1);
                                 //If the bullet item is completely damaged (empty)
                                 if (damage >= bulletItemStack.getMaxDamage()) {
+                                    bulletItemStack.setItemDamage(0);
                                     //Set the damage to 0 and consume one ammo item (unless in creative)
-                                    if (((EntityPlayer) riddenByEntity).capabilities.isCreativeMode) {
-                                        bulletItemStack.setItemDamage(0);
-                                    } else {
-                                        driveable.getDriveableData().ammo[seatInfo.gunnerID] = null;
+                                    if (!((EntityPlayer) riddenByEntity).capabilities.isCreativeMode) {
+                                        driveable.getDriveableData().ammo[seatInfo.gunnerID].stackSize--;
+                                        if (driveable.getDriveableData().ammo[seatInfo.gunnerID].stackSize <= 0) {
+                                           driveable.getDriveableData().ammo[seatInfo.gunnerID] = null; 
+                                        }
                                     }
+                                    gunDelay += gun.getReloadTime(bulletItemStack);
+                                    PacketPlaySound.sendSoundPacket(posX, posY, posZ, gun.reloadSoundRange, dimension, gun.reloadSound, true);
+                                } else {
+                                    //Reset the shoot delay
+                                    gunDelay += gun.getShootDelay();
                                 }
-                                //Reset the shoot delay
-                                gunDelay += gun.getShootDelay();
+                                
                             }
                         }
                     }
