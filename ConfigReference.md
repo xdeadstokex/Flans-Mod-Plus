@@ -112,7 +112,7 @@ BAB
 | FlashTexture | String | ~ | The texture name of the muzzle flash |
 | ModelScale | Float | 1 | The scale to transform by |
 | Texture | String | ~ | The name of the texture file to use |
-| HitTexture | String | ~ | The name of the hit texture file to use |
+| HitTexture | String | ~ | The name of the hit texture file to use. Will look in the skins folder. |
 | DeployedTexture | String | ~ | The name of the deployed texture file to use |
 | StandBackDistance | Float | 1.5 | How far behind the player should be behind a deployed gun |
 | TopViewLimit | Float | -60 | How far the players view should be limited upwards (Deployed) |
