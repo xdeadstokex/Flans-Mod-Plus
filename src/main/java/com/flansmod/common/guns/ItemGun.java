@@ -922,7 +922,7 @@ public class ItemGun extends Item implements IPaintableItem {
                             }
                         } else {
                             Entity entity = (Entity) obj;
-                            if (entity != player && !entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun)) {
+                            if (entity != player && !entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun) && entity.boundingBox != null && data.lastMeleePositions != null && nextPosInWorldCoords != null) {
                                 MovingObjectPosition mop = entity.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
                                 if (mop != null) {
                                     Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
@@ -1288,6 +1288,7 @@ public class ItemGun extends Item implements IPaintableItem {
                         entityPlayer.posZ, type.gunSoundRange, type.distantSoundRange, entityPlayer.dimension);
             }
         }
+        
         if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable) {
             // Spawn the bullet entities
             ItemShootable itemShootable = (ItemShootable) bulletStack.getItem();
