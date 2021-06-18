@@ -583,10 +583,10 @@ public class TickHandlerClient {
                 ItemStack currentHeldItem = player.getCurrentEquippedItem();
                 if (currentHeldItem != null && currentHeldItem.getItem() instanceof ItemGun) {
                     GunType type = ((ItemGun) currentHeldItem.getItem()).type;
-                    AttachmentType grip = type.getGrip(currentHeldItem);
-                    if (grip != null && grip.flashlight) {
+                    for (AttachmentType attachment : type.getCurrentAttachments(currentHeldItem))
+                    if (attachment != null && attachment.flashlight) {
                         for (int i = 0; i < 2; i++) {
-                            MovingObjectPosition ray = player.rayTrace(grip.flashlightRange / 2F * (i + 1), 1F);
+                            MovingObjectPosition ray = player.rayTrace(attachment.flashlightRange / 2F * (i + 1), 1F);
                             if (ray != null) {
                                 int x = ray.blockX;
                                 int y = ray.blockY;
