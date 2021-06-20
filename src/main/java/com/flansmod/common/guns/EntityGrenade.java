@@ -44,6 +44,8 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 public class EntityGrenade extends EntityShootable implements IEntityAdditionalSpawnData
 {
 	public GrenadeType type;
+	
+	public ShootableType getType() { return type; }
 	/** The entity that threw them */
 	public EntityLivingBase thrower;
 	/** This is to avoid players grenades teamkilling after they switch team */

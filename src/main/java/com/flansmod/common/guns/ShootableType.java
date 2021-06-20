@@ -22,6 +22,11 @@ public abstract class ShootableType extends InfoType
 	/** Trail particles given off by this while being thrown */
 	public String trailParticleType = "smoke";
 
+	// hasLight controls whether it has full luminescence.
+	// hasDynamicLight controls if it lights up the area around it.
+	public boolean hasLight = false;
+	public boolean hasDynamicLight = false;
+
 	//Item Stuff
 	/** The maximum number of grenades that can be stacked together */
 	public int maxStackSize = 1;
@@ -191,6 +196,11 @@ public abstract class ShootableType extends InfoType
 
 			else if(split[0].equals("BreaksGlass"))
 				breaksGlass = Boolean.parseBoolean(split[1].toLowerCase());
+
+			else if (split[0].equals("HasLight"))
+				hasLight = Boolean.parseBoolean(split[1].toLowerCase());
+			else if (split[0].equals("HasDynamicLight"))
+				hasDynamicLight = Boolean.parseBoolean(split[1].toLowerCase());
 
 			//Detonation conditions etc
 			else if(split[0].equals("Fuse"))

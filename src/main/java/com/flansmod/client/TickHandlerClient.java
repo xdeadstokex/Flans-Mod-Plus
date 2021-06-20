@@ -43,6 +43,7 @@ import com.flansmod.common.driveables.EnumDriveablePart;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.AttachmentType;
 import com.flansmod.common.guns.EntityBullet;
+import com.flansmod.common.guns.EntityShootable;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.network.PacketTeamInfo;
@@ -627,9 +628,9 @@ public class TickHandlerClient {
             }
 
             for (Object obj : mc.theWorld.loadedEntityList) {
-                if (obj instanceof EntityBullet) {
-                    EntityBullet bullet = (EntityBullet) obj;
-                    if (!bullet.isDead && bullet.type.hasDynamicLight) {
+                if (obj instanceof EntityShootable) {
+                    EntityShootable bullet = (EntityShootable) obj;
+                    if (!bullet.isDead && bullet.getType().hasDynamicLight) {
                         int x = (int)bullet.posX;
                         int y = (int)bullet.posY;
                         int z = (int)bullet.posZ;

@@ -70,6 +70,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public Entity owner;
     private int ticksInAir;
     public BulletType type;
+
+    public ShootableType getType() { return type; }
     /**
      * What type of weapon did this come from? For death messages
      */

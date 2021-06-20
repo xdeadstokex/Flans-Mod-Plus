@@ -309,8 +309,6 @@ This will override the value set in the gun's model!
 | Shell | ~ | ~ | Add this to set this as a SHELL |
 | Missile | ~ | ~ | Add this to set this as a MISSILE |
 | WeaponType | String | ~ | Set weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
-| HasLight | Boolean | false | Bullet should have full brightness. |
-| HasDynamicLight | Boolean | false | Bullet should emit light. |
 | LockOnToDriveables | Bool | false | Lock on to vehicles, planes and mechas. |
 | LockOnToVehicles | Bool | false | Lock on to X |
 | LockOnToPlanes | Bool | false | Lock on to X |
@@ -390,6 +388,8 @@ This will override the value set in the gun's model!
 | HealAmount | Float | 0 | Amount to heal players by who use this bag |
 | AddPotionEffect / PotionEffect | String | ~ | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
+| HasLight | Boolean | false | Bullet should have full brightness. |
+| HasDynamicLight | Boolean | false | Bullet should emit light. |
 
 ### [MechaItemType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaItemType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |

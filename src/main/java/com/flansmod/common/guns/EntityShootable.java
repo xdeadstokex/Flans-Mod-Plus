@@ -12,4 +12,6 @@ public abstract class EntityShootable extends Entity
 	{
 		super(w);
 	}
+
+	public abstract ShootableType getType();
 }
