@@ -441,6 +441,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         continue;
                     }
                     if (player == owner && ticksInAir < 20)
+                        // The shooter of this bullet is immune to it for the first second.
                         continue;
                     int snapshotToTry = TeamsManager.bulletSnapshotMin;
                     if (TeamsManager.bulletSnapshotDivisor > 0) {
@@ -464,6 +465,22 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     else {
                         //Raytrace
                         ArrayList<BulletHit> playerHits = snapshot.raytrace(origin, motion);
+                        // if (snapshotToTry + 1 < data.snapshots.length && data.snapshots[snapshotToTry + 1]
+                        //         .raytrace(origin, motion).size() > 0) {
+                        //     FlansMod.log("+1 " + data.snapshots[snapshotToTry + 1].raytrace(origin, motion).size());
+                        //     FlansMod.log("Ping " + pingOfShooter);
+                        // }
+
+                        // if (snapshotToTry - 1 < data.snapshots.length && playerHits.size() > 0) {
+                        //     FlansMod.log("¬ " + playerHits.size());
+                        //     FlansMod.log("Ping " + pingOfShooter);
+                        // }
+
+                        // if (snapshotToTry - 1 > 0 && data.snapshots[snapshotToTry - 1].raytrace(origin, motion)
+                        //         .size() > 0) {
+                        //     FlansMod.log("-1 " + data.snapshots[snapshotToTry - 1].raytrace(origin, motion).size());
+                        //     FlansMod.log("Ping " + pingOfShooter);
+                        // }
                         hits.addAll(playerHits);
                     }
                 }

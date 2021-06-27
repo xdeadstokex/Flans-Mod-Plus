@@ -13,6 +13,8 @@ import com.flansmod.common.eventhandlers.ServerTickEvent;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
+import com.flansmod.common.guns.boxes.GunPage;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.network.PacketHandler;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
@@ -25,6 +27,7 @@ import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
+import com.flansmod.common.types.IGunboxDescriptionable;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
@@ -311,6 +314,38 @@ public class FlansMod {
 
 		log("ICBM hooking complete.");
 		*/
+
+        FlansMod.log("Starting gunbox mapping.");
+        for (BlockGunBox box : gunBoxBlocks) {
+            for (GunPage page : box.type.gunPages) {
+                for (GunBoxEntry entry : page.gunList) {
+                    try {
+                        if (entry.type != null) {
+                            IGunboxDescriptionable item = getGunBoxItem(entry.type);
+
+                            if (item != null) {
+                                item.setOriginGunBox(box.getLocalizedName());
+                            }
+                        }
+                        if (!entry.isAmmoNullOrEmpty()) {
+                            for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
+                                IGunboxDescriptionable item = getGunBoxItem(ammoEntry.type);
+
+                                if (item != null) {
+                                    item.setOriginGunBox(box.getLocalizedName());
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        if (FlansMod.printDebugLog) {
+                            FlansMod.log("A gunbox entry appears to be null");
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        FlansMod.log("Finished gunbox mapping.");
     }
 
     @SubscribeEvent
@@ -567,6 +602,24 @@ public class FlansMod {
         Sync.getUnifiedHash();
         log("Client Hash: " + Sync.cachedHash);
         Team.spectators = spectators;
+    }
+
+    public static IGunboxDescriptionable getGunBoxItem(InfoType item) {
+        if (item instanceof GunType) {
+            for (ItemGun gitem : gunItems) {
+                if (gitem.type.shortName == item.shortName) {
+                    return gitem;
+                }
+            }
+        } else if (item instanceof BulletType) {
+            for (ItemBullet bitem : bulletItems) {
+                if (bitem.type.shortName == item.shortName) {
+                    return bitem;
+                }
+            }
+        }
+        
+        return null;
     }
 
     public static PacketHandler getPacketHandler() {

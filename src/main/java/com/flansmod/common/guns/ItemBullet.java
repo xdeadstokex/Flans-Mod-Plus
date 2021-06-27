@@ -16,6 +16,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.IFlanItem;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.types.IGunboxDescriptionable;
 import com.flansmod.common.vector.Vector3f;
 
 import net.minecraft.client.settings.KeyBinding;
@@ -25,8 +26,13 @@ import net.minecraft.client.settings.GameSettings;
 /**
  * Implemented from old source.
  */
-public class ItemBullet extends ItemShootable implements IFlanItem {
+public class ItemBullet extends ItemShootable implements IFlanItem, IGunboxDescriptionable {
     public BulletType type;
+
+    public String originGunbox = "";
+    
+    public String getOriginGunBox() { return originGunbox; }
+    public void setOriginGunBox(String e) { originGunbox = e; }
 
     public ItemBullet(BulletType infoType) {
         super(infoType);
@@ -79,8 +85,8 @@ public class ItemBullet extends ItemShootable implements IFlanItem {
                 lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
             } else {
                 lines.add("");
-                if (type.getGunBox() != "none") {
-                    lines.add("\u00a79Box" + "\u00a77: " + type.getGunBox());
+                if (originGunbox != "") {
+                    lines.add("\u00a79Box" + "\u00a77: " + originGunbox);
                 }
                 lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.damageVsLiving, 2));
                 lines.add("\u00a79Penetration" + "\u00a77: " + roundFloat(type.penetratingPower, 2));

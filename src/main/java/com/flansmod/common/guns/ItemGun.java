@@ -34,6 +34,7 @@ import com.flansmod.common.network.PacketGunState;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketSelectOffHandGun;
+import com.flansmod.common.network.PacketParticle;
 //import com.flansmod.common.network.PacketUpdateSpeed;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
@@ -43,6 +44,7 @@ import com.flansmod.common.teams.EntityFlagpole;
 import com.flansmod.common.teams.EntityGunItem;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
+import com.flansmod.common.types.IGunboxDescriptionable;
 import com.flansmod.common.vector.Vector3f;
 
 import com.google.common.collect.Multimap;
@@ -82,7 +84,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
-public class ItemGun extends Item implements IPaintableItem {
+public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptionable {
     public GunType type;
     private static boolean rightMouseHeld;
     private static boolean leftMouseHeld;
@@ -90,7 +92,10 @@ public class ItemGun extends Item implements IPaintableItem {
     public static boolean crouching = false;
     public static boolean sprinting = false;
     public static boolean shooting = false;
+    public String originGunbox = "";
 
+    public String getOriginGunBox() { return originGunbox; }
+    public void setOriginGunBox(String e) { originGunbox = e; }
     // This is a bodge - the server needs to hold state that is held on the client.
     public boolean isScoped = false;
     public int soundDelay;
@@ -229,8 +234,8 @@ public class ItemGun extends Item implements IPaintableItem {
         } else {
             lines.add("");
             
-            if (type.getGunBox() != "none") {
-                lines.add("\u00a79Box" + "\u00a77: " + type.getGunBox());
+            if (originGunbox != "") {
+                lines.add("\u00a79Box" + "\u00a77: " + originGunbox);
             }
 
             AttachmentType barrel = type.getBarrel(stack);
@@ -1288,6 +1293,15 @@ public class ItemGun extends Item implements IPaintableItem {
                         entityPlayer.posZ, type.gunSoundRange, type.distantSoundRange, entityPlayer.dimension);
             }
         }
+
+        // AttachmentType barrel = gunType.getBarrel(stack);
+        // if (barrel == null || !barrel.disableMuzzleFlash) {
+        //     FlansMod.packetHandler.sendToAllAround(
+        //             new PacketParticle("flame", entityPlayer.posX + 1, entityPlayer.posY + 1.6,
+        //                     entityPlayer.posZ + 1, 0, 0.05, 0),
+        //             entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 100, entityPlayer.dimension);
+        // }
+
         
         if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable) {
             // Spawn the bullet entities

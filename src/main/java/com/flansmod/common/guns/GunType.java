@@ -277,10 +277,6 @@ public class GunType extends PaintableType implements IScope
 	// Modifier for (usually decreasing) spread when gun is ADS. -1 uses default values from flansmod.cfg. For shotguns.
 	public float adsSpreadModifierShotgun = -1F;
 
-
-	// Cached gunbox value - so we don't have to search through the gunboxes every single time gui is rendered.
-	private String gunBoxName = "";
-
 	public GunType(TypeFile file)
 	{
 		super(file);
@@ -1468,21 +1464,6 @@ public class GunType extends PaintableType implements IScope
 
 		setFireMode(stack, mode.ordinal());
 		return mode;
-	}
-
-	public String getGunBox() {
-		if (gunBoxName != "") {
-			return gunBoxName;
-		} else {
-			for (BlockGunBox box : FlansMod.gunBoxBlocks) {
-				if (box.searchFor(this) != null) {
-					gunBoxName = box.getLocalizedName();
-					return gunBoxName;
-				}
-			}
-			gunBoxName = "none";
-			return gunBoxName;
-		}
 	}
 
 	/** Set the secondary or primary fire mode */
