@@ -336,17 +336,30 @@ public class DriveableType extends PaintableType {
         for (String line : file.lines) {
             if (line == null)
                 break;
+            String[] split = line.split(" ");
             if (line.startsWith("//"))
                 continue;
-            String[] split = line.split(" ");
+
             if (split.length < 2)
                 continue;
 
-            if (split[0].equals("Passengers")) {
-                numPassengers = Integer.parseInt(split[1]);
-                seats = new Seat[numPassengers + 1];
-                break;
+            try {
+                if (split[0].equals("Passengers")) {
+                    numPassengers = Integer.parseInt(split[1]);
+                    seats = new Seat[numPassengers + 1];
+                    break;
+                }
+            } catch (Exception e) {
+                String msg = " : ";
+                for (String s : split)
+                    msg = msg + " " + s;
+                FlansMod.log("Errored reading " + file.name + msg);
+
+                if (FlansMod.printStackTrace) {
+                    e.printStackTrace();
+                }
             }
+
         }
         //Make sure NumWheels is read before anything else
         for (String line : file.lines) {
@@ -358,11 +371,85 @@ public class DriveableType extends PaintableType {
             if (split.length < 2)
                 continue;
 
-            if (split[0].equals("NumWheels")) {
-                wheelPositions = new DriveablePosition[Integer.parseInt(split[1])];
+            try {
+                if (split[0].equals("NumWheels")) {
+                    wheelPositions = new DriveablePosition[Integer.parseInt(split[1])];
+                    break;
+                }
+            } catch (Exception e) {
+                String msg = " : ";
+                for (String s : split)
+                    msg = msg + " " + s;
+                FlansMod.log("Errored pre-reading " + file.name + msg);
+
+                if (FlansMod.printStackTrace) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        int counter = 0;
+        for (String line : file.lines) {
+            if (line == null)
+                break;
+            if (line.startsWith("//"))
+                continue;
+            String[] split = line.split(" ");
+            if (split.length < 2)
+                continue;
+
+            try {
+                // Passengers / Gunner Seats
+                if (split[0].equals("Passenger")) {
+                    Seat seat = new Seat(split);
+                    seats[seat.id] = seat;
+                    if (seat.gunType != null) {
+                        seat.gunnerID = numPassengerGunners++;
+                        driveableRecipe.add(new ItemStack(seat.gunType.item));
+                    }
+                    counter++;
+                }
+            } catch (Exception ex) {
+                String msg = " : ";
+                for (String s : split)
+                    msg = msg + " " + s;
+                FlansMod.log("Errored pre-reading " + file.name + msg);
+
+                if (FlansMod.printStackTrace) {
+                    ex.printStackTrace();
+                }
+            }
+            try {
+                if (split[0].equals("Driver") || split[0].equals("Pilot")) {
+                    if (split.length > 4)
+                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                                Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
+                                Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                    else
+                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                                Integer.parseInt(split[3]));
+                }
+            } catch (Exception ex) {
+                String msg = " : ";
+                for (String s : split)
+                    msg = msg + " " + s;
+                FlansMod.log("Errored pre-reading " + file.name + msg);
+                FlansMod.log("Cannot continue, as the driver may not be defined. Removing vehicle.");
+
+                if (FlansMod.printStackTrace) {
+                    ex.printStackTrace();
+                }
+
+                throw ex;
+            }
+
+            if (counter == seats.length) {
                 break;
             }
         }
+
+
         types.add(this);
     }
 
@@ -744,14 +831,7 @@ public class DriveableType extends PaintableType {
                     box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
                 }
                 health.put(part, box);
-            }
-
             //Driver Position
-            else if (split[0].equals("Driver") || split[0].equals("Pilot")) {
-                if (split.length > 4)
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-                else
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));
             } else if (split[0].equals("DriverPart")) {
                 seats[0].part = EnumDriveablePart.getPart(split[1]);
             } else if (split[0].equals("DriverGun") || split[0].equals("PilotGun")) {
@@ -785,15 +865,7 @@ public class DriveableType extends PaintableType {
                 seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
             }
 
-            //Passengers / Gunner Seats
-            else if (split[0].equals("Passenger")) {
-                Seat seat = new Seat(split);
-                seats[seat.id] = seat;
-                if (seat.gunType != null) {
-                    seat.gunnerID = numPassengerGunners++;
-                    driveableRecipe.add(new ItemStack(seat.gunType.item));
-                }
-            } else if (split[0].equals("GunOrigin"))
+            else if (split[0].equals("GunOrigin"))
                 seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
 
                 //Y offset for badly built models :P
