@@ -470,6 +470,7 @@ This will override the value set in the gun's model!
 | Buoyancy | Float | 0.0165 | Upwards force per wheel when a driveable is on water |
 | FloatOffset | Float | 0 | ? |
 | CanMountEntity | Boolean | false | ? |
+| EngineStartTime | Float | 0 | Time between the vehicle being placed, and it being driveable. |
 | Wheel / WheelPosition | (Integer) ID (Float) X Y Z (partName) | ~ | Add a wheel position with ID. partName is optional and will default to coreWheel unless stated. |
 | WheelRadius / WheelStepHeight | Float | 1 | The wheel radius. Allows travelling up blocks when > 1 or root2 (Not sure which) |
 | WheelSpringStrength / SpringStrength | Float | 0.5 | Strength of suspension? |

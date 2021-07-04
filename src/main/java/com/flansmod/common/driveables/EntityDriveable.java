@@ -226,6 +226,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     public Float collisionHardness = 0F;
 
+    public int engineStartDelay;
+
     //public ArrayList<EntityPlayer> playerIDs = new ArrayList<EntityPlayer>();
 
     public EntityDriveable(World world) {
@@ -297,6 +299,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
         }
+
+        engineStartDelay = type.engineStartTime;
     }
 
     @Override
@@ -951,6 +955,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         return rotate(localGunVec);
     }
 
+    public boolean isEngineActive() {
+        return (driverIsCreative() || driveableData.fuelInTank > 0) && engineStartDelay == 0;
+    }
+
     public void correctWheelPos() {
         if (this.ticksExisted % (10 * 20) == 0) {
             for (EntityWheel wheel : wheels) {
@@ -1136,7 +1144,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         //Harvest stuff
         //Aesthetics
-        if (hasEnoughFuel()) {
+        if (hasEnoughFuel() && isEngineActive()) {
             harvesterAngle += throttle / 5F;
         }
         //Actual harvesting
@@ -1292,10 +1300,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (riddenByEntity != null)
             riddenByEntity.fallDistance = 0F;
 
-        boolean canThrust = driverIsCreative() || driveableData.fuelInTank > 0;
-
         //If there's no player in the driveable or it cannot thrust, slow the plane and turn off mouse held actions
-        if ((seats != null && seats[0] != null && seats[0].riddenByEntity == null) || !canThrust && getDriveableType().maxThrottle != 0 && getDriveableType().maxNegativeThrottle != 0) {
+        if ((seats != null && seats[0] != null && seats[0].riddenByEntity == null) || !isEngineActive() && getDriveableType().maxThrottle != 0 && getDriveableType().maxNegativeThrottle != 0) {
             throttle *= 0.99F;
         }
         if (seats != null && seats[0] != null && seats[0].riddenByEntity == null) {
@@ -1339,6 +1345,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             } else if (this.ticksExisted == getDriveableType().placeTimeSecondary) {
                 p.addChatComponentMessage(new ChatComponentText("Secondary gun ready to use!"));
             }
+
+            if (engineStartDelay > 0 && engineStartDelay % (2.5*20) == 0) {
+                p.addChatComponentMessage(new ChatComponentText("Engine starting.. " + (float)engineStartDelay/20 + " seconds remaining."));
+            } else if (engineStartDelay == 1) {
+                p.addChatComponentMessage(new ChatComponentText("Engine started!"));
+            }
         }
 
         if (!worldObj.isRemote) {
@@ -1362,6 +1374,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         prevDeckCheck = deckCheck;
 
+        if (engineStartDelay > 0) { engineStartDelay--; }
         //Handle fuel
 
         int fuelMultiplier = 2;
@@ -1557,7 +1570,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 int meta = worldObj.getBlockMetadata(x, y, z);
 
                 float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
-                float damage = blockHardness * blockHardness * (float) speed;
+
+                float damage = 0;
+                FlansMod.log(" " + blockHardness);
+                if (blockHardness > 0.2) {
+                    damage = blockHardness * blockHardness * (float) speed;
+                }
 
                 if (null == blockHit.getCollisionBoundingBoxFromPool(this.worldObj, x, y, z)) {
                     damage = 0;
@@ -1565,20 +1583,19 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                 if (damage > 0) {
                     damagePart = true;
-                }
+                    if (!attackPart(p.part, DamageSource.inWall, damage) && TeamsManager.driveablesBreakBlocks) {
+                        // And if it didn't die from the attack, break the block
+                        worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(blockHit) + (meta << 12));
 
-                //Attack the part
-                if (!attackPart(p.part, DamageSource.inWall, damage) && TeamsManager.driveablesBreakBlocks) {
-                    //And if it didn't die from the attack, break the block
-                    worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(blockHit) + (meta << 12));
-
-                    if (!worldObj.isRemote) {
-                        blockHit.dropBlockAsItem(worldObj, x, y, z, meta, 1);
-                        worldObj.setBlockToAir(x, y, z);
+                        if (!worldObj.isRemote) {
+                            blockHit.dropBlockAsItem(worldObj, x, y, z, meta, 1);
+                            worldObj.setBlockToAir(x, y, z);
+                        }
+                    } else {
+                        // The part died!
+                        worldObj.createExplosion(this, currentPos.xCoord, currentPos.yCoord, currentPos.zCoord, 1F,
+                                false);
                     }
-                } else {
-                    //The part died!
-                    worldObj.createExplosion(this, currentPos.xCoord, currentPos.yCoord, currentPos.zCoord, 1F, false);
                 }
             }
 

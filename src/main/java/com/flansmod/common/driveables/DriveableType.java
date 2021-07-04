@@ -68,6 +68,8 @@ public class DriveableType extends PaintableType {
     public int reloadSoundTick = 15214541;
     public float fallDamageFactor = 1.0F;
 
+    public int engineStartTime = 0;
+
     //Weapon variables
     /**
      * The weapon type assigned to left mouse
@@ -623,6 +625,8 @@ public class DriveableType extends PaintableType {
                 numMissileSlots = Integer.parseInt(split[1]);
             else if (split[0].equals("FuelTankSize"))
                 fuelTankSize = Integer.parseInt(split[1]);
+            else if (split[0].equals("EngineStartTime"))
+                engineStartTime = Integer.parseInt(split[1]);
             else if (split[0].equals("FilterAmmunitionInput"))
                 filterAmmunition = Boolean.parseBoolean(split[1]);
 

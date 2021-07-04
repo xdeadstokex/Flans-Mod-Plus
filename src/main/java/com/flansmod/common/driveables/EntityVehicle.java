@@ -240,22 +240,34 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         switch (key) {
             case 0: //Accelerate : Increase the throttle, up to 1.
             {
-                if (type.useRealisticAcceleration) {
-                    throttle += data.engine.enginePower / type.mass;
-                } else {
-                    throttle += 0.01F;
+                if (isEngineActive()) {
+                    if (type.useRealisticAcceleration) {
+                        throttle += data.engine.enginePower / type.mass;
+                    } else {
+                        throttle += 0.01F;
+                    }
                 }
+
                 if (throttle > 1F)
                     throttle = 1F;
+
                 return true;
             }
             case 1: //Decelerate : Decrease the throttle, down to -1, or 0 if the vehicle cannot reverse
             {
-                throttle -= 0.01F;
+                if (isEngineActive()) {
+                    if (type.useRealisticAcceleration) {
+                        throttle -= data.engine.enginePower / type.mass;
+                    } else {
+                        throttle -= 0.01F;
+                    }
+                }
+
                 if (throttle < -1F)
                     throttle = -1F;
                 if (throttle < 0F && type.maxNegativeThrottle == 0F)
                     throttle = 0F;
+
                 return true;
             }
             case 2: //Left : Yaw the wheels left
@@ -486,7 +498,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         if (disabled || !hasBothTracks()) wheelsYaw = 0;
 
         //Rotate the wheels
-        if (hasEnoughFuel()) {
+        if (hasEnoughFuel() && isEngineActive()) {
             wheelsAngle += throttle / 3.25F;
         }
 
@@ -568,7 +580,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             //If the player driving this is in creative, then we can thrust, no matter what
             boolean canThrustCreatively = !TeamsManager.vehiclesNeedFuel || (seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode);
             //Otherwise, check the fuel tanks!
-            if (canThrustCreatively || data.fuelInTank > Math.abs(data.engine.fuelConsumption * throttle)) {
+            if ((canThrustCreatively || data.fuelInTank > Math.abs(data.engine.fuelConsumption * throttle)) && isEngineActive()) {
                 if (getVehicleType().tank) {
                     boolean left = wheel.ID == 0 || wheel.ID == 3;
 
@@ -748,10 +760,17 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             roll = Lerp(roll, troll, 0.2F);
 
             if (type.tank) {
-                float velocityScale = 0.04F * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle) * data.engine.engineSpeed;
-                float steeringScale = 0.1F * (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier);
-                float effectiveWheelSpeed = ((wheelsYaw * steeringScale)) * velocityScale;
-                yaw = axes.getYaw() / 180F * 3.14159F + (effectiveWheelSpeed);
+                float effectiveWheelSpeed;
+                if (isEngineActive()) {
+                    float velocityScale = 0.04F * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle)
+                            * data.engine.engineSpeed;
+                    float steeringScale = 0.1F * (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier);
+                    effectiveWheelSpeed = ((wheelsYaw * steeringScale)) * velocityScale;
+                } else {
+                    effectiveWheelSpeed = 0;
+                }  
+
+                yaw = axes.getYaw() / 180F * 3.14159F + effectiveWheelSpeed;
             } else {
                 float velocityScale = 0.1F * throttle * (throttle > 0 ? type.maxThrottle : type.maxNegativeThrottle) * data.engine.engineSpeed;
                 float steeringScale = 0.1F * (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier);
@@ -777,7 +796,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             soundPosition = type.startSoundLength;
         }
         //Flying sound
-        if (throttle >= 0.2F && soundPosition == 0 && hasEnoughFuel()) {
+        if (throttle >= 0.2F && soundPosition == 0 && hasEnoughFuel() && isEngineActive()) {
             PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.engineSoundRange, dimension, type.engineSound, false);
             soundPosition = type.engineSoundLength;
         }
@@ -788,7 +807,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             }
         }
         //Back sound
-        if (throttle <= -0.2F && soundPosition == 0 && hasEnoughFuel()) {
+        if (throttle <= -0.2F && soundPosition == 0 && hasEnoughFuel() && isEngineActive()) {
             PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.backSoundRange, dimension, type.backSound, false);
             soundPosition = type.backSoundLength;
         }
@@ -844,7 +863,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             animCountLeft++;
             animCountRight--;
             animSpeed = 1;
-            if (soundPosition == 0 && hasEnoughFuel() && type.tank) {
+            if (soundPosition == 0 && hasEnoughFuel() && type.tank && isEngineActive()) {
                 PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.engineSoundRange, dimension, type.engineSound, false);
                 soundPosition = type.engineSoundLength;
             }
@@ -853,7 +872,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             animCountLeft--;
             animCountRight++;
             animSpeed = 1;
-            if (soundPosition == 0 && hasEnoughFuel() && type.tank) {
+            if (soundPosition == 0 && hasEnoughFuel() && type.tank && isEngineActive() && isEngineActive()) {
                 PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.engineSoundRange, dimension, type.engineSound, false);
                 soundPosition = type.engineSoundLength;
             }
