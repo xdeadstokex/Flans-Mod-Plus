@@ -685,7 +685,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 return;
             }
 
-            //Right hand gun
+            //Right hand gun - main gun
             if (type.getFireMode(itemstack) == EnumFireMode.BURST && data.burstRoundsRemainingRight > 0) {
                 player.inventory.setInventorySlotContents(player.inventory.currentItem, tryToShoot(itemstack, type, world, player, false));
             }
@@ -710,7 +710,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 }
             }
 
-            //Left hand gun
+            //Left hand gun - offhand gun.
             if (type.oneHanded && data.offHandGunSlot != 0) {
                 ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
                 if (offHandGunStack != null && offHandGunStack.getItem() instanceof ItemGun) {
@@ -1103,6 +1103,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     reloadCount = 1;
                 }
 
+
                 if (reload(gunStack, gunType, world, entityplayer, false, left)) {
                     //Set player shoot delay to be the reload delay
                     //Set both gun delays to avoid reloading two guns at once
@@ -1154,15 +1155,15 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 //Update the stack in the gun
                 setBulletItemStack(gunStack, bulletStack, bulletID);
 
-                if (gunType.getFireMode(gunStack) == EnumFireMode.BURST) {
-                    if (left && data.burstRoundsRemainingLeft > 0)
-                        data.burstRoundsRemainingLeft--;
-                    if (!left && data.burstRoundsRemainingRight > 0)
-                        data.burstRoundsRemainingRight--;
-                }
-
                 if (gunType.consumeGunUponUse)
                     return null;
+            }
+
+            if (gunType.getFireMode(gunStack) == EnumFireMode.BURST) {
+                if (left && data.burstRoundsRemainingLeft > 0)
+                    data.burstRoundsRemainingLeft--;
+                if (!left && data.burstRoundsRemainingRight > 0)
+                    data.burstRoundsRemainingRight--;
             }
         }
         return gunStack;
