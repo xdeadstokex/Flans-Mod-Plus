@@ -428,6 +428,8 @@ This will override the value set in the gun's model!
 | WasteCompact | Boolean | false | Delete certain items when picked up to save inventory space |
 
 ### [DriveableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/DriveableType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
+
+PSA: On some versions of FlansMod, you MUST define your seat and drivers before adding guns, setting up traverse sounds or anything related to the vehicle's seats. You do this by ensuring Passenger definitions are higher in the file.
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | VehicleGunModelScale | Float | 1 | The scale to transform the vehicle guns |

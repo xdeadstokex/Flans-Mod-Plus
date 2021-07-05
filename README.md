@@ -15,6 +15,8 @@ This version of Flansmod Plus aims to be the most recent and stable.
 
 [Penetration System Guide](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/PenetrationSystem.md)
 
+[Discord (Support, Update Announcements)](https://discord.gg/JXxansAe3y)
+
 ## Download finished builds:
 
 [Curseforge Page](https://www.curseforge.com/minecraft/mc-mods/flans-mod-ultimate-stability-edition)
