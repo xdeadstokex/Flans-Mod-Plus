@@ -218,61 +218,70 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         if (type.description != null) {
             Collections.addAll(lines, type.description.split("_"));
         }
-        //Reveal all the gun stats when holding down the sneak key
-        if (!GameSettings.isKeyDown(shift)) {
-            //Show loaded ammo
-            for (int i = 0; i < type.getNumAmmoItemsInGun(stack); i++) {
-                ItemStack bulletStack = getBulletItemStack(stack, i);
-                if (bulletStack != null && bulletStack.getItem() instanceof ItemBullet) {
-                    BulletType bulletType = ((ItemBullet) bulletStack.getItem()).type;
-                    String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
-                    lines.add(line);
+
+        if (FlansMod.showItemDescriptions) {
+            // Reveal all the gun stats when holding down the sneak key
+            if (!GameSettings.isKeyDown(shift)) {
+                // Show loaded ammo
+                for (int i = 0; i < type.getNumAmmoItemsInGun(stack); i++) {
+                    ItemStack bulletStack = getBulletItemStack(stack, i);
+                    if (bulletStack != null && bulletStack.getItem() instanceof ItemBullet) {
+                        BulletType bulletType = ((ItemBullet) bulletStack.getItem()).type;
+                        String line = bulletType.name + " " + (bulletStack.getMaxDamage() - bulletStack.getItemDamage())
+                                + "/" + bulletStack.getMaxDamage();
+                        lines.add(line);
+                    }
                 }
+
+                lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode())
+                        + "\u00a7r\u00a77 for details");
+            } else {
+                lines.add("");
+
+                if (originGunbox != "") {
+                    lines.add("\u00a79Box" + "\u00a77: " + originGunbox);
+                }
+
+                AttachmentType barrel = type.getBarrel(stack);
+                if (barrel != null && barrel.silencer)
+                    lines.add("\u00a7e[Suppressed]");
+
+                if (type.getSecondaryFire(stack))
+                    lines.add("\u00a7e[Underbarrel]");
+
+                lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
+                lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilDisplay(stack), 2));
+                String sprintingControl = String.format("%s%s", EnumChatFormatting.RED,
+                        roundFloat(1 - type.getRecoilControl(stack, true, false), 2));
+                String sneakingControl = String.format("%s%s", EnumChatFormatting.GREEN,
+                        roundFloat(1 - type.getRecoilControl(stack, false, true), 2));
+                String normalControl = String.format("%s%s", EnumChatFormatting.AQUA,
+                        roundFloat(1 - type.getRecoilControl(stack, false, false), 2));
+                lines.add("\u00a79Recoil Control" + "\u00a77: "
+                        + String.format("%s %s %s", sprintingControl, normalControl, sneakingControl));
+                lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack, false, false), 2));
+                lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
+                lines.add("\u00a79Bullet Speed" + "\u00a77: " + roundFloat(type.getBulletSpeed(stack), 2));
+                // TODO Convert to stack values so this works with attachments
+                if (type.shootDelay != 0) {
+                    lines.add("\u00a79FireRate" + "\u00a77: " + 1200 / type.shootDelay + "\u00a77rpm ");
+                } else
+                    lines.add("\u00a79FireRate" + "\u00a77: " + type.roundsPerMin + "\u00a77rpm ");
+                lines.add("\u00a79Mode" + "\u00a77: \u00a7f" + type.getFireMode(stack).toString().toLowerCase());
+
+                lines.add("");
+                lines.add("\u00a7eAttachments");
+                boolean empty = true;
+                for (AttachmentType attachment : type.getCurrentAttachments(stack)) {
+                    String line = attachment.name;
+                    lines.add(line);
+                    if (line != null)
+                        empty = false;
+                }
+
+                if (empty)
+                    lines.add("None");
             }
-
-            lines.add("Hold \u00a7b\u00a7o" + GameSettings.getKeyDisplayString(shift.getKeyCode()) + "\u00a7r\u00a77 for details");
-        } else {
-            lines.add("");
-            
-            if (originGunbox != "") {
-                lines.add("\u00a79Box" + "\u00a77: " + originGunbox);
-            }
-
-            AttachmentType barrel = type.getBarrel(stack);
-            if (barrel != null && barrel.silencer)
-                lines.add("\u00a7e[Suppressed]");
-
-            if (type.getSecondaryFire(stack))
-                lines.add("\u00a7e[Underbarrel]");
-
-            lines.add("\u00a79Damage" + "\u00a77: " + roundFloat(type.getDamage(stack), 2));
-            lines.add("\u00a79Recoil" + "\u00a77: " + roundFloat(type.getRecoilDisplay(stack), 2));
-            String sprintingControl = String.format("%s%s", EnumChatFormatting.RED, roundFloat(1 - type.getRecoilControl(stack, true, false), 2));
-            String sneakingControl = String.format("%s%s", EnumChatFormatting.GREEN, roundFloat(1 - type.getRecoilControl(stack, false, true), 2));
-            String normalControl = String.format("%s%s", EnumChatFormatting.AQUA, roundFloat(1 - type.getRecoilControl(stack, false, false), 2));
-            lines.add("\u00a79Recoil Control" + "\u00a77: " + String.format("%s %s %s", sprintingControl, normalControl, sneakingControl));
-            lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack, false, false), 2));
-            lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
-            lines.add("\u00a79Bullet Speed" + "\u00a77: " + roundFloat(type.getBulletSpeed(stack), 2));
-            //TODO Convert to stack values so this works with attachments
-            if (type.shootDelay != 0) {
-                lines.add("\u00a79FireRate" + "\u00a77: " + 1200 / type.shootDelay + "\u00a77rpm ");
-            } else
-                lines.add("\u00a79FireRate" + "\u00a77: " + type.roundsPerMin + "\u00a77rpm ");
-            lines.add("\u00a79Mode" + "\u00a77: \u00a7f" + type.getFireMode(stack).toString().toLowerCase());
-
-            lines.add("");
-            lines.add("\u00a7eAttachments");
-            boolean empty = true;
-            for (AttachmentType attachment : type.getCurrentAttachments(stack)) {
-                String line = attachment.name;
-                lines.add(line);
-                if (line != null)
-                    empty = false;
-            }
-
-            if (empty)
-                lines.add("None");
         }
     }
 
@@ -1297,9 +1306,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         // AttachmentType barrel = gunType.getBarrel(stack);
         // if (barrel == null || !barrel.disableMuzzleFlash) {
         //     FlansMod.packetHandler.sendToAllAround(
-        //             new PacketParticle("flame", entityPlayer.posX + 1, entityPlayer.posY + 1.6,
-        //                     entityPlayer.posZ + 1, 0, 0.05, 0),
-        //             entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 100, entityPlayer.dimension);
+        //         new PacketParticle("flame", entityPlayer.posX + 1, entityPlayer.posY + 1.6,
+        //                 entityPlayer.posZ + 1, 0, 0.05, 0),
+        //         entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 100, entityPlayer.dimension);
         // }
 
         

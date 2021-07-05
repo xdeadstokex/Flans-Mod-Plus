@@ -71,7 +71,7 @@ public class ItemBullet extends ItemShootable implements IFlanItem, IGunboxDescr
     @SuppressWarnings("unchecked")
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean b) {
-        if (type.fancyDescription) {
+        if (type.fancyDescription && FlansMod.showItemDescriptions) {
             KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
 
             if (!type.packName.isEmpty()) {

@@ -123,6 +123,7 @@ public class FlansMod {
     public static float defaultADSSpreadMultiplier = 0.2F;
     public static float defaultADSSpreadMultiplierShotgun = 0.8F;
     public static boolean seatCollisions = true;
+    public static boolean showItemDescriptions = true;
 
 
     public static int armourSpawnRate = 20;
@@ -675,6 +676,7 @@ public class FlansMod {
             hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor" + COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
                     "Hit cross hair color " + COLOR[i]);
         }
+        showItemDescriptions = configFile.getBoolean("Enable fancy descriptions", Configuration.CATEGORY_GENERAL, showItemDescriptions, "Whether to show fancy item descriptions. These can be shown by pressing shift on an item ingame.");
 
         if (configFile.hasChanged())
             configFile.save();
@@ -723,6 +725,7 @@ public class FlansMod {
             hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor" + COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
                     "Hit cross hair color " + COLOR[i]);
         }
+        showItemDescriptions = configFile.getBoolean("Enable fancy descriptions", Configuration.CATEGORY_GENERAL, showItemDescriptions, "Whether to show fancy item descriptions. These can be shown by pressing shift on an item ingame.");
 
         if (side.isClient()) {
             String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "hold", "The type of aiming that you want to use 'toggle' or 'hold'");
