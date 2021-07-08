@@ -252,6 +252,8 @@ public class DriveableType extends PaintableType {
     public String engineSound = "";
     public int engineSoundLength;
     public int backSoundRange = 50;
+	public String exitSound = "";
+    public int exitSoundLength = 50;
     public String idleSound = "";
     public int idleSoundLength = 50;
     public String backSound = "";
@@ -890,6 +892,8 @@ public class DriveableType extends PaintableType {
                 engineSoundLength = Integer.parseInt(split[1]);
             else if (split[0].equals("IdleSoundLength"))
                 idleSoundLength = Integer.parseInt(split[1]);
+           else if (split[0].equals("ExitSoundLength"))
+                exitSoundLength = Integer.parseInt(split[1			
             else if (split[0].equals("BackSoundRange"))
                 backSoundRange = Integer.parseInt(split[1]);
             else if (split[0].equals("BackSoundLength"))
@@ -913,6 +917,9 @@ public class DriveableType extends PaintableType {
             } else if (split[0].equals("IdleSound")) {
                 idleSound = split[1];
                 FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            } else if (split[0].equals("ExitSound")) {
+                exitSound = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);				
             } else if (split[0].equals("BackSound")) {
                 backSound = split[1];
                 FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
