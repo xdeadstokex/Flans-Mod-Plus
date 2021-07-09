@@ -367,8 +367,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                                         FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, false, player.rotationYaw, player.rotationPitch));
                                     }
                                     if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && leftMouseHeld) {
-                                        if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
+                                        if (clientSideShoot(player, offHandGunStack, offHandGunType, true)) {
                                             player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
+                                        }    
                                     }
                                 }
                             }

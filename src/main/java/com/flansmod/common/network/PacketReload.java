@@ -124,8 +124,12 @@ public class PacketReload extends PacketBase {
     public void handleClientSide(EntityPlayer clientPlayer) {
         ItemStack stack = clientPlayer.getCurrentEquippedItem();
         PlayerData data = PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT);
-        if (left)
+        if (left) {
             stack = clientPlayer.inventory.getStackInSlot(data.offHandGunSlot - 1);
+            data.burstRoundsRemainingLeft = 0;
+        } else {
+            data.burstRoundsRemainingRight = 0;
+        }
         if (stack != null && stack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) stack.getItem()).type;
             if (left)
