@@ -893,7 +893,7 @@ public class DriveableType extends PaintableType {
             else if (split[0].equals("IdleSoundLength"))
                 idleSoundLength = Integer.parseInt(split[1]);
            else if (split[0].equals("ExitSoundLength"))
-                exitSoundLength = Integer.parseInt(split[1			
+                exitSoundLength = Integer.parseInt(split[1]);	
             else if (split[0].equals("BackSoundRange"))
                 backSoundRange = Integer.parseInt(split[1]);
             else if (split[0].equals("BackSoundLength"))

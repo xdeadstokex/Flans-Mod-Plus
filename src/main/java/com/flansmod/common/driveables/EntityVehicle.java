@@ -43,7 +43,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
      */
     public int soundPosition;
     public int idlePosition;
-	public int exitPosition;
     /**
      * Front wheel yaw, used to control the vehicle steering
      */
@@ -494,9 +493,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         if (soundPosition > 0)
             soundPosition--;
         if (idlePosition > 0)
-            idlePosition--;
-        if (exitPosition > 0)
-            exitPosition--;  		
+            idlePosition--;		
 
         if (type.tank && !hasBothTracks()) throttle = 0;
         if (disabled || !hasBothTracks()) wheelsYaw = 0;
