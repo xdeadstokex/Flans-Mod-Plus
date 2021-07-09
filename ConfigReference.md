@@ -550,7 +550,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | StartSoundLength | Integer | ~ | The length in ticks of the starting sound | 
 | EngineSoundRange | Integer | 50 | Radius in blocks to play the engine sound | 
 | EngineSoundLength | Integer | ~ | The length in ticks of the engine sound | 
-| IdleSoundLengh | Integer | 50 | The length in ticks of the starting sound This may be a mistake and actually be IdelSoundRange. Who knows? | 
+| IdleSoundLength | Integer | 50 | The length in ticks of the starting sound This may be a mistake and actually be IdelSoundRange. Who knows? | 
 | BackSoundRange | Integer | 50 | Radius in blocks to play the back sound | 
 | BackSoundLength | Integer | ~ | The length in ticks of the starting sound | 
 | SoundTime | Integer | 0 | The length in ticks of the ? sound | 
@@ -558,6 +558,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | PitchSoundLength | Integer | ~ | The length in ticks of the sound | 
 | PassengerYawSoundLength | SeatID soundLength | ~ | The length in ticks of the sound | 
 | PassengerPitchSoundLength | SeatID soundLength | ~ | The length in ticks of the sound |
+| ExitSoundLength | Integer | 50 | Length (in ticks) of the exit sound | 
+| ExitSound | string | ~ | The sound to play when a player exits a vehicle | 
 | StartSound | String | ~ | The name of the sound to play | 
 | EngineSound | String | ~ | The name of the sound to play | 
 | IdleSound | String | ~ | The name of the sound to play | 
