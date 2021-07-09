@@ -319,6 +319,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                 seats[0].riddenByEntity.setInvisible(false);
                 //resetZoom();
                 seats[0].riddenByEntity.mountEntity(null);
+                PacketPlaySound.sendSoundPacket(posX, posY, posZ, FlansMod.soundRange, dimension, type.exitSound, false);
                 return true;
             }
             case 7: //Inventory
@@ -492,7 +493,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         if (soundPosition > 0)
             soundPosition--;
         if (idlePosition > 0)
-            idlePosition--;
+            idlePosition--;		
 
         if (type.tank && !hasBothTracks()) throttle = 0;
         if (disabled || !hasBothTracks()) wheelsYaw = 0;
