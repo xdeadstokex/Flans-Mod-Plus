@@ -1618,9 +1618,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                         a = 3F;
                     }
                 }
-                Vec3 seatPos = Vec3.createVectorHelper(seat.posX + fwd.x * a, seat.posY + fwd.y * a, seat.posZ + fwd.z * a);
 
-                Vec3 wheelMidPos = Vec3.createVectorHelper((wheels[0].posX + wheels[1].posX)/2F, seatPos.yCoord, (wheels[0].posZ + wheels[1].posZ)/2F);
+                double checkY = Math.max((wheels[0].posY + wheels[1].posY)/2F + (this instanceof EntityVehicle ?  1.5 : 0), seat.posY);
+                Vec3 seatPos = Vec3.createVectorHelper(seat.posX + fwd.x * a, checkY + fwd.y * a, seat.posZ + fwd.z * a);
+                Vec3 wheelMidPos = Vec3.createVectorHelper((wheels[0].posX + wheels[1].posX)/2F, checkY, (wheels[0].posZ + wheels[1].posZ)/2F);
 
                 MovingObjectPosition hit = worldObj.rayTraceBlocks(seatPos, wheelMidPos, crashInWater);
                 if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK) {
