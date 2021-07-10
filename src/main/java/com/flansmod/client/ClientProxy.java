@@ -423,6 +423,7 @@ public class ClientProxy extends CommonProxy {
             double d8 = mc.renderViewEntity.posZ - p_72726_6_;
             EntityFX entityfx = null;
 
+            // VANILLA PARTICLES
             if (p_72726_1_.equals("hugeexplosion")) {
                 mc.effectRenderer.addEffect(entityfx = new EntityHugeExplodeFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_));
             } else if (p_72726_1_.equals("largeexplode")) {
@@ -430,6 +431,7 @@ public class ClientProxy extends CommonProxy {
             } else if (p_72726_1_.equals("fireworksSpark")) {
                 mc.effectRenderer.addEffect(entityfx = new EntityFireworkSparkFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_, mc.effectRenderer));
             }
+            // END OF VANILLA PARTICLES
 
             if (entityfx != null) {
                 return entityfx;
@@ -441,7 +443,7 @@ public class ClientProxy extends CommonProxy {
                 } else if (i > 1) {
                     return null;
                 } else {
-                    // FlansMod only
+                    // FLANS PARTICLES
                     if (p_72726_1_.equals("flansmod.flare")) {
                         entityfx = new EntityFlare(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     }
@@ -494,7 +496,12 @@ public class ClientProxy extends CommonProxy {
                     if (p_72726_1_.equals("flansmod.rocketexhaust")) {
                         entityfx = new EntityRocketexhaust(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     }
+                    // END OF CUSTOM FLANS PARTICLES
 
+
+
+
+                    // VANILLA PARTICLES
                     if (p_72726_1_.equals("bubble")) {
                         entityfx = new EntityBubbleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("suspended")) {
