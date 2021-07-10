@@ -272,6 +272,8 @@ This will override the value set in the gun's model!
 | DebrisParticleCount | Integer | 0 | Number of debris particles to create |
 | TrailParticles / SmokeTrail | Bool | false | Whether to create a trail of particles. |
 | TrailParticleType | String | smoke | The type of particle to emity for the trail |
+| HasLight | Boolean | false | Bullet should have full brightness. (Currently implemented for bullets only) |
+| HasDynamicLight | Boolean | false | Bullet should emit light. |
 
 ### [BulletType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/BulletType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |
@@ -388,8 +390,6 @@ This will override the value set in the gun's model!
 | HealAmount | Float | 0 | Amount to heal players by who use this bag |
 | AddPotionEffect / PotionEffect | String | ~ | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
-| HasLight | Boolean | false | Bullet should have full brightness. |
-| HasDynamicLight | Boolean | false | Bullet should emit light. |
 
 ### [MechaItemType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaItemType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
 | Keyword | Type | Default | Purpose |
