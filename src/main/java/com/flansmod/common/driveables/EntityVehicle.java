@@ -714,6 +714,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             amountToMoveCar.x = -axes.getXAxis().x*(float)getSpeedXZ()*0.1F;
             amountToMoveCar.z = -axes.getXAxis().z*(float)getSpeedXZ()*0.1F;
         }
+        collisionHardness = 0F;
         moveEntity(amountToMoveCar.x, amountToMoveCar.y, amountToMoveCar.z);
 
         this.motionY = bmy;

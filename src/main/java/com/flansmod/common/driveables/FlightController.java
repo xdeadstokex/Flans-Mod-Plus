@@ -50,8 +50,8 @@ public class FlightController {
 			throttle = 0F;
 			drag = 0.8F - ((float)plane.getSpeedXYZ()) < 0 ? 0 : 0.8F - ((float) plane.getSpeedXYZ());
 			doSpeedKick = plane.getSpeedXYZ() > 0.1;
-			plane.collisionHardness = 0F;
 		}
+		plane.collisionHardness = 0F;
 		
 		switch (mode) {
 		case PLANE: {

@@ -1572,7 +1572,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
 
                 float damage = 0;
-                FlansMod.log(" " + blockHardness);
                 if (blockHardness > 0.2) {
                     damage = blockHardness * blockHardness * (float) speed;
                 }
@@ -1604,7 +1603,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (FlansMod.seatCollisions) {
             // This is for preventing vehicle glitching. It makes seats collideable, and stops their motion if 
             for (EntitySeat seat : seats) {
-                if (seat == null || wheels == null ||wheels[0] == null || wheels[1] == null)
+                if (seat == null || wheels == null ||wheels[0] == null || wheels[1] == null || seat.riddenByEntity == null) 
                     continue;
                 DriveablePosition p = seat.getAsDriveablePosition();
                 if (driveableData.parts.get(p.part).dead)
