@@ -64,7 +64,7 @@ public class ItemPlane extends Item implements IPaintableItem
 	{
 		if(stack.stackTagCompound == null)
 		{
-			if(!world.isRemote && stack.getItemDamage() != 0)
+			if(!world.isRemote)
 				stack.stackTagCompound = getOldTagCompound(stack, world);
 			if(stack.stackTagCompound == null)
 			{
@@ -225,7 +225,16 @@ public class ItemPlane extends Item implements IPaintableItem
     @SideOnly(Side.CLIENT)
     public IIcon getIconIndex(ItemStack stack)
     {
-        return icons[stack.getItemDamage()];
+		if (stack != null) {
+			if (stack.getItemDamage() > icons.length) {
+				return icons[0];
+			} else {
+				return icons[stack.getItemDamage()];
+			}
+		} else {
+			return icons[0];
+		}
+
     }
 
     /** Make sure that creatively spawned planes have nbt data */
