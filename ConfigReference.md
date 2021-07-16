@@ -580,10 +580,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | LockingOnSound | String | ~ | The name of the sound to play | 
 | FlareSound | String | ~ | The name of the sound to play | 
 | FancyCollision | Boolean | false | Enable some fancy collision type |
-| AddCollisionMesh | (X,Y,Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to core |
-| AddCollisionMeshRaw | (X Y Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to core, but in a different way |
-| AddTurretCollisionMesh | (X,Y,Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to turret |
-| AddTurretCollisionMeshRaw | (X Y Z for all) position boxSize p1mod p2mod p3mod p4mod p5mod p6mod p8mod | ~ | Add collision shapebox to turret but in a different way |
+| AddCollisionMesh | [posX,posY,posZ] [sizeX,sizeY,sizeZ] [p1X,p1Y,p1Z] .. [p8X,p8Y,p8Z] | ~ | Add collision shapebox to core. p1..p8 are the corners of the shapebox. Positive = expand out, negative = shrink corner in. |
+| AddCollisionMeshRaw | posX posY posZ sizeX sizeY sizeZ p1X p1Y p1Z .. p8X p8Y p8Z | ~ | Add collision shapebox to core, but with no brackets. p1..p8 are the corners of the shapebox. Positive = expand out, negative = shrink corner in. |
+| AddTurretCollisionMesh | [posX,posY,posZ] [sizeX,sizeY,sizeZ] [p1X,p1Y,p1Z] .. [p8X,p8Y,p8Z] | ~ | Add collision shapebox to turret. p1..p8 are the corners of the shapebox. Positive = expand out, negative = shrink corner in. |
+| AddTurretCollisionMeshRaw | posX posY posZ sizeX sizeY sizeZ p1X p1Y p1Z .. p8X p8Y p8Z | ~ | Add collision shapebox to turret but with no brackets. p1..p8 are the corners of the shapebox. Positive = expand out, negative = shrink corner in. |
 | LeftLinkPoint | X Y Z | ~ | Add link point for track animation |
 | RightLinkPoint | X Y Z | ~ | Add link point for track animation |
 | TrackLinkLength | Float | 0 | Set link length for track animation |
