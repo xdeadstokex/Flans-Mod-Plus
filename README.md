@@ -11,11 +11,12 @@ This version of Flansmod Plus aims to be the most recent and stable.
 
 [Config reference](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/ConfigReference.md)
 
-[Wiki: Compiling](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Compiling)
-[Wiki: Particle Types](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Particle-Types)
-[Wiki: Penetration System](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Penetration-System)
-[Wiki: Vehicle-Player Collisions](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Player-Collisions)
-[Wiki: Vehicle Guns](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Vehicle-Guns)
+### Wiki Articles
+* [Wiki: Compiling](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Compiling)
+* [Wiki: Particle Types](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Particle-Types)
+* [Wiki: Penetration System](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Penetration-System)
+* [Wiki: Vehicle-Player Collisions](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Player-Collisions)
+* [Wiki: Vehicle Guns](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Vehicle-Guns)
 
 [Discord (Support, Update Announcements)](https://discord.gg/JXxansAe3y)
 
