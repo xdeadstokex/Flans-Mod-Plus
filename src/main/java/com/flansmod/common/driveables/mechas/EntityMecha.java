@@ -297,7 +297,11 @@ public class EntityMecha extends EntityDriveable
 			}
 			case 6 : //Exit : Get out
 			{
-				seats[0].riddenByEntity.mountEntity(null);
+				if (seats[0].riddenByEntity != null) {
+					seats[0].riddenByEntity.setInvisible(false);
+					seats[0].riddenByEntity.mountEntity(null);
+				}
+				
           		return true;
 			}
 			case 7 : //Inventory
@@ -737,6 +741,9 @@ public class EntityMecha extends EntityDriveable
             stompDelay--;
 		
 		prevLegsYaw = legAxes.getYaw();
+
+		if (type.setPlayerInvisible && !this.worldObj.isRemote && seats[0].riddenByEntity != null)
+			seats[0].riddenByEntity.setInvisible(true);
 		
 		//Autorepair. Like a Boss.
 		

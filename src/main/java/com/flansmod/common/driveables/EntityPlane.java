@@ -265,9 +265,11 @@ public class EntityPlane extends EntityDriveable {
             }
             case 6: //Exit : Get out
             {
-                if (seats[0].riddenByEntity != null)
+                if (seats[0].riddenByEntity != null) {
                     seats[0].riddenByEntity.setInvisible(false);
                     seats[0].riddenByEntity.mountEntity(null);
+                }
+                    
                 return true;
             }
             case 7: //Inventory : Check to see if this plane allows in-flight inventory editing or if the plane is on the ground
