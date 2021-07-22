@@ -2187,22 +2187,23 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             Vector3f.add(p7, pos, p7);
             Vector3f.add(p8, pos, p8);
 
-            boolean muff = true;
-            String wank = "crit";
+            String particleType = "crit";
 
 
-            /**
-             FlansMod.proxy.spawnParticle(wank, p1.x,p1.y,p1.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p2.x,p2.y,p2.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p3.x,p3.y,p3.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p4.x,p4.y,p4.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p5.x,p5.y,p5.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p6.x,p6.y,p6.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p7.x,p7.y,p7.z, 0,0,0);
-             FlansMod.proxy.spawnParticle(wank, p8.x,p8.y,p8.z, 0,0,0);
-             */
-            //renderTri(p1,p2,p3);
-            //renderTri(p3,p4,p1);
+            if (FlansMod.DEBUG) {
+                FlansMod.proxy.spawnParticle(particleType, p1.x, p1.y, p1.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p2.x, p2.y, p2.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p3.x, p3.y, p3.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p4.x, p4.y, p4.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p5.x, p5.y, p5.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p6.x, p6.y, p6.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p7.x, p7.y, p7.z, 0, 0, 0);
+                FlansMod.proxy.spawnParticle(particleType, p8.x, p8.y, p8.z, 0, 0, 0);
+
+                renderTri(p1, p2, p3);
+                renderTri(p3, p4, p1);
+            }
+            
             if (tester.nearestDistance < topFaceDist) tester.isOnTop = false;
 
 
