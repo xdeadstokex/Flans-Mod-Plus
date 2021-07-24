@@ -1,13 +1,19 @@
 package com.flansmod.common;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.flansmod.client.model.GunAnimations;
+import com.flansmod.common.driveables.*;
+import com.flansmod.common.driveables.mechas.ContainerMechaInventory;
+import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.guns.ContainerGunModTable;
 import com.flansmod.common.guns.boxes.ContainerGunBox;
+import com.flansmod.common.guns.boxes.GunBoxType;
+import com.flansmod.common.network.PacketBreakSound;
+import com.flansmod.common.paintjob.ContainerPaintjobTable;
+import com.flansmod.common.paintjob.TileEntityPaintjobTable;
+import com.flansmod.common.parts.ItemPart;
+import com.flansmod.common.parts.PartType;
+import com.flansmod.common.teams.ArmourBoxType;
+import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,25 +25,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-import com.flansmod.client.model.GunAnimations;
-import com.flansmod.common.driveables.ContainerDriveableInventory;
-import com.flansmod.common.driveables.ContainerDriveableMenu;
-import com.flansmod.common.driveables.DriveablePart;
-import com.flansmod.common.driveables.DriveableType;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EnumDriveablePart;
-import com.flansmod.common.driveables.mechas.ContainerMechaInventory;
-import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.guns.ContainerGunModTable;
-import com.flansmod.common.guns.boxes.GunBoxType;
-import com.flansmod.common.network.PacketBreakSound;
-import com.flansmod.common.paintjob.ContainerPaintjobTable;
-import com.flansmod.common.paintjob.TileEntityPaintjobTable;
-import com.flansmod.common.parts.ItemPart;
-import com.flansmod.common.parts.PartType;
-import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.types.EnumType;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class CommonProxy {
     protected static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
@@ -175,7 +168,7 @@ public class CommonProxy {
         ArrayList<ItemStack> dirts = new ArrayList<ItemStack>();
         dirts.add(0, new ItemStack(Item.getItemById(3)));
         CraftingInstance crafting = new CraftingInstance(player.inventory, dirts, new ItemStack(Item.getItemById(id)));
-        if (crafting.canCraft()) {
+        if (crafting.canCraft(player)) {
             crafting.craft(player.inventory.player);
         }
     }
@@ -214,7 +207,7 @@ public class CommonProxy {
                 }
             }
             //If we didn't find enough, give the stack a red outline
-            if (totalAmountFound < recipeStack.stackSize) {
+            if (totalAmountFound < recipeStack.stackSize && !player.capabilities.isCreativeMode) {
                 //For some reason, the player sent a craft packet, despite being unable to
                 canCraft = false;
                 break;
@@ -262,32 +255,34 @@ public class CommonProxy {
         }
 
         //If the player doesn't have any suitable engines, return
-        if (bestEngineStack == null) {
+        if (bestEngineStack == null && !player.capabilities.isCreativeMode) {
             player.inventory.copyInventory(temporaryInventory);
             return;
         }
 
-        //Remove the engines from the inventory
-        int numEnginesAcquired = 0;
-        for (int n = 0; n < player.inventory.getSizeInventory(); n++) {
-            //Get the stack in each slot
-            ItemStack stackInSlot = player.inventory.getStackInSlot(n);
-            //Check to see if its the engine we want
-            if (stackInSlot != null && stackInSlot.getItem() == bestEngineStack.getItem()) {
-                //Work out the amount to take from the stack
-                int amountFound = Math.min(stackInSlot.stackSize, type.numEngines() - numEnginesAcquired);
-                //Take it
-                stackInSlot.stackSize -= amountFound;
-                //Check for empty stacks
-                if (stackInSlot.stackSize <= 0)
-                    stackInSlot = null;
-                //Put the modified stack back in the inventory
-                player.inventory.setInventorySlotContents(n, stackInSlot);
-                //Increase the amount found counter
-                numEnginesAcquired += amountFound;
-                //If we have enough, stop looking
-                if (numEnginesAcquired == type.numEngines())
-                    break;
+        if (!player.capabilities.isCreativeMode) {
+            //Remove the engines from the inventory
+            int numEnginesAcquired = 0;
+            for (int n = 0; n < player.inventory.getSizeInventory(); n++) {
+                //Get the stack in each slot
+                ItemStack stackInSlot = player.inventory.getStackInSlot(n);
+                //Check to see if its the engine we want
+                if (stackInSlot != null && stackInSlot.getItem() == bestEngineStack.getItem()) {
+                    //Work out the amount to take from the stack
+                    int amountFound = Math.min(stackInSlot.stackSize, type.numEngines() - numEnginesAcquired);
+                    //Take it
+                    stackInSlot.stackSize -= amountFound;
+                    //Check for empty stacks
+                    if (stackInSlot.stackSize <= 0)
+                        stackInSlot = null;
+                    //Put the modified stack back in the inventory
+                    player.inventory.setInventorySlotContents(n, stackInSlot);
+                    //Increase the amount found counter
+                    numEnginesAcquired += amountFound;
+                    //If we have enough, stop looking
+                    if (numEnginesAcquired == type.numEngines())
+                        break;
+                }
             }
         }
 
