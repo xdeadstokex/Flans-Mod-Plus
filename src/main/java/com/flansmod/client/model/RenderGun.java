@@ -122,8 +122,7 @@ public class RenderGun implements IItemRenderer {
 		renderGun(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);
 	}
 
-	private void renderGun(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations,
-			boolean offHand, Object... data) {
+	private void renderGun(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
 		// The model scale
 		float f = 1F / 16F;
 		ModelGun model = gunType.model;
@@ -173,7 +172,7 @@ public class RenderGun implements IItemRenderer {
 			case EQUIPPED_FIRST_PERSON:
 			{
 				IScope scope = gunType.getCurrentScope(item);
-				if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay()) {
+				if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay() && !model.stillRenderGunWhenScopedOverlay) {
 					GL11.glPopMatrix();
 					return;
 				}
@@ -190,8 +189,9 @@ public class RenderGun implements IItemRenderer {
 					GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
 					GL11.glRotatef(-5F, 0F, 1F, 0F);
 					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-					if (gunType.hasScopeOverlay)
+					if (gunType.hasScopeOverlay) {
 						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+					}
 					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 					// forward, up, sideways
 					GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);
@@ -201,19 +201,28 @@ public class RenderGun implements IItemRenderer {
 					// left/right on length == left/right on height == null == down/up
 					GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
 					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-					if (gunType.hasScopeOverlay)
+					if (gunType.hasScopeOverlay) {
 						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+					}
 					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 					// forward, up, sideways
 					GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y,
 							0F + model.stanceTranslate.z);
 				} else {
-					GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
-					GL11.glRotatef(-5F, 0F, 1F, 0F);
-					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-					if (gunType.hasScopeOverlay)
-						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+					// Angle down slightly
+					GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F); // Angle nose down slightly -> angle nose up slightly
+					GL11.glRotatef(-5F, 0F, 1F, 0F); // Rotate Z nose inward
+					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch); // Slightly forward, slightly up -> more up, to left -> more towards middle
+					if (gunType.hasScopeOverlay) {
+						if (!model.stillRenderGunWhenScopedOverlay) {
+							// Move back into eye if ADS
+							GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+						}
+						// If gun is still rendered, we don't want to put gun behind the eye.
+					}
+					// Rotate nose up
 					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+					// Move gun down as ADS progresses
 					GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
 				}
 

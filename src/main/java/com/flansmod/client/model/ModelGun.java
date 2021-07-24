@@ -213,6 +213,8 @@ public class ModelGun extends ModelBase
 	public Vector3f translateClip = new Vector3f(0F, 0F, 0F);
 	public Vector3f stagedtranslateClip = new Vector3f(0F, 0F, 0F);
 	public boolean stagedReload = false;
+
+	public boolean stillRenderGunWhenScopedOverlay = false;
 	
 
 	/** This offsets the render position for third person */
