@@ -214,8 +214,10 @@ public class ModelGun extends ModelBase
 	public Vector3f stagedtranslateClip = new Vector3f(0F, 0F, 0F);
 	public boolean stagedReload = false;
 
+	// Disables moving gun back when ADS.
 	public boolean stillRenderGunWhenScopedOverlay = false;
-	
+	// Multiplier for ADS effect (moving gun to middle, e.t.c.)
+	public float adsEffectMultiplier = 2f;
 
 	/** This offsets the render position for third person */
 	public Vector3f thirdPersonOffset = new Vector3f();
