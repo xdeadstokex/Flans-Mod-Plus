@@ -1,11 +1,13 @@
 package com.flansmod.client.gui;
 
-import java.util.HashMap;
-import java.util.Collections;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.input.Mouse;
-
+import com.flansmod.client.FlansModResourceHandler;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.driveables.DriveableType;
+import com.flansmod.common.driveables.mechas.MechaType;
+import com.flansmod.common.parts.ItemPart;
+import com.flansmod.common.parts.PartType;
+import com.flansmod.common.types.EnumType;
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,18 +17,13 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import java.util.Collections;
+import java.util.HashMap;
 
-import com.flansmod.client.FlansModResourceHandler;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.driveables.DriveableType;
-import com.flansmod.common.driveables.mechas.MechaType;
-import com.flansmod.common.parts.ItemPart;
-import com.flansmod.common.parts.PartType;
-import com.flansmod.common.types.EnumType;
-import com.flansmod.common.FlansMod;
-
+@SuppressWarnings("DuplicatedCode")
 public class GuiDriveableCrafting extends GuiScreen {
     /**
      * The background image
@@ -36,23 +33,25 @@ public class GuiDriveableCrafting extends GuiScreen {
     /**
      * The inventory of the player using this crafting table
      */
-    private InventoryPlayer inventory;
+    private final InventoryPlayer inventory;
     /**
      * The Minecraft instance
      */
-    private Minecraft mc;
+    private final Minecraft mc;
     /**
      * The world in which this crafting table resides
      */
-    private World world;
+    private final World world;
     /**
      * The crafting table co-ordinates
      */
-    private int x, y, z;
+    private final int x;
+    private final int y;
+    private final int z;
     /**
      * Item renderer
      */
-    private static RenderItem itemRenderer = new RenderItem();
+    private static final RenderItem itemRenderer = new RenderItem();
     /**
      * Gui origin
      */
@@ -86,8 +85,8 @@ public class GuiDriveableCrafting extends GuiScreen {
      */
     String recipeTooltip;
 
-    public GuiDriveableCrafting(InventoryPlayer playerinventory, World w, int i, int j, int k) {
-        inventory = playerinventory;
+    public GuiDriveableCrafting(InventoryPlayer inventoryPlayer, World w, int i, int j, int k) {
+        inventory = inventoryPlayer;
         mc = FMLClientHandler.instance().getClient();
         world = w;
         x = i;
@@ -95,6 +94,7 @@ public class GuiDriveableCrafting extends GuiScreen {
         z = k;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
         super.initGui();
@@ -236,7 +236,7 @@ public class GuiDriveableCrafting extends GuiScreen {
                             }
                         }
                         //If we didn't find enough, give the stack a red outline
-                        if (totalAmountFound < recipeStack.stackSize) {
+                        if (totalAmountFound < recipeStack.stackSize && !inventory.player.capabilities.isCreativeMode) {
                             mc.renderEngine.bindTexture(texture);
                             drawTexturedModalRect(guiOriginX + 8 + c * 18, guiOriginY + 138 + r * 18, 195, 11, 16, 16);
                             canCraft = false;
@@ -248,7 +248,7 @@ public class GuiDriveableCrafting extends GuiScreen {
             }
 
             //Collect up all the engines into neat and tidy stacks so we can find if any of them are big enough and which of those stacks are best
-            HashMap<PartType, ItemStack> engines = new HashMap<PartType, ItemStack>();
+            HashMap<PartType, ItemStack> engines = new HashMap<>();
 
             //Find some suitable engines
             for (int n = 0; n < temporaryInventory.getSizeInventory(); n++) {
