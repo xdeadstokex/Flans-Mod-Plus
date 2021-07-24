@@ -102,8 +102,8 @@ BAB
 | Mode | String | FULLAUTO | The mode of the gun. (fullauto, minigun, burst, semiauto) |
 | Scope | String | ~ | None = NoScope, otherwise scopeTexture |
 | AllowNightVision | Bool | false | Gives night vision effect when scoped |
-| ZoomLevel | Float | 1 | Zoom level of the default scope |
-| FOVZoomLevel | Float | 1.5 | The FOV zoom level of the default scope |
+| ZoomLevel | Float | 1 | Zoom level of the default scope. It is NOT possible to zoom in *and* have the gun visible, due to a limitation of forge. |
+| FOVZoomLevel | Float | 1.5 | The FOV zoom level of the default scope. Keeps the gun visible (if animated properly). |
 | Deployable | Bool | false | Whether the gun is placeable |
 | DeployedModel | String | ~ | The model name of the deployed model |
 | CasingModel | String | ~ | The model name of the casings to eject |
@@ -357,8 +357,8 @@ This will override the value set in the gun's model!
 | StickToEntity | Boolean | false | Sticks to X |
 | StickToDriveable | Boolean | false | Sticks to X |
 | StickToEntityAfter | Boolean | false | ? |
-| AllowStickSound | Boolean | false | Whether to play the stick sound |
-| StickSoundRange | Integer | 10 | The range to play the stick sound |
+| AllowStickSound | Boolean | false | Whether to play the stick sound. Only triggers on StickEntityAfter type of sticking. |
+| StickSoundRange | Integer | 10 | The range to play the stick sound. Only triggers on StickEntityAfter type of sticking. |
 | StickSound | String | ~ | The sound to play when sticking |
 | NumExplodeParticles | Integer | 0 | Number of explosion particles to create |
 | ExplodeParticles | String | largesmoke | The type of explosion particles to create |
