@@ -214,6 +214,7 @@ public class GunType extends PaintableType implements IScope
 	public boolean deployable = false;
 	/** The deployable model */
 	public ModelMG deployableModel;
+	public String deployableModelString;
 	/** The deployable model's texture*/
 	public String deployableTexture;
 	/** Various deployable settings controlling the player view limits and standing position */
@@ -239,8 +240,10 @@ public class GunType extends PaintableType implements IScope
 	public float modelScale = 1F;
 	/** For adding a bullet casing model to render */
 	public ModelCasing casingModel;
+	public String casingModelString;
 	/** For adding a muzzle flash model to render */
 	public ModelFlash flashModel;
+	public String flashModelString;
 	/** Set a bullet casing texture */
 	public String casingTexture;
 	/** Set a muzzle flash texture */
@@ -524,14 +527,20 @@ public class GunType extends PaintableType implements IScope
 			}
 			else if(split[0].equals("Deployable"))
 				deployable = split[1].equals("True");
-			else if(FMLCommonHandler.instance().getSide().isClient() && deployable && split[0].equals("DeployedModel"))
+			else if(FMLCommonHandler.instance().getSide().isClient() && deployable && split[0].equals("DeployedModel")) {
 				deployableModel = FlansMod.proxy.loadModel(split[1], shortName, ModelMG.class);
+				deployableModelString = split[1];
+			}
 			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("Model")))
 				model = FlansMod.proxy.loadModel(split[1], shortName, ModelGun.class);
-			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("CasingModel")))
+			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("CasingModel"))) {
 				casingModel = FlansMod.proxy.loadModel(split[1], shortName, ModelCasing.class);
-			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("FlashModel")))
+				casingModelString = split[1];
+			}
+			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("FlashModel"))) {
 				flashModel = FlansMod.proxy.loadModel(split[1], shortName, ModelFlash.class);
+				flashModelString = split[1];
+			}
 			else if(split[0].equals("CasingTexture"))
 				casingTexture = split[1];
 			else if(split[0].equals("FlashTexture"))
@@ -1008,6 +1017,10 @@ public class GunType extends PaintableType implements IScope
 			model.thirdPersonOffset = parseVector3f(split);
 		else if (split[0].equals("animItemFrameOffset"))
 			model.itemFrameOffset = parseVector3f(split);
+		else if (split[0].equals("animStillRenderGunWhenScopedOverlay"))
+			model.stillRenderGunWhenScopedOverlay = Boolean.parseBoolean(split[1]);
+		else if (split[0].equals("animAdsEffectMultiplier"))
+			model.adsEffectMultiplier = Float.parseFloat(split[1]);
 	}
 
 	/** Used only for driveables */
@@ -1058,6 +1071,9 @@ public class GunType extends PaintableType implements IScope
 	public void reloadModel()
 	{
 		model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
+		deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
+		casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
+		flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
 	}
 
 	@Override
