@@ -3,9 +3,6 @@ package com.flansmod.common.driveables;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
-import java.util.Vector;
-
-import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -13,7 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -29,7 +25,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import cofh.api.energy.IEnergyContainerItem;
 
 import com.flansmod.api.IControllable;
@@ -44,7 +39,6 @@ import com.flansmod.common.driveables.DriveableType.ShootParticle;
 import com.flansmod.common.driveables.collisions.CollisionPlane;
 import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 import com.flansmod.common.driveables.collisions.CollisionTest;
-import com.flansmod.common.driveables.collisions.RidingEntityPosition;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.EntityDamageSourceFlans;
@@ -64,12 +58,8 @@ import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.teams.TeamsManager;
-import com.flansmod.common.tools.ItemTool;
-import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -1053,7 +1043,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         prevPropAngle = propAngle;
         prevRotorAngle = rotorAngle;
         if (throttle != 0) {
-            propAngle += (Math.pow(throttle, 0.4)) * 1.5;
+            propAngle += (Math.pow(Math.abs(throttle), 0.4)) * 1.5;
             rotorAngle += throttle / 7F;
         }
 
