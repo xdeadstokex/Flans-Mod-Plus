@@ -36,6 +36,7 @@ BAB
 |-----------------------------|------------|----------------|-------------------------------------------------------------------------------------------|
 | Damage | Float | 0 | Multiplies the damage of the bullet |
 | MeleeDamage | Float | 1 | The damage caused by punching with the gun |
+| MeleeDamageDriveableModifier | Float | 1 | Multiplier for melee damage when the entity is a DriveableEntity. |
 | CounterRecoilForce | Float | 0.8 | Constant to determine how quickly the gun returns to centre after firing. Higher = longer |
 | CounterRecoilForceSneaking | Float | 0.7 | ~ |
 | CounterRecoilForceSprinting | Float | 0.9 | ~ |

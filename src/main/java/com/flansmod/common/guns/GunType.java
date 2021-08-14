@@ -85,6 +85,8 @@ public class GunType extends PaintableType implements IScope
 	public float damage = 0;
 	/** The damage inflicted upon punching someone with this gun */
 	public float meleeDamage = 1;
+	// Modifier for melee damage against specifically driveable entities.
+	public float meleeDamageDriveableModifier = 1;
 	/** The speed of bullets upon leaving this gun */
 	public float bulletSpeed = 5.0F;
 	/** The number of bullet entities created by each shot */
@@ -320,6 +322,9 @@ public class GunType extends PaintableType implements IScope
 				meleeDamage = Float.parseFloat(split[1]);
 				if(meleeDamage > 0F)
 					secondaryFunction = EnumSecondaryFunction.MELEE;
+			}
+			else if (split[0].equals("MeleeDamageDriveableModifier")) {
+				meleeDamageDriveableModifier = Float.parseFloat(split[1]);
 			}
 			else if(split[0].equals("CounterRecoilForce"))
 				recoilCounterCoefficient = Float.parseFloat(split[1]);
@@ -1221,14 +1226,14 @@ public class GunType extends PaintableType implements IScope
 	}
 
 	/** Get the melee damage of a specific gun, taking into account attachments */
-	public float getMeleeDamage(ItemStack stack)
+	public float getMeleeDamage(ItemStack stack, boolean driveable)
 	{
 		float stackMeleeDamage = meleeDamage;
 		for(AttachmentType attachment : getCurrentAttachments(stack))
 		{
 			stackMeleeDamage *= attachment.meleeDamageMultiplier;
 		}
-		return stackMeleeDamage;
+		return stackMeleeDamage * (driveable ? meleeDamageDriveableModifier : 1);
 	}
 
 	/** Get the damage of a specific gun, taking into account attachments */

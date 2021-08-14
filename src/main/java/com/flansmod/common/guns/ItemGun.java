@@ -978,7 +978,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                                     default:
                                 }
 
-                                if (playerHit.hitbox.player.attackEntityFrom(getMeleeDamage(player), swingDistance * type.meleeDamage)) {
+                                if (playerHit.hitbox.player.attackEntityFrom(getMeleeDamage(player), swingDistance * type.getMeleeDamage(itemstack, false))) {
                                     //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
                                     playerHit.hitbox.player.arrowHitTimer++;
                                     playerHit.hitbox.player.hurtResistantTime = playerHit.hitbox.player.maxHurtResistantTime / 2;
@@ -988,7 +988,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                                     world.spawnEntityInWorld(new EntityDebugDot(world, new Vector3f(data.lastMeleePositions[k].x + dPos.x * playerHit.intersectTime, data.lastMeleePositions[k].y + dPos.y * playerHit.intersectTime, data.lastMeleePositions[k].z + dPos.z * playerHit.intersectTime), 1000, 1F, 0F, 0F));
                             } else if (bulletHit instanceof EntityHit) {
                                 EntityHit entityHit = (EntityHit) bulletHit;
-                                if (entityHit.entity.attackEntityFrom(DamageSource.causePlayerDamage(player), swingDistance * type.meleeDamage) && entityHit.entity instanceof EntityLivingBase) {
+                                if (entityHit.entity.attackEntityFrom(DamageSource.causePlayerDamage(player), swingDistance * type.getMeleeDamage(itemstack, ((EntityHit) bulletHit).entity instanceof EntityDriveable)) && entityHit.entity instanceof EntityLivingBase) {
                                     EntityLivingBase living = (EntityLivingBase) entityHit.entity;
                                     //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
                                     living.arrowHitTimer++;
