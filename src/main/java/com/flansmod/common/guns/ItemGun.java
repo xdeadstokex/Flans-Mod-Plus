@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.flansmod.common.network.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -27,14 +28,6 @@ import com.flansmod.common.guns.raytracing.EnumHitboxType;
 import com.flansmod.common.guns.raytracing.PlayerBulletHit;
 import com.flansmod.common.guns.raytracing.PlayerHitbox;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
-import com.flansmod.common.network.PacketGunFire;
-import com.flansmod.common.network.PacketGunRecoil;
-import com.flansmod.common.network.PacketGunSpread;
-import com.flansmod.common.network.PacketGunState;
-import com.flansmod.common.network.PacketPlaySound;
-import com.flansmod.common.network.PacketReload;
-import com.flansmod.common.network.PacketSelectOffHandGun;
-import com.flansmod.common.network.PacketParticle;
 //import com.flansmod.common.network.PacketUpdateSpeed;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
@@ -1305,13 +1298,11 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             }
         }
 
-        // AttachmentType barrel = gunType.getBarrel(stack);
-        // if (barrel == null || !barrel.disableMuzzleFlash) {
-        //     FlansMod.packetHandler.sendToAllAround(
-        //         new PacketParticle("flame", entityPlayer.posX + 1, entityPlayer.posY + 1.6,
-        //                 entityPlayer.posZ + 1, 0, 0.05, 0),
-        //         entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 100, entityPlayer.dimension);
-        // }
+         AttachmentType barrel = gunType.getBarrel(stack);
+         if ((barrel == null || !barrel.disableMuzzleFlash) && type.showMuzzleFlashParticles) {
+             PacketMuzzleFlash p = new PacketMuzzleFlash(entityPlayer, type.muzzleFlashParticle, type.muzzleFlashParticleSize, (type.flashTexture == null && type.showMuzzleFlashParticlesToShooter), gunType.shortName);
+             FlansMod.packetHandler.sendToAllAround(p, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 160, entityPlayer.dimension);
+         }
 
         
         if (!world.isRemote && bulletStack.getItem() instanceof ItemShootable) {

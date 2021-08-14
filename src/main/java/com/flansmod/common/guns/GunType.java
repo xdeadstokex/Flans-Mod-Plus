@@ -251,6 +251,13 @@ public class GunType extends PaintableType implements IScope
 	/** Set a hit marker texture */
 	public String hitTexture;
 
+	public String muzzleFlashParticle = "flansmod.muzzleflash";
+	public float muzzleFlashParticleSize = 1F;
+	public Boolean showMuzzleFlashParticles = true;
+	public Boolean showMuzzleFlashParticlesToShooter = false;
+	public Vector3f muzzleFlashParticlesHandOffset = new Vector3f();
+	public Vector3f muzzleFlashParticlesShoulderOffset = new Vector3f();
+
 	//Attachment settings
 	/** If this is true, then all attachments are allowed. Otherwise the list is checked */
 	public boolean allowAllAttachments = false;
@@ -545,6 +552,18 @@ public class GunType extends PaintableType implements IScope
 				casingTexture = split[1];
 			else if(split[0].equals("FlashTexture"))
 				flashTexture = split[1];
+			else if(split[0].equals("MuzzleFlashParticle"))
+				muzzleFlashParticle = split[1];
+			else if (split[0].equals("MuzzleFlashParticleSize"))
+				muzzleFlashParticleSize = Float.parseFloat(split[1]);
+			else if (split[0].equals("ShowMuzzleFlashParticle"))
+				showMuzzleFlashParticles = Boolean.parseBoolean(split[1]);
+			else if (split[0].equals("ShowMuzzleFlashParticleFirstPerson"))
+				showMuzzleFlashParticlesToShooter = Boolean.parseBoolean(split[1]);
+			else if (split[0].equals("MuzzleFlashParticleShoulderOffset"))
+				muzzleFlashParticlesShoulderOffset = new Vector3f(split[1], null);
+			else if (split[0].equals("MuzzleFlashParticleHandOffset"))
+				muzzleFlashParticlesHandOffset = new Vector3f(split[1], null);
 			else if(split[0].equals("ModelScale"))
 				modelScale = Float.parseFloat(split[1]);
 			else if(split[0].equals("Texture"))

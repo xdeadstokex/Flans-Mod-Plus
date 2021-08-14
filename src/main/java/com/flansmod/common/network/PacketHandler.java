@@ -166,6 +166,7 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         registerPacket(PacketGunRecoil.class);
         registerPacket(PacketGunState.class);
         registerPacket(PacketHashSend.class);
+        registerPacket(PacketMuzzleFlash.class);
     }
 
     /**
@@ -290,12 +291,39 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         } else {
             players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
         }
+
+        float minRangeSq = minRange * minRange;
+        float maxRangeSq = maxRange * maxRange;
+
         for (Object p : players) {
             if (p instanceof EntityPlayerMP) {
                 EntityPlayerMP pl = (EntityPlayerMP) p;
                 if (pl.dimension == dimension) {
-                    double dist = Math.sqrt((pl.posX - x) * (pl.posX - x) + (pl.posY - y) * (pl.posY - y) + (pl.posZ - z) * (pl.posZ - z));
-                    if (dist > minRange && dist < maxRange) {
+                    double dist = (pl.posX - x) * (pl.posX - x) + (pl.posY - y) * (pl.posY - y) + (pl.posZ - z) * (pl.posZ - z);
+                    if (dist > minRangeSq && dist < maxRangeSq) {
+                        sendTo(packet, pl);
+                    }
+                }
+            }
+        }
+    }
+
+    public void sendToAllExcept(PacketBase packet, double x, double y, double z, float range, EntityPlayer player, int dimension) {
+        List players;
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            players = Minecraft.getMinecraft().theWorld.playerEntities;
+        } else {
+            players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        }
+
+        float rangeSq = range * range;
+
+        for (Object p : players) {
+            if (p instanceof EntityPlayerMP) {
+                EntityPlayerMP pl = (EntityPlayerMP) p;
+                if (pl.dimension == dimension && !pl.getUniqueID().equals(player.getUniqueID())) {
+                    double dist = (pl.posX - x) * (pl.posX - x) + (pl.posY - y) * (pl.posY - y) + (pl.posZ - z) * (pl.posZ - z);
+                    if (dist < rangeSq) {
                         sendTo(packet, pl);
                     }
                 }

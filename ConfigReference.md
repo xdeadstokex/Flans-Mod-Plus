@@ -110,6 +110,12 @@ BAB
 | FlashModel | String | ~ | The model name of the muzzle flash |
 | CasingTexture | String | ~ | The texture name of the casings to eject |
 | FlashTexture | String | ~ | The texture name of the muzzle flash |
+| MuzzleFlashParticle | String | flansmod.muzzleflash | Particle to use for muzzle flash effect. |
+| MuzzleFlashParticleSize | Float | 1 | Scaling for size of muzzle flash particle. |
+| MuzzleFlashParticleShoulderOffset | Vector3F | [0, 0, 0] | Offset relative to the players body. Used to calculate hand position. Uses format [x,y,z] where x, y and z can be floats. |
+| MuzzleFlashParticleHandOffset | Vector3F | [0, 0, 0] | Offset relative to the players right arm. Used to calculate gun position. Uses format [x,y,z] where x, y and z can be floats. |
+| ShowMuzzleFlashParticle | Boolean | true | Whether to show muzzle flash particles by default. |
+| ShowMuzzleFlashParticleFirstPerson | Boolean | true | Whether to show muzzle flash particles to the shooter by default. |#
 | ModelScale | Float | 1 | The scale to transform by |
 | Texture | String | ~ | The name of the texture file to use |
 | HitTexture | String | ~ | The name of the hit texture file to use. Will look in the skins folder. |

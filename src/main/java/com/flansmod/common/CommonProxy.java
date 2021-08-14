@@ -373,8 +373,12 @@ public class CommonProxy {
 
     public void spawnParticle(String p_72869_1_,
                               double p_72869_2_, double p_72869_4_, double p_72869_6_,
-                              double p_72869_8_, double p_72869_10_, double p_72869_12_) {
+                              double p_72869_8_, double p_72869_10_, double p_72869_12_, float scale) {
+    }
 
+    public void spawnParticle(String p_72869_1_,
+                              double p_72869_2_, double p_72869_4_, double p_72869_6_,
+                              double p_72869_8_, double p_72869_10_, double p_72869_12_) {
     }
 
     public float getMouseSensitivity() {

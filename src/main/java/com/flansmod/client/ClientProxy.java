@@ -398,17 +398,20 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void spawnParticle(String s,
-                              double x, double y, double z,
-                              double mx, double my, double mz) {
+    public void spawnParticle(String s, double x, double y, double z, double mx, double my, double mz) {
+        spawnParticle(s, x, y, z, mx, my, mz, 1.0F);
+    }
+
+    @Override
+    public void spawnParticle(String s, double x, double y, double z, double mx, double my, double mz, float scale) {
         try {
-            doSpawnParticle(s, x, y, z, mx, my, mz);
+            doSpawnParticle(s, x, y, z, mx, my, mz, scale);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
 
-    private static EntityFX doSpawnParticle(String p_72726_1_, double p_72726_2_, double p_72726_4_, double p_72726_6_, double p_72726_8_, double p_72726_10_, double p_72726_12_) {
+    private static EntityFX doSpawnParticle(String p_72726_1_, double p_72726_2_, double p_72726_4_, double p_72726_6_, double p_72726_8_, double p_72726_10_, double p_72726_12_, float scale) {
         Minecraft mc = Minecraft.getMinecraft();
         World theWorld = mc.theWorld;
         if (mc.renderViewEntity != null && mc.effectRenderer != null) {
@@ -446,56 +449,35 @@ public class ClientProxy extends CommonProxy {
                     // FLANS PARTICLES
                     if (p_72726_1_.equals("flansmod.flare")) {
                         entityfx = new EntityFlare(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.smoker")) {
+                    } else if (p_72726_1_.equals("flansmod.smoker")) {
                         entityfx = new EntitySmokeGrenade(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.flash")) {
+                    } else if (p_72726_1_.equals("flansmod.flash")) {
                         entityfx = new EntityFlash(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.smokeburst")) {
+                    } else if (p_72726_1_.equals("flansmod.smokeburst")) {
                         entityfx = new EntitySmokeBurst(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.bigsmoke")) {
+                    } else if (p_72726_1_.equals("flansmod.bigsmoke")) {
                         entityfx = new EntityBigSmoke(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.debris1")) {
+                    } else if (p_72726_1_.equals("flansmod.debris1")) {
                         entityfx = new EntityDebris1(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.fmflame")) {
+                    } else if (p_72726_1_.equals("flansmod.fmflame")) {
                         entityfx = new EntityFMFlame(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.fmtracer")) {
+                    } else if (p_72726_1_.equals("flansmod.fmtracer")) {
                         entityfx = new EntityFMTracer(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.fmtracergreen")) {
+                    } else if (p_72726_1_.equals("flansmod.fmtracergreen")) {
                         entityfx = new EntityFMTracerGreen(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.fmtracerred")) {
+                    } else if (p_72726_1_.equals("flansmod.fmtracerred")) {
                         entityfx = new EntityFMTracerRed(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-
-                    if (p_72726_1_.equals("flansmod.afterburn")) {
+                    } else if (p_72726_1_.equals("flansmod.muzzleflash")) {
+                        entityfx = new EntityFMMuzzleFlash(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                        entityfx.multipleParticleScaleBy(scale);
+                    } else if (p_72726_1_.equals("flansmod.afterburn")) {
                         entityfx = new EntityAfterburn(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.fmsmoke")) {
+                    } else if (p_72726_1_.equals("flansmod.fmsmoke")) {
                         entityfx = new EntityFMSmoke(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                    }
-
-                    if (p_72726_1_.equals("flansmod.rocketexhaust")) {
+                    } else if (p_72726_1_.equals("flansmod.rocketexhaust")) {
                         entityfx = new EntityRocketexhaust(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     }
+
                     // END OF CUSTOM FLANS PARTICLES
 
 
@@ -611,6 +593,7 @@ public class ClientProxy extends CommonProxy {
                     }
 
                     if (entityfx != null) {
+                        entityfx.multipleParticleScaleBy(scale);
                         mc.effectRenderer.addEffect(entityfx);
                     }
 

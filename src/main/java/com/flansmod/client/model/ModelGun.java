@@ -1,5 +1,6 @@
 package com.flansmod.client.model;
 
+import com.flansmod.client.tmt.PositionTextureVertex;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
@@ -53,8 +54,8 @@ public class ModelGun extends ModelBase
 	public Vector3f accessoryAttachPoint = new Vector3f();
 
 	//Muzzle flash models
-	public Vector3f defaultBarrelFlashPoint = new Vector3f(0,0,0);
-	public Vector3f muzzleFlashPoint = new Vector3f(0,0,0);
+	public Vector3f defaultBarrelFlashPoint = null;
+	public Vector3f muzzleFlashPoint = null;
 	public boolean hasFlash = false;
 
 	//Arms rendering
@@ -217,7 +218,7 @@ public class ModelGun extends ModelBase
 	// Disables moving gun back when ADS.
 	public boolean stillRenderGunWhenScopedOverlay = false;
 	// Multiplier for ADS effect (moving gun to middle, e.t.c.)
-	public float adsEffectMultiplier = 2f;
+	public float adsEffectMultiplier = 1;
 
 	/** This offsets the render position for third person */
 	public Vector3f thirdPersonOffset = new Vector3f();
@@ -500,4 +501,5 @@ public class ModelGun extends ModelBase
 			mod.rotationPointZ += z;
 		}
 	}
+
 }
