@@ -7,8 +7,7 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.vector.Vector;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.PlayerItemPositionUtils;
-import com.jcraft.jogg.Packet;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.Minecraft;
