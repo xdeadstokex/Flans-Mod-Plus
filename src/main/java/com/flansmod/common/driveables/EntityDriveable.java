@@ -2475,26 +2475,26 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 //Create a flans mod explosion rather than a standard MC one. allows control over death boom   	
     	        {
         	        new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
-        		        	type.explosionRadius, type.explosionPower,TeamsManager.explosions && type.explosionBreaksBlocks,
-        		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, seatNum, seatNum);
+        		        	type.deathExplosionRadius, type.deathExplosionPower,TeamsManager.explosions && type.deathExplosionBreaksBlocks,
+        		        	type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
         	
         	        }
         	        else
         	        {
         	        	worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks);
         	        }
-        		if(!worldObj.isRemote && type.fireRadius > 0.1F)
+        		if(!worldObj.isRemote && type.deathFireRadius > 0.1F)
         		{
-        			for(float i = -type.fireRadius; i < type.fireRadius; i++)
+        			for(float i = -type.deathFireRadius; i < type.deathFireRadius; i++)
         			{
-        				for(float j = -type.fireRadius; j < type.fireRadius; j++)
+        				for(float j = -type.deathFireRadius; j < type.deathFireRadius; j++)
         				{
-        					for(float k = -type.fireRadius; k < type.fireRadius; k++)
+        					for(float k = -type.deathFireRadius; k < type.deathFireRadius; k++)
         					{
         						int x = MathHelper.floor_double(i + posX);
         						int y = MathHelper.floor_double(j + posY);
         						int z = MathHelper.floor_double(k + posZ);
-        						if(i * i + j * j + k * k <= type.fireRadius * type.fireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean())
+        						if(i * i + j * j + k * k <= type.deathFireRadius * type.deathFireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean())
         						{
         							worldObj.setBlock(x, y, z, Blocks.fire, 0, 3);
         						}
