@@ -59,6 +59,7 @@ import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.common.guns.FlansModExplosion;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -2471,7 +2472,36 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
 
                 if (type.isExplosionWhenDestroyed)
-                    this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, 4, false);//Explosion when vehicle is destroyed
+//Create a flans mod explosion rather than a standard MC one. allows control over death boom   	
+    	        {
+        	        new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
+        		        	type.explosionRadius, type.explosionPower,TeamsManager.explosions && type.explosionBreaksBlocks,
+        		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, seatNum, seatNum);
+        	
+        	        }
+        	        else
+        	        {
+        	        	worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks);
+        	        }
+        		if(!worldObj.isRemote && type.fireRadius > 0.1F)
+        		{
+        			for(float i = -type.fireRadius; i < type.fireRadius; i++)
+        			{
+        				for(float j = -type.fireRadius; j < type.fireRadius; j++)
+        				{
+        					for(float k = -type.fireRadius; k < type.fireRadius; k++)
+        					{
+        						int x = MathHelper.floor_double(i + posX);
+        						int y = MathHelper.floor_double(j + posY);
+        						int z = MathHelper.floor_double(k + posZ);
+        						if(i * i + j * j + k * k <= type.fireRadius * type.fireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean())
+        						{
+        							worldObj.setBlock(x, y, z, Blocks.fire, 0, 3);
+        						}
+        					}
+        				}
+        			}
+        		}
 
 
                 for (DriveablePart part : driveableData.parts.values()) {
