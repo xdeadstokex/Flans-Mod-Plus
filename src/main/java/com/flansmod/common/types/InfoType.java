@@ -3,6 +3,7 @@ package com.flansmod.common.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flansmod.api.IInfoType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
@@ -17,7 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import com.flansmod.common.FlansMod;
 
-public abstract class InfoType {
+public abstract class InfoType implements IInfoType {
     /**
      * infoTypes
      */

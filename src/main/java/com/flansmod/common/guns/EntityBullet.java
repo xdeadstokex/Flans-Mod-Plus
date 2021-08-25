@@ -1,5 +1,6 @@
 package com.flansmod.common.guns;
 
+import com.flansmod.api.IEntityBullet;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EntityBullet extends EntityShootable implements IEntityAdditionalSpawnData {
+public class EntityBullet extends EntityShootable implements IEntityAdditionalSpawnData, IEntityBullet {
     private static int bulletLife = 600; //Kill bullets after 30 seconds
     public Entity owner;
     private int ticksInAir;
@@ -85,10 +86,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
      * If this is non-zero, then the player raytrace code will look back in time to when the player thinks their bullet should have hit
      */
     public int pingOfShooter = 0;
-    /**
-     * Avoids the fact that using the entity random to calculate spread direction always results in the same direction
-     */
-    public static Random bulletRandom = new Random();
     /**
      * Stop repeat detonations
      */
