@@ -273,6 +273,16 @@ public class DriveableType extends PaintableType {
     public boolean rangingGun = false;
 
     public boolean isExplosionWhenDestroyed = false;
+    //allows control over death explosion
+    public float fireRadius = 0F;
+    public float explosionRadius = 0F;
+    public float explosionPower = 1F;
+    public boolean explosionBreaksBlocks = true;
+    public float explosionDamageVsLiving  = 1.0F;
+    public float explosionDamageVsPlayer  = 1.0F;
+    public float explosionDamageVsPlane   = 1.0F;
+    public float explosionDamageVsVehicle = 1.0F;
+ //
     public String lockedOnSound = "";
     public int soundTime = 0;
     public int canLockOnAngle = 10;
@@ -478,6 +488,23 @@ public class DriveableType extends PaintableType {
 
             else if (split[0].equals("IsExplosionWhenDestroyed"))
                 isExplosionWhenDestroyed = Boolean.parseBoolean(split[1]);
+//Explosion alterations
+	    else if(split[0].equals("FireRadius") || split[0].equals("Fire"))
+				fireRadius = Float.parseFloat(split[1]);
+	    else if(split[0].equals("ExplosionRadius") || split[0].equals("Explosion"))
+				explosionRadius = Float.parseFloat(split[1]);
+    	    else if(split[0].equals("ExplosionPower"))
+				explosionPower = Float.parseFloat(split[1]);
+	    else if(split[0].equals("ExplosionBreaksBlocks"))
+				explosionBreaksBlocks = Boolean.parseBoolean(split[1].toLowerCase());
+	    else if(split[0].equals("ExplosionDamageVsLiving"))
+				explosionDamageVsLiving = Float.parseFloat(split[1]);
+	    else if(split[0].equals("ExplosionDamageVsPlayer"))
+				explosionDamageVsPlayer = Float.parseFloat(split[1]);
+	    else if(split[0].equals("ExplosionDamageVsPlane"))
+	 			explosionDamageVsPlane = Float.parseFloat(split[1]);
+	    else if(split[0].equals("ExplosionDamageVsVehicle"))
+				explosionDamageVsVehicle = Float.parseFloat(split[1]);
 
             else if (split[0].equals("FallDamageFactor"))
                 fallDamageFactor = Float.parseFloat(split[1]);
