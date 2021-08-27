@@ -59,6 +59,7 @@ import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.common.guns.FlansModExplosion;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -2471,8 +2472,32 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
 
                 if (type.isExplosionWhenDestroyed)
-                    this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, 4, false);//Explosion when vehicle is destroyed
-
+//Create a flans mod explosion rather than a standard MC one. allows control over death boom   	
+    	        {
+        	        new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
+        		        	type.deathExplosionRadius, type.deathExplosionPower,TeamsManager.explosions && type.deathExplosionBreaksBlocks,
+        		        	type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
+        	
+        	        }
+        		if(!worldObj.isRemote && type.deathFireRadius > 0.1F)
+        		{
+        			for(float i = -type.deathFireRadius; i < type.deathFireRadius; i++)
+        			{
+        				for(float j = -type.deathFireRadius; j < type.deathFireRadius; j++)
+        				{
+        					for(float k = -type.deathFireRadius; k < type.deathFireRadius; k++)
+        					{
+        						int x = MathHelper.floor_double(i + posX);
+        						int y = MathHelper.floor_double(j + posY);
+        						int z = MathHelper.floor_double(k + posZ);
+        						if(i * i + j * j + k * k <= type.deathFireRadius * type.deathFireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean())
+        						{
+        							worldObj.setBlock(x, y, z, Blocks.fire, 0, 3);
+        						}
+        					}
+        				}
+        			}
+        		}
 
                 for (DriveablePart part : driveableData.parts.values()) {
                     if (part.health > 0 && !part.dead)
