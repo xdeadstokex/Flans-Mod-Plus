@@ -2479,10 +2479,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         		        	type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
         	
         	        }
-        	        else
-        	        {
-        	        	worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks);
-        	        }
         		if(!worldObj.isRemote && type.deathFireRadius > 0.1F)
         		{
         			for(float i = -type.deathFireRadius; i < type.deathFireRadius; i++)
@@ -2502,7 +2498,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         				}
         			}
         		}
-
 
                 for (DriveablePart part : driveableData.parts.values()) {
                     if (part.health > 0 && !part.dead)
