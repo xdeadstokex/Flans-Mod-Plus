@@ -116,7 +116,7 @@ BAB
 | MuzzleFlashParticleShoulderOffset | Vector3F | [0, 0, 0] | Offset relative to the players body. Used to calculate hand position. Uses format [x,y,z] where x, y and z can be floats. |
 | MuzzleFlashParticleHandOffset | Vector3F | [0, 0, 0] | Offset relative to the players right arm. Used to calculate gun position. Uses format [x,y,z] where x, y and z can be floats. |
 | ShowMuzzleFlashParticle | Boolean | true | Whether to show muzzle flash particles by default. |
-| ShowMuzzleFlashParticleFirstPerson | Boolean | true | Whether to show muzzle flash particles to the shooter by default. |#
+| ShowMuzzleFlashParticleFirstPerson | Boolean | false | Whether to show muzzle flash particles to the shooter by default. |
 | ModelScale | Float | 1 | The scale to transform by |
 | Texture | String | ~ | The name of the texture file to use |
 | HitTexture | String | ~ | The name of the hit texture file to use. Will look in the skins folder. |
@@ -443,7 +443,15 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Model | String | ~ | Model name |
 | VehicleGunReloadTick | Integer | 15214541 | The tick to reload vehicle gun sounds. 9 days 19:18:47.050 ? Very cursed. |
 | Texture | String | ~ | Texture file to use |
-| IsExplosionWhenDestroyed | Boolean | flase | Make an explosion when the vehicle is destroyed |
+| IsExplosionWhenDestroyed | Boolean | false | Make an explosion when the vehicle is destroyed |
+| DeathExplosionPower | Float | 1 | Power of explosion when the vehicle is destroyed |
+| DeathExplosionRadius | Float | 1 | Radius of explosion when the vehicle is destroyed |
+| DeathExplosionBreaksBlocks | Boolean | true | Whether death explosion breaks blocks or not |
+| DeathFireRadius | Float | 1 | Radius of fire to be created when vehicle is destroyed |
+| DeathExplosionDamageVsLiving | Float | Damage of death explosion against living |
+| DeathExplosionDamageVsPlayer | Float | Damage of death explosion against players |
+| DeathExplosionDamageVsPlane | Float | Damage of death explosion against planes |
+| DeathExplosionDamageVsVehicle | Float | Damage of death explosion against vehicles |
 | FallDamageFactor | Float | 1 | Multiplier for fall damage in some way |
 | MaxThrottle | Float | 1 | Maximum throttle in generic units? |
 | MaxNegativeThrottle | Float | 0 | Maximum negative throttle, aka reversing |
