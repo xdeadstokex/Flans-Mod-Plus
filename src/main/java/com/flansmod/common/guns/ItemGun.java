@@ -1300,7 +1300,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
          AttachmentType barrel = gunType.getBarrel(stack);
          if ((barrel == null || !barrel.disableMuzzleFlash) && type.showMuzzleFlashParticles) {
-             PacketMuzzleFlash p = new PacketMuzzleFlash(entityPlayer, type.muzzleFlashParticle, type.muzzleFlashParticleSize, (type.flashTexture == null && type.showMuzzleFlashParticlesToShooter), gunType.shortName);
+             PacketMuzzleFlash p = new PacketMuzzleFlash(entityPlayer, type.muzzleFlashParticle, type.muzzleFlashParticleSize, type.flashTexture == null, gunType.shortName);
              FlansMod.packetHandler.sendToAllAround(p, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 160, entityPlayer.dimension);
          }
 

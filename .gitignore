@@ -1,11 +1,11 @@
 # Build and Bins
 .gradle/
-gradle/
 build/
 bin/
 out/
 run/*
 gradlew
+/gradle/wrapper/gradle-wrapper.jar
 
 # IDEs
 .classpath

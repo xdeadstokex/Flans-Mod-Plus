@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 import com.flansmod.client.model.EnumAnimationType;
 import com.flansmod.client.model.EnumMeleeAnimation;
-import com.flansmod.client.model.ModelAttachment;
 import com.flansmod.client.model.ModelCasing;
 import com.flansmod.client.model.ModelFlash;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,10 +18,8 @@ import net.minecraft.nbt.NBTTagList;
 import com.flansmod.client.model.ModelGun;
 import com.flansmod.client.model.ModelMG;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
-import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 
@@ -256,7 +250,7 @@ public class GunType extends PaintableType implements IScope
 	public String muzzleFlashParticle = "flansmod.muzzleflash";
 	public float muzzleFlashParticleSize = 1F;
 	public Boolean showMuzzleFlashParticles = true;
-	public Boolean showMuzzleFlashParticlesToShooter = false;
+	public Boolean showMuzzleFlashParticlesFirstPerson = false;
 	public Vector3f muzzleFlashParticlesHandOffset = new Vector3f();
 	public Vector3f muzzleFlashParticlesShoulderOffset = new Vector3f();
 
@@ -564,7 +558,7 @@ public class GunType extends PaintableType implements IScope
 			else if (split[0].equals("ShowMuzzleFlashParticle"))
 				showMuzzleFlashParticles = Boolean.parseBoolean(split[1]);
 			else if (split[0].equals("ShowMuzzleFlashParticleFirstPerson"))
-				showMuzzleFlashParticlesToShooter = Boolean.parseBoolean(split[1]);
+				showMuzzleFlashParticlesFirstPerson = Boolean.parseBoolean(split[1]);
 			else if (split[0].equals("MuzzleFlashParticleShoulderOffset"))
 				muzzleFlashParticlesShoulderOffset = new Vector3f(split[1], null);
 			else if (split[0].equals("MuzzleFlashParticleHandOffset"))

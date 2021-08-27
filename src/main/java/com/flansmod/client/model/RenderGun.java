@@ -555,11 +555,10 @@ public class RenderGun implements IItemRenderer {
 
 			// Option to offset flash location with a barrel attachment (location + offset =
 			// new location)
-			boolean isFlashEnabled = true;
-			if (barrelAttachment != null && barrelAttachment.disableMuzzleFlash)
-				isFlashEnabled = false;
+			boolean isFlashEnabled = barrelAttachment == null || !barrelAttachment.disableMuzzleFlash;
 
-			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
+			boolean pointsAreDefined = model.muzzleFlashPoint != null && (barrelAttachment != null ? barrelAttachment.model.attachmentFlashOffset != null : model.defaultBarrelFlashPoint != null);
+			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item) && pointsAreDefined)
 			{
 				GL11.glPushMatrix();
 				ModelFlash flash = type.flashModel;
