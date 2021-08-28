@@ -17,6 +17,7 @@ This version of Flansmod Plus aims to be the most recent and stable.
 * [Wiki: Penetration System](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Penetration-System)
 * [Wiki: Vehicle-Player Collisions](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Player-Collisions)
 * [Wiki: Vehicle Guns](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Vehicle-Guns)
+* [Wiki: Muzzle Flash](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Muzzle-Flash)
 
 [Discord (Support, Update Announcements)](https://discord.gg/JXxansAe3y)
 
