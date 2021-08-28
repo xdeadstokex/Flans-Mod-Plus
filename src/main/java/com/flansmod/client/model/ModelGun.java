@@ -501,5 +501,4 @@ public class ModelGun extends ModelBase
 			mod.rotationPointZ += z;
 		}
 	}
-
 }

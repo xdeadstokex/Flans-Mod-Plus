@@ -557,21 +557,25 @@ public class RenderGun implements IItemRenderer {
 			// new location)
 			boolean isFlashEnabled = barrelAttachment == null || !barrelAttachment.disableMuzzleFlash;
 
-			boolean pointsAreDefined = model.muzzleFlashPoint != null && (barrelAttachment != null ? barrelAttachment.model.attachmentFlashOffset != null : model.defaultBarrelFlashPoint != null);
-			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item) && pointsAreDefined)
+			if (isFlashEnabled && animations.muzzleFlashTime > 0 && type.flashModel != null && !type.getSecondaryFire(item))
 			{
 				GL11.glPushMatrix();
 				ModelFlash flash = type.flashModel;
 				GL11.glScalef(model.flashScale, model.flashScale, model.flashScale);
 				{
-					if (barrelAttachment != null)
-						GL11.glTranslatef(model.muzzleFlashPoint.x + barrelAttachment.model.attachmentFlashOffset.x,
-										  model.muzzleFlashPoint.y + barrelAttachment.model.attachmentFlashOffset.y,
-										  model.muzzleFlashPoint.z + barrelAttachment.model.attachmentFlashOffset.z);
-					else
-						GL11.glTranslatef(model.muzzleFlashPoint.x + model.defaultBarrelFlashPoint.x,
-										  model.muzzleFlashPoint.y + model.defaultBarrelFlashPoint.y,
-										  model.muzzleFlashPoint.z + model.defaultBarrelFlashPoint.z);
+					Vector3f base = model.muzzleFlashPoint == null ? Vector3f.Zero : model.muzzleFlashPoint;
+					if (barrelAttachment != null) {
+						Vector3f barrelOffset = (barrelAttachment.model != null && barrelAttachment.model.attachmentFlashOffset != null) ? barrelAttachment.model.attachmentFlashOffset : Vector3f.Zero;
+						GL11.glTranslatef(base.x + barrelOffset.x,
+											base.y + barrelOffset.y,
+											base.z + barrelOffset.z);
+					} else {
+						Vector3f defaultOffset = model.defaultBarrelFlashPoint == null ? Vector3f.Zero : model.defaultBarrelFlashPoint;
+
+						GL11.glTranslatef(base.x + defaultOffset.x,
+								base.y + defaultOffset.y,
+								base.z + defaultOffset.z);
+					}
 
 					renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(type.flashTexture));
 					ModelGun.glowOn();
