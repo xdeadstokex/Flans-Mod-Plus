@@ -93,3 +93,8 @@ build {
     dependsOn clearOutput
     dependsOn outputJar
 }
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
