@@ -16,7 +16,7 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 
 public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
-
+//:D
     public InfoType weapon;
     public EntityPlayer shooter;
     public boolean headshot;
