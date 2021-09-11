@@ -24,3 +24,6 @@ This version of Flansmod Plus aims to be the most recent and stable.
 ## Download finished builds:
 
 [Curseforge Page](https://www.curseforge.com/minecraft/mc-mods/flans-mod-ultimate-stability-edition)
+
+## An API for interacting with Flansmod, from bukkit or forge:
+[Link (Note, still in development)](https://github.com/pixelrider2000/Flans-API)
