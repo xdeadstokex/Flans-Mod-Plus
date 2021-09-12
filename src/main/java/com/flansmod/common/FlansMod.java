@@ -208,6 +208,7 @@ public class FlansMod {
 
         paintjobTable = new BlockPaintjobTable();
         GameRegistry.registerBlock(paintjobTable, "paintjobTable");
+        GameRegistry.addRecipe(new ItemStack(paintjobTable), "ICI", "III", "DDD", 'C', Items.cauldron, 'I', Items.iron_ingot, 'D', Items.dye);
         GameRegistry.registerTileEntity(TileEntityPaintjobTable.class, MODID);
 
         proxy.registerRenderers();
