@@ -368,8 +368,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     /**
      * Called with the movement of the mouse. Used in controlling vehicles if need be.
      *
-     * @param deltaY
-     * @param deltaX
+     * @param deltaY change in Y
+     * @param deltaX change in X
      * @return if mouse movement was handled.
      */
     @Override
@@ -2298,8 +2298,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     @SuppressWarnings("unused")
     public void updateRiderPos(Entity rider, CollisionTest test, Vector3f pos, Vector3f motion) {
-        boolean isDriveable = false;
-        if (rider instanceof EntityDriveable) isDriveable = true;
+        boolean isDriveable = rider instanceof EntityDriveable;
         Vector3f vehicleMotion = lastPos;
 
         Vector3f riderMountPoint = new Vector3f(rider.posX - posX, rider.posY - posY, rider.posZ - posZ);
@@ -2463,6 +2462,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     if (seat.riddenByEntity instanceof EntityPlayer) {
 //						((EntityPlayer)seats[i].riddenByEntity).addPotionEffect(new PotionEffect(Potion.harm.id, 10, 5));
                         Entity entity = seat.riddenByEntity;
+                        seat.riddenByEntity.setInvisible(false);
                         seat.riddenByEntity.mountEntity(null);
                         if (this.lastAtkEntity instanceof EntityPlayer) {
                             entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) this.lastAtkEntity), 10000000);
