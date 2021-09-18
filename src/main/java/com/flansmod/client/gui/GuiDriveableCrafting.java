@@ -311,7 +311,7 @@ public class GuiDriveableCrafting extends GuiScreen {
     }
 
     /**
-     * Item stack renderering method
+     * Item stack rendering method
      */
     private void drawSlotInventory(ItemStack itemstack, int i, int j) {
         if (itemstack == null || itemstack.getItem() == null)

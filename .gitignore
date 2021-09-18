@@ -6,6 +6,7 @@ out/
 run/*
 gradlew
 /gradle/wrapper/gradle-wrapper.jar
+classes/
 
 # IDEs
 .classpath
