@@ -867,7 +867,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
                 Vector3f dPos = data.lastMeleePositions[k] == null ? new Vector3f() : Vector3f.sub(nextPosInWorldCoords, data.lastMeleePositions[k], null);
 
-                if (player.worldObj.isRemote && FlansMod.DEBUG)
+                if (player.worldObj.isRemote && FlansMod.DEBUG && data.lastMeleePositions[k] != null)
                     player.worldObj.spawnEntityInWorld(new EntityDebugVector(player.worldObj, data.lastMeleePositions[k], dPos, 200, 1F, 0F, 0F));
 
                 //Do the raytrace
