@@ -61,7 +61,7 @@ public class GunAnimations {
     public int casingStage = 0;
     public int lastCasingStage = 0;
 
-    /** Hammer model mechanics */
+    /* Hammer model mechanics */
     /**
      * If in single action, the model will play a modified animation and delay hammer reset
      */
@@ -184,7 +184,7 @@ public class GunAnimations {
         if (meleeAnimationLength > 0) {
             meleeAnimationProgress++;
             //If we are done, reset
-            if (meleeAnimationProgress == meleeAnimationLength)
+            if (meleeAnimationProgress > meleeAnimationLength)
                 meleeAnimationProgress = meleeAnimationLength = 0;
         }
     }
