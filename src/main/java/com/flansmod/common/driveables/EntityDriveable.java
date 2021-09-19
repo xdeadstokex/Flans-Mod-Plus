@@ -948,7 +948,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     }
 
     public boolean isEngineActive() {
-        return (driverIsCreative() || driveableData.fuelInTank > 0) && engineStartDelay == 0;
+        return (driverIsCreative() || driveableData.fuelInTank > 0) && engineStartDelay == 0 || getDriveableType().fuelTankSize <= 0;
     }
 
     public void correctWheelPos() {
