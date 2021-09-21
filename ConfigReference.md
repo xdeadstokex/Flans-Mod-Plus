@@ -502,7 +502,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | BombSlots / MineS;ots | Integer | ~ | The number of slots for bombs in the driveable |
 | MissileSlots / ShellSlots | Integer | ~ | The number of slots for missiles in the driveable |
 | RestrictAmmunitionInput | Bool | false | Whether to only allow bullet types/grenade types in gun/bomb/missile slots in the vehicle. |
-| FuelTankSize | Integer | 100 | Possibly buckets? Not sure. |
+| FuelTankSize | Integer | 100 | Size of fuel tank. -1 means that the vehicle does not need fuel, and will ignore engine start times. |
 | BulletDetectionRadius | Integer | 5 | The radius (in blocks) to check for bullets |
 | AddAmmo | String | ~ | Add an ammo type by shortname |
 | AllowAllAmmo / AcceptAllAmmo | Boolean | false | Allow any type of ammunition to be shot (Please dont do this) |
