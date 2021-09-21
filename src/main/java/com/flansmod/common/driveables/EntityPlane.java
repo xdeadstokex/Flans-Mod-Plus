@@ -207,7 +207,7 @@ public class EntityPlane extends EntityDriveable {
             FlansMod.getPacketHandler().sendToServer(new PacketDriveableKey(key));
             return true;
         }
-        boolean canThrust = ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || getDriveableData().fuelInTank > 0) && isEngineActive();
+        boolean canThrust = ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || getDriveableData().fuelInTank > 0) && isEngineActive() || type.fuelTankSize < 0;
         switch (key) {
             case 0: //Accelerate : Increase the throttle, up to 1.
             {
@@ -590,7 +590,7 @@ public class EntityPlane extends EntityDriveable {
 
         //Movement
 
-        boolean canThrust = (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || data.fuelInTank > 0;
+        boolean canThrust = (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || data.fuelInTank > 0 || type.fuelTankSize < 0;
 
         //Throttle handling
         //Without a player, default to 0
