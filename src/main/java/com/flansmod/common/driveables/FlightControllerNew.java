@@ -300,19 +300,10 @@ public class FlightControllerNew {
 		//stalling pitch mechanics plugged in as well
 		if (speed < type.takeoffSpeed) {
 			lift = -9.8F;
-			if(pitch > 10) {
-				plane.axes.rotateLocalPitch((float) -1F);
-			}
 		} else if (speed < (type.takeoffSpeed * 0.5F)){
 			lift = -4.9F;
-			if(pitch > 10) {
-				plane.axes.rotateLocalPitch((float) -0.1F);
-			}
 		} else if (speed < (type.takeoffSpeed * 0.75F)){
 			lift = -2.45F;
-			if(pitch > 10) {
-				plane.axes.rotateLocalPitch((float) -0.01F);
-			}
 		} else if (speed < (type.takeoffSpeed * 0.9F)){
 			lift = -0.65F;
 		} else if (speed < type.takeoffSpeed) {
