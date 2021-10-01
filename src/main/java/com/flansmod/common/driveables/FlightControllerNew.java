@@ -302,22 +302,16 @@ public class FlightControllerNew {
 			lift = -9.8F;
 			if(pitch > 10) {
 				plane.axes.rotateLocalPitch((float) -1F);
-			} else if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
-				plane.axes.rotateLocalPitch((float) 0.0F);
 			}
 		} else if (speed < (type.takeoffSpeed * 0.5F)){
 			lift = -4.9F;
 			if(pitch > 10) {
 				plane.axes.rotateLocalPitch((float) -0.1F);
-			} else if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
-				plane.axes.rotateLocalPitch((float) 0.0F);
 			}
 		} else if (speed < (type.takeoffSpeed * 0.75F)){
 			lift = -2.45F;
 			if(pitch > 10) {
 				plane.axes.rotateLocalPitch((float) -0.01F);
-			} else if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
-				plane.axes.rotateLocalPitch((float) 0.0F);
 			}
 		} else if (speed < (type.takeoffSpeed * 0.9F)){
 			lift = -0.65F;
@@ -349,7 +343,7 @@ public class FlightControllerNew {
 		// If we don't do this, the gravity will keep being applied, giving a speed of 0.3 with no motion.
 		if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
 			plane.motionY = -0.001;
-			plane.axes.rotateLocalPitch((float) -0.1F);
+			plane.axes.rotateLocalPitch((float) -0.5F);
 		} else if(pitch < 7) {
 			plane.axes.rotateLocalPitch((float) -0.00F);
 		}
