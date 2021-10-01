@@ -14,27 +14,32 @@ public class PlaneType extends DriveableType
 {
 	/** What type of flying vehicle is this? */
 	public EnumPlaneMode mode = EnumPlaneMode.PLANE;	
-	/** Pitch modifiers */
+	//Control Modifiers
 	public float lookDownModifier = 1F, lookUpModifier = 1F;
-	/** Roll modifiers */
 	public float rollLeftModifier = 1F, rollRightModifier = 1F;
-	/** Yaw modifiers */
 	public float turnLeftModifier = 1F, turnRightModifier = 1F;
-	/** Co-efficient of lift which determines how the plane flies */
-	public float lift = 1F;
-
-	public float emptyDrag = 1F;
-
+	//vehicle settings
+    public float restingPitch = 0F;
+    public boolean spinWithoutTail = false;
 	public boolean heliThrottlePull = true;
-	
-	/** The point at which bomb entities spawn */
+	//Does this use the new flight controller?
+	public boolean newFlightControl; 
+	//Physics Modifiers
+	public float lift = 1F;
+	public float takeoffSpeed = 0.5F;
+	public float maxSpeed = 2.0F;
+	public boolean supersonic = false;
+	public float wingArea = 1F;
+	//Max thrust in 10s of kgf
+	public float maxThrust = 50.0F;
+	//mass in kg
+    public float mass = 1000.0F;
+	public float emptyDrag = 1F;
+	//Weapon system variables
 	public Vector3f bombPosition;
-	/** The time in ticks between bullets fired by the nose / wing guns */
 	public int planeShootDelay;
-	/** The time in ticks between bombs dropped */
 	public int planeBombDelay;
-	
-	
+	//Aesthetic features
 	//Wing Animations
 	public Vector3f wingPos1 = new Vector3f(0,0,0);
 	public Vector3f wingPos2 = new Vector3f(0,0,0);
@@ -42,7 +47,6 @@ public class PlaneType extends DriveableType
 	public Vector3f wingRot2 = new Vector3f(0,0,0);
 	public Vector3f wingRate = new Vector3f(0,0,0);
 	public Vector3f wingRotRate = new Vector3f(0,0,0);
-	
 	//Wing Wheel Animations
 	public Vector3f wingWheelPos1 = new Vector3f(0,0,0);
 	public Vector3f wingWheelPos2 = new Vector3f(0,0,0);
@@ -50,7 +54,6 @@ public class PlaneType extends DriveableType
 	public Vector3f wingWheelRot2 = new Vector3f(0,0,0);
 	public Vector3f wingWheelRate = new Vector3f(0,0,0);
 	public Vector3f wingWheelRotRate = new Vector3f(0,0,0);
-	
 	//Body Wheel Animations
 	public Vector3f bodyWheelPos1 = new Vector3f(0,0,0);
 	public Vector3f bodyWheelPos2 = new Vector3f(0,0,0);
@@ -58,7 +61,6 @@ public class PlaneType extends DriveableType
 	public Vector3f bodyWheelRot2 = new Vector3f(0,0,0);
 	public Vector3f bodyWheelRate = new Vector3f(0,0,0);
 	public Vector3f bodyWheelRotRate = new Vector3f(0,0,0);
-	
 	//Tail Wheel Animations
 	public Vector3f tailWheelPos1 = new Vector3f(0,0,0);
 	public Vector3f tailWheelPos2 = new Vector3f(0,0,0);
@@ -66,7 +68,6 @@ public class PlaneType extends DriveableType
 	public Vector3f tailWheelRot2 = new Vector3f(0,0,0);
 	public Vector3f tailWheelRate = new Vector3f(0,0,0);
 	public Vector3f tailWheelRotRate = new Vector3f(0,0,0);
-	
 	//Door animations
 	public Vector3f doorPos1 = new Vector3f(0,0,0);
 	public Vector3f doorPos2 = new Vector3f(0,0,0);
@@ -79,21 +80,18 @@ public class PlaneType extends DriveableType
 	public ArrayList<Propeller> propellers = new ArrayList<Propeller>();
 	/** The positions, parent parts and recipe items of the helicopter propellers, used to calculate forces and render the plane correctly */
 	public ArrayList<Propeller> heliPropellers = new ArrayList<Propeller>(), heliTailPropellers = new ArrayList<Propeller>();
-				
-	/** Aesthetic features */
+	//Wheter to enable variable gear, doors, or wings 
     public boolean hasGear = false, hasDoor = false, hasWing = false;
+    //Do wings fold when Gear are deployed?
     public boolean foldWingForLand = false;
+    //Can it fly with oor open?
 	public boolean flyWithOpenDoor = false;
+	//Do these automatically deploy when near ground?
 	public boolean autoOpenDoorsNearGround = true;
 	public boolean autoDeployLandingGearNearGround = true;
-    /** Default pitch for when parked. Will implement better system soon */
-    public float restingPitch = 0F;
-    
-    public boolean spinWithoutTail = false;
-    
+	//Is this a valkyrie? "very specific"
     public boolean valkyrie = false;
-    
-    /** Whether the player can access the inventory while in the air */
+    //Can you access the inventory in flight?
     public boolean invInflight = true;
 
 	public static ArrayList<PlaneType> types = new ArrayList<PlaneType>();
@@ -119,6 +117,10 @@ public class PlaneType extends DriveableType
 			//Plane Mode
 			if(split[0].equals("Mode"))
 				mode = EnumPlaneMode.getMode(split[1]);
+			//Better flight model?
+			if (split[0].equals("NewFlightControl"))
+				newFlightControl = Boolean.parseBoolean(split[1]);
+			
 			//Yaw modifiers
 			if(split[0].equals("TurnLeftSpeed"))
 				turnLeftModifier = Float.parseFloat(split[1]);
@@ -138,13 +140,26 @@ public class PlaneType extends DriveableType
 			//Lift
 			if(split[0].equals("Lift"))
 				lift = Float.parseFloat(split[1]);
+			//Flight variables
+			if(split[0].equals("TakeoffSpeed"))
+				takeoffSpeed = Float.parseFloat(split[1]);
+			if(split[0].equals("MaxSpeed"))
+				maxSpeed = Float.parseFloat(split[1]);
+			//Is it Supersonic?
+			if (split[0].equals("Supersonic"))
+				supersonic = Boolean.parseBoolean(split[1]);
+			if(split[0].equals("MaxThrust"))
+				maxThrust = Float.parseFloat(split[1]);
+            if (split[0].equals("Mass"))
+                mass = Float.parseFloat(split[1]);
+			if(split[0].equals("WingArea"))
+				wingArea = Float.parseFloat(split[1]);
 
 			if (split[0].equals("HeliThrottlePull"))
 				heliThrottlePull = Boolean.parseBoolean(split[1]);
 			if (split[0].equals("EmptyDrag"))
 				emptyDrag = Float.parseFloat(split[1]);
-				
-				
+							
 			//Propellers and Armaments
 
 			if(split[0].equals("ShootDelay"))
@@ -172,7 +187,6 @@ public class PlaneType extends DriveableType
 				driveableRecipe.add(new ItemStack(propeller.itemType.item));
 			}
 			
-
 			if(split[0].equals("HasFlare"))
 				hasFlare = split[1].equals("True");
 			if(split[0].equals("FlareDelay"))
