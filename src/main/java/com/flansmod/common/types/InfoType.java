@@ -1,9 +1,10 @@
 package com.flansmod.common.types;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.flansmod.api.IInfoType;
+import com.flansmod.common.FlansMod;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
@@ -12,17 +13,15 @@ import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-import com.flansmod.common.FlansMod;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class InfoType implements IInfoType {
     /**
      * infoTypes
      */
-    public static List<InfoType> infoTypes = new ArrayList<InfoType>();
+    public static List<InfoType> infoTypes = new ArrayList<>();
 
     public String contentPack;
     public Item item;
@@ -209,7 +208,7 @@ public abstract class InfoType implements IInfoType {
                     // Split ID with . and if it contains a second part, use it
                     // as damage value.
                     if (recipeLine[i * 2 + 2].contains("."))
-                        recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.valueOf(recipeLine[i * 2 + 2].split("\\.")[1]));
+                        recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.parseInt(recipeLine[i * 2 + 2].split("\\.")[1]));
                     else
                         recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2], 0);
                 }
@@ -218,7 +217,7 @@ public abstract class InfoType implements IInfoType {
                 recipe = new Object[recipeLine.length - 1];
                 for (int i = 0; i < (recipeLine.length - 1); i++) {
                     if (recipeLine[i + 1].contains("."))
-                        recipe[i] = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.valueOf(recipeLine[i + 1].split("\\.")[1]));
+                        recipe[i] = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.parseInt(recipeLine[i + 1].split("\\.")[1]));
                     else
                         recipe[i] = getRecipeElement(recipeLine[i + 1], 0);
                 }
@@ -231,11 +230,6 @@ public abstract class InfoType implements IInfoType {
             }
         }
     }
-
-    public Item getItem() {
-        return item;
-    }
-
 
     public static ItemStack getRecipeElement(String s, int damage) {
         return getRecipeElement(s, 1, damage);
@@ -330,7 +324,33 @@ public abstract class InfoType implements IInfoType {
         return new PotionEffect(potionID, duration, amplifier, false);
     }
 
+    //TODO: This seems to always return "Material.ground", regardless of the input...
     public static Material getMaterial(String material) {
         return Material.ground;
+    }
+
+    @Override
+    public String getContentPack() {
+        return contentPack;
+    }
+
+    @Override
+    public Item getItem() {
+        return item;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getShortName() {
+        return shortName;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 }
