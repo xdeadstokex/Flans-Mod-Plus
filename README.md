@@ -18,6 +18,7 @@ This version of Flansmod Plus aims to be the most recent and stable.
 * [Wiki: Vehicle-Player Collisions](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Player-Collisions)
 * [Wiki: Vehicle Guns](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Vehicle-Guns)
 * [Wiki: Muzzle Flash](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Muzzle-Flash)
+* [Wiki: Muzzle Flash](https://github.com/Unknown025/Flans-Mod-Plus/wiki/New-Flight-Model)
 
 [Discord (Support, Update Announcements)](https://discord.gg/JXxansAe3y)
 
