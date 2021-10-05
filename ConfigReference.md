@@ -678,13 +678,20 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Mode | String | PLANE | VTOL / HELI / PlANE |
+| NewFlightControl | Boolean | false | Whether to enable new flight physics for planes |
+| MaxThrust | Float | 50 | Maximum thrust of an engine in 10s of kgf |
+| MaxSpeed | Float | 2.0 | Max Speed plane can fly blocks/tick |
+| TakeoffSpeed | Float | 0.5 | Speed where plane can start to fly |
 | TurnLeftSpeed | Float | 1 | Modifier for turn speed |
 | TurnRightSpeed | Float | 1 | Modifier for turn speed |
 | LookUpSpeed | Float | 1 | Modifier for turn speed |
 | LookDownSpeed | Float | 1 | Modifier for turn speed |
 | RollLeftSpeed | Float | 1 | Modifier for turn speed |
 | RollRightSpeed | Float | 1 | Modifier for turn speed |
+| Supersonic | Boolean | false | Whether plane is suited for speeds over 2.0 Blocks/tick |
 | Lift | Float | 1 | Coefficient of lift |
+| Mass | float | 1000 | Mass in kg |
+| WingArea | Float| 1 | Area in meters^2 of a single wing |
 | HeliThrottlePull | Boolean | true | Whether throttle will "pull" itself to 50% in a helicopter. | 
 | EmptyDrag | Float | 1 | Extra drag given to the plane when there is no driver. |
 | ShootDelay | Integer | ~ | Number of ticks between shots of the guns |
