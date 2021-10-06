@@ -269,8 +269,6 @@ public class FlightControllerNew {
 		// This basically limits flight speed to 300ish km/h 
 		if (speed > type.maxSpeed) {
 			speed = type.maxSpeed;
-		} else if (speed > 2.8F) {
-			speed = 2.8F;
 		}
 		float newSpeed = speed + (thrust/type.mass) * numPropsWorking;
 		//Calculate the amount to alter motion by
