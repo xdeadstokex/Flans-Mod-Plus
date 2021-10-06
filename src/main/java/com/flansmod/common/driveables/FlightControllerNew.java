@@ -115,14 +115,10 @@ public class FlightControllerNew {
 				sensitivityAdjust = 0;
 			} else if (speed < type.takeoffSpeed) {
 				sensitivityAdjust = (speed/2);
-			} else if (speed < ((type.takeoffSpeed*1.5F))) {
-				sensitivityAdjust = (2 * speed) - 1;
-			} else if (speed < type.maxSpeed){
+			} else if (speed < type.maxSpeed+0.1F) {
 				sensitivityAdjust = 1.5F - (speed/2);
-			} else if (speed >= 2.0F && type.supersonic == true){
+			} else if (speed >= 2.0F && type.supersonic == true) {
 				sensitivityAdjust = 2.5F - (speed/2);
-			} else {
-				sensitivityAdjust = 0;
 			}
 
 			// If 0<speed<0.625, we'll call this taxi mode. Yaw sensitivity will work differently to main sensitivity.
@@ -273,8 +269,6 @@ public class FlightControllerNew {
 		// This basically limits flight speed to 300ish km/h 
 		if (speed > type.maxSpeed) {
 			speed = type.maxSpeed;
-		} else if (speed > 3.5F) {
-			speed = 3.5F;
 		}
 		float newSpeed = speed + (thrust/type.mass) * numPropsWorking;
 		//Calculate the amount to alter motion by
