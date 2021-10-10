@@ -180,12 +180,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         varDoor = tag.getBoolean("VarDoor");
     }
 
-    @Override
-    public boolean isInRangeToRenderDist(double d) {
-        double d1 = 400D;
-        return d < d1 * d1;
-    }
-
     /**
      * Called with the movement of the mouse. Used in controlling vehicles if need be.
      *

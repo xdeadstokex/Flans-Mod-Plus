@@ -212,7 +212,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (FlansMod.driveableHitboxes) {
             setSize(1F, 1F);
         } else {
-            setSize(0.0005F, 0.0005F);
+            setSize(0F, 0F);
         }
         yOffset = 6F / 16F;
         ignoreFrustumCheck = true;
@@ -2791,8 +2791,15 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             recoilTimer = (int) getDriveableType().shootDelayPrimary;
     }
 
+    @Override
+    public boolean isInRangeToRenderDist(double d) {
+        double d1 = this.renderDistanceWeight;
+        return d < d1 * d1;
+    }
+
     // Returns if the bounding box is under the 
     public boolean isUnderWater() {
         return worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, getDriveableType().maxDepth, 0));
     }
 }
+
