@@ -1521,13 +1521,17 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
     }
 
-    @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack stack) {
-        if (icons != null) {
-            return icons[stack.getItemDamage()];
-        } else {
-            return defaultIcon;
+    public IIcon getIconIndex(ItemStack stack)
+    {
+        try {
+            if (stack.getItemDamage() < icons.length) {
+                return icons[stack.getItemDamage()];
+            } else {
+                return icons[0];
+            }
+        } catch (NullPointerException e) {
+            return null;
         }
     }
 

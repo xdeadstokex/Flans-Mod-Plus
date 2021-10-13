@@ -212,10 +212,10 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
     public IIcon getIconIndex(ItemStack stack)
     {
     	try {
-			if (stack.getItemDamage() > icons.length) {
-				return icons[0];
-			} else {
+			if (stack.getItemDamage() < icons.length) {
 				return icons[stack.getItemDamage()];
+			} else {
+				return icons[0];
 			}
 		} catch (NullPointerException e) {
     		return null;

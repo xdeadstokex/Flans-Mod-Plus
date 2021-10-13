@@ -188,19 +188,18 @@ public class ItemPlane extends Item implements IPaintableItem {
         }
     }
 
-    @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack stack) {
-        if (stack != null) {
-            if (stack.getItemDamage() > icons.length) {
-                return icons[0];
-            } else {
+    public IIcon getIconIndex(ItemStack stack)
+    {
+        try {
+            if (stack.getItemDamage() < icons.length) {
                 return icons[stack.getItemDamage()];
+            } else {
+                return icons[0];
             }
-        } else {
-            return icons[0];
+        } catch (NullPointerException e) {
+            return null;
         }
-
     }
 
     /**
