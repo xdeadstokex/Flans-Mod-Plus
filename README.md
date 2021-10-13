@@ -2,10 +2,9 @@
 
 Unofficial 1.7.10 continuation of Flan's Mod Ultimate.
 
-
 Please don't redistribute any code without permission.
 
-This version of Flansmod Plus aims to be the most recent and stable.
+This version of Flan's Mod Plus aims to be the most recent and stable.
 
 ## Useful stuff for Content Pack makers / Server Owners:
 
@@ -24,7 +23,7 @@ This version of Flansmod Plus aims to be the most recent and stable.
 
 ## Download finished builds:
 
-[Curseforge Page](https://www.curseforge.com/minecraft/mc-mods/flans-mod-ultimate-stability-edition)
+[CurseForge Page](https://www.curseforge.com/minecraft/mc-mods/flans-mod-ultimate-stability-edition)
 
-## An API for interacting with Flansmod, from bukkit or forge:
+## An API for interacting with Flansmod, from Bukkit or Forge:
 [Link (Note, still in development)](https://github.com/pixelrider2000/Flans-API)
