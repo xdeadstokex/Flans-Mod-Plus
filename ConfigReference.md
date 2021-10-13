@@ -445,8 +445,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Texture | String | ~ | Texture file to use |
 | IsExplosionWhenDestroyed | Boolean | false | Make an explosion when the vehicle is destroyed |
 | DeathExplosionPower | Float | 1 | Power of explosion when the vehicle is destroyed |
-| DeathExplosionRadius | Float | 1 | Radius of explosion when the vehicle is destroyed |
-| DeathExplosionBreaksBlocks | Boolean | true | Whether death explosion breaks blocks or not |
+| DeathExplosionRadius | Float | 4 | Radius of explosion when the vehicle is destroyed |
+| DeathExplosionBreaksBlocks | Boolean | false | Whether death explosion breaks blocks or not |
 | DeathFireRadius | Float | 1 | Radius of fire to be created when vehicle is destroyed |
 | DeathExplosionDamageVsLiving | Float | Damage of death explosion against living |
 | DeathExplosionDamageVsPlayer | Float | Damage of death explosion against players |

@@ -32,15 +32,15 @@ public class DriveableType extends PaintableType {
     /**
      * Health of each driveable part
      */
-    public HashMap<EnumDriveablePart, CollisionBox> health = new HashMap<EnumDriveablePart, CollisionBox>();
+    public HashMap<EnumDriveablePart, CollisionBox> health = new HashMap<>();
     /**
      * Recipe parts associated to each driveable part
      */
-    public HashMap<EnumDriveablePart, ItemStack[]> partwiseRecipe = new HashMap<EnumDriveablePart, ItemStack[]>();
+    public HashMap<EnumDriveablePart, ItemStack[]> partwiseRecipe = new HashMap<>();
     /**
      * Recipe parts as one complete list
      */
-    public ArrayList<ItemStack> driveableRecipe = new ArrayList<ItemStack>();
+    public ArrayList<ItemStack> driveableRecipe = new ArrayList<>();
 
     //Ammo
     /**
@@ -50,7 +50,7 @@ public class DriveableType extends PaintableType {
     /**
      * The list of bullet types that can be used in this driveable for the main gun (tank shells, plane bombs etc)
      */
-    public List<BulletType> ammo = new ArrayList<BulletType>();
+    public List<BulletType> ammo = new ArrayList<>();
 
     //Harvesting variables
     /**
@@ -60,7 +60,7 @@ public class DriveableType extends PaintableType {
     /**
      * What materials this harvester eats
      */
-    public ArrayList<Material> materialsHarvested = new ArrayList<Material>();
+    public ArrayList<Material> materialsHarvested = new ArrayList<>();
     public boolean collectHarvest = false;
     public boolean dropHarvest = false;
     public Vector3f harvestBoxSize = new Vector3f(0, 0, 0);
@@ -98,11 +98,11 @@ public class DriveableType extends PaintableType {
     /**
      * Positions of primary and secondary weapons
      */
-    public ArrayList<ShootPoint> shootPointsPrimary = new ArrayList<ShootPoint>(), shootPointsSecondary = new ArrayList<ShootPoint>();
+    public ArrayList<ShootPoint> shootPointsPrimary = new ArrayList<>(), shootPointsSecondary = new ArrayList<>();
     /**
      * Pilot guns also have their own seperate array so ammo handling can be done
      */
-    public ArrayList<PilotGun> pilotGuns = new ArrayList<PilotGun>();
+    public ArrayList<PilotGun> pilotGuns = new ArrayList<>();
     public int reloadTimePrimary = 0,
             reloadTimeSecondary = 0;
     public String reloadSoundPrimary = "",
@@ -139,12 +139,12 @@ public class DriveableType extends PaintableType {
             name = s;
         }
 
-        float x = 0, y = 0, z = 0;
+        float x, y, z;
         String name;
     }
 
-    public ArrayList<ShootParticle> shootParticlesPrimary = new ArrayList<ShootParticle>();
-    public ArrayList<ShootParticle> shootParticlesSecondary = new ArrayList<ShootParticle>();
+    public ArrayList<ShootParticle> shootParticlesPrimary = new ArrayList<>();
+    public ArrayList<ShootParticle> shootParticlesSecondary = new ArrayList<>();
 
     //Inventory + Pilot guns
     /**
@@ -170,7 +170,7 @@ public class DriveableType extends PaintableType {
     /**
      * A list of ambient particle emitters on this vehicle
      */
-    public ArrayList<ParticleEmitter> emitters = new ArrayList<ParticleEmitter>();
+    public ArrayList<ParticleEmitter> emitters = new ArrayList<>();
 
     //Movement variables
     /**
@@ -204,7 +204,7 @@ public class DriveableType extends PaintableType {
     /**
      * Collision points for block based collisions
      */
-    public ArrayList<DriveablePosition> collisionPoints = new ArrayList<DriveablePosition>();
+    public ArrayList<DriveablePosition> collisionPoints = new ArrayList<>();
 
     /**
      * Coefficient of drag
@@ -275,9 +275,9 @@ public class DriveableType extends PaintableType {
     public boolean isExplosionWhenDestroyed = false;
     //allows control over death explosion
     public float deathFireRadius = 0F;
-    public float deathExplosionRadius = 0F;
+    public float deathExplosionRadius = 4F;
     public float deathExplosionPower = 1F;
-    public boolean deathExplosionBreaksBlocks = true;
+    public boolean deathExplosionBreaksBlocks = false;
     public float deathExplosionDamageVsLiving  = 1.0F;
     public float deathExplosionDamageVsPlayer  = 1.0F;
     public float deathExplosionDamageVsPlane   = 1.0F;
@@ -323,8 +323,8 @@ public class DriveableType extends PaintableType {
     public float maxThrottleInWater = 0.5F;
     public int maxDepth = 3;
 
-    public ArrayList<Vector3f> leftTrackPoints = new ArrayList<Vector3f>();
-    public ArrayList<Vector3f> rightTrackPoints = new ArrayList<Vector3f>();
+    public ArrayList<Vector3f> leftTrackPoints = new ArrayList<>();
+    public ArrayList<Vector3f> rightTrackPoints = new ArrayList<>();
     public float trackLinkLength = 0;
 
     /**
@@ -332,9 +332,9 @@ public class DriveableType extends PaintableType {
      */
     public boolean IT1 = false;
     
-    public static ArrayList<DriveableType> types = new ArrayList<DriveableType>();
+    public static ArrayList<DriveableType> types = new ArrayList<>();
 
-    public ArrayList<CollisionShapeBox> collisionBox = new ArrayList<CollisionShapeBox>();
+    public ArrayList<CollisionShapeBox> collisionBox = new ArrayList<>();
     public boolean fancyCollision = false;
 
     public CollisionShapeBox colbox;
@@ -364,9 +364,9 @@ public class DriveableType extends PaintableType {
                     break;
                 }
             } catch (Exception e) {
-                String msg = " : ";
+                StringBuilder msg = new StringBuilder(" : ");
                 for (String s : split)
-                    msg = msg + " " + s;
+                    msg.append(" ").append(s);
                 FlansMod.log("Errored reading " + file.name + msg);
 
                 if (FlansMod.printStackTrace) {
@@ -391,9 +391,9 @@ public class DriveableType extends PaintableType {
                     break;
                 }
             } catch (Exception e) {
-                String msg = " : ";
+                StringBuilder msg = new StringBuilder(" : ");
                 for (String s : split)
-                    msg = msg + " " + s;
+                    msg.append(" ").append(s);
                 FlansMod.log("Errored pre-reading " + file.name + msg);
 
                 if (FlansMod.printStackTrace) {
@@ -425,9 +425,9 @@ public class DriveableType extends PaintableType {
                     counter++;
                 }
             } catch (Exception ex) {
-                String msg = " : ";
+                StringBuilder msg = new StringBuilder(" : ");
                 for (String s : split)
-                    msg = msg + " " + s;
+                    msg.append(" ").append(s);
                 FlansMod.log("Errored pre-reading " + file.name + msg);
 
                 if (FlansMod.printStackTrace) {
@@ -445,9 +445,9 @@ public class DriveableType extends PaintableType {
                                 Integer.parseInt(split[3]));
                 }
             } catch (Exception ex) {
-                String msg = " : ";
+                StringBuilder msg = new StringBuilder(" : ");
                 for (String s : split)
-                    msg = msg + " " + s;
+                    msg.append(" ").append(s);
                 FlansMod.log("Errored pre-reading " + file.name + msg);
                 FlansMod.log("Cannot continue, as the driver may not be defined. Removing vehicle.");
 
@@ -617,31 +617,41 @@ public class DriveableType extends PaintableType {
             } else if (split[0].equals("HarvestMaterial")) {
                 materialsHarvested.add(getMaterial(split[1]));
             } else if (split[0].equals("HarvestToolType")) {
-                if (split[1].equals("Axe")) {
-                    materialsHarvested.add(Material.wood);
-                    materialsHarvested.add(Material.plants);
-                    materialsHarvested.add(Material.vine);
-                } else if (split[1].equals("Pickaxe") || split[1].equals("Drill")) {
-                    materialsHarvested.add(Material.iron);
-                    materialsHarvested.add(Material.anvil);
-                    materialsHarvested.add(Material.rock);
-                } else if (split[1].equals("Spade") || split[1].equals("Shovel") || split[1].equals("Excavator")) {
-                    materialsHarvested.add(Material.ground);
-                    materialsHarvested.add(Material.grass);
-                    materialsHarvested.add(Material.sand);
-                    materialsHarvested.add(Material.snow);
-                    materialsHarvested.add(Material.clay);
-                } else if (split[1].equals("Hoe") || split[1].equals("Combine")) {
-                    materialsHarvested.add(Material.plants);
-                    materialsHarvested.add(Material.leaves);
-                    materialsHarvested.add(Material.vine);
-                    materialsHarvested.add(Material.cactus);
-                    materialsHarvested.add(Material.gourd);
-                } else if (split[1].equals("Tank")) {
-                    materialsHarvested.add(Material.leaves);
-                    materialsHarvested.add(Material.cactus);
-                    materialsHarvested.add(Material.wood);
-                    materialsHarvested.add(Material.plants);
+                switch (split[1]) {
+                    case "Axe":
+                        materialsHarvested.add(Material.wood);
+                        materialsHarvested.add(Material.plants);
+                        materialsHarvested.add(Material.vine);
+                        break;
+                    case "Pickaxe":
+                    case "Drill":
+                        materialsHarvested.add(Material.iron);
+                        materialsHarvested.add(Material.anvil);
+                        materialsHarvested.add(Material.rock);
+                        break;
+                    case "Spade":
+                    case "Shovel":
+                    case "Excavator":
+                        materialsHarvested.add(Material.ground);
+                        materialsHarvested.add(Material.grass);
+                        materialsHarvested.add(Material.sand);
+                        materialsHarvested.add(Material.snow);
+                        materialsHarvested.add(Material.clay);
+                        break;
+                    case "Hoe":
+                    case "Combine":
+                        materialsHarvested.add(Material.plants);
+                        materialsHarvested.add(Material.leaves);
+                        materialsHarvested.add(Material.vine);
+                        materialsHarvested.add(Material.cactus);
+                        materialsHarvested.add(Material.gourd);
+                        break;
+                    case "Tank":
+                        materialsHarvested.add(Material.leaves);
+                        materialsHarvested.add(Material.cactus);
+                        materialsHarvested.add(Material.wood);
+                        materialsHarvested.add(Material.plants);
+                        break;
                 }
             }
 
@@ -757,15 +767,15 @@ public class DriveableType extends PaintableType {
             else if (split[0].equals("ShootParticlesPrimary"))
                 shootParticlesPrimary.add(new ShootParticle(
                         split[1],
-                        Float.valueOf(split[2]),
-                        Float.valueOf(split[3]),
-                        Float.valueOf(split[4])));
+                        Float.parseFloat(split[2]),
+                        Float.parseFloat(split[3]),
+                        Float.parseFloat(split[4])));
             else if (split[0].equals("ShootParticlesSecondary"))
                 shootParticlesSecondary.add(new ShootParticle(
                         split[1],
-                        Float.valueOf(split[2]),
-                        Float.valueOf(split[3]),
-                        Float.valueOf(split[4])));
+                        Float.parseFloat(split[2]),
+                        Float.parseFloat(split[3]),
+                        Float.parseFloat(split[4])));
 
 
             if (split[0].equals("SetPlayerInvisible"))
@@ -818,7 +828,7 @@ public class DriveableType extends PaintableType {
                 //Recipe
             else if (split[0].equals("AddRecipeParts")) {
                 EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-                ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+                ArrayList<ItemStack> stacks = new ArrayList<>();
                 for (int i = 0; i < (split.length - 2) / 2; i++) {
                     int amount = Integer.parseInt(split[2 * i + 2]);
                     boolean damaged = split[2 * i + 3].contains(".");
@@ -1082,8 +1092,8 @@ public class DriveableType extends PaintableType {
             }
         } catch (Exception e) {
             if (split != null) {
-                String msg = " : ";
-                for (String s : split) msg = msg + " " + s;
+                StringBuilder msg = new StringBuilder(" : ");
+                for (String s : split) msg.append(" ").append(s);
                 FlansMod.log("Errored reading " + file.name + msg);
             } else {
                 FlansMod.log("Errored reading " + file.name);
@@ -1144,7 +1154,7 @@ public class DriveableType extends PaintableType {
      * Find the items needed to rebuild a part. The returned array is disconnected from the template items it has looked up
      */
     public ArrayList<ItemStack> getItemsRequired(DriveablePart part, PartType engine) {
-        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> stacks = new ArrayList<>();
         //Start with the items required to build this part
         if (partwiseRecipe.get(part.type) != null) {
             for (ItemStack stack : partwiseRecipe.get(part.type)) {
