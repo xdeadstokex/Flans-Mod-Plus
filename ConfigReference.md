@@ -448,10 +448,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | DeathExplosionRadius | Float | 1 | Radius of explosion when the vehicle is destroyed |
 | DeathExplosionBreaksBlocks | Boolean | true | Whether death explosion breaks blocks or not |
 | DeathFireRadius | Float | 1 | Radius of fire to be created when vehicle is destroyed |
-| DeathExplosionDamageVsLiving | Float | Damage of death explosion against living |
-| DeathExplosionDamageVsPlayer | Float | Damage of death explosion against players |
-| DeathExplosionDamageVsPlane | Float | Damage of death explosion against planes |
-| DeathExplosionDamageVsVehicle | Float | Damage of death explosion against vehicles |
+| DeathExplosionDamageVsLiving | Float | 1 | Damage of death explosion against living |
+| DeathExplosionDamageVsPlayer | Float | 1 | Damage of death explosion against players |
+| DeathExplosionDamageVsPlane | Float | 1 | Damage of death explosion against planes |
+| DeathExplosionDamageVsVehicle | Float | 1| Damage of death explosion against vehicles |
 | FallDamageFactor | Float | 1 | Multiplier for fall damage in some way |
 | MaxThrottle | Float | 1 | Maximum throttle in generic units? |
 | MaxNegativeThrottle | Float | 0 | Maximum negative throttle, aka reversing |
