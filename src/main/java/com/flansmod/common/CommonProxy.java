@@ -30,19 +30,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class CommonProxy {
-    protected static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
-
     /**
      * Returns the list of content pack files, and on the client, adds the content pack resources and models to the classpath
+     *
+     * @deprecated Use {@link ContentManager#loadContent()}.
      */
+    @Deprecated
     public List<File> getContentList(Method method, ClassLoader classloader) {
         List<File> contentPacks = new ArrayList<File>();
         for (File file : FlansMod.flanDir.listFiles()) {
             //Load folders and valid zip files
-            if (file.isDirectory() || zipJar.matcher(file.getName()).matches()) {
+            if (file.isDirectory() || ContentManager.zipJar.matcher(file.getName()).matches()) {
                 //Add the directory to the content pack list
                 FlansMod.log("Loaded content pack : " + file.getName());
                 contentPacks.add(file);
@@ -50,6 +50,10 @@ public class CommonProxy {
         }
         FlansMod.log("Loaded content pack list server side.");
         return contentPacks;
+    }
+
+    public void loadFlanAssets() {
+
     }
 
     /**
