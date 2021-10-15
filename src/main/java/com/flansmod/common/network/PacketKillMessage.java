@@ -9,10 +9,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import com.flansmod.client.TickHandlerClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 
 public class PacketKillMessage extends PacketBase 
 {
 	public InfoType killedBy;
+	public int itemDamage;
 	public String killerName;
 	public String killedName;
 	public boolean headshot;
@@ -22,10 +25,11 @@ public class PacketKillMessage extends PacketBase
 	{
 		
 	}
-	
-	public PacketKillMessage(boolean head, InfoType weapon, String victim, String murderer, Float dist)
+
+	public PacketKillMessage(boolean head, InfoType weapon, int itmDmg, String victim, String murderer, Float dist)
 	{
 		killedBy = weapon;
+		itemDamage = itmDmg;
 		killerName = murderer;
 		killedName = victim;
 		headshot = head;
@@ -37,6 +41,7 @@ public class PacketKillMessage extends PacketBase
 	{
 		data.writeBoolean(headshot);
 		writeUTF(data, killedBy.shortName);
+		data.writeInt(itemDamage);
 		writeUTF(data, killerName);
 		writeUTF(data, killedName);
 		data.writeFloat(distance);
@@ -47,6 +52,7 @@ public class PacketKillMessage extends PacketBase
 	{
 		headshot = data.readBoolean();
 		killedBy = InfoType.getType(readUTF(data));
+		itemDamage = data.readInt();
 		killerName = readUTF(data);
 		killedName = readUTF(data);
 		distance = data.readFloat();
@@ -62,7 +68,7 @@ public class PacketKillMessage extends PacketBase
 	@Override
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
-		TickHandlerClient.addKillMessage(headshot, killedBy, killerName, killedName);
+		TickHandlerClient.addKillMessage(headshot, killedBy,itemDamage, killerName, killedName);
 	}
 
 }
