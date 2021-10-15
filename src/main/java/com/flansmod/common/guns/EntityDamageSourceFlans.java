@@ -16,7 +16,7 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 
 public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
-//:D
+
     public InfoType weapon;
     public EntityPlayer shooter;
     public boolean headshot;
@@ -49,6 +49,7 @@ public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
                 new PacketKillMessage(
                         headshot,
                         weapon,
+                        shooter.getHeldItem().getItemDamage(),
                         ((killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName()),
                         ((killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
                         dist
