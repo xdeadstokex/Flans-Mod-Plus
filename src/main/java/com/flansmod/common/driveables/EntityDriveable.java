@@ -216,7 +216,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
         yOffset = 6F / 16F;
         ignoreFrustumCheck = true;
-        renderDistanceWeight = 200D;
+        renderDistanceWeight = 20000D;
     }
 
 
@@ -988,11 +988,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             }
         }
 
-
-        if (deckCheck != prevDeckCheck)
-            onDeck = true;
-        else onDeck = false;
-
+        onDeck = deckCheck != prevDeckCheck;
 
         //Aesthetics
         if (type.IT1 && !disabled) {
@@ -1207,7 +1203,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             boolean canEmit;
             boolean inThrottle = false;
             DriveablePart part = getDriveableData().parts.get(EnumDriveablePart.getPart(emitter.part));
-            float healthPercentage = (float) part.health / (float) part.maxHealth;
+            float healthPercentage = part.health / part.maxHealth;
             canEmit = isPartIntact(EnumDriveablePart.getPart(emitter.part)) && healthPercentage >= emitter.minHealth && healthPercentage <= emitter.maxHealth;
 
             if ((throttle >= emitter.minThrottle && throttle <= emitter.maxThrottle))
@@ -1219,7 +1215,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 if (inThrottle && canEmit) {
                     //Emit!
                     Vector3f velocity = new Vector3f(0, 0, 0);
-                    ;
+
                     Vector3f pos = new Vector3f(0, 0, 0);
                     if (seats != null && seats[0] != null) {
                         if (EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.turret && EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.barrel) {
@@ -1229,7 +1225,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                             pos = axes.findLocalVectorGlobally(localPosition);
                             velocity = axes.findLocalVectorGlobally(emitter.velocity);
-                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && emitter.part != "barrel") {
+                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && !emitter.part.equals("barrel")) {
 
                             Vector3f localPosition2 = new Vector3f(emitter.origin.x + rand.nextFloat() * emitter.extents.x - emitter.extents.x * 0.5f,
                                     emitter.origin.y + rand.nextFloat() * emitter.extents.y - emitter.extents.y * 0.5f,
@@ -1603,9 +1599,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     int z = hit.blockZ;
                     Block blockHit = worldObj.getBlock(x, y, z);
 
-                    float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
-
-                    collisionHardness = blockHardness;
+                    collisionHardness = blockHit.getBlockHardness(worldObj, x, y, z);
                 }
             }
         }
