@@ -867,7 +867,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
                 Vector3f dPos = data.lastMeleePositions[k] == null ? new Vector3f() : Vector3f.sub(nextPosInWorldCoords, data.lastMeleePositions[k], null);
 
-                if (player.worldObj.isRemote && FlansMod.DEBUG)
+                if (player.worldObj.isRemote && FlansMod.DEBUG && data.lastMeleePositions[k] != null)
                     player.worldObj.spawnEntityInWorld(new EntityDebugVector(player.worldObj, data.lastMeleePositions[k], dPos, 200, 1F, 0F, 0F));
 
                 //Do the raytrace
@@ -879,12 +879,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     for (int j = 0; j < world.loadedEntityList.size(); j++) {
                         Object obj = world.loadedEntityList.get(j);
                         //Get players
-                        if (obj instanceof EntityPlayer) {
+                        if (obj instanceof EntityPlayer && obj != player) {
                             EntityPlayer otherPlayer = (EntityPlayer) obj;
                             PlayerData otherData = PlayerHandler.getPlayerData(otherPlayer);
                             boolean shouldDoNormalHitDetect = false;
-                            if (otherPlayer == player)
-                                continue;
                             if (otherData != null) {
                                 if (otherPlayer.isDead || otherData.team == Team.spectators) {
                                     continue;
@@ -930,7 +928,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             }
                         } else {
                             Entity entity = (Entity) obj;
-                            if (entity != player && !entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun) && entity.boundingBox != null && data.lastMeleePositions != null && nextPosInWorldCoords != null) {
+                            if (!entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun) && entity.boundingBox != null && data.lastMeleePositions != null && data.lastMeleePositions[k] != null) {
                                 MovingObjectPosition mop = entity.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
                                 if (mop != null) {
                                     Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
@@ -958,45 +956,47 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         float swingDistance = dPos.length();
 
                         for (BulletHit bulletHit : hits) {
-                            if (bulletHit instanceof PlayerBulletHit) {
-                                PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
-                                float damageMultiplier = 1F;
-                                switch (playerHit.hitbox.type) {
-                                    case LEFTITEM:
-                                    case RIGHTITEM: //Hit a shield. Stop the swing.
-                                    {
-                                        data.meleeProgress = data.meleeLength = 0;
-                                        return;
+                            if (!DoesHitBlock(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3(), Math.abs(bulletHit.intersectTime), player)) {
+                                if (bulletHit instanceof PlayerBulletHit) {
+                                    PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
+                                    float damageMultiplier = 1F;
+                                    switch (playerHit.hitbox.type) {
+                                        case LEFTITEM:
+                                        case RIGHTITEM: //Hit a shield. Stop the swing.
+                                        {
+                                            data.meleeProgress = data.meleeLength = 0;
+                                            return;
+                                        }
+                                        case HEAD:
+                                            damageMultiplier = 2F;
+                                            break;
+                                        case RIGHTARM:
+                                        case LEFTARM:
+                                            damageMultiplier = 0.6F;
+                                            break;
+                                        default:
                                     }
-                                    case HEAD:
-                                        damageMultiplier = 2F;
-                                        break;
-                                    case RIGHTARM:
-                                    case LEFTARM:
-                                        damageMultiplier = 0.6F;
-                                        break;
-                                    default:
-                                }
 
-                                if (playerHit.hitbox.player.attackEntityFrom(getMeleeDamage(player), swingDistance * type.getMeleeDamage(itemstack, false))) {
-                                    //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
-                                    playerHit.hitbox.player.arrowHitTimer++;
-                                    playerHit.hitbox.player.hurtResistantTime = playerHit.hitbox.player.maxHurtResistantTime / 2;
-                                }
+                                    if (playerHit.hitbox.player.attackEntityFrom(getMeleeDamage(player), swingDistance * type.getMeleeDamage(itemstack, false))) {
+                                        //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
+                                        playerHit.hitbox.player.arrowHitTimer++;
+                                        playerHit.hitbox.player.hurtResistantTime = playerHit.hitbox.player.maxHurtResistantTime / 2;
+                                    }
 
-                                if (FlansMod.DEBUG)
-                                    world.spawnEntityInWorld(new EntityDebugDot(world, new Vector3f(data.lastMeleePositions[k].x + dPos.x * playerHit.intersectTime, data.lastMeleePositions[k].y + dPos.y * playerHit.intersectTime, data.lastMeleePositions[k].z + dPos.z * playerHit.intersectTime), 1000, 1F, 0F, 0F));
-                            } else if (bulletHit instanceof EntityHit) {
-                                EntityHit entityHit = (EntityHit) bulletHit;
-                                if (entityHit.entity.attackEntityFrom(DamageSource.causePlayerDamage(player), swingDistance * type.getMeleeDamage(itemstack, ((EntityHit) bulletHit).entity instanceof EntityDriveable)) && entityHit.entity instanceof EntityLivingBase) {
-                                    EntityLivingBase living = (EntityLivingBase) entityHit.entity;
-                                    //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
-                                    living.arrowHitTimer++;
-                                    living.hurtResistantTime = living.maxHurtResistantTime / 2;
-                                }
+                                    if (FlansMod.DEBUG)
+                                        world.spawnEntityInWorld(new EntityDebugDot(world, new Vector3f(data.lastMeleePositions[k].x + dPos.x * playerHit.intersectTime, data.lastMeleePositions[k].y + dPos.y * playerHit.intersectTime, data.lastMeleePositions[k].z + dPos.z * playerHit.intersectTime), 1000, 1F, 0F, 0F));
+                                } else if (bulletHit instanceof EntityHit) {
+                                    EntityHit entityHit = (EntityHit) bulletHit;
+                                    if (entityHit.entity.attackEntityFrom(DamageSource.causePlayerDamage(player), swingDistance * type.getMeleeDamage(itemstack, ((EntityHit) bulletHit).entity instanceof EntityDriveable)) && entityHit.entity instanceof EntityLivingBase) {
+                                        EntityLivingBase living = (EntityLivingBase) entityHit.entity;
+                                        //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
+                                        living.arrowHitTimer++;
+                                        living.hurtResistantTime = living.maxHurtResistantTime / 2;
+                                    }
 
-                                if (FlansMod.DEBUG)
-                                    world.spawnEntityInWorld(new EntityDebugDot(world, new Vector3f(data.lastMeleePositions[k].x + dPos.x * entityHit.intersectTime, data.lastMeleePositions[k].y + dPos.y * entityHit.intersectTime, data.lastMeleePositions[k].z + dPos.z * entityHit.intersectTime), 1000, 1F, 0F, 0F));
+                                    if (FlansMod.DEBUG)
+                                        world.spawnEntityInWorld(new EntityDebugDot(world, new Vector3f(data.lastMeleePositions[k].x + dPos.x * entityHit.intersectTime, data.lastMeleePositions[k].y + dPos.y * entityHit.intersectTime, data.lastMeleePositions[k].z + dPos.z * entityHit.intersectTime), 1000, 1F, 0F, 0F));
+                                }
                             }
                         }
                     }
@@ -1012,6 +1012,21 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             if (data.meleeProgress == data.meleeLength)
                 data.meleeProgress = data.meleeLength = 0;
         }
+    }
+
+    public boolean DoesHitBlock(Vec3 startPos, Vec3 endPos, float time, EntityPlayer player) {
+        Vec3 delta = endPos.subtract(startPos);
+        Vec3 hitPos = endPos;
+
+        Vec3 playerPos = Vec3.createVectorHelper(player.posX, player.posY + 1.4 + (player.worldObj.isRemote ? (player.isSneaking() ? -1.4 : -1.6) : 0), player.posZ);
+        MovingObjectPosition mop = player.worldObj.rayTraceBlocks(playerPos, hitPos);
+
+        if (mop != null) {
+            player.worldObj.spawnEntityInWorld(new EntityDebugDot(player.worldObj, new Vector3f(mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord), 2000, 0.5F, 1, 0.5F));
+            return player.worldObj.getBlock(mop.blockX, mop.blockY, mop.blockZ).getBlockHardness(player.worldObj, mop.blockX, mop.blockY, mop.blockZ) > 0.2;
+        }
+
+        return false;
     }
 
     public DamageSource getMeleeDamage(EntityPlayer attacker) {
@@ -1506,13 +1521,17 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
     }
 
-    @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack stack) {
-        if (icons != null) {
-            return icons[stack.getItemDamage()];
-        } else {
-            return defaultIcon;
+    public IIcon getIconIndex(ItemStack stack)
+    {
+        try {
+            if (stack.getItemDamage() < icons.length) {
+                return icons[stack.getItemDamage()];
+            } else {
+                return icons[0];
+            }
+        } catch (NullPointerException e) {
+            return null;
         }
     }
 

@@ -78,6 +78,7 @@ public class EntityPlane extends EntityDriveable {
     public float zSpeed = 0;
     public float rollSpeed = 0;
     public FlightController control = new FlightController();
+    public FlightControllerNew control2 = new FlightControllerNew();
     public AnimationController anim = new AnimationController();
     public boolean initiatedAnim = false;
 
@@ -207,7 +208,7 @@ public class EntityPlane extends EntityDriveable {
             FlansMod.getPacketHandler().sendToServer(new PacketDriveableKey(key));
             return true;
         }
-        boolean canThrust = ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || getDriveableData().fuelInTank > 0) && isEngineActive();
+        boolean canThrust = ((seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || getDriveableData().fuelInTank > 0) && isEngineActive() || type.fuelTankSize < 0;
         switch (key) {
             case 0: //Accelerate : Increase the throttle, up to 1.
             {
@@ -590,7 +591,7 @@ public class EntityPlane extends EntityDriveable {
 
         //Movement
 
-        boolean canThrust = (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || data.fuelInTank > 0;
+        boolean canThrust = (seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode) || data.fuelInTank > 0 || type.fuelTankSize < 0;
 
         //Throttle handling
         //Without a player, default to 0
@@ -610,7 +611,11 @@ public class EntityPlane extends EntityDriveable {
                 throttle -= 0.001;
             }
         }
+        if (type.newFlightControl == false) {
         control.fly(this);
+        } else if (type.newFlightControl == true) {
+        	control2.fly(this);
+        }
 
         double motion = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
         if (motion > 10) {

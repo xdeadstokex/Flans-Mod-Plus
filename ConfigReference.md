@@ -445,13 +445,13 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Texture | String | ~ | Texture file to use |
 | IsExplosionWhenDestroyed | Boolean | false | Make an explosion when the vehicle is destroyed |
 | DeathExplosionPower | Float | 1 | Power of explosion when the vehicle is destroyed |
-| DeathExplosionRadius | Float | 1 | Radius of explosion when the vehicle is destroyed |
-| DeathExplosionBreaksBlocks | Boolean | true | Whether death explosion breaks blocks or not |
+| DeathExplosionRadius | Float | 4 | Radius of explosion when the vehicle is destroyed |
+| DeathExplosionBreaksBlocks | Boolean | false | Whether death explosion breaks blocks or not |
 | DeathFireRadius | Float | 1 | Radius of fire to be created when vehicle is destroyed |
-| DeathExplosionDamageVsLiving | Float | Damage of death explosion against living |
-| DeathExplosionDamageVsPlayer | Float | Damage of death explosion against players |
-| DeathExplosionDamageVsPlane | Float | Damage of death explosion against planes |
-| DeathExplosionDamageVsVehicle | Float | Damage of death explosion against vehicles |
+| DeathExplosionDamageVsLiving | Float | 1 | Damage of death explosion against living |
+| DeathExplosionDamageVsPlayer | Float | 1 | Damage of death explosion against players |
+| DeathExplosionDamageVsPlane | Float | 1 | Damage of death explosion against planes |
+| DeathExplosionDamageVsVehicle | Float | 1| Damage of death explosion against vehicles |
 | FallDamageFactor | Float | 1 | Multiplier for fall damage in some way |
 | MaxThrottle | Float | 1 | Maximum throttle in generic units? |
 | MaxNegativeThrottle | Float | 0 | Maximum negative throttle, aka reversing |
@@ -502,7 +502,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | BombSlots / MineS;ots | Integer | ~ | The number of slots for bombs in the driveable |
 | MissileSlots / ShellSlots | Integer | ~ | The number of slots for missiles in the driveable |
 | RestrictAmmunitionInput | Bool | false | Whether to only allow bullet types/grenade types in gun/bomb/missile slots in the vehicle. |
-| FuelTankSize | Integer | 100 | Possibly buckets? Not sure. |
+| FuelTankSize | Integer | 100 | Size of fuel tank. -1 means that the vehicle does not need fuel, and will ignore engine start times. |
 | BulletDetectionRadius | Integer | 5 | The radius (in blocks) to check for bullets |
 | AddAmmo | String | ~ | Add an ammo type by shortname |
 | AllowAllAmmo / AcceptAllAmmo | Boolean | false | Allow any type of ammunition to be shot (Please dont do this) |
@@ -678,13 +678,20 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Mode | String | PLANE | VTOL / HELI / PlANE |
+| NewFlightControl | Boolean | false | Whether to enable new flight physics for planes |
+| MaxThrust | Float | 50 | Maximum thrust of an engine in 10s of kgf |
+| MaxSpeed | Float | 2.0 | Max Speed plane can fly blocks/tick |
+| TakeoffSpeed | Float | 0.5 | Speed where plane can start to fly |
 | TurnLeftSpeed | Float | 1 | Modifier for turn speed |
 | TurnRightSpeed | Float | 1 | Modifier for turn speed |
 | LookUpSpeed | Float | 1 | Modifier for turn speed |
 | LookDownSpeed | Float | 1 | Modifier for turn speed |
 | RollLeftSpeed | Float | 1 | Modifier for turn speed |
 | RollRightSpeed | Float | 1 | Modifier for turn speed |
+| Supersonic | Boolean | false | Whether plane is suited for speeds over 2.0 Blocks/tick |
 | Lift | Float | 1 | Coefficient of lift |
+| Mass | float | 1000 | Mass in kg |
+| WingArea | Float| 1 | Area in meters^2 of a single wing |
 | HeliThrottlePull | Boolean | true | Whether throttle will "pull" itself to 50% in a helicopter. | 
 | EmptyDrag | Float | 1 | Extra drag given to the plane when there is no driver. |
 | ShootDelay | Integer | ~ | Number of ticks between shots of the guns |

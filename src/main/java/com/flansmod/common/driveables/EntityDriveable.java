@@ -84,7 +84,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     public boolean fuelling;
     /**
-     * Extra prevRoation field for smoothness in all 3 rotational axes
+     * Extra prevRotation field for smoothness in all 3 rotational axes
      */
     public float prevRotationRoll;
     /**
@@ -212,11 +212,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (FlansMod.driveableHitboxes) {
             setSize(1F, 1F);
         } else {
-            setSize(0.0F, 0.0F);
+            setSize(0F, 0F);
         }
         yOffset = 6F / 16F;
         ignoreFrustumCheck = true;
-        renderDistanceWeight = 200D;
+        renderDistanceWeight = 20000D;
     }
 
 
@@ -350,8 +350,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     /**
      * Called with the movement of the mouse. Used in controlling vehicles if need be.
      *
-     * @param deltaY
-     * @param deltaX
+     * @param deltaY change in Y
+     * @param deltaX change in X
      * @return if mouse movement was handled.
      */
     @Override
@@ -930,7 +930,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     }
 
     public boolean isEngineActive() {
-        return (driverIsCreative() || driveableData.fuelInTank > 0) && engineStartDelay == 0;
+        return (driverIsCreative() || driveableData.fuelInTank > 0) && engineStartDelay == 0 || getDriveableType().fuelTankSize < 0;
     }
 
     public void correctWheelPos() {
@@ -988,11 +988,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             }
         }
 
-
-        if (deckCheck != prevDeckCheck)
-            onDeck = true;
-        else onDeck = false;
-
+        onDeck = deckCheck != prevDeckCheck;
 
         //Aesthetics
         if (type.IT1 && !disabled) {
@@ -1207,7 +1203,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             boolean canEmit;
             boolean inThrottle = false;
             DriveablePart part = getDriveableData().parts.get(EnumDriveablePart.getPart(emitter.part));
-            float healthPercentage = (float) part.health / (float) part.maxHealth;
+            float healthPercentage = part.health / part.maxHealth;
             canEmit = isPartIntact(EnumDriveablePart.getPart(emitter.part)) && healthPercentage >= emitter.minHealth && healthPercentage <= emitter.maxHealth;
 
             if ((throttle >= emitter.minThrottle && throttle <= emitter.maxThrottle))
@@ -1219,7 +1215,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 if (inThrottle && canEmit) {
                     //Emit!
                     Vector3f velocity = new Vector3f(0, 0, 0);
-                    ;
+
                     Vector3f pos = new Vector3f(0, 0, 0);
                     if (seats != null && seats[0] != null) {
                         if (EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.turret && EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.barrel) {
@@ -1229,7 +1225,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                             pos = axes.findLocalVectorGlobally(localPosition);
                             velocity = axes.findLocalVectorGlobally(emitter.velocity);
-                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && emitter.part != "barrel") {
+                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && !emitter.part.equals("barrel")) {
 
                             Vector3f localPosition2 = new Vector3f(emitter.origin.x + rand.nextFloat() * emitter.extents.x - emitter.extents.x * 0.5f,
                                     emitter.origin.y + rand.nextFloat() * emitter.extents.y - emitter.extents.y * 0.5f,
@@ -1603,9 +1599,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     int z = hit.blockZ;
                     Block blockHit = worldObj.getBlock(x, y, z);
 
-                    float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
-
-                    collisionHardness = blockHardness;
+                    collisionHardness = blockHit.getBlockHardness(worldObj, x, y, z);
                 }
             }
         }
@@ -2280,8 +2274,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     @SuppressWarnings("unused")
     public void updateRiderPos(Entity rider, CollisionTest test, Vector3f pos, Vector3f motion) {
-        boolean isDriveable = false;
-        if (rider instanceof EntityDriveable) isDriveable = true;
+        boolean isDriveable = rider instanceof EntityDriveable;
         Vector3f vehicleMotion = lastPos;
 
         Vector3f riderMountPoint = new Vector3f(rider.posX - posX, rider.posY - posY, rider.posZ - posZ);
@@ -2445,6 +2438,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     if (seat.riddenByEntity instanceof EntityPlayer) {
 //						((EntityPlayer)seats[i].riddenByEntity).addPotionEffect(new PotionEffect(Potion.harm.id, 10, 5));
                         Entity entity = seat.riddenByEntity;
+                        seat.riddenByEntity.setInvisible(false);
                         seat.riddenByEntity.mountEntity(null);
                         if (this.lastAtkEntity instanceof EntityPlayer) {
                             entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) this.lastAtkEntity), 10000000);
@@ -2791,8 +2785,15 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             recoilTimer = (int) getDriveableType().shootDelayPrimary;
     }
 
+    @Override
+    public boolean isInRangeToRenderDist(double d) {
+        double d1 = this.renderDistanceWeight;
+        return d < d1 * d1;
+    }
+
     // Returns if the bounding box is under the 
     public boolean isUnderWater() {
         return worldObj.isAnyLiquid(this.boundingBox.copy().offset(0, getDriveableType().maxDepth, 0));
     }
 }
+

@@ -14,8 +14,6 @@ import com.flansmod.common.network.PacketTeamInfo;
 import com.flansmod.common.network.PacketTeamInfo.PlayerScoreData;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
-import com.flansmod.common.sync.SyncEventHandler;
-
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -39,7 +37,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -393,13 +390,6 @@ public class FlansModClient extends FlansMod {
         }
     }
 
-    @SubscribeEvent
-    public void chatMessage(ClientChatReceivedEvent event) {
-        if (event.message.toString().equals("#flansmod")) {
-            event.setCanceled(true);
-        }
-    }
-
     static boolean flipControlMode() {
         if (controlModeSwitchTimer > 0)
             return false;
@@ -599,5 +589,4 @@ public class FlansModClient extends FlansMod {
         FlansMod.configFile.save();
         fireButton = buttonInput;
     }
-
 }

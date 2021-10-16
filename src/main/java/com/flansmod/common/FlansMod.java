@@ -69,6 +69,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -139,6 +140,9 @@ public class FlansMod {
     public static final TeamsManager teamsManager = new TeamsManager();
     public static final CommonTickHandler tickHandler = new CommonTickHandler();
     public static FlansHooks hooks = new FlansHooks();
+    public static final ContentManager contentManager = new ContentManager();
+
+    private static final HashMap<String, String> modelLocations = new HashMap<>();
 
     public static boolean isInFlash = false;
     public static int flashTime = 10;
@@ -208,12 +212,15 @@ public class FlansMod {
 
         paintjobTable = new BlockPaintjobTable();
         GameRegistry.registerBlock(paintjobTable, "paintjobTable");
+        GameRegistry.addRecipe(new ItemStack(paintjobTable), "ICI", "III", "DDD", 'C', Items.cauldron, 'I', Items.iron_ingot, 'D', Items.dye);
         GameRegistry.registerTileEntity(TileEntityPaintjobTable.class, MODID);
 
         proxy.registerRenderers();
 
         //Read content packs
-        readContentPacks(event);
+//        readContentPacks(event);
+        contentManager.loadContent();
+        proxy.loadFlanAssets();
 
         if (gunItems.size() >= 1) {
             MinecraftForge.EVENT_BUS.register(gunItems.get(0));
@@ -222,10 +229,12 @@ public class FlansMod {
         //Do proxy loading
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
-        proxy.forceReload();
+        if (contentManager.reloadResources())
+            proxy.forceReload();
 
         FMLCommonHandler.instance().registerCrashCallable(new FlansCrash());
 
+        Team.spectators = spectators;
         log("Pre-initializing complete.");
     }
 
@@ -415,7 +424,9 @@ public class FlansMod {
 
     /**
      * Reads type files from all content packs
+     * @deprecated Use {@link ContentManager#loadContent()}.
      */
+    @Deprecated
     private void getTypeFiles(List<File> contentPacks) {
         for (File contentPack : contentPacks) {
             if (contentPack.isDirectory()) {
@@ -503,7 +514,9 @@ public class FlansMod {
      * Reads Flan content packs.
      *
      * @param event Forge PreInitialization event.
+     * @deprecated Use {@link ContentManager#loadContent()} instead.
      */
+    @Deprecated
     private void readContentPacks(FMLPreInitializationEvent event) {
         // Icons, Skins, Models
         // Get the classloader in order to load the images
@@ -589,7 +602,7 @@ public class FlansMod {
                             }
                             Sync.addHash(typeFile.lines.toString(), infoType.shortName);
                         }
-                        
+
                     }
                 } catch (Exception e) {
                     log("Failed to add " + type.name() + " : " + typeFile.name);
@@ -608,18 +621,18 @@ public class FlansMod {
     public static IGunboxDescriptionable getGunBoxItem(InfoType item) {
         if (item instanceof GunType) {
             for (ItemGun gitem : gunItems) {
-                if (gitem.type.shortName == item.shortName) {
+                if (Objects.equals(gitem.type.shortName, item.shortName)) {
                     return gitem;
                 }
             }
         } else if (item instanceof BulletType) {
             for (ItemBullet bitem : bulletItems) {
-                if (bitem.type.shortName == item.shortName) {
+                if (Objects.equals(bitem.type.shortName, item.shortName)) {
                     return bitem;
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -663,7 +676,7 @@ public class FlansMod {
         defaultADSSpreadMultiplier = configFile.getFloat("Default ADS Spread Modifier", "Gameplay Settings (synced)", defaultADSSpreadMultiplier, 0, 10, "Modifier for spread when the player is aiming.");
         defaultADSSpreadMultiplierShotgun = configFile.getFloat("Default ADS Spread Modifier (Shotguns)", "Gameplay Settings (synced)", defaultADSSpreadMultiplierShotgun, 0, 10, "Modifier for spread when the player is aiming. (Multishot guns only).");
         seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
-        
+
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -787,5 +800,25 @@ public class FlansMod {
 
     public static void log(String format, Object... args) {
         log(String.format(format, args));
+    }
+
+    /**
+     * Provides a location for a pack name.
+     * <p>
+     * For example:
+     * <code>
+     * FlansMod.registerModelLocation("ww2", "com.flansmod.client.model");
+     * </code>
+     * will set any model name prefixed with "ww2" to be loaded from "com.flansmod.client.model".
+     *
+     * @param name     Content package name.
+     * @param location Fully qualified model location.
+     */
+    public static void registerModelLocation(String name, String location) {
+        modelLocations.put(name, location);
+    }
+
+    public static String getModelLocation(String name) {
+        return modelLocations.get(name);
     }
 }

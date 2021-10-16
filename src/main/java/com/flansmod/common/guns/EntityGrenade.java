@@ -242,7 +242,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 			//Raytrace the motion of this grenade
 			MovingObjectPosition hit = worldObj.rayTraceBlocks(posVec.toVec3(), nextPosVec.toVec3());
 			//If we hit block
-			if(hit != null && hit.typeOfHit == MovingObjectType.BLOCK)
+			if(hit != null && hit.typeOfHit == MovingObjectType.BLOCK && worldObj.getBlock(hit.blockX, hit.blockY, hit.blockZ).getMaterial().blocksMovement())
 			{
 				//Get the blockID and block material
 				Block block = worldObj.getBlock(hit.blockX, hit.blockY, hit.blockZ);

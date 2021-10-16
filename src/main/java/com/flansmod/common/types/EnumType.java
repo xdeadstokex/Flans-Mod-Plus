@@ -44,7 +44,7 @@ public enum EnumType {
     tool("tools"), armour("armorFiles"), armourBox("armorBoxes"), box("boxes"), playerClass("classes"),
     team("teams"), itemHolder("itemHolders");
 
-    public String folderName;
+    public final String folderName;
 
     EnumType(String s) {
         folderName = s;

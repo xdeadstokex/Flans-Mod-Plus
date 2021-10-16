@@ -56,12 +56,19 @@ public class ItemAttachment extends Item implements IPaintableItem
     	}
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack stack)
-    {
-        return icons[stack.getItemDamage()];
-    }
+	@SideOnly(Side.CLIENT)
+	public IIcon getIconIndex(ItemStack stack)
+	{
+		try {
+			if (stack.getItemDamage() < icons.length) {
+				return icons[stack.getItemDamage()];
+			} else {
+				return icons[0];
+			}
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
     
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean b)

@@ -180,12 +180,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         varDoor = tag.getBoolean("VarDoor");
     }
 
-    @Override
-    public boolean isInRangeToRenderDist(double d) {
-        double d1 = 400D;
-        return d < d1 * d1;
-    }
-
     /**
      * Called with the movement of the mouse. Used in controlling vehicles if need be.
      *
@@ -428,7 +422,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         double bkPrevPosY = this.prevPosY;
 
         super.onUpdate();
-        this.renderDistanceWeight = 4000.0D;
         animateFancyTracks();
         if (worldObj.isRemote) {
             for (Entity e : findEntitiesWithinbounds()) {
@@ -579,9 +572,9 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
             //Apply velocity
             //If the player driving this is in creative, then we can thrust, no matter what
-            boolean canThrustCreatively = !TeamsManager.vehiclesNeedFuel || (seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode);
+            boolean canThrustCreatively = !TeamsManager.vehiclesNeedFuel || type.fuelTankSize < 0 || (seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode);
             //Otherwise, check the fuel tanks!
-            if ((canThrustCreatively || data.fuelInTank > Math.abs(data.engine.fuelConsumption * throttle)) && isEngineActive()) {
+            if ((canThrustCreatively || type.fuelTankSize < 0 || data.fuelInTank > Math.abs(data.engine.fuelConsumption * throttle)) && isEngineActive()) {
                 if (getVehicleType().tank) {
                     boolean left = wheel.ID == 0 || wheel.ID == 3;
 
