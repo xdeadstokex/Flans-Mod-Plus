@@ -463,9 +463,9 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | TurretOrigin | (Float) X Y Z | 0 0 0 | The origin of the turret |
 | TurretOriginOffset | (Float) X Y Z | 0 0 0 | The offset of the turret from the origin? |
 | CollisionPoint / AddCollisionPoint | (float) X Y Z partName | | Points for block based collision detection |
-| CollisionDamageEnable | Boolean | false | Damage the ? when collided with |
-| CollisionDamageThrottle | Float | 0 | ? |
-| CollisionDamageTimes | Float | 0 | ? |
+| CollisionDamageEnable | Boolean | false | Damage the vehicle when collision points collide with blocks |
+| CollisionDamageThrottle | Float | 0 | Damage to cause to colliding entities |
+| CollisionDamageTimes | Float | 0 | when to cause damage to colliding entities based on throttle |
 | CanLockAngle | Float | 10 | Maximum angle on which the ? can lock on to an entity |
 | LockOnSoundTime | Integer | 60 | Time to play the lock on sound |
 | LockOnToDriveables | Boolean | false | Lock on to Vehicles, plans and mechas |
