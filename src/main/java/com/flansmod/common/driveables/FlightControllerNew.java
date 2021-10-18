@@ -111,18 +111,20 @@ public class FlightControllerNew {
 			
 			// Plane mode.
 			// main sensitivity.
-			if (speed < 0.5F) {
+			if (speed < 0.25F) {
 				sensitivityAdjust = 0;
-			} else if (speed < type.takeoffSpeed) {
+			} else if (speed < 0.5F) {
 				sensitivityAdjust = (speed/2);
-			} else if (speed < type.maxSpeed+0.1F) {
+			} else if (speed < 1F) {
+				sensitivityAdjust = (2 * speed) - 1;
+			} else if (speed < 3F) {
 				sensitivityAdjust = 1.5F - (speed/2);
 			} else if (speed >= 2.0F && type.supersonic == true) {
 				sensitivityAdjust = 2.5F - (speed/2);
 			}
 
 			// If 0<speed<0.625, we'll call this taxi mode. Yaw sensitivity will work differently to main sensitivity.
-			if (groundSpeed < type.takeoffSpeed) {
+			if (groundSpeed < 0.5F) {
 				yawSensitivity = 5 * (0.5F * speed)/(float)Math.sqrt(type.turnRightModifier);
 			} else {
 				yawSensitivity = sensitivityAdjust;
@@ -328,9 +330,6 @@ public class FlightControllerNew {
 		// If we don't do this, the gravity will keep being applied, giving a speed of 0.3 with no motion.
 		if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
 			plane.motionY = -0.001;
-			plane.axes.rotateLocalPitch((float) -0.5F);
-		} else if(pitch < 7) {
-			plane.axes.rotateLocalPitch((float) -0.00F);
 		}
 		else {
 			plane.motionY -= gravity;
@@ -365,8 +364,7 @@ public class FlightControllerNew {
 	          plane.axes.rotateLocalRoll(5.0F); 
 	        doomsday++;
 	        if (plane.axes.getPitch() < 35.0F)
-	          plane.axes.rotateLocalPitch(-0.05F * doomsday); 
-	        if (plane.isEngineActive())
+	          plane.axes.rotateLocalPitch(-0.05F * doomsday);
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	      }
 	    if (!plane.isPartIntact(EnumDriveablePart.tail)) {
@@ -374,34 +372,31 @@ public class FlightControllerNew {
 	        lift *= 0.8F;
 	        lift = (float)(lift - 1.960000029206276D);
 	        tail = false;
-	        if (doomsday < 750.0F)
+	        if (doomsday < 1500.0F)
 	          doomsday++; 
-	        if (doomsday >= 750.0F)
+	        if (doomsday >= 1500.0F)
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	        plane.axes.rotateLocalPitch(type.lookUpModifier * doomsday / doomsday / 2.0F);
-	        if (plane.isEngineActive())
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	      } 
 	      if (!plane.isPartIntact(EnumDriveablePart.leftWing)) {
 	        plane.motionY += -gravity;
 	        leftWing = false;
-	        if (doomsday < 750.0F)
+	        if (doomsday < 1500.0F)
 	          doomsday++; 
-	        if (doomsday >= 750.0F)
+	        if (doomsday >= 1500.0F)
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	        plane.axes.rotateLocalRoll(type.rollRightModifier * doomsday / doomsday / 1.0F);
-	        if (plane.isEngineActive())
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	      } 
 	      if (!plane.isPartIntact(EnumDriveablePart.rightWing)) {
 	        plane.motionY += gravity;
 	        rightWing = false;
-	        if (doomsday < 750.0F)
+	        if (doomsday < 1500.0F)
 	          doomsday++; 
-	        if (doomsday >= 750.0F)
+	        if (doomsday >= 1500.0F)
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	        plane.axes.rotateLocalRoll(-type.rollLeftModifier * doomsday / doomsday / 15.0F);
-	        if (plane.isEngineActive())
 	          plane.attackPart(EnumDriveablePart.core, DamageSource.generic, 1.0F); 
 	      } 
 	      if (doomsday >= 100.0F)
