@@ -23,6 +23,7 @@ import com.flansmod.common.types.TypeFile;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
+import net.minecraft.launchwrapper.Launch;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -37,7 +38,12 @@ import java.util.zip.ZipInputStream;
 public class ContentManager {
     public static final Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
 
-    private boolean logDeobf;
+    /**
+     * Enables various development environment features.
+     * Automatically enabled if debug mode enabled.
+     */
+    public static boolean DEV_ENV = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    private boolean loggedDeobf;
     private boolean reloadResources;
     private final HashMap<String, IFlansContentProvider> contentPacks = new HashMap<>();
 
@@ -51,12 +57,12 @@ public class ContentManager {
                         String directory = provider.getContentDirectory();
 
                         File source = container.getSource();
-                        if (source.getName().endsWith("bin")) {
-                            if (!logDeobf) {
-                                FlansMod.logger.info("Detected deobfuscated Forge environment, content packs will be loaded from directories");
-                                logDeobf = true;
+                        if (DEV_ENV) {
+                            if (!loggedDeobf) {
+                                FlansMod.logger.warn("Detected deobfuscated Forge environment, content packs will be loaded from directories");
+                                loggedDeobf = true;
                             }
-                            contentPacks.put(directory, provider);
+                            contentPacks.put(directory, new ContentPackMod(container, provider));
                         } else if (zipJar.matcher(source.getName()).matches()) {
                             contentPacks.put(directory, new ContentPackMod(container, provider));
                         }
@@ -98,9 +104,9 @@ public class ContentManager {
             } else if (provider instanceof ContentPackMod) {
                 ContentPackMod mod = (ContentPackMod) provider;
 
-                if (mod.container.getSource().getName().endsWith("bin")) {
+                if (DEV_ENV) {
                     //Load deobfuscated version.
-                    loadTypesDirectory(name, mod.container.getSource());
+                    loadTypesDirectory(name, new File(FlansMod.flanDir, provider.getContentDirectory()));
                 } else if (zipJar.matcher(mod.container.getSource().getName()).matches()) {
                     loadTypesArchive(name, mod.container.getSource());
                 }
