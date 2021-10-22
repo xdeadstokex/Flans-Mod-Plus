@@ -104,6 +104,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public double thisSpeed = 0;
     public int closeCount = 0;
     public int soundTime = 0;
+    //Used to store speed for submunitions
     public float speedA;
 
     public int impactX;

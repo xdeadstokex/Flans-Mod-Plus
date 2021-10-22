@@ -23,7 +23,7 @@ public class PlaneType extends DriveableType
     public boolean spinWithoutTail = false;
 	public boolean heliThrottlePull = true;
 	//Does this use the new flight controller?
-	public boolean newFlightControl; 
+	public boolean newFlightControl = false;
 	//Physics Modifiers
 	public float lift = 1F;
 	public float takeoffSpeed = 0.5F;
@@ -36,7 +36,6 @@ public class PlaneType extends DriveableType
     public float mass = 1000.0F;
 	public float emptyDrag = 1F;
 	//Weapon system variables
-	public Vector3f bombPosition;
 	public int planeShootDelay;
 	public int planeBombDelay;
 	//Aesthetic features

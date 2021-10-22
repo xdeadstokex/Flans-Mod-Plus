@@ -179,7 +179,7 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData
 			Entity player = damagesource.getEntity();
 			if (player == riddenByEntity)
 			{
-				
+
 			} else if(riddenByEntity != null)
 			{
 				return riddenByEntity.attackEntityFrom(damagesource, i);
@@ -383,7 +383,8 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData
 							ammo[j].damageItem(1, player);
 						shootDelay = type.shootDelay;
 						barrelRecoil[j] = type.recoil;
-						worldObj.spawnEntityInWorld(((ItemBullet)ammo[j].getItem()).getEntity(worldObj, rotate(type.barrelX[currentBarrel] / 16D - type.barrelZ[currentBarrel] / 16D, type.barrelY[currentBarrel] / 16D, type.barrelX[currentBarrel] / 16D + type.barrelZ[currentBarrel] / 16D).addVector(posX, posY, posZ), gunYaw + 90F, gunPitch, player, type.accuracy, type.damage, ammo[j].getItemDamage(), type));
+						float shootSpeed = (bullet == null ? 1F : bullet.speedMultiplier) * 3.0F;
+						worldObj.spawnEntityInWorld(((ItemBullet)ammo[j].getItem()).getEntity(worldObj, rotate(type.barrelX[currentBarrel] / 16D - type.barrelZ[currentBarrel] / 16D, type.barrelY[currentBarrel] / 16D, type.barrelX[currentBarrel] / 16D + type.barrelZ[currentBarrel] / 16D).addVector(posX, posY, posZ), gunYaw + 90F, gunPitch, player, type.accuracy, type.damage, shootSpeed, ammo[j].getItemDamage(), type));
 						PacketPlaySound.sendSoundPacket(posX, posY, posZ, 50, dimension, type.shootSound, true);
 					}
 				}
@@ -403,7 +404,8 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData
 						ammo[ammoSlot].setItemDamage(ammo[ammoSlot].getItemDamage() + 1);
 						shootDelay = type.shootDelay;
 						barrelRecoil[ammoSlot] = type.recoil;
-						worldObj.spawnEntityInWorld(((ItemBullet)ammo[ammoSlot].getItem()).getEntity(worldObj, rotate(type.barrelX[currentBarrel] / 16D - type.barrelZ[currentBarrel] / 16D, type.barrelY[currentBarrel] / 16D, type.barrelX[currentBarrel] / 16D + type.barrelZ[currentBarrel] / 16D).addVector(posX, posY + 1.5F, posZ), gunYaw + 90F, gunPitch, placer, type.accuracy, type.damage, ammo[ammoSlot].getItemDamage(), type));
+						float shootSpeed = (bullet == null ? 1F : bullet.speedMultiplier) * 3.0F;
+						worldObj.spawnEntityInWorld(((ItemBullet)ammo[ammoSlot].getItem()).getEntity(worldObj, rotate(type.barrelX[currentBarrel] / 16D - type.barrelZ[currentBarrel] / 16D, type.barrelY[currentBarrel] / 16D, type.barrelX[currentBarrel] / 16D + type.barrelZ[currentBarrel] / 16D).addVector(posX, posY + 1.5F, posZ), gunYaw + 90F, gunPitch, placer, type.accuracy, type.damage, shootSpeed, ammo[ammoSlot].getItemDamage(), type));
 						PacketPlaySound.sendSoundPacket(posX, posY, posZ, 50, dimension, type.shootSound, true);
 
 						if(shootTimeCount >= type.countExplodeAfterShoot -1 && type.countExplodeAfterShoot != -1 && !worldObj.isRemote){

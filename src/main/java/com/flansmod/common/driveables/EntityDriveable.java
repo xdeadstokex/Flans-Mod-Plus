@@ -680,12 +680,16 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             float shellSpeed = gunType.bulletSpeed;
             if (type.rangingGun)
                 shellSpeed = type.bulletSpeed;
+
+
             ItemStack bulletItemStack = driveableData.ammo[getDriveableType().numPassengerGunners + currentGun];
             //Check that neither is null and that the bullet item is actually a bullet
             if (bulletItemStack != null && bulletItemStack.getItem() instanceof ItemShootable && TeamsManager.bulletsEnabled) {
                 ShootableType bullet = ((ItemShootable) bulletItemStack.getItem()).type;
                 if (gunType.isAmmo(bullet)) {
                     //spawnParticle(gunType, Vector3f.add(gunVec, new Vector3f((float)posX, (float)posY,V (float)posZ), null));
+
+                    if (bullet instanceof BulletType) { shellSpeed *= ((BulletType) bullet).speedMultiplier; }
 
                     spawnParticle(type.shootParticle(secondary), shootPoint, gunVec);
                     //Spawn a new bullet item
@@ -798,6 +802,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                             float shellSpeed = type.bulletSpeed;
                             ItemStack bulletStack = driveableData.getStackInSlot(slot);
                             ItemBullet bulletItem = (ItemBullet) bulletStack.getItem();
+                            shellSpeed *= bulletItem.type.speedMultiplier;
                             EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(gunVec, new Vector3f(posX, posY, posZ), null), lookVector, (EntityLivingBase) seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, driveableData.getStackInSlot(slot).getItemDamage(), type);
                             //EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(gunVec, new Vector3f((float)posX, (float)posY, (float)posZ), null), lookVector, (EntityLivingBase)seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, bulletStack.getItemDamage(), type);
                             //EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(new Vector3f(posX, posY, posZ), gunVec, null), lookVector, (EntityLivingBase)seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, driveableData.getStackInSlot(slot).getItemDamage(), type);
@@ -1604,8 +1609,36 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     Block blockHit = worldObj.getBlock(x, y, z);
 
                     float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
-
                     collisionHardness = blockHardness;
+
+                    int meta = worldObj.getBlockMetadata(x, y, z);
+                    float damage = 0;
+                    if (blockHardness > 0.2) {
+                        damage = blockHardness * blockHardness * (float) speed;
+                    }
+
+                    if (null == blockHit.getCollisionBoundingBoxFromPool(this.worldObj, x, y, z)) {
+                        damage = 0;
+                    }
+
+
+
+                    if (damage > 0) {
+                        damagePart = true;
+                        if (!attackPart(p.part, DamageSource.inWall, damage) && TeamsManager.driveablesBreakBlocks) {
+                            // And if it didn't die from the attack, break the block
+                            worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(blockHit) + (meta << 12));
+
+                            if (!worldObj.isRemote) {
+                                blockHit.dropBlockAsItem(worldObj, x, y, z, meta, 1);
+                                worldObj.setBlockToAir(x, y, z);
+                            }
+                        } else {
+                            // The part died!
+                            worldObj.createExplosion(this, x, y, z, 1F,
+                                    false);
+                        }
+                    }
                 }
             }
         }
