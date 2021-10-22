@@ -14,7 +14,10 @@ import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
-import com.flansmod.common.teams.*;
+import com.flansmod.common.teams.ArmourBoxType;
+import com.flansmod.common.teams.ArmourType;
+import com.flansmod.common.teams.BlockArmourBox;
+import com.flansmod.common.teams.ItemTeamArmour;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
@@ -24,7 +27,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import net.minecraft.launchwrapper.Launch;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.util.HashMap;
@@ -186,13 +188,17 @@ public class ContentManager {
         FlansMod.logger.info("Client Hash: " + Sync.cachedHash);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void loadTypesDirectory(String packName, File contentPack) {
         for (EnumType typeToCheckFor : EnumType.values()) {
             File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
             if (!typesDir.exists())
                 continue;
-            for (File file : FileUtils.listFiles(typesDir, new String[]{"txt"}, true)) {
+            for (File file : typesDir.listFiles()) {
                 if (!file.isDirectory()) {
+                    if (!file.getName().endsWith(".txt")) {
+                        FlansMod.logger.warn("Type file {} does not have a recognized file extension", file.getName());
+                    }
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader(file));
                         String[] splitName = file.getName().split("/");
