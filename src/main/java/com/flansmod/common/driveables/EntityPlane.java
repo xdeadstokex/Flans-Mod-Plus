@@ -77,8 +77,8 @@ public class EntityPlane extends EntityDriveable {
     public float ySpeed = 0;
     public float zSpeed = 0;
     public float rollSpeed = 0;
-    public FlightController control = new FlightController();
-    public FlightControllerNew control2 = new FlightControllerNew();
+    public FlightController flightController = new FlightController();
+    public FlightControllerNew newFlightController = new FlightControllerNew();
     public AnimationController anim = new AnimationController();
     public boolean initiatedAnim = false;
 
@@ -611,10 +611,10 @@ public class EntityPlane extends EntityDriveable {
                 throttle -= 0.001;
             }
         }
-        if (type.newFlightControl == false) {
-        control.fly(this);
-        } else if (type.newFlightControl == true) {
-        	control2.fly(this);
+        if (type.newFlightControl) {
+            newFlightController.fly(this);
+        } else {
+            flightController.fly(this);
         }
 
         double motion = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);

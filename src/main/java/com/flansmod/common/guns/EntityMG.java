@@ -2,6 +2,7 @@ package com.flansmod.common.guns;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
@@ -42,7 +43,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 	public int reloadTimer;
 	public int soundDelay;
 	public float shootDelay;
-	public static List<EntityMG> mgs = new ArrayList<EntityMG>();
+	public static List<EntityMG> mgs = new ArrayList<>();
 	public EntityPlayer gunner;
 	//Server side
 	public boolean isShooting;
@@ -113,12 +114,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 		{
 			ticksSinceUsed = 0;
 			rotationYaw = gunner.rotationYaw - direction * 90;
-			for (; rotationYaw < -180; rotationYaw += 360)
-			{
-			}
-			for (; rotationYaw > 180; rotationYaw -= 360)
-			{
-			}
+			while (rotationYaw < -180) { rotationYaw += 360; }
+			while (rotationYaw > 180) { rotationYaw -= 360; }
 			rotationPitch = gunner.rotationPitch;
 			// Keep it within reasonable angles
 			if (rotationYaw > type.sideViewLimit)
@@ -187,7 +184,8 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 			if (gunner != null && !gunner.capabilities.isCreativeMode)
 				ammo.damageItem(1, gunner);
 			shootDelay = type.shootDelay;
-			worldObj.spawnEntityInWorld(((ItemBullet)ammo.getItem()).getEntity(worldObj, Vec3.createVectorHelper(blockX + 0.5D, blockY + type.pivotHeight, blockZ + 0.5D), (direction * 90F + rotationYaw), rotationPitch, gunner, type.bulletSpread, type.damage, ammo.getItemDamage(), type));
+			float bulletSpeed = type.bulletSpeed * (bullet == null ? 1F : bullet.speedMultiplier);
+			worldObj.spawnEntityInWorld(((ItemBullet)ammo.getItem()).getEntity(worldObj, Vec3.createVectorHelper(blockX + 0.5D, blockY + type.pivotHeight, blockZ + 0.5D), (direction * 90F + rotationYaw), rotationPitch, gunner, type.bulletSpread, type.damage, bulletSpeed, ammo.getItemDamage(), type));
 			if (soundDelay <= 0)
 			{
 				soundDelay = type.shootSoundLength;
@@ -242,11 +240,12 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 				// Fire
 				BulletType bullet = BulletType.getBullet(ammo.getItem());
 				if (gunner != null && !gunner.capabilities.isCreativeMode)
-					ammo.damageItem(1, (EntityLiving) player);
+					ammo.damageItem(1, (EntityLivingBase) player);
 				shootDelay = type.shootDelay;
+				float bulletSpeed = type.bulletSpeed * (bullet == null ? 1F : bullet.speedMultiplier);
 				if (!worldObj.isRemote)
 				{
-					worldObj.spawnEntityInWorld(((ItemBullet)ammo.getItem()).getEntity(worldObj, (EntityLivingBase) player, type.bulletSpread, type.damage, type.bulletSpeed, false, ammo.getItemDamage(), type));
+					worldObj.spawnEntityInWorld(((ItemBullet)ammo.getItem()).getEntity(worldObj, (EntityLivingBase) player, type.bulletSpread, type.damage, bulletSpeed, false, ammo.getItemDamage(), type));
 				}
 				if (soundDelay <= 0)
 				{
@@ -275,7 +274,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 	{
 		// Player right clicked on gun
 		// Mount gun
-		if (gunner != null && (gunner instanceof EntityPlayer) && gunner != player)
+		if (gunner != null && gunner != player)
 		{
 			return true;
 		}
@@ -361,7 +360,7 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 			{
 				if(TeamsManager.weaponDrops == 2)
 				{
-					EntityGunItem gunEntity = new EntityGunItem(worldObj, posX, posY, posZ, new ItemStack(type.getItem()), Arrays.asList(ammo));
+					EntityGunItem gunEntity = new EntityGunItem(worldObj, posX, posY, posZ, new ItemStack(type.getItem()), Collections.singletonList(ammo));
 					worldObj.spawnEntityInWorld(gunEntity);
 				}
 				else if(TeamsManager.weaponDrops == 1)
@@ -465,7 +464,6 @@ public class EntityMG extends Entity implements IEntityAdditionalSpawnData
 	@Override
     public ItemStack getPickedResult(MovingObjectPosition target)
     {
-		ItemStack stack = new ItemStack(type.item, 1, 0);
-		return stack;
+		return new ItemStack(type.item, 1, 0);
     }
 }

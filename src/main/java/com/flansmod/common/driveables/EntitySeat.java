@@ -1,5 +1,6 @@
 package com.flansmod.common.driveables;
 
+import com.flansmod.common.guns.*;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
@@ -23,10 +24,6 @@ import com.flansmod.api.IControllable;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.guns.EnumFireMode;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemShootable;
-import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.network.PacketDriveableKey;
 import com.flansmod.common.network.PacketDriveableKeyHeld;
 import com.flansmod.common.network.PacketPlaySound;
@@ -670,7 +667,10 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
                                 //Calculate the origin of the bullets
                                 Vector3f yOffset = driveable.axes.findLocalVectorGlobally(new Vector3f(0F, (float) player.getMountedYOffset(), 0F));
                                 //Spawn a new bullet item
-                                worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(yOffset, new Vector3f(gunOrigin.x, gunOrigin.y, gunOrigin.z), null), shootVec, (EntityLivingBase) riddenByEntity, gun.bulletSpread, gun.damage, gun.bulletSpeed, bulletItemStack.getItemDamage(), driveable.getDriveableType()));
+                                float bulletSpeed = gun.bulletSpeed;
+                                if (bullet instanceof BulletType) { bulletSpeed *= ((BulletType) bullet).speedMultiplier; }
+
+                                worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(yOffset, new Vector3f(gunOrigin.x, gunOrigin.y, gunOrigin.z), null), shootVec, (EntityLivingBase) riddenByEntity, gun.bulletSpread, gun.damage, bulletSpeed, bulletItemStack.getItemDamage(), driveable.getDriveableType()));
                                 //Play the shoot sound
                                 if (soundDelay <= 0) {
                                     PacketPlaySound.sendSoundPacket(posX, posY, posZ, gun.gunSoundRange, dimension, gun.shootSound, false);
