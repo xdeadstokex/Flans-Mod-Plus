@@ -1,19 +1,17 @@
 package com.flansmod.client.model.animation;
 
-import java.util.ArrayList;
-
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.client.model.animation.PoseComponent;
+
+import java.util.ArrayList;
 
 public class AnimationController {
-    public ArrayList<AnimationPart> parts = new ArrayList<AnimationPart>();
+    public ArrayList<AnimationPart> parts = new ArrayList<>();
     public int state = 0;
     int animStage = 1;
-    ArrayList<AnimationPose> poses = new ArrayList<AnimationPose>();
+    ArrayList<AnimationPose> poses = new ArrayList<>();
     AnimationPose pose;
     public int timeSinceSwitch = 0;
-
 
     public void initAnim() {
         //core ALWAYS REGISTER THIS FIRST
