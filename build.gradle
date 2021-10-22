@@ -98,3 +98,8 @@ task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'deobf'
 }
+
+def customGradle = rootProject.file('custom.gradle');
+if (customGradle.exists()) {
+    apply from: customGradle;
+}

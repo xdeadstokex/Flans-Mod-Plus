@@ -422,7 +422,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         double bkPrevPosY = this.prevPosY;
 
         super.onUpdate();
-        this.renderDistanceWeight = 4000.0D;
         animateFancyTracks();
         if (worldObj.isRemote) {
             for (Entity e : findEntitiesWithinbounds()) {

@@ -4,6 +4,7 @@ import com.flansmod.client.debug.*;
 import com.flansmod.client.gui.*;
 import com.flansmod.client.model.*;
 import com.flansmod.common.CommonProxy;
+import com.flansmod.common.ContentManager;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.EntityMecha;
@@ -103,15 +104,15 @@ public class ClientProxy extends CommonProxy {
      */
     @Override
     public List<File> getContentList(Method method, ClassLoader classloader) {
-        contentPacks = new ArrayList<File>();
+        contentPacks = new ArrayList<>();
         File[] files = FlansMod.flanDir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isDirectory() || zipJar.matcher(file.getName()).matches()) {
+                if (file.isDirectory() || ContentManager.zipJar.matcher(file.getName()).matches()) {
                     try {
                         method.invoke(classloader, file.toURI().toURL());
 
-                        HashMap<String, Object> map = new HashMap<String, Object>();
+                        HashMap<String, Object> map = new HashMap<>();
                         map.put("modid", "FlansMod");
                         map.put("name", "Flan's Mod : " + file.getName());
                         map.put("version", "1");
@@ -132,6 +133,40 @@ public class ClientProxy extends CommonProxy {
 
         FlansMod.log("Loaded textures and models.");
         return contentPacks;
+    }
+
+    @Override
+    public void loadFlanAssets() {
+        ClassLoader classloader = (net.minecraft.server.MinecraftServer.class).getClassLoader();
+        Method method;
+        try {
+            method = (java.net.URLClassLoader.class).getDeclaredMethod("addURL", java.net.URL.class);
+            method.setAccessible(true);
+        } catch (ReflectiveOperationException e) {
+            FlansMod.logger.error("Failed to get class loader. All content loading will now fail.", e);
+            return;
+        }
+
+        for (File file : Objects.requireNonNull(FlansMod.flanDir.listFiles())) {
+            if (file.isDirectory() || ContentManager.zipJar.matcher(file.getName()).matches()) {
+                try {
+                    method.invoke(classloader, file.toURI().toURL());
+
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("modid", FlansMod.MODID);
+                    map.put("name", "Flan's Mod : " + file.getName());
+                    map.put("version", "1");
+                    FMLModContainer container = new FMLModContainer(FlansMod.class.getCanonicalName(), new ModCandidate(file, file, file.isDirectory() ? ContainerType.DIR : ContainerType.JAR), map);
+                    container.bindMetadata(MetadataCollection.from(null, ""));
+                    FMLClientHandler.instance().addModAsResource(container);
+
+                } catch (Exception e) {
+                    FlansMod.logger.error("Failed to load images for content pack : " + file.getName(), e);
+                }
+                // Add the directory to the content pack list
+                FlansMod.logger.info("Loaded content pack : " + file.getName());
+            }
+        }
     }
 
     /**
@@ -265,11 +300,22 @@ public class ClientProxy extends CommonProxy {
             return "Model" + in;
             //Otherwise, we need to slightly rearrange the wording of the string for it to make sense
         else if (split.length > 1) {
+            if (FlansMod.getModelLocation(split[0]) != null) {
+                StringBuilder location = new StringBuilder(FlansMod.getModelLocation(split[0]));
+                for (int i = 1; i < split.length - 1; i++) {
+                    location.append(split[i]);
+                }
+                return location + ".Model" + split[1];
+            }
+
+            if (FlansMod.printDebugLog)
+                FlansMod.logger.warn("No model location found for {}", in);
+
             StringBuilder out = new StringBuilder("Model" + split[split.length - 1]);
             for (int i = split.length - 2; i >= 0; i--) {
                 out.insert(0, split[i] + ".");
             }
-            return out.toString();
+            return modelDir + out; //Assume the model is in the default model directory.
         }
         return in;
     }
@@ -282,7 +328,7 @@ public class ClientProxy extends CommonProxy {
         if (s == null || shortName == null)
             return null;
         try {
-            return typeClass.cast(Class.forName(modelDir + getModelName(s)).getConstructor().newInstance());
+            return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
         } catch (Exception e) {
             FlansMod.log("Failed to load model : " + shortName + " (" + s + ")");
             if (FlansMod.printStackTrace) {
@@ -479,8 +525,6 @@ public class ClientProxy extends CommonProxy {
                     }
 
                     // END OF CUSTOM FLANS PARTICLES
-
-
 
 
                     // VANILLA PARTICLES

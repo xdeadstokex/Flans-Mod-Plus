@@ -216,7 +216,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
         yOffset = 6F / 16F;
         ignoreFrustumCheck = true;
-        renderDistanceWeight = 200D;
+        renderDistanceWeight = 20000D;
     }
 
 
@@ -680,16 +680,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             float shellSpeed = gunType.bulletSpeed;
             if (type.rangingGun)
                 shellSpeed = type.bulletSpeed;
-
-
             ItemStack bulletItemStack = driveableData.ammo[getDriveableType().numPassengerGunners + currentGun];
             //Check that neither is null and that the bullet item is actually a bullet
             if (bulletItemStack != null && bulletItemStack.getItem() instanceof ItemShootable && TeamsManager.bulletsEnabled) {
                 ShootableType bullet = ((ItemShootable) bulletItemStack.getItem()).type;
                 if (gunType.isAmmo(bullet)) {
                     //spawnParticle(gunType, Vector3f.add(gunVec, new Vector3f((float)posX, (float)posY,V (float)posZ), null));
-
-                    if (bullet instanceof BulletType) { shellSpeed *= ((BulletType) bullet).speedMultiplier; }
 
                     spawnParticle(type.shootParticle(secondary), shootPoint, gunVec);
                     //Spawn a new bullet item
@@ -802,7 +798,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                             float shellSpeed = type.bulletSpeed;
                             ItemStack bulletStack = driveableData.getStackInSlot(slot);
                             ItemBullet bulletItem = (ItemBullet) bulletStack.getItem();
-                            shellSpeed *= bulletItem.type.speedMultiplier;
                             EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(gunVec, new Vector3f(posX, posY, posZ), null), lookVector, (EntityLivingBase) seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, driveableData.getStackInSlot(slot).getItemDamage(), type);
                             //EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(gunVec, new Vector3f((float)posX, (float)posY, (float)posZ), null), lookVector, (EntityLivingBase)seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, bulletStack.getItemDamage(), type);
                             //EntityShootable bulletEntity = bulletItem.getEntity(worldObj, Vector3f.add(new Vector3f(posX, posY, posZ), gunVec, null), lookVector, (EntityLivingBase)seats[0].riddenByEntity, spread, damageMultiplier, shellSpeed, driveableData.getStackInSlot(slot).getItemDamage(), type);
@@ -993,11 +988,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             }
         }
 
-
-        if (deckCheck != prevDeckCheck)
-            onDeck = true;
-        else onDeck = false;
-
+        onDeck = deckCheck != prevDeckCheck;
 
         //Aesthetics
         if (type.IT1 && !disabled) {
@@ -1212,7 +1203,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             boolean canEmit;
             boolean inThrottle = false;
             DriveablePart part = getDriveableData().parts.get(EnumDriveablePart.getPart(emitter.part));
-            float healthPercentage = (float) part.health / (float) part.maxHealth;
+            float healthPercentage = part.health / part.maxHealth;
             canEmit = isPartIntact(EnumDriveablePart.getPart(emitter.part)) && healthPercentage >= emitter.minHealth && healthPercentage <= emitter.maxHealth;
 
             if ((throttle >= emitter.minThrottle && throttle <= emitter.maxThrottle))
@@ -1224,7 +1215,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 if (inThrottle && canEmit) {
                     //Emit!
                     Vector3f velocity = new Vector3f(0, 0, 0);
-                    ;
+
                     Vector3f pos = new Vector3f(0, 0, 0);
                     if (seats != null && seats[0] != null) {
                         if (EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.turret && EnumDriveablePart.getPart(emitter.part) != EnumDriveablePart.barrel) {
@@ -1234,7 +1225,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                             pos = axes.findLocalVectorGlobally(localPosition);
                             velocity = axes.findLocalVectorGlobally(emitter.velocity);
-                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && emitter.part != "barrel") {
+                        } else if (EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.turret || EnumDriveablePart.getPart(emitter.part) == EnumDriveablePart.head && !emitter.part.equals("barrel")) {
 
                             Vector3f localPosition2 = new Vector3f(emitter.origin.x + rand.nextFloat() * emitter.extents.x - emitter.extents.x * 0.5f,
                                     emitter.origin.y + rand.nextFloat() * emitter.extents.y - emitter.extents.y * 0.5f,
@@ -1608,37 +1599,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     int z = hit.blockZ;
                     Block blockHit = worldObj.getBlock(x, y, z);
 
-                    float blockHardness = blockHit.getBlockHardness(worldObj, x, y, z);
-                    collisionHardness = blockHardness;
-
-                    int meta = worldObj.getBlockMetadata(x, y, z);
-                    float damage = 0;
-                    if (blockHardness > 0.2) {
-                        damage = blockHardness * blockHardness * (float) speed;
-                    }
-
-                    if (null == blockHit.getCollisionBoundingBoxFromPool(this.worldObj, x, y, z)) {
-                        damage = 0;
-                    }
-
-
-
-                    if (damage > 0) {
-                        damagePart = true;
-                        if (!attackPart(p.part, DamageSource.inWall, damage) && TeamsManager.driveablesBreakBlocks) {
-                            // And if it didn't die from the attack, break the block
-                            worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(blockHit) + (meta << 12));
-
-                            if (!worldObj.isRemote) {
-                                blockHit.dropBlockAsItem(worldObj, x, y, z, meta, 1);
-                                worldObj.setBlockToAir(x, y, z);
-                            }
-                        } else {
-                            // The part died!
-                            worldObj.createExplosion(this, x, y, z, 1F,
-                                    false);
-                        }
-                    }
+                    collisionHardness = blockHit.getBlockHardness(worldObj, x, y, z);
                 }
             }
         }

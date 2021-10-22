@@ -10,6 +10,8 @@ This version of Flan's Mod Plus aims to be the most recent and stable.
 
 [Config reference](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/ConfigReference.md)
 
+[Create/convert to a content mod](PackToModNotice.md)
+
 ### Wiki Articles
 * [Wiki: Compiling](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Compiling)
 * [Wiki: Particle Types](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Particle-Types)
