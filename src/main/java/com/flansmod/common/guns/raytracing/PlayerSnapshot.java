@@ -33,6 +33,7 @@ public class PlayerSnapshot
 	public PlayerSnapshot(EntityPlayer p)
 	{
 		player = p;
+		time = p.worldObj.getTotalWorldTime();
 		pos = new Vector3f(p.posX, p.posY, p.posZ);
 		if(FlansMod.proxy.isThePlayer(p))
 			pos = new Vector3f(p.posX, p.posY - 1.6F, p.posZ);
@@ -103,19 +104,28 @@ public class PlayerSnapshot
 			}
 		}
 	}
-	
-	public ArrayList<BulletHit> raytrace(Vector3f origin, Vector3f motion)
-	{	
+
+	public ArrayList<BulletHit> raytrace(Vector3f origin, Vector3f motion) {
+		return raytrace(origin, motion, 0F, 1F);
+	}
+
+	public ArrayList<BulletHit> raytrace(Vector3f origin, Vector3f motion, float lowerBound, float upperBound)
+	{
+		//Prepare a list for the hits
+		ArrayList<BulletHit> hits = new ArrayList<BulletHit>();
+
+		if (upperBound <= lowerBound) {
+			return hits;
+		}
+
 		//Get the bullet raytrace vector into local coordinates
 		Vector3f localOrigin = Vector3f.sub(origin, pos, null);
-		//Prepare a list for the hits
-		ArrayList<BulletHit> hits = new ArrayList<BulletHit>();		
 		
 		//Check each hitbox for a hit
 		for(PlayerHitbox hitbox : hitboxes)
 		{
 			PlayerBulletHit hit = hitbox.raytrace(localOrigin, motion);
-			if(hit != null && hit.intersectTime >= 0F && hit.intersectTime <= 1F)
+			if(hit != null && hit.intersectTime >= lowerBound && hit.intersectTime <= upperBound)
 			{
 				hits.add(hit);
 			}

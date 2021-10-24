@@ -1,17 +1,13 @@
 package com.flansmod.common.guns;
 
-import com.flansmod.api.IEntityBullet;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -30,9 +26,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderHandEvent;
 
-import com.flansmod.client.FlansModClient;
+import com.flansmod.api.IEntityBullet;
 import com.flansmod.client.debug.EntityDebugDot;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
@@ -53,13 +48,13 @@ import com.flansmod.common.guns.raytracing.PlayerHitbox;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.network.PacketPlaySound;
+import com.flansmod.common.network.PacketHitMarker;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.vector.Vector3f;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -114,11 +109,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public boolean isFirstPositionSetting = false;
     public boolean isPositionUpper = true;
 
-    // For rendering - this applies to the last fired bullet, just before render. (Gets reset at render)
-    // This isn't really an optimal place for putting these variables, I can't think of anywhere better though.
-    public static boolean hitCrossHair;
-    public static float penAmount;
-    public static boolean headshot;
+    // Hitmarker information on the server side.
+    public boolean lastHitHeadshot = false;
+    public float lastHitPenAmount = 1F;
 
     public float penetratingPower;
 
@@ -284,6 +277,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public void onUpdate() {
         super.onUpdate();
 
+        // Update the ping for hit detection
+        if (!worldObj.isRemote && owner instanceof  EntityPlayerMP) {
+            pingOfShooter = ((EntityPlayerMP)owner).ping;
+        }
+
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
@@ -442,8 +440,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         // The shooter of this bullet is immune to it for the first second.
                         continue;
                     int snapshotToTry = TeamsManager.bulletSnapshotMin;
+                    float snapshotPortion = pingOfShooter / (float)TeamsManager.bulletSnapshotDivisor;
                     if (TeamsManager.bulletSnapshotDivisor > 0) {
-                        snapshotToTry += pingOfShooter / TeamsManager.bulletSnapshotDivisor;
+                        snapshotToTry += snapshotPortion;
                     }
                     if (snapshotToTry >= data.snapshots.length)
                         snapshotToTry = data.snapshots.length - 1;
@@ -461,10 +460,50 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (snapshot == null)
                         shouldDoNormalHitDetect = true;
                     else {
-                        //Raytrace
-                        ArrayList<BulletHit> playerHits = snapshot.raytrace(origin, motion);
+                        boolean snapshotBeforeExists = snapshotToTry != 0 && data.snapshots[snapshotToTry-1] != null;
+                        boolean snapshotAfterExists = snapshotToTry + 1 < data.snapshots.length && data.snapshots[snapshotToTry+1] != null;
 
-                        hits.addAll(playerHits);
+                        // -0.5 = before
+                        // 0 = centered
+                        // 0.5 = after
+                        float bias = 0.25F;
+                        float offset = snapshotPortion + bias;
+
+                        float lb = offset - 0.5F;
+                        float ub = offset + 0.5F;
+
+                        ArrayList<BulletHit> onStepHits = new ArrayList<>();
+                        ArrayList<BulletHit> altStepHits = new ArrayList<>();
+
+                        if (offset > 0.5 && snapshotAfterExists) {
+                            // Timestep t and t+1
+                            onStepHits = snapshot.raytrace(origin, motion, lb, 1);
+                            if (onStepHits.isEmpty()) {
+                                altStepHits = data.snapshots[snapshotToTry + 1].raytrace(origin, motion, 0, lb);
+                            }
+                        } else if (offset < 0.5 && snapshotBeforeExists) {
+                            // Timestep t and t-1
+                            onStepHits = snapshot.raytrace(origin, motion, 0, ub);
+                            if (onStepHits.isEmpty()) {
+                                altStepHits = data.snapshots[snapshotToTry - 1].raytrace(origin, motion, ub, 1);
+                            }
+                        } else {
+                            // Timestep t ONLY
+                            onStepHits = snapshot.raytrace(origin, motion, 0, 1);
+                        }
+
+                        hits.addAll(onStepHits);
+                        hits.addAll(altStepHits);
+
+/*                        StringBuilder sb = new StringBuilder();
+                        sb.append("SnapShot ").append(snapshotToTry).append(" / ").append(data.snapshots.length).append("\n");
+                        sb.append("Shooter Ping ").append(pingOfShooter).append(" T1 ").append(snapshot.time).append("\n");
+                        sb.append("Offset ").append(snapshotPortion).append(offset < 0.5 ? " Pre" : (offset > 0.5 ? " Post" : " On")).append("\n");
+                        sb.append("OnStep ").append(onStepHits.size()).append(" OffStep ").append(altStepHits.size()).append("\n");
+
+                        if (onStepHits.size() + altStepHits.size() > 0) {
+                            FlansMod.log(sb.toString());
+                        }*/
                     }
                 }
 
@@ -489,8 +528,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             } else {
                 Entity entity = (Entity) obj;
                 if (entity != this && entity != owner && !entity.isDead && !(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb) && !(entity instanceof EntityArrow) &&
-                        (entity.getClass().toString().indexOf("flansmod.") < 0 || entity instanceof EntityAAGun || entity instanceof EntityGrenade)
-                        && entity.getClass().toString().indexOf("holographicdisplays") < 0) {
+                        (!entity.getClass().toString().contains("flansmod.") || entity instanceof EntityAAGun || entity instanceof EntityGrenade)
+                        && !entity.getClass().toString().contains("holographicdisplays")) {
                     AxisAlignedBB bb = entity.boundingBox.addCoord(
                             -(entity.posX - entity.prevPosX) * 2,
                             -(entity.posY - entity.prevPosY) * 2,
@@ -543,39 +582,40 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             //Sort the hits according to the intercept position
             Collections.sort(hits);
 
+            boolean showCrosshair = false;
+            lastHitPenAmount = 0F;
+            lastHitHeadshot = false;
+
             for (BulletHit bulletHit : hits) {
                 if (bulletHit instanceof DriveableHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-                    if (worldObj.isRemote) {
-                        if (owner instanceof EntityPlayer) {
-                            if (FlansMod.proxy.isThePlayer((EntityPlayer) owner)) {
-                                hitCrossHair = true;
-                            }
-                        }
-                    }
+
                     DriveableHit driveableHit = (DriveableHit) bulletHit;
                     driveableHit.driveable.lastAtkEntity = owner;
                     penetratingPower = driveableHit.driveable.bulletHit(this, driveableHit, penetratingPower);
 
+                    if (!worldObj.isRemote) {
+                        if (owner instanceof EntityPlayer) {
+                            showCrosshair = true;
+                        }
+                    }
 
                     if (type.canSpotEntityDriveable)
                         driveableHit.driveable.setEntityMarker(200);
-                    //driveableHit.driveable.isShowedPosition = true;
-                    //driveableHit.driveable.tickCount = 200;
+
                     if (FlansMod.DEBUG)
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * driveableHit.intersectTime, posY + motionY * driveableHit.intersectTime, posZ + motionZ * driveableHit.intersectTime), 1000, 0F, 0F, 1F));
-
                 } else if (bulletHit instanceof PlayerBulletHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-                    if (worldObj.isRemote) {
+
+                    if (!worldObj.isRemote) {
                         if (owner instanceof EntityPlayer) {
-                            if (FlansMod.proxy.isThePlayer((EntityPlayer) owner)) {
-                                hitCrossHair = true;
-                            }
+                            showCrosshair = true;
                         }
                     }
+
                     PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
                     penetratingPower = playerHit.hitbox.hitByBullet(this, penetratingPower);
                     if (FlansMod.DEBUG)
@@ -583,16 +623,14 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 } else if (bulletHit instanceof EntityHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-                    if (worldObj.isRemote) {
+
+                    if (!worldObj.isRemote) {
                         if (owner instanceof EntityPlayer) {
-                            if (FlansMod.proxy.isThePlayer((EntityPlayer) owner)) {
-                                hitCrossHair = true;
-                                // Reset crosshair rendering
-                                penAmount = 1;
-                                headshot = false;
-                            }
+                            showCrosshair = true;
+                            lastHitPenAmount = 1F;
                         }
                     }
+
                     EntityHit entityHit = (EntityHit) bulletHit;
                     float d = damage;
                     if (entityHit.entity instanceof EntityLivingBase) {
@@ -670,6 +708,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     break;
                 }
 
+            }
+
+            if (showCrosshair && owner instanceof EntityPlayerMP) {
+                FlansMod.log("Sending pkt");
+                FlansMod.getPacketHandler().sendTo(new PacketHitMarker(lastHitHeadshot, lastHitPenAmount, false), (EntityPlayerMP)owner);
             }
 
         }

@@ -1,18 +1,15 @@
 package com.flansmod.common.driveables;
 
-import java.util.ArrayList;
 import java.lang.Math;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 import com.flansmod.common.driveables.collisions.CollisionTest;
 import com.flansmod.common.driveables.collisions.RidingEntityPosition;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.raytracing.DriveableHit;
-import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.vector.Vector3f;
 
 public class DriveablePart 
@@ -374,13 +371,13 @@ public class DriveablePart
 		//Perform damage code
 		if(bullet != null)
 		{
-			EntityBullet.penAmount = 1;
-			EntityBullet.headshot = false;
 			float damageModifier = damageMod;
 			if (penetratingPower <= 0.7F*penRes && FlansMod.useNewPenetrationSystem) {
 				damageModifier *= (float)Math.pow((double)(penetratingPower/(0.7F*penRes)), 2.5);
-				EntityBullet.penAmount = damageModifier;
 			}
+
+			bullet.lastHitPenAmount = Math.max(bullet.lastHitPenAmount, damageModifier);
+
 			if(hit.driveable instanceof EntityPlane)
 			{
 				health -= bullet.damage * bullet.type.damageVsPlanes * damageModifier;

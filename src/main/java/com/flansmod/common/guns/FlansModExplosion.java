@@ -15,6 +15,7 @@ import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.EntityWheel;
 import com.flansmod.common.network.PacketExplosion;
+import com.flansmod.common.network.PacketHitMarker;
 import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.types.InfoType;
 
@@ -203,9 +204,9 @@ public class FlansModExplosion extends Explosion
                     if( damage > 0.5F)
                     {
                     	boolean b = entity.attackEntityFrom(player == null || type == null ? DamageSource.setExplosionSource(this) : new EntityDamageSourceFlans(type.shortName, entity, player, type, false, false), damage);
-                    	if(b)
+                    	if(b && !worldObj.isRemote && player instanceof EntityPlayerMP)
                     	{
-                    		EntityBullet.hitCrossHair = true;
+                    		FlansMod.getPacketHandler().sendTo(new PacketHitMarker(false, 1F, true), (EntityPlayerMP) player);
                     	}
                         double d11 = EnchantmentProtection.func_92092_a(entity, d10);
                         entity.motionX += d0 * d11;

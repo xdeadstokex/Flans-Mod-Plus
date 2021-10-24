@@ -321,9 +321,9 @@ public class TickHandlerClient {
                 }
             }
             //RenderHitCrossHair
-            if (EntityBullet.hitCrossHair) {
+            if (FlansModClient.hitMarker) {
                 tickCount = 20;
-                EntityBullet.hitCrossHair = false;
+                FlansModClient.hitMarker = false;
             }
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             ItemStack currentHeldItem = player.getCurrentEquippedItem();
@@ -337,8 +337,18 @@ public class TickHandlerClient {
                 GL11.glDepthMask(false);
                 GL11.glBlendFunc(770, 771);
                 // Rendering of fancy crosshair.
+                FlansMod.log("" + FlansModClient.hitMarkerHeadshot);
+                FlansMod.log("" + FlansModClient.hitMarkerPenAmount);
                 if (FlansMod.fancyCrosshair) {
-                    if (EntityBullet.headshot) {
+                    if (FlansModClient.hitMarkerExplosion) {
+                        // Headshot - blue.
+                        GL11.glColor4f(
+                                0.95F,
+                                0.85F,
+                                0.3F,
+                                FlansMod.hitCrossHairColor[0] * (float) tickCount / 20
+                        );
+                    } else if (FlansModClient.hitMarkerHeadshot) {
                         // Headshot - blue.
                         GL11.glColor4f(
                                 0,
@@ -350,16 +360,16 @@ public class TickHandlerClient {
                         // Two stage transition between red and green, to avoid going into yellow.
                         // Green = full pen.
                         // Red = 0 .
-                        if (EntityBullet.penAmount < 0.5) {
+                        if (FlansModClient.hitMarkerPenAmount < 0.5) {
                             GL11.glColor4f(
                                     1,
-                                    2 * EntityBullet.penAmount,
+                                    2 * FlansModClient.hitMarkerPenAmount,
                                     0,
                                     FlansMod.hitCrossHairColor[0] * (float) tickCount / 20
                             );
                         } else {
                             GL11.glColor4f(
-                                    2 * (1 - EntityBullet.penAmount),
+                                    2 * (1 - FlansModClient.hitMarkerPenAmount),
                                     1,
                                     0,
                                     FlansMod.hitCrossHairColor[0] * (float) tickCount / 20

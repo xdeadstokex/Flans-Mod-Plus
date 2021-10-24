@@ -164,51 +164,28 @@ public class PlayerHitbox {
                 instanceof ItemTeamArmour)) ? 0.15F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
                 .type.penetrationResistance;
 
-//        FlansMod.log("%f", headPenRes);
-//        FlansMod.log("%f", chestPenRes);
-//        FlansMod.log("%f", legsPenRes);
-//        FlansMod.log("%f", feetPenRes);
-
-
         float totalPenetrationResistance = 0;
 
-        switch (type) {
-            case HEAD:
-                totalPenetrationResistance = headPenRes;
-                break;
-            default:
-                totalPenetrationResistance = chestPenRes + legsPenRes + feetPenRes;
-                break;
-
+        if (type == EnumHitboxType.HEAD) {
+            totalPenetrationResistance = headPenRes;
+        } else {
+            totalPenetrationResistance = chestPenRes + legsPenRes + feetPenRes;
         }
 
         float damageModifier = 1;
-        EntityBullet.penAmount = 1;
         if (penetratingPower <= 0.7F * totalPenetrationResistance && FlansMod.useNewPenetrationSystem) {
             damageModifier = (float) Math.pow((double) (penetratingPower / (0.7F * totalPenetrationResistance)), 2.5);
-            EntityBullet.penAmount = damageModifier;
         } else if (!FlansMod.useNewPenetrationSystem) {
             damageModifier = bullet.type.penetratingPower < 0.1F ? penetratingPower / bullet.type.penetratingPower : 1;
         }
-        EntityBullet.headshot = false;
-        switch (type) {
-            case BODY:
-                break;
-            case HEAD:
-                damageModifier *= 2F;
-                EntityBullet.headshot = true;
-                break;
-            case LEFTARM:
-                break;
-            case RIGHTARM:
-                break;
-            case LEFTITEM:
-                break;
-            case RIGHTITEM:
-                break;
-            default:
-                break;
+
+        bullet.lastHitPenAmount = Math.max(bullet.lastHitPenAmount, damageModifier);
+
+        if (type == EnumHitboxType.HEAD) {
+            damageModifier *= 2F;
+            bullet.lastHitHeadshot = true;
         }
+
         switch (type) {
             case BODY:
             case HEAD:

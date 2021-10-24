@@ -792,9 +792,9 @@ public class FlansMod {
         configFile.save();
     }
 
-    public static void log(String string) {
+    public static void log(Object obj) {
         if (printDebugLog) {
-            logger.info(string);
+            logger.info(obj.toString());
         }
     }
 

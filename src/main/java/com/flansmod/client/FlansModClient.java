@@ -130,6 +130,11 @@ public class FlansModClient extends FlansMod {
     public static FlanMouseButton aimButton;
     public static float fov;
 
+    public static boolean hitMarker = false;
+    public static boolean hitMarkerHeadshot = false;
+    public static float hitMarkerPenAmount = 1F;
+    public static boolean hitMarkerExplosion = false;
+
     public void load() {
         log("Loading Flan's mod client side.");
         MinecraftForge.EVENT_BUS.register(this);
