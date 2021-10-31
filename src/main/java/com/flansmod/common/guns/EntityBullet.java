@@ -522,7 +522,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         if (hitLambda < 0)
                             hitLambda = -hitLambda;
 
-                        hits.add(new PlayerBulletHit(new PlayerHitbox(player, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
+                        hits.add(new PlayerBulletHit(new PlayerHitbox(player, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(),  new Vector3f(), EnumHitboxType.BODY), hitLambda));
                     }
                 }
             } else {

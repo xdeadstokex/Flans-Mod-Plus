@@ -923,7 +923,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                                     if (hitLambda < 0)
                                         hitLambda = -hitLambda;
 
-                                    hits.add(new PlayerBulletHit(new PlayerHitbox(otherPlayer, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
+                                    hits.add(new PlayerBulletHit(new PlayerHitbox(otherPlayer, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
                                 }
                             }
                         } else {
