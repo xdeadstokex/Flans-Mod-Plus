@@ -51,6 +51,8 @@ public class VehicleType extends DriveableType {
 
     public boolean useRealisticAcceleration = false;
 
+    public float maxFallSpeed = 0.85F;
+    public float gravity = 0.175F;
 
     //Door animations
     public Vector3f doorPos1 = new Vector3f(0, 0, 0);
@@ -113,6 +115,11 @@ public class VehicleType extends DriveableType {
                 mass = Float.parseFloat(split[1]);
             if (split[0].equals("UseRealisticAcceleration"))
                 useRealisticAcceleration = Boolean.parseBoolean(split[1]);
+            if (split[0].equals("Gravity"))
+                gravity = Float.parseFloat(split[1]);
+            if (split[0].equals("MaxFallSpeed"))
+                maxFallSpeed = Float.parseFloat(split[1]);
+
             //Visuals
             if (split[0].equals("HasDoor"))
                 hasDoor = Boolean.parseBoolean(split[1].toLowerCase());

@@ -753,6 +753,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Mass | Float | 1000 | The mass of the vehicle, for realistic acceleration. Roughly in KG? |
 | UseRealisticAcceleration | Boolean | false | Use a system which uses vehicle mass and engine power to calculate acceleration. |
 | ThrottleDecay | Float | 0.0035F | Amount to decrease the throttle by each tick |
+| Gravity | Float | 0.175 | The rate at which to increase speed downwards when falling. |
+| MaxFallSpeed | Float | 0.85 | Terminal velocity of the vehicle. |
 | HasDoor | Boolean | false | Whether this has openable doors |
 | ShootWithOpenDoor | Boolean | false | Whether the vehicle can NOT shoot while the door is open. True = CANNOT fly with door open False = CAN fly with door open (it's inverted) |
 | RotateWheels | Boolean | false | Whether to animate rotating wheels |
