@@ -345,7 +345,7 @@ public class PlaneType extends DriveableType
     	{
     		if(propeller.planePart == part.type)
     		{
-				if (propeller.itemType != null && propeller.itemType != null) {
+				if (propeller.itemType != null) {
 					stacks.add(new ItemStack(propeller.itemType.item));
 
 				} else {

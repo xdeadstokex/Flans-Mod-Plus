@@ -268,7 +268,7 @@ public class GuiGunBox extends GuiContainer
 
 					} catch (Exception e) {
 						recipeTooltip = null;
-						if (entry != null && entry.type.shortName != null) {
+						if (entry.type.shortName != null) {
 							FlansMod.log("Require part(s) null! Contact content pack author. " + entry.type.shortName);
 						} else {
 							FlansMod.log("Entry is null!");

@@ -97,7 +97,7 @@ public class PacketSeatCheck extends PacketBase
 	@SideOnly(Side.CLIENT)
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
-		log("handleClientSide", clientPlayer);
+		//log("handleClientSide", clientPlayer);
 		
 		if(clientPlayer.ridingEntity==null && entityId != -1)
 		{
@@ -111,9 +111,9 @@ public class PacketSeatCheck extends PacketBase
 				Entity entity = clientPlayer.worldObj.getEntityByID(entityId);
 				if(entity instanceof EntitySeat)
 				{
-					FlansMod.log("mount seat :"+clientPlayer.getDisplayName()+
-							" : seatEntityId="+entityId+
-							" : check="+checkCount);
+					//FlansMod.log("mount seat :"+clientPlayer.getDisplayName()+
+							//" : seatEntityId="+entityId+
+							//" : check="+checkCount);
 
 					clientPlayer.mountEntity(entity);
 				}

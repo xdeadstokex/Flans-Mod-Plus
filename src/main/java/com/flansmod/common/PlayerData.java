@@ -198,7 +198,7 @@ public class PlayerData
 	{
 		meleeLength = meleeTime;
 		lastMeleePositions = new Vector3f[type.meleePath.size()];
-		
+
 		for(int k = 0; k < type.meleeDamagePoints.size(); k++)
 		{
 			Vector3f meleeDamagePoint = type.meleeDamagePoints.get(k);

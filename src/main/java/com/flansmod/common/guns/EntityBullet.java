@@ -711,7 +711,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             }
 
             if (showCrosshair && owner instanceof EntityPlayerMP) {
-                FlansMod.log("Sending pkt");
                 FlansMod.getPacketHandler().sendTo(new PacketHitMarker(lastHitHeadshot, lastHitPenAmount, false), (EntityPlayerMP)owner);
             }
 

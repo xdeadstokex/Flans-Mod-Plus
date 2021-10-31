@@ -50,7 +50,6 @@ public class PacketHitMarker extends PacketBase
     @Override
     public void handleClientSide(EntityPlayer clientPlayer)
     {
-        FlansMod.log("rcvd pkt");
         FlansModClient.hitMarker = true;
         FlansModClient.hitMarkerPenAmount = penAmount;
         FlansModClient.hitMarkerHeadshot = headshot;

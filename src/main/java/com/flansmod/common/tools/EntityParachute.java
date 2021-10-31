@@ -28,7 +28,7 @@ public class EntityParachute extends Entity implements IEntityAdditionalSpawnDat
 	{
 		super(w);
 		ignoreFrustumCheck = true;
-		FlansMod.log(w.isRemote ? "Client paraspawn" : "Server paraspawn");
+		//FlansMod.log(w.isRemote ? "Client paraspawn" : "Server paraspawn");
 	}
 	
 	public EntityParachute(World w, ToolType t, EntityPlayer player)

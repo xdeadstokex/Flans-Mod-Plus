@@ -337,8 +337,6 @@ public class TickHandlerClient {
                 GL11.glDepthMask(false);
                 GL11.glBlendFunc(770, 771);
                 // Rendering of fancy crosshair.
-                FlansMod.log("" + FlansModClient.hitMarkerHeadshot);
-                FlansMod.log("" + FlansModClient.hitMarkerPenAmount);
                 if (FlansMod.fancyCrosshair) {
                     if (FlansModClient.hitMarkerExplosion) {
                         // Headshot - blue.
