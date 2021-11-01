@@ -100,7 +100,7 @@ task outputJar(type: Jar) {
         exclude '**/nerf/'
         exclude '**/simpleparts/'
         exclude '**/titan/'
-        exclude '**/utility'
+        exclude '**/utility/'
         exclude '**/ww2/'
         exclude '**/yeolde/'
         exclude '**/zombie/'
@@ -122,63 +122,63 @@ task deobfJar(type: Jar) {
 
 task mechaParts(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/mechaparts/' }
-    from 'run/Flan/Mecha Parts Pack'
+    from 'eclipse/Flan/Mecha Parts Pack'
     baseName = 'Mecha Parts'
     appendix = 'Content Pack'
 }
 
 task modernWeapons(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/modernweapons/' }
-    from 'run/Flan/Modern Weapons Pack'
+    from 'eclipse/Flan/Modern Weapons Pack'
     baseName = 'Modern Warfare'
     appendix = 'Content Pack'
 }
 
 task nerf(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/nerf/' }
-    from 'run/Flan/Nerf Pack'
+    from 'eclipse/Flan/Nerf Pack'
     baseName = 'Nerf'
     appendix = 'Content Pack'
 }
 
 task simpleParts(type: Jar) {
-    from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/simple/' }
-    from 'run/Flan/Parts Pack'
+    from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/simpleparts/' }
+    from 'eclipse/Flan/Parts Pack'
     baseName = 'Simple Parts'
     appendix = 'Content Pack'
 }
 
 task titan(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/titan/' }
-    from 'run/Flan/Titan Pack'
+    from 'eclipse/Flan/Titan Pack'
     baseName = 'Titan'
     appendix = 'Content Pack'
 }
 
 task utility(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/utility/' }
-    from 'run/Flan/Utility Pack'
+    from 'eclipse/Flan/Utility Pack'
     baseName = 'Utility'
     appendix = 'Content Pack'
 }
 
 task ww2(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/ww2/' }
-    from 'run/Flan/WW2 Pack'
+    from 'eclipse/Flan/WW2 Pack'
     baseName = 'WW2'
     appendix = 'Content Pack'
 }
 
 task yeOlde(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/yeolde/' }
-    from 'run/Flan/Ye Olde Pack'
+    from 'eclipse/Flan/Ye Olde Pack'
     baseName = 'Ye Olde'
     appendix = 'Content Pack'
 }
 
 task zombie(type: Jar) {
     from(zipTree("${destinationDir}/${archiveName}")) { include 'com/flansmod/zombie/' }
-    from 'run/Flan/Zombie Pack'
+    from 'eclipse/Flan/Zombie Pack'
     baseName = 'Zombie'
     appendix = 'Content Pack'
 }

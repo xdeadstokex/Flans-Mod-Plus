@@ -42,7 +42,6 @@ public class ContentManager {
 
     /**
      * Enables various development environment features.
-     * Automatically enabled if debug mode enabled.
      */
     public static boolean DEV_ENV = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
     private boolean loggedDeobf;
