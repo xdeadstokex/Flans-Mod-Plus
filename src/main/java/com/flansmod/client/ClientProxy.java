@@ -309,7 +309,7 @@ public class ClientProxy extends CommonProxy {
             }
 
             if (FlansMod.printDebugLog)
-                FlansMod.logger.warn("No model location found for {}", in);
+                FlansMod.logger.warn("No model location registered for {}", in);
 
             StringBuilder out = new StringBuilder("Model" + split[split.length - 1]);
             for (int i = split.length - 2; i >= 0; i--) {
@@ -330,10 +330,7 @@ public class ClientProxy extends CommonProxy {
         try {
             return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
         } catch (Exception e) {
-            FlansMod.log("Failed to load model : " + shortName + " (" + s + ")");
-            if (FlansMod.printStackTrace) {
-                e.printStackTrace();
-            }
+            FlansMod.logger.error("Failed to load model : " + shortName + " (" + s + ")", e);
         }
         return null;
     }

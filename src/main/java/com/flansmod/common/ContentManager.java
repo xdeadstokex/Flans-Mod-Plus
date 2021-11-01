@@ -48,6 +48,9 @@ public class ContentManager {
     private boolean reloadResources;
     private final HashMap<String, IFlansContentProvider> contentPacks = new HashMap<>();
 
+    /**
+     * Finds and loads all Flans content.
+     */
     public void loadContent() {
         //Mods folder
         for (ModContainer container : Loader.instance().getActiveModList()) {
@@ -113,7 +116,13 @@ public class ContentManager {
                 }
             }
         }
+    }
 
+    /**
+     * Creates all the mod items.
+     * <i>Execute only after registering all models!</i>
+     */
+    public void createItems() {
         //Create items
         for (EnumType type : EnumType.values()) {
             Class<? extends InfoType> typeClass = type.getTypeClass();

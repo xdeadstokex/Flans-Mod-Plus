@@ -221,6 +221,7 @@ public class FlansMod {
 //        readContentPacks(event);
         contentManager.loadContent();
         proxy.loadFlanAssets();
+        contentManager.createItems();
 
         if (gunItems.size() >= 1) {
             MinecraftForge.EVENT_BUS.register(gunItems.get(0));
@@ -229,8 +230,10 @@ public class FlansMod {
         //Do proxy loading
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
-        if (contentManager.reloadResources())
+        if (contentManager.reloadResources()) {
+            logger.warn("Content packs detected, reload resources");
             proxy.forceReload();
+        }
 
         FMLCommonHandler.instance().registerCrashCallable(new FlansCrash());
 
