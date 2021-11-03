@@ -1,34 +1,38 @@
-package com.flansmod.client;
+package com.flansmod.client.particle;
+
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.teams.TeamsManager;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.block.Block;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class EntityFMTracerGreen extends EntityFX
+public class EntityFlare extends EntityFX
 {
-	public static ResourceLocation icon = new ResourceLocation("flansmod", "particle/FMTracerGreen.png");
-	public EntityFMTracerGreen(World w, double px, double py, double pz, double mx, double my, double mz)
+	public float damage = 5;
+	public EntityFlare(World w, double px, double py, double pz, double mx, double my, double mz)
 	{
 		super(w, px, py, pz, mx, my, mz);
-		this.particleMaxAge = 6;
-		this.particleAge = 0;
-		this.particleGravity = 0;
+		this.particleMaxAge *= 100;
+		this.particleGravity = 1;
 		this.motionX = mx;
 		this.motionY = my;
 		this.motionZ = mz;
-		FlansMod.proxy.spawnParticle("flansmod.FMTracerGreen",
-				this.posX,
-				this.posY,
-				this.posZ,
-				0,0,0);
-
-		icon = new ResourceLocation("flansmod", "particle/FMTracerGreen.png");
 	}
 	
 	public int getFXLayer()
@@ -55,27 +59,33 @@ public class EntityFMTracerGreen extends EntityFX
 		GL11.glEnable(GL11.GL_BLEND);
 		int srcBlend = GL11.glGetInteger(GL11.GL_BLEND_SRC);
 		int dstBlend = GL11.glGetInteger(GL11.GL_BLEND_DST);
-		//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glBlendFunc(1, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDepthMask(false); 
-    	FMLClientHandler.instance().getClient().renderEngine.bindTexture(new ResourceLocation("flansmod", "particle/FMTracerGreen.png"));
+    	FMLClientHandler.instance().getClient().renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/flare.png"));
 
-        float scale = 0.6F - ((this.particleAge)*0.1F);
+        float scale = 0.3F * this.particleScale;
         float xPos = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) par2 - interpPosX);
         float yPos = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) par2 - interpPosY);
         float zPos = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) par2 - interpPosZ);
-        float colorIntensity = 1F;
-        //par1Tessellator.setColorOpaque_F(this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity);//, 1.0F);
-        par1Tessellator.setColorRGBA_F(this.particleRed * colorIntensity, this.particleGreen * (colorIntensity - this.particleAge*0.2F), this.particleBlue * (colorIntensity - this.particleAge*0.2F), (1F - this.particleAge*0.1F));
+        float colorIntensity = 1.0F;
+        par1Tessellator.setColorOpaque_F(this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity);//, 1.0F);
+
         par1Tessellator.addVertexWithUV((double) (xPos - par3 * scale - par6 * scale), (double) (yPos - par4 * scale), (double) (zPos - par5 * scale - par7 * scale), 0D, 1D);
         par1Tessellator.addVertexWithUV((double) (xPos - par3 * scale + par6 * scale), (double) (yPos + par4 * scale), (double) (zPos - par5 * scale + par7 * scale), 1D, 1D);
         par1Tessellator.addVertexWithUV((double) (xPos + par3 * scale + par6 * scale), (double) (yPos + par4 * scale), (double) (zPos + par5 * scale + par7 * scale), 1D, 0D);
         par1Tessellator.addVertexWithUV((double) (xPos + par3 * scale - par6 * scale), (double) (yPos - par4 * scale), (double) (zPos + par5 * scale - par7 * scale), 0D, 0D);
         par1Tessellator.draw();
-        //GL11.glBlendFunc(srcBlend, dstBlend);
+		GL11.glBlendFunc(srcBlend, dstBlend);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDepthMask(true); 
-        GL11.glPopMatrix();
-
+		GL11.glPopMatrix();
+    }
+	
+	@Override
+    public AxisAlignedBB getBoundingBox()
+    {
+		boundingBox.expand(1, 1, 1);
+        return boundingBox;
     }
 
 	public void onUpdate()
@@ -83,13 +93,36 @@ public class EntityFMTracerGreen extends EntityFX
 		this.prevPosX = this.posX;
 		this.prevPosY = this.posY;
 		this.prevPosZ = this.posZ;
-		this.renderDistanceWeight = 2000.0D;
+
 		if(this.particleAge++ >= this.particleMaxAge)
 		{
 			this.setDead();
 		}
-		
+
+		this.motionY -= 0.04D * (double) this.particleGravity;
 		this.moveEntity(this.motionX, this.motionY, this.motionZ);
+		this.motionX *= 0.99;
+		this.motionY *= 0.99;
+		this.motionZ *= 0.99;
+		
+		if(this.posY < 0)
+		{
+			setDead();
+		}
+		
+		int NUM = 5;
+		for(int i=0; i<NUM; i++)
+		{
+			double dx = (this.posX-this.prevPosX) / NUM;
+			double dy = (this.posY-this.prevPosY) / NUM;
+			double dz = (this.posZ-this.prevPosZ) / NUM;
+			FlansMod.proxy.spawnParticle("flansmod.fmflame",
+				this.prevPosX + dx*i,
+				this.prevPosY + dy*i,
+				this.prevPosZ + dz*i,
+				0,0,0);
+		}
+
 		if(this.onGround)
 		{
 			setDead();

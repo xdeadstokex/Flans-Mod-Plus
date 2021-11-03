@@ -1,4 +1,4 @@
-package com.flansmod.client;
+package com.flansmod.client.particle;
 
 import org.lwjgl.opengl.GL11;
 
@@ -10,25 +10,25 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class EntityFMTracer extends EntityFX
+public class EntityFMTracerGreen extends EntityFX
 {
-	public static ResourceLocation icon = new ResourceLocation("flansmod", "particle/FMTracer.png");
-	public EntityFMTracer(World w, double px, double py, double pz, double mx, double my, double mz)
+	public static ResourceLocation icon = new ResourceLocation("flansmod", "particle/FMTracerGreen.png");
+	public EntityFMTracerGreen(World w, double px, double py, double pz, double mx, double my, double mz)
 	{
 		super(w, px, py, pz, mx, my, mz);
 		this.particleMaxAge = 6;
 		this.particleAge = 0;
-		this.particleGravity = 1;
+		this.particleGravity = 0;
 		this.motionX = mx;
 		this.motionY = my;
 		this.motionZ = mz;
-		FlansMod.proxy.spawnParticle("flansmod.fmsmoke",
+		FlansMod.proxy.spawnParticle("flansmod.FMTracerGreen",
 				this.posX,
 				this.posY,
 				this.posZ,
 				0,0,0);
 
-		icon = new ResourceLocation("flansmod", "particle/FMTracer.png");
+		icon = new ResourceLocation("flansmod", "particle/FMTracerGreen.png");
 	}
 	
 	public int getFXLayer()
@@ -57,7 +57,7 @@ public class EntityFMTracer extends EntityFX
 		int dstBlend = GL11.glGetInteger(GL11.GL_BLEND_DST);
 		//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDepthMask(false); 
-    	FMLClientHandler.instance().getClient().renderEngine.bindTexture(new ResourceLocation("flansmod", "particle/FMTracer.png"));
+    	FMLClientHandler.instance().getClient().renderEngine.bindTexture(new ResourceLocation("flansmod", "particle/FMTracerGreen.png"));
 
         float scale = 0.6F - ((this.particleAge)*0.1F);
         float xPos = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) par2 - interpPosX);

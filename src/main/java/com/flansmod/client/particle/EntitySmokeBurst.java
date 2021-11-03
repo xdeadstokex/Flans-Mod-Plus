@@ -1,4 +1,4 @@
-package com.flansmod.client;
+package com.flansmod.client.particle;
 
 import org.lwjgl.opengl.GL11;
 

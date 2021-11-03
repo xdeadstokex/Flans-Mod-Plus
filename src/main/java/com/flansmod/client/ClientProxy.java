@@ -3,6 +3,7 @@ package com.flansmod.client;
 import com.flansmod.client.debug.*;
 import com.flansmod.client.gui.*;
 import com.flansmod.client.model.*;
+import com.flansmod.client.particle.*;
 import com.flansmod.common.CommonProxy;
 import com.flansmod.common.ContentManager;
 import com.flansmod.common.FlansMod;
