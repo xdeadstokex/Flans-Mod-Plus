@@ -3,6 +3,7 @@ package com.flansmod.common.guns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -49,7 +50,7 @@ public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
                 new PacketKillMessage(
                         headshot,
                         weapon,
-                        shooter.getHeldItem().getItemDamage(),
+                        shooter.getHeldItem() != null ? shooter.getHeldItem().getItemDamage() : 0,
                         ((killedTeam == null ? "f" : killedTeam.textColour) + player.getCommandSenderName()),
                         ((killerTeam == null ? "f" : killerTeam.textColour) + shooter.getCommandSenderName()),
                         dist
