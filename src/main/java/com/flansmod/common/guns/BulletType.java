@@ -237,8 +237,8 @@ public class BulletType extends ShootableType
 				tickStartHoming = Integer.parseInt(split[1]);
 			else if(split[0].equals("EnableSACLOS"))
 				enableSACLOS = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("EnableSACLOS"))
-				enableSACLOS = Boolean.parseBoolean(split[1]);
+			else if(split[0].equals("MaxDegreeOFSACLOS"))
+				maxDegreeOfSACLOS = Integer.parseInt(split[1]);
 			else if(split[0].equals("MaxRangeOfMissile"))
 				maxRangeOfMissile = Integer.parseInt(split[1]);
 			else if(split[0].equals("CanSpotEntityDriveable"))
