@@ -298,7 +298,7 @@ public class ClientProxy extends CommonProxy {
         String[] split = in.split("\\.");
         //If there is no dot, our model class is in the default model package
         if (split.length == 1)
-            return "Model" + in;
+            return "com.flansmod.client.model." + "Model" + in;
             //Otherwise, we need to slightly rearrange the wording of the string for it to make sense
         else if (split.length > 1) {
             if (FlansMod.getModelLocation(split[0]) != null) {
@@ -558,7 +558,7 @@ public class ClientProxy extends CommonProxy {
                         entityfx = new EntitySpellParticleFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                         ((EntitySpellParticleFX) entityfx).setBaseSpellTextureIndex(144);
                         float f = theWorld.rand.nextFloat() * 0.5F + 0.35F;
-                        entityfx.setRBGColorF(1.0F * f, 0.0F * f, 1.0F * f);
+                        entityfx.setRBGColorF(f, 0.0F, f);
                     } else if (p_72726_1_.equals("note")) {
                         entityfx = new EntityNoteFX(theWorld, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                     } else if (p_72726_1_.equals("portal")) {

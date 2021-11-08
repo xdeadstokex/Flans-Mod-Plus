@@ -54,7 +54,7 @@ public class GunBoxType extends InfoType
 	public void preRead(TypeFile file)
 	{
 		gunEntries = new GunBoxEntry[8];
-		currentPage = new GunPage("default");
+		currentPage = new GunPage("Default");
 	}
 	
 	@Override
@@ -111,7 +111,7 @@ public class GunBoxType extends InfoType
 					if(nextGun > gunEntries.length - 1)
 					{
 						currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
-						iteratePage("default " + (gunPages.size() + 2));
+						iteratePage("Default " + (gunPages.size() + 2));
 						nextGun++;
 					}
 					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), parts);

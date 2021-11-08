@@ -444,29 +444,31 @@ public class FlansMod {
                 }
 
                 for (EnumType typeToCheckFor : EnumType.values()) {
-                    File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
-                    if (!typesDir.exists())
-                        continue;
+                    for (String folderName : typeToCheckFor.folderNames) {
+                        File typesDir = new File(contentPack, "/" + folderName + "/");
+                        if (!typesDir.exists())
+                            continue;
 
-                    for (File file : typesDir.listFiles()) {
-                        try {
-                            BufferedReader reader = new BufferedReader(new FileReader(file));
-                            String[] splitName = file.getName().split("/");
-                            TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
-                            for (; ; ) {
-                                String line;
-                                try {
-                                    line = reader.readLine();
-                                } catch (Exception e) {
-                                    break;
+                        for (File file : typesDir.listFiles()) {
+                            try {
+                                BufferedReader reader = new BufferedReader(new FileReader(file));
+                                String[] splitName = file.getName().split("/");
+                                TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
+                                for (; ; ) {
+                                    String line;
+                                    try {
+                                        line = reader.readLine();
+                                    } catch (Exception e) {
+                                        break;
+                                    }
+                                    if (line == null)
+                                        break;
+                                    typeFile.lines.add(line);
                                 }
-                                if (line == null)
-                                    break;
-                                typeFile.lines.add(line);
+                                reader.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -482,9 +484,11 @@ public class FlansMod {
                             continue;
                         TypeFile typeFile = null;
                         for (EnumType type : EnumType.values()) {
-                            if (zipEntry.getName().startsWith(type.folderName + "/") && zipEntry.getName().split(type.folderName + "/").length > 1 && zipEntry.getName().split(type.folderName + "/")[1].length() > 0) {
-                                String[] splitName = zipEntry.getName().split("/");
-                                typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
+                            for (String folderName : type.folderNames) {
+                                if (zipEntry.getName().startsWith(folderName + "/") && zipEntry.getName().split(folderName + "/").length > 1 && zipEntry.getName().split(folderName + "/")[1].length() > 0) {
+                                    String[] splitName = zipEntry.getName().split("/");
+                                    typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
+                                }
                             }
                         }
                         if (typeFile == null) {

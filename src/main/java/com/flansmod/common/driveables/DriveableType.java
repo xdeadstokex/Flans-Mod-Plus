@@ -449,13 +449,10 @@ public class DriveableType extends PaintableType {
                 for (String s : split)
                     msg.append(" ").append(s);
                 FlansMod.log("Errored pre-reading " + file.name + msg);
-                FlansMod.log("Cannot continue, as the driver may not be defined. Removing vehicle.");
 
                 if (FlansMod.printStackTrace) {
                     ex.printStackTrace();
                 }
-
-                throw ex;
             }
 
             if (counter == seats.length) {

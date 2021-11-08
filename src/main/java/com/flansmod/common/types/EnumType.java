@@ -39,21 +39,34 @@ import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
 
 public enum EnumType {
-    part("parts"), bullet("bullets"), attachment("attachments"), grenade("grenades"), gun("guns"),
-    aa("aaguns"), vehicle("vehicles"), plane("planes"), mechaItem("mechaItems"), mecha("mechas"),
-    tool("tools"), armour("armorFiles"), armourBox("armorBoxes"), box("boxes"), playerClass("classes"),
-    team("teams"), itemHolder("itemHolders");
+    part(new String[] { "parts" } ),
+    bullet(new String[] {"bullets", "ammo" } ),
+    attachment(new String[] { "attachments" }),
+    grenade(new String[] { "grenades" }),
+    gun(new String[] { "guns" }),
+    aa(new String[] { "aaguns" }),
+    vehicle(new String[] { "vehicles"} ),
+    plane(new String[] { "planes" }),
+    mechaItem(new String[] { "mechaItems" }),
+    mecha(new String[] { "mechas" }),
+    tool(new String[] { "tools" }),
+    armour(new String[] { "armorFiles" }),
+    armourBox(new String[] { "armorBoxes" }),
+    box(new String[] { "boxes" }),
+    playerClass(new String[] { "classes" }),
+    team(new String[] { "teams" });
 
-    public final String folderName;
+    public final String[] folderNames;
 
-    EnumType(String s) {
-        folderName = s;
+    EnumType(String[] s) {
+        folderNames = s;
     }
 
     public static EnumType get(String s) {
         for (EnumType e : values()) {
-            if (e.folderName.equals(s))
-                return e;
+            for (String folderName : e.folderNames) {
+                if (folderName.equals(s)) { return e; }
+            }
         }
         return null;
     }

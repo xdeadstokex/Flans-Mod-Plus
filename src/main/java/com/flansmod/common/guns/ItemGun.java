@@ -1112,7 +1112,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     reloadCount = 1;
                 }
 
-
                 if (reload(gunStack, gunType, world, entityplayer, false, left)) {
                     //Set player shoot delay to be the reload delay
                     //Set both gun delays to avoid reloading two guns at once

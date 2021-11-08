@@ -27,6 +27,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import net.minecraft.launchwrapper.Launch;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.util.HashMap;
@@ -190,7 +191,7 @@ public class ContentManager {
                     FlansMod.logger.error("Failed to add " + type.name() + " : " + typeFile.name, e);
                 }
             }
-            FlansMod.logger.info("Loaded " + type.folderName + ".");
+            FlansMod.logger.info("Loaded " + type.folderNames[0] + ".");
         }
         Sync.getUnifiedHash();
         FlansMod.logger.info("Client Hash: " + Sync.cachedHash);
@@ -199,32 +200,34 @@ public class ContentManager {
     @SuppressWarnings("ConstantConditions")
     private void loadTypesDirectory(String packName, File contentPack) {
         for (EnumType typeToCheckFor : EnumType.values()) {
-            File typesDir = new File(contentPack, "/" + typeToCheckFor.folderName + "/");
-            if (!typesDir.exists())
-                continue;
-            for (File file : typesDir.listFiles()) {
-                if (!file.isDirectory()) {
-                    if (!file.getName().endsWith(".txt")) {
-                        FlansMod.logger.warn("Type file {} does not have a recognized file extension", file.getName());
-                    }
-                    try {
-                        BufferedReader reader = new BufferedReader(new FileReader(file));
-                        String[] splitName = file.getName().split("/");
-                        TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], packName);
-                        for (; ; ) {
-                            String line;
-                            try {
-                                line = reader.readLine();
-                            } catch (Exception e) {
-                                break;
-                            }
-                            if (line == null)
-                                break;
-                            typeFile.lines.add(line);
+            for (String folderName : typeToCheckFor.folderNames) {
+                File typesDir = new File(contentPack, "/" + folderName + "/");
+                if (!typesDir.exists())
+                    continue;
+                for (File file : FileUtils.listFiles(typesDir, null, true)) {
+                    if (!file.isDirectory()) {
+                        if (!file.getName().endsWith(".txt")) {
+                            FlansMod.logger.warn("Type file {} does not have a recognized file extension", file.getName());
                         }
-                        reader.close();
-                    } catch (IOException e) {
-                        FlansMod.logger.error("Could not read {}", file.getName(), e);
+                        try {
+                            BufferedReader reader = new BufferedReader(new FileReader(file));
+                            String[] splitName = file.getName().split("/");
+                            TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], packName);
+                            for (; ; ) {
+                                String line;
+                                try {
+                                    line = reader.readLine();
+                                } catch (Exception e) {
+                                    break;
+                                }
+                                if (line == null)
+                                    break;
+                                typeFile.lines.add(line);
+                            }
+                            reader.close();
+                        } catch (IOException e) {
+                            FlansMod.logger.error("Could not read {}", file.getName(), e);
+                        }
                     }
                 }
             }
@@ -245,7 +248,7 @@ public class ContentManager {
                     continue;
                 TypeFile typeFile = null;
                 for (EnumType type : EnumType.values()) {
-                    if (zipEntry.getName().startsWith(type.folderName + "/") && zipEntry.getName().split(type.folderName + "/").length > 1 && zipEntry.getName().split(type.folderName + "/")[1].length() > 0) {
+                    if (zipEntry.getName().startsWith(type.folderNames[0] + "/") && zipEntry.getName().split(type.folderNames[0] + "/").length > 1 && zipEntry.getName().split(type.folderNames[0] + "/")[1].length() > 0) {
                         String[] splitName = zipEntry.getName().split("/");
                         typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], packName);
                     }
