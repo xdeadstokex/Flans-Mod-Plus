@@ -328,7 +328,8 @@ This will override the value set in the gun's model!
 | LockOnForce / TurningForce | Float | 1 | The force locking the bullet onto the target |
 | MaxDegreeOfLockOnMissile | Integer | 20 | The highest degree that the missile will keep its target when locked on |
 | TickStartHoming | Integer | 5 | How many ticks before the missile starts to home |
-| EnableSACLOS | Boolean | false | Enable Wire/Radio guiding |
+| EnableSACLOS | Boolean | false | Enable Wire/Radio guiding, (Semi-Active Guidance). Source must maintain lock for projctile to track |
+| MaxDegreeOfSACLOS | Integer | 5 | Max angle around look vector that projectile will track within. If outside, tracking is lost. |
 | MaxRangeOfMissile | Integer | 150 | Number of blocks that a missile can be guided for |
 | CanSpotEntityDriveable | Boolean | false | ? |
 | ShootForSettingPos | Boolean | false | ? |
