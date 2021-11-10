@@ -673,7 +673,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (disabled) return;
         float damageMultiplier = secondary ? type.damageMultiplierSecondary : type.damageMultiplierPrimary;
         //If its a pilot gun, then it is using a gun type, so do the following
-        if (shootPoint.rootPos instanceof PilotGun) {
+        if (shootPoint.rootPos instanceof PilotGun && ((PilotGun) shootPoint.rootPos).type != null) {
             PilotGun pilotGun = (PilotGun) shootPoint.rootPos;
             //Get the gun from the plane type and the ammo from the data
             GunType gunType = pilotGun.type;
