@@ -1251,38 +1251,28 @@ public class GunType extends PaintableType implements IScope {
     }
 
     //Attachment getter methods
-    public AttachmentType getBarrel(ItemStack gun) {
-        return getAttachment(gun, "barrel");
-    }
-
+    public AttachmentType getBarrel(ItemStack gun) { return getAttachment(gun, "barrel"); }
     public AttachmentType getScope(ItemStack gun) {
         return getAttachment(gun, "scope");
     }
-
     public AttachmentType getStock(ItemStack gun) {
         return getAttachment(gun, "stock");
     }
-
     public AttachmentType getGrip(ItemStack gun) {
         return getAttachment(gun, "grip");
     }
-
     public AttachmentType getGadget(ItemStack gun) {
         return getAttachment(gun, "gadget");
     }
-
     public AttachmentType getSlide(ItemStack gun) {
         return getAttachment(gun, "slide");
     }
-
     public AttachmentType getPump(ItemStack gun) {
         return getAttachment(gun, "pump");
     }
-
     public AttachmentType getAccessory(ItemStack gun) {
         return getAttachment(gun, "accessory");
     }
-
     public AttachmentType getGeneric(ItemStack gun, int i) {
         return getAttachment(gun, "generic_" + i);
     }
@@ -1291,35 +1281,27 @@ public class GunType extends PaintableType implements IScope {
     public ItemStack getBarrelItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "barrel");
     }
-
     public ItemStack getScopeItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "scope");
     }
-
     public ItemStack getStockItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "stock");
     }
-
     public ItemStack getGripItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "grip");
     }
-
     public ItemStack getGadgetItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "gadget");
     }
-
     public ItemStack getSlideItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "slide");
     }
-
     public ItemStack getPumpItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "pump");
     }
-
     public ItemStack getAccessoryItemStack(ItemStack gun) {
         return getAttachmentItemStack(gun, "accessory");
     }
-
     public ItemStack getGenericItemStack(ItemStack gun, int i) {
         return getAttachmentItemStack(gun, "generic_" + i);
     }
@@ -1328,6 +1310,9 @@ public class GunType extends PaintableType implements IScope {
      * Generalised attachment getter method
      */
     public AttachmentType getAttachment(ItemStack gun, String name) {
+        if (gun == null || !(gun.getItem() instanceof ItemGun)) {
+            return null;
+        }
         checkForTags(gun);
         return AttachmentType.getFromNBT(gun.stackTagCompound.getCompoundTag("attachments").getCompoundTag(name));
     }

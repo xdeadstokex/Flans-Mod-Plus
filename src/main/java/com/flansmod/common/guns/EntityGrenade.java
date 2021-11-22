@@ -673,7 +673,18 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 	public void readSpawnData(ByteBuf data)
 	{
 		type = GrenadeType.getGrenade(ByteBufUtils.readUTF8String(data));
-		thrower = (EntityLivingBase)worldObj.getEntityByID(data.readInt());
+		int entityID = data.readInt();
+		Entity ent = worldObj.getEntityByID(entityID);
+		if (ent instanceof EntityLivingBase) {
+			thrower = (EntityLivingBase) ent;
+		} else {
+			FlansMod.log("Thrower is not an EntityLivingBase!");
+			if (FlansMod.DEBUG) {
+				FlansMod.log("Entity ID " + entityID);
+			}
+			thrower = null;
+		}
+
 		setRotation(data.readFloat(), data.readFloat());
 		prevRotationYaw = rotationYaw;
 		prevRotationPitch = rotationPitch;
