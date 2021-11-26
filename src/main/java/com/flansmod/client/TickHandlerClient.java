@@ -222,8 +222,12 @@ public class TickHandlerClient {
                 tessellator.addVertexWithUV(i / 2D - 43, 0D, -90D, 85D / 256D, 0D / 256D);
                 tessellator.draw();
 
+
+                boolean twoTeamMode = PacketTeamInfo.numTeams == 2 && PacketTeamInfo.sortedByTeam &&
+                        PacketTeamInfo.teamData.length == 2 && PacketTeamInfo.teamData[0] != null && PacketTeamInfo.teamData[1] != null
+                        && PacketTeamInfo.teamData[0].team != null && PacketTeamInfo.teamData[1].team != null;
                 //If we are in a two team gametype, draw the team scores at the top of the screen
-                if (PacketTeamInfo.numTeams == 2 && PacketTeamInfo.sortedByTeam) {
+                if (twoTeamMode) {
                     //Draw team 1 colour bit
                     int colour = PacketTeamInfo.teamData[0].team.teamColour;
                     GL11.glColor4f(((colour >> 16) & 0xff) / 256F, ((colour >> 8) & 0xff) / 256F, (colour & 0xff) / 256F, 1.0F);
@@ -274,9 +278,13 @@ public class TickHandlerClient {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 String playerUsername = FlansModClient.minecraft.thePlayer.getCommandSenderName();
 
-                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).score + "", i / 2 - 7, 1, 0x000000);
-                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).kills + "", i / 2 - 7, 9, 0x000000);
-                mc.fontRenderer.drawString(PacketTeamInfo.getPlayerScoreData(playerUsername).deaths + "", i / 2 - 7, 17, 0x000000);
+
+                PacketTeamInfo.PlayerScoreData pScoreData = PacketTeamInfo.getPlayerScoreData(playerUsername);
+                if (pScoreData != null) {
+                    mc.fontRenderer.drawString(pScoreData.score + "", i / 2 - 7, 1, 0x000000);
+                    mc.fontRenderer.drawString(pScoreData.kills + "", i / 2 - 7, 9, 0x000000);
+                    mc.fontRenderer.drawString(pScoreData.deaths + "", i / 2 - 7, 17, 0x000000);
+                }
             }
             for (KillMessage killMessage : killMessages) {
                 mc.fontRenderer.drawString("\u00a7" + killMessage.killerName + "     " + "\u00a7" + killMessage.killedName, i - mc.fontRenderer.getStringWidth(killMessage.killerName + "     " + killMessage.killedName) - 6, j - 32 - killMessage.line * 16, 0xffffff);
