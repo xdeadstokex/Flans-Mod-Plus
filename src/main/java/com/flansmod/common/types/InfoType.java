@@ -66,6 +66,10 @@ public abstract class InfoType implements IInfoType {
             read(split, file);
         }
         postRead(file);
+
+        if (shortName == null) {
+            infoTypes.remove(this);
+        }
     }
 
     /**
