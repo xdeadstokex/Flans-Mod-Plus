@@ -17,6 +17,7 @@ public class PacketModConfig extends PacketBase {
     public boolean gunCarryLimitEnable;
     public int gunCarryLimit;
     public boolean realisticRecoil;
+    public boolean enableSightDownwardMovement;
     public int armourEnchantability;
     public boolean hashKick;
     public boolean disableSprintHipFireByDefault;
@@ -37,6 +38,7 @@ public class PacketModConfig extends PacketBase {
         gunCarryLimitEnable = FlansMod.gunCarryLimitEnable;
         gunCarryLimit = FlansMod.gunCarryLimit;
         realisticRecoil = FlansMod.realisticRecoil;
+        enableSightDownwardMovement = FlansMod.enableSightDownwardMovement;
         armourEnchantability = FlansMod.armourEnchantability;
         hashKick = FlansMod.kickNonMatchingHashes;
         disableSprintHipFireByDefault= FlansMod.disableSprintHipFireByDefault;
@@ -60,6 +62,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(gunCarryLimitEnable);
         data.writeInt(gunCarryLimit);
         data.writeBoolean(realisticRecoil);
+        data.writeBoolean(enableSightDownwardMovement);
         data.writeInt(armourEnchantability);
         data.writeBoolean(hashKick);
         data.writeBoolean(disableSprintHipFireByDefault);
@@ -82,6 +85,7 @@ public class PacketModConfig extends PacketBase {
         gunCarryLimitEnable = data.readBoolean();
         gunCarryLimit = data.readInt();
         realisticRecoil = data.readBoolean();
+        enableSightDownwardMovement = data.readBoolean();
         armourEnchantability = data.readInt();
         hashKick = data.readBoolean();
         disableSprintHipFireByDefault = data.readBoolean();
@@ -110,6 +114,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.gunCarryLimitEnable = gunCarryLimitEnable;
         FlansMod.gunCarryLimit = gunCarryLimit;
         FlansMod.realisticRecoil = realisticRecoil;
+        FlansMod.enableSightDownwardMovement = enableSightDownwardMovement;
         FlansMod.armourEnchantability = armourEnchantability;
         FlansMod.kickNonMatchingHashes = hashKick;
         FlansMod.disableSprintHipFireByDefault = disableSprintHipFireByDefault;
