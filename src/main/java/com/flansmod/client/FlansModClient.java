@@ -284,9 +284,16 @@ public class FlansModClient extends FlansMod {
         minecraft.thePlayer.rotationYaw -= playerRecoilYaw;
         antiRecoilPitch += playerRecoilPitch;
         antiRecoilYaw += playerRecoilYaw;
-
-        if (!FlansMod.realisticRecoil) {
-            minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+        if(!FlansMod.enableSightDownwardMovement) {
+            if (!Mouse.isButtonDown(fireButton.getButton()) && minecraft.thePlayer.getHeldItem() != null && minecraft.thePlayer.getHeldItem().getItem() instanceof ItemGun) {
+                if (!FlansMod.realisticRecoil) {
+                    minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+                }
+            }
+        } else {
+            if (!FlansMod.realisticRecoil) {
+                minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+            }
         }
         minecraft.thePlayer.rotationYaw += antiRecoilYaw * 0.2F;
         antiRecoilPitch *= 0.8F;
