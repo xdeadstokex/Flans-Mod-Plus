@@ -640,12 +640,14 @@ public class CommandTeams extends CommandBase {
             return getListOfStringsMatchingLastWord(prm, "help",
                     "off",
                     "arena",
+                    "autobalance",
                     "survival",
                     "getSticks",
                     "listGametypes",
                     "setGametype",
                     "listAllTeams",
                     "listTeams",
+                    "listAllTeams",
                     "setTeams",
                     "addMap",
                     "listMaps",
@@ -701,7 +703,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams getSticks"));
                 sender.addChatMessage(new ChatComponentText("/teams listGametypes"));
                 sender.addChatMessage(new ChatComponentText("/teams setGametype <name>"));
-                //sender.addChatMessage(new ChatComponentText("/teams listAllTeams"));
+                sender.addChatMessage(new ChatComponentText("/teams listAllTeams"));
                 sender.addChatMessage(new ChatComponentText("/teams listTeams"));
                 //sender.addChatMessage(new ChatComponentText("/teams setTeams <teamName1> <teamName2>"));
                 sender.addChatMessage(new ChatComponentText("/teams addMap <shortName> <longName>"));
@@ -736,7 +738,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams planeLife <time>"));
                 sender.addChatMessage(new ChatComponentText("/teams vehicleLife <time>"));
                 sender.addChatMessage(new ChatComponentText("/teams aaLife <time>"));
-
+                sender.addChatMessage(new ChatComponentText("/teams autobalance <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams vehiclesBreakBlocks <true / false>"));
                 break;
             }
