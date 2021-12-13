@@ -86,6 +86,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
     public static boolean sprinting = false;
     public static boolean shooting = false;
     public String originGunbox = "";
+    private boolean canClick = true;
+    private boolean lastIsShooting = false;
 
     public String getOriginGunBox() { return originGunbox; }
     public void setOriginGunBox(String e) { originGunbox = e; }
@@ -704,6 +706,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 }
             }
 
+            lastIsShooting = data.isShootingRight;
+
             //Left hand gun - offhand gun.
             if (type.oneHanded && data.offHandGunSlot != 0) {
                 ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
@@ -1071,7 +1075,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
     }
 
-    private boolean canClick = true;
 
     public ItemStack tryToShoot(ItemStack gunStack, GunType gunType, World world, EntityPlayerMP entityplayer, boolean left) {
         sprinting = entityplayer.isSprinting();
@@ -1148,6 +1151,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 } else if ((gunType.clickSoundOnEmpty != null) && canClick) {
                     PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
                     canClick = false;
+                } else if (data.isShootingRight != lastIsShooting) {
+                    PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmptyRepeated, true);
                 }
 
             }

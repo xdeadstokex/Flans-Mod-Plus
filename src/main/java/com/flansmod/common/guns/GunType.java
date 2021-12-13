@@ -249,6 +249,10 @@ public class GunType extends PaintableType implements IScope {
      */
     public String clickSoundOnEmpty;
     /**
+     * Sound to play on firing when empty(multiple times)
+     */
+    public String clickSoundOnEmptyRepeated;
+    /**
      * The sound to play while holding the weapon in the hand
      */
     public String idleSound;
@@ -600,6 +604,9 @@ public class GunType extends PaintableType implements IScope {
                 FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
             } else if (split[0].equals("EmptyClickSound")) {
                 clickSoundOnEmpty = split[1];
+                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+            } else if (split[0].equals("EmptyClickSoundRepeated")) {
+                clickSoundOnEmptyRepeated = split[1];
                 FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
             } else if (split[0].equals("IdleSound")) {
                 idleSound = split[1];

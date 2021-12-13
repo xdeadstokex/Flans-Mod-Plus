@@ -88,7 +88,8 @@ BAB
 | SuppressedShootSound | String | ~ |  |
 | ReloadSound | String | ~ |  |
 | EmptyReloadSound | String | ~ |  |
-| EmptyClickSound | String | ~ |  |
+| EmptyClickSound | String | ~ | Plays the first time the player tries to shoot with no ammo. |
+| EmptyClickSoundRepeated | String | ~ | Plays when the player tries to shoot with no ammo (after first time if click if defined) |
 | IdleSound | String | ~ |  |
 | IdleSoundLength | String | ~ |  |
 | MeleeSound | String | ~ |  |
