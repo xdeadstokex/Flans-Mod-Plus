@@ -403,7 +403,8 @@ public class GunType extends PaintableType implements IScope {
 
     public String muzzleFlashParticle = "flansmod.muzzleflash";
     public float muzzleFlashParticleSize = 1F;
-    public Boolean showMuzzleFlashParticles = true;
+    private Boolean useMuzzleFlashDefaults = true;
+    private Boolean showMuzzleFlashParticles = true;
     public Boolean showMuzzleFlashParticlesFirstPerson = false;
     public Vector3f muzzleFlashParticlesHandOffset = new Vector3f();
     public Vector3f muzzleFlashParticlesShoulderOffset = new Vector3f();
@@ -679,8 +680,10 @@ public class GunType extends PaintableType implements IScope {
                 muzzleFlashParticle = split[1];
             else if (split[0].equals("MuzzleFlashParticleSize"))
                 muzzleFlashParticleSize = Float.parseFloat(split[1]);
-            else if (split[0].equals("ShowMuzzleFlashParticle"))
+            else if (split[0].equals("ShowMuzzleFlashParticle")) {
                 showMuzzleFlashParticles = Boolean.parseBoolean(split[1]);
+                useMuzzleFlashDefaults = false;
+            }
             else if (split[0].equals("ShowMuzzleFlashParticleFirstPerson"))
                 showMuzzleFlashParticlesFirstPerson = Boolean.parseBoolean(split[1]);
             else if (split[0].equals("MuzzleFlashParticleShoulderOffset"))
@@ -1670,6 +1673,10 @@ public class GunType extends PaintableType implements IScope {
                 return paintjob;
         }
         return defaultPaintjob;
+    }
+
+    public boolean getShouldShowMuzzleFlash() {
+        return useMuzzleFlashDefaults ? FlansMod.showMuzzleFlashParticlesDefault : showMuzzleFlashParticles;
     }
 
     @Override
