@@ -102,6 +102,10 @@ public abstract class InfoType implements IInfoType {
                 }
             } else if (split[0].equals("ShortName")) {
                 shortName = split[1];
+                if (iconPath == null || iconPath.isEmpty()) {
+                    // bogus default icon, if none is given at all - otherwise texture is blank.
+                    iconPath = "Missing-Icon-" + shortName;
+                }
             } else if (split[0].equals("Colour") || split[0].equals("Color")) {
                 colour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
             } else if (split[0].equals("Icon")) {
