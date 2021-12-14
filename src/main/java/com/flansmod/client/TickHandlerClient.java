@@ -293,11 +293,15 @@ public class TickHandlerClient {
 
 
                 RenderHelper.enableGUIStandardItemLighting();
+       	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
                 drawSlotInventory(FlansModClient.minecraft.fontRenderer, new ItemStack(killMessage.weapon.item, 1, killMessage.itemDamage), i - FlansModClient.minecraft.fontRenderer
                         .getStringWidth((killMessage.headshot ? "         " : "     ") + killMessage.killedName), j - 36 - killMessage.line * 16);
                 if (killMessage.headshot)
                     drawSlotInventory(FlansModClient.minecraft.fontRenderer, new ItemStack(FlansMod.crosshairsymbol), i - FlansModClient.minecraft.fontRenderer
                             .getStringWidth("     " + killMessage.killedName), j - 36 - killMessage.line * 16);
+                GL11.glDisable(3042 /*GL_BLEND*/);
                 RenderHelper.disableStandardItemLighting();
             }
 		
