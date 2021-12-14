@@ -154,6 +154,7 @@ public class FlansMod {
     public static BlockSpawner spawner;
     public static ItemOpStick opStick;
     public static ItemFlagpole flag;
+    public static Item crosshairsymbol;
     public static ArrayList<BlockGunBox> gunBoxBlocks = new ArrayList<>();
     public static ArrayList<ItemBullet> bulletItems = new ArrayList<>();
     public static ArrayList<ItemGun> gunItems = new ArrayList<>();
@@ -199,6 +200,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
+	crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -210,7 +212,7 @@ public class FlansMod {
         spawner = (BlockSpawner) (new BlockSpawner(Material.iron).setBlockName("teamsSpawner").setBlockUnbreakable().setResistance(1000000F));
         GameRegistry.registerBlock(spawner, ItemBlockManyNames.class, "teamsSpawner");
         GameRegistry.registerTileEntity(TileEntitySpawner.class, "teamsSpawner");
-
+        GameRegistry.registerItem(crosshairsymbol, "crosshairsymbol", MODID);
         paintjobTable = new BlockPaintjobTable();
         GameRegistry.registerBlock(paintjobTable, "paintjobTable");
         GameRegistry.addRecipe(new ItemStack(paintjobTable), "ICI", "III", "DDD", 'C', Items.cauldron, 'I', Items.iron_ingot, 'D', Items.dye);
