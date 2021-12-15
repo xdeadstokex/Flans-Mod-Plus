@@ -883,70 +883,72 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     for (int j = 0; j < world.loadedEntityList.size(); j++) {
                         Object obj = world.loadedEntityList.get(j);
                         //Get players
-                        if (obj instanceof EntityPlayer && obj != player) {
-                            EntityPlayer otherPlayer = (EntityPlayer) obj;
-                            PlayerData otherData = PlayerHandler.getPlayerData(otherPlayer);
-                            boolean shouldDoNormalHitDetect = false;
-                            if (otherData != null) {
-                                if (otherPlayer.isDead || otherData.team == Team.spectators) {
-                                    continue;
+                        if (obj != player) {
+                            if (obj instanceof EntityPlayer) {
+                                EntityPlayer otherPlayer = (EntityPlayer) obj;
+                                PlayerData otherData = PlayerHandler.getPlayerData(otherPlayer);
+                                boolean shouldDoNormalHitDetect = false;
+                                if (otherData != null) {
+                                    if (otherPlayer.isDead || otherData.team == Team.spectators) {
+                                        continue;
+                                    }
+                                    int snapshotToTry = player instanceof EntityPlayerMP ? ((EntityPlayerMP) player).ping / 50 : 0;
+                                    if (snapshotToTry >= otherData.snapshots.length)
+                                        snapshotToTry = otherData.snapshots.length - 1;
+
+                                    PlayerSnapshot snapshot = otherData.snapshots[snapshotToTry];
+                                    if (snapshot == null)
+                                        snapshot = otherData.snapshots[0];
+
+                                    //DEBUG
+                                    //snapshot = new PlayerSnapshot(player);
+
+                                    //Check one last time for a null snapshot. If this is the case, fall back to normal hit detection
+                                    if (snapshot == null)
+                                        shouldDoNormalHitDetect = true;
+                                    else {
+                                        //Raytrace
+                                        ArrayList<BulletHit> playerHits = snapshot.raytrace(data.lastMeleePositions[k] == null ? nextPosInWorldCoords : data.lastMeleePositions[k], dPos);
+                                        hits.addAll(playerHits);
+                                    }
                                 }
-                                int snapshotToTry = player instanceof EntityPlayerMP ? ((EntityPlayerMP) player).ping / 50 : 0;
-                                if (snapshotToTry >= otherData.snapshots.length)
-                                    snapshotToTry = otherData.snapshots.length - 1;
 
-                                PlayerSnapshot snapshot = otherData.snapshots[snapshotToTry];
-                                if (snapshot == null)
-                                    snapshot = otherData.snapshots[0];
+                                //If we couldn't get a snapshot, use normal entity hitbox calculations
+                                if (otherData == null || shouldDoNormalHitDetect) {
+                                    MovingObjectPosition mop = data.lastMeleePositions[k] == null ? player.boundingBox.calculateIntercept(nextPosInWorldCoords.toVec3(), Vec3.createVectorHelper(0F, 0F, 0F)) : player.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
+                                    if (mop != null) {
+                                        Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
+                                        float hitLambda = 1F;
+                                        if (dPos.x != 0F)
+                                            hitLambda = hitPoint.x / dPos.x;
+                                        else if (dPos.y != 0F)
+                                            hitLambda = hitPoint.y / dPos.y;
+                                        else if (dPos.z != 0F)
+                                            hitLambda = hitPoint.z / dPos.z;
+                                        if (hitLambda < 0)
+                                            hitLambda = -hitLambda;
 
-                                //DEBUG
-                                //snapshot = new PlayerSnapshot(player);
-
-                                //Check one last time for a null snapshot. If this is the case, fall back to normal hit detection
-                                if (snapshot == null)
-                                    shouldDoNormalHitDetect = true;
-                                else {
-                                    //Raytrace
-                                    ArrayList<BulletHit> playerHits = snapshot.raytrace(data.lastMeleePositions[k] == null ? nextPosInWorldCoords : data.lastMeleePositions[k], dPos);
-                                    hits.addAll(playerHits);
+                                        hits.add(new PlayerBulletHit(new PlayerHitbox(otherPlayer, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
+                                    }
                                 }
-                            }
+                            } else {
+                                Entity entity = (Entity) obj;
+                                if (!entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun) && entity.boundingBox != null && data.lastMeleePositions != null && data.lastMeleePositions[k] != null) {
+                                    MovingObjectPosition mop = entity.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
+                                    if (mop != null) {
+                                        Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
+                                        float hitLambda = 1F;
+                                        if (dPos.x != 0F)
+                                            hitLambda = hitPoint.x / dPos.x;
+                                        else if (dPos.y != 0F)
+                                            hitLambda = hitPoint.y / dPos.y;
+                                        else if (dPos.z != 0F)
+                                            hitLambda = hitPoint.z / dPos.z;
+                                        if (hitLambda < 0)
+                                            hitLambda = -hitLambda;
 
-                            //If we couldn't get a snapshot, use normal entity hitbox calculations
-                            if (otherData == null || shouldDoNormalHitDetect) {
-                                MovingObjectPosition mop = data.lastMeleePositions[k] == null ? player.boundingBox.calculateIntercept(nextPosInWorldCoords.toVec3(), Vec3.createVectorHelper(0F, 0F, 0F)) : player.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
-                                if (mop != null) {
-                                    Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
-                                    float hitLambda = 1F;
-                                    if (dPos.x != 0F)
-                                        hitLambda = hitPoint.x / dPos.x;
-                                    else if (dPos.y != 0F)
-                                        hitLambda = hitPoint.y / dPos.y;
-                                    else if (dPos.z != 0F)
-                                        hitLambda = hitPoint.z / dPos.z;
-                                    if (hitLambda < 0)
-                                        hitLambda = -hitLambda;
-
-                                    hits.add(new PlayerBulletHit(new PlayerHitbox(otherPlayer, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
-                                }
-                            }
-                        } else {
-                            Entity entity = (Entity) obj;
-                            if (!entity.isDead && (entity instanceof EntityLivingBase || entity instanceof EntityAAGun) && entity.boundingBox != null && data.lastMeleePositions != null && data.lastMeleePositions[k] != null) {
-                                MovingObjectPosition mop = entity.boundingBox.calculateIntercept(data.lastMeleePositions[k].toVec3(), nextPosInWorldCoords.toVec3());
-                                if (mop != null) {
-                                    Vector3f hitPoint = new Vector3f(mop.hitVec.xCoord - data.lastMeleePositions[k].x, mop.hitVec.yCoord - data.lastMeleePositions[k].y, mop.hitVec.zCoord - data.lastMeleePositions[k].z);
-                                    float hitLambda = 1F;
-                                    if (dPos.x != 0F)
-                                        hitLambda = hitPoint.x / dPos.x;
-                                    else if (dPos.y != 0F)
-                                        hitLambda = hitPoint.y / dPos.y;
-                                    else if (dPos.z != 0F)
-                                        hitLambda = hitPoint.z / dPos.z;
-                                    if (hitLambda < 0)
-                                        hitLambda = -hitLambda;
-
-                                    hits.add(new EntityHit(entity, hitLambda));
+                                        hits.add(new EntityHit(entity, hitLambda));
+                                    }
                                 }
                             }
                         }
