@@ -337,10 +337,7 @@ public class TickHandlerClient {
             }
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             ItemStack currentHeldItem = player.getCurrentEquippedItem();
-            if (tickCount > 0 && FlansMod.hitCrossHairEnable && currentHeldItem != null && currentHeldItem.getItem() instanceof ItemGun) {
-                ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-                ItemGun gunItem = (ItemGun) stack.getItem();
-                GunType gunType = gunItem.type;
+            if (tickCount > 0 && FlansMod.hitCrossHairEnable) {
                 FlansModClient.minecraft.entityRenderer.setupOverlayRendering();
                 GL11.glEnable(3042 /* GL_BLEND */);
                 GL11.glDisable(2929 /* GL_DEPTH_TEST */);
@@ -395,15 +392,23 @@ public class TickHandlerClient {
 
                 GL11.glDisable(3008 /* GL_ALPHA_TEST */);
                 //Custom hit marker GUI if set in gun config
-                if (gunType.hitTexture != null) {
-                    mc.renderEngine.bindTexture(FlansModResourceHandler.getAuxiliaryTexture(gunType.hitTexture));
+
+                ResourceLocation crosshair = null;
+
+                if (currentHeldItem != null && currentHeldItem.getItem() instanceof ItemGun) {
+                    ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+                    ItemGun gunItem = (ItemGun) stack.getItem();
+                    GunType gunType = gunItem.type;
+                    if (gunType.hitTexture != null) {
+                        crosshair = FlansModResourceHandler.getAuxiliaryTexture(gunType.hitTexture);
+                    }
                 }
-                //Default hit marker GUI
-                else if (FlansMod.hdHitCrosshair) {
-                    mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/HDCrossHair.png"));
-                } else {
-                    mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/CrossHair.png"));
+
+                if (crosshair == null) {
+                    crosshair = new ResourceLocation("flansmod", FlansMod.hdHitCrosshair ? "gui/HDCrossHair.png" : "gui/CrossHair.png");
                 }
+
+                mc.renderEngine.bindTexture(crosshair);
 
                 tessellator.startDrawingQuads();
                 tessellator.addVertexWithUV(i / 2D - 2 * j, j, -90D, 0.0D, 1.0D);
