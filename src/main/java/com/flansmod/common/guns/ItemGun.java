@@ -1215,14 +1215,22 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 //Iterate over all inventory slots and find the magazine / bullet item with the most bullets
                 int bestSlot = -1;
                 int bulletsInBestSlot = 0;
+                boolean bestSlotIsPreferred = false;
                 for (int j = 0; j < inventory.getSizeInventory(); j++) {
                     ItemStack item = inventory.getStackInSlot(j);
 
                     if (item != null && item.getItem() instanceof ItemShootable && gunType.isAmmo(((ItemShootable) (item.getItem())).type, gunStack)) {
                         int bulletsInThisSlot = item.getMaxDamage() - item.getItemDamage();
-                        if (bulletsInThisSlot > bulletsInBestSlot) {
+                        boolean isPreferred = ((ItemShootable) item.getItem()).type.shortName.equals(preferredAmmoShortname);
+
+                        if (isPreferred) {
+                            if ((bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) || !bestSlotIsPreferred) {
+                                bestSlot = j;
+                                bestSlotIsPreferred = true;
+                            }
+                        } else if (!bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) {
                             bestSlot = j;
-                            bulletsInBestSlot = bulletsInThisSlot;
+                            bestSlotIsPreferred = true;
                         }
                     }
                 }
