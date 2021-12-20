@@ -97,7 +97,7 @@ public class FlansMod {
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
     public static boolean realisticRecoil = false;
-    public static boolean enableSightDownwardMovement = false;
+    public static boolean enableSightDownwardMovement = true;
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
     public static boolean bulletGuiEnable = true;
@@ -671,7 +671,7 @@ public class FlansMod {
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
-	crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+	    crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
