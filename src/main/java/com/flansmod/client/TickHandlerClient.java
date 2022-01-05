@@ -425,7 +425,7 @@ public class TickHandlerClient {
             if (mc.thePlayer.hurtTime > 0) {
                 tickCountWounded = 40;
             }
-            if (tickCountWounded > 0) {
+            if (tickCountWounded > 0 && FlansMod.showFlashesWhenWounded) {
                 FlansModClient.minecraft.entityRenderer.setupOverlayRendering();
                 GL11.glEnable(3042 /* GL_BLEND */);
                 GL11.glDisable(2929 /* GL_DEPTH_TEST */);

@@ -31,6 +31,7 @@ public class PacketModConfig extends PacketBase {
     public float defaultADSSpreadMultiplierShotgun;
     public boolean seatCollisions;
     public boolean muzzleFlashParticles;
+    public boolean showWoundFlashes;
 
     public PacketModConfig() {
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
@@ -53,6 +54,7 @@ public class PacketModConfig extends PacketBase {
         defaultADSSpreadMultiplierShotgun = FlansMod.defaultADSSpreadMultiplierShotgun;
         seatCollisions = FlansMod.seatCollisions;
         muzzleFlashParticles = FlansMod.showMuzzleFlashParticlesDefault;
+        showWoundFlashes = FlansMod.showFlashesWhenWounded;
     }
 
     @Override
@@ -77,6 +79,7 @@ public class PacketModConfig extends PacketBase {
         data.writeFloat(defaultADSSpreadMultiplierShotgun);
         data.writeBoolean(seatCollisions);
         data.writeBoolean(muzzleFlashParticles);
+        data.writeBoolean(showWoundFlashes);
     }
 
     @Override
@@ -101,6 +104,7 @@ public class PacketModConfig extends PacketBase {
         defaultADSSpreadMultiplierShotgun = data.readFloat();
         seatCollisions = data.readBoolean();
         muzzleFlashParticles = data.readBoolean();
+        showWoundFlashes = data.readBoolean();
     }
 
     @Override
@@ -131,6 +135,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.defaultADSSpreadMultiplierShotgun = defaultADSSpreadMultiplierShotgun;
         FlansMod.seatCollisions = seatCollisions;
         FlansMod.showMuzzleFlashParticlesDefault = muzzleFlashParticles;
+        FlansMod.showFlashesWhenWounded = showWoundFlashes;
         FlansMod.log("Config synced successfully");
     }
 }
