@@ -1279,6 +1279,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             ItemStack vehicleStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             vehicleStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(vehicleStack.stackTagCompound);
+            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke vehicle %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
             entityDropItem(vehicleStack, 0.5F);
             setDead();
         }
