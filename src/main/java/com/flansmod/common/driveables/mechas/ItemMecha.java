@@ -106,7 +106,9 @@ public class ItemMecha extends Item implements IPaintableItem
             int k = movingobjectposition.blockZ;
             if(!world.isRemote)
             {
-				world.spawnEntityInWorld(new EntityMecha(world, (double)i + 0.5F, (double)j + 1.5F + type.yOffset, (double)k + 0.5F, entityplayer, type, getData(itemstack, world), getTagCompound(itemstack, world)));
+            	EntityMecha mecha = new EntityMecha(world, (double)i + 0.5F, (double)j + 1.5F + type.yOffset, (double)k + 0.5F, entityplayer, type, getData(itemstack, world), getTagCompound(itemstack, world));
+				FlansMod.log("Player %s placed mecha %s (%d) at (%d, %d, %d)", entityplayer.getDisplayName(), type.shortName, mecha.getEntityId(), i, j, k);
+				world.spawnEntityInWorld(mecha);
             }
 			if(!entityplayer.capabilities.isCreativeMode)
 			{	

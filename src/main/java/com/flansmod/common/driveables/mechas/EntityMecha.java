@@ -575,6 +575,7 @@ public class EntityMecha extends EntityDriveable
 			driveableData.writeToNBT(mechaStack.stackTagCompound);
 			inventory.writeToNBT(mechaStack.stackTagCompound);
 			entityDropItem(mechaStack, 0.5F);
+			if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke mecha %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
 	 		setDead();
 		}
         else

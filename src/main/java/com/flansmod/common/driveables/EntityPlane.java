@@ -10,6 +10,7 @@ import com.flansmod.common.vector.Matrix4f;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
@@ -793,6 +794,7 @@ public class EntityPlane extends EntityDriveable {
             planeStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(planeStack.stackTagCompound);
             entityDropItem(planeStack, 0.5F);
+            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke plane %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
             setDead();
         }
         return super.attackEntityFrom(damagesource, i);

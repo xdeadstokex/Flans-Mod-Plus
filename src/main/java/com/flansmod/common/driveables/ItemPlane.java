@@ -130,22 +130,14 @@ public class ItemPlane extends Item implements IPaintableItem {
             int j = movingobjectposition.blockY;
             int k = movingobjectposition.blockZ;
             Block block = world.getBlock(i, j, k);
-            if (type.placeableOnLand || block instanceof BlockLiquid) {
+            if (type.placeableOnLand || block instanceof BlockLiquid || (type.placeableOnSponge && block instanceof BlockSponge)) {
                 if (!world.isRemote) {
                     DriveableData data = getPlaneData(itemstack, world);
-                    if (data != null)
-                        world.spawnEntityInWorld(new EntityPlane(world, (double) i + 0.5F, (double) j + 2.5F, (double) k + 0.5F, entityplayer, type, data));
-                }
-                if (!entityplayer.capabilities.isCreativeMode) {
-                    itemstack.stackSize--;
-                }
-            }
-
-            if (!type.placeableOnLand && type.placeableOnSponge && block instanceof BlockSponge) {
-                if (!world.isRemote) {
-                    DriveableData data = getPlaneData(itemstack, world);
-                    if (data != null)
-                        world.spawnEntityInWorld(new EntityPlane(world, (double) i + 0.5F, (double) j + 2.5F, (double) k + 0.5F, entityplayer, type, data));
+                    if (data != null) {
+                        EntityPlane plane = new EntityPlane(world, (double) i + 0.5F, (double) j + 2.5F, (double) k + 0.5F, entityplayer, type, data);
+                        world.spawnEntityInWorld(plane);
+                        if (!world.isRemote) { FlansMod.log("Player %s placed plane %s (%d) at (%d, %d, %d)", entityplayer.getDisplayName(), type.shortName, plane.getEntityId(), i, j, k); }
+                    }
                 }
                 if (!entityplayer.capabilities.isCreativeMode) {
                     itemstack.stackSize--;
