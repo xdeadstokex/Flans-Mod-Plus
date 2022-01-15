@@ -3,6 +3,7 @@ package com.flansmod.common.network;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.flansmod.common.FlansMod;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,6 +80,7 @@ public class PacketTeamInfo extends PacketBase
     	data.writeBoolean(TeamsManager.vehiclesNeedFuel);
     	data.writeBoolean(TeamsManager.driveablesBreakBlocks);
     	data.writeBoolean(TeamsManager.allowVehicleZoom);
+    	data.writeBoolean(TeamsManager.survivalCanBreakVehicles);
     	
 		if(TeamsManager.getInstance().currentRound == null)
     	{
@@ -186,6 +188,9 @@ public class PacketTeamInfo extends PacketBase
 		TeamsManager.vehiclesNeedFuel = data.readBoolean();
 		TeamsManager.driveablesBreakBlocks = data.readBoolean();
 		TeamsManager.allowVehicleZoom = data.readBoolean();
+		FlansMod.log("e " + TeamsManager.survivalCanBreakVehicles);
+		TeamsManager.survivalCanBreakVehicles = data.readBoolean();
+		FlansMod.log("f " + TeamsManager.survivalCanBreakVehicles);
 		gametype = readUTF(data);
 		if(gametype.equals("No Gametype"))
 		{

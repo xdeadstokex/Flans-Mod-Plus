@@ -789,7 +789,8 @@ public class EntityPlane extends EntityDriveable {
 
         if (damagesource.damageType.equals("player")
                 && damagesource.getEntity().onGround
-                && (seats[0] == null || seats[0].riddenByEntity == null)) {
+                && (seats[0] == null || seats[0].riddenByEntity == null)
+                && ((damagesource.getEntity() instanceof EntityPlayer && ((EntityPlayer)damagesource.getEntity()).capabilities.isCreativeMode) || TeamsManager.survivalCanBreakVehicles)) {
             ItemStack planeStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             planeStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(planeStack.stackTagCompound);

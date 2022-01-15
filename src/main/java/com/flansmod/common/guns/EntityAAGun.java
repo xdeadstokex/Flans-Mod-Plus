@@ -183,7 +183,7 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData
 			} else if(riddenByEntity != null)
 			{
 				return riddenByEntity.attackEntityFrom(damagesource, i);
-			} else if(TeamsManager.canBreakGuns)
+			} else if(TeamsManager.canBreakGuns && ((damagesource.getEntity() instanceof EntityPlayer && ((EntityPlayer)damagesource.getEntity()).capabilities.isCreativeMode) || TeamsManager.survivalCanBreakVehicles))
 			{
 				if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke AA Gun %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
 				setDead();

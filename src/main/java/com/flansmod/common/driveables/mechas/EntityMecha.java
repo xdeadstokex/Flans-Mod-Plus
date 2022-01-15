@@ -567,8 +567,13 @@ public class EntityMecha extends EntityDriveable
         		worldObj.createExplosion(this, posX, posY, posZ, blockDamageFromFalling, TeamsManager.explosions);
         	}
         }
-        
-        else if(damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null))
+        // assert that player is on ground, vehicle is empty and the player is in creative or non creatives can break
+        else if(
+        		damagesource.damageType.equals("player") &&
+				damagesource.getEntity().onGround &&
+				(seats[0] == null || seats[0].riddenByEntity == null) &&
+				((damagesource.getEntity() instanceof EntityPlayer && ((EntityPlayer)damagesource.getEntity()).capabilities.isCreativeMode) || TeamsManager.survivalCanBreakVehicles)
+		)
 		{
 			ItemStack mechaStack = new ItemStack(type.item, 1, driveableData.paintjobID);
 			mechaStack.stackTagCompound = new NBTTagCompound();
