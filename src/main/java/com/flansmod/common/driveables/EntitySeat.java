@@ -647,10 +647,25 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
                                 //Calculate the origin of the bullets
                                 Vector3f yOffset = driveable.axes.findLocalVectorGlobally(new Vector3f(0F, (float) player.getMountedYOffset(), 0F));
                                 //Spawn a new bullet item
-                                float bulletSpeed = gun.bulletSpeed;
-                                if (bullet instanceof BulletType) { bulletSpeed *= ((BulletType) bullet).speedMultiplier; }
 
-                                worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(yOffset, new Vector3f(gunOrigin.x, gunOrigin.y, gunOrigin.z), null), shootVec, (EntityLivingBase) riddenByEntity, gun.bulletSpread, gun.damage, bulletSpeed, bulletItemStack.getItemDamage(), driveable.getDriveableType()));
+                                float spread = gun.bulletSpread;
+                                float bulletSpeed = gun.bulletSpeed;
+                                float numBullets = gun.numBullets;
+                                if (bullet instanceof BulletType) {
+                                    bulletSpeed *= ((BulletType) bullet).speedMultiplier;
+
+                                    if (gun.allowSpreadByBullet && ((BulletType) bullet).bulletSpread != -1) {
+                                        spread = ((BulletType) bullet).bulletSpread;
+                                    }
+
+                                    if (gun.allowNumBulletsByBulletType && ((BulletType) bullet).numBullets != -1) {
+                                        numBullets = ((BulletType) bullet).numBullets;
+                                    }
+                                }
+
+                                for (int i=0; i<numBullets; i++) {
+                                    worldObj.spawnEntityInWorld(((ItemShootable) bulletItemStack.getItem()).getEntity(worldObj, Vector3f.add(yOffset, new Vector3f(gunOrigin.x, gunOrigin.y, gunOrigin.z), null), shootVec, (EntityLivingBase) riddenByEntity, spread, gun.damage, bulletSpeed, bulletItemStack.getItemDamage(), driveable.getDriveableType()));
+                                }
                                 //Play the shoot sound
                                 if (soundDelay <= 0) {
                                     PacketPlaySound.sendSoundPacket(posX, posY, posZ, gun.gunSoundRange, dimension, gun.shootSound, false);
