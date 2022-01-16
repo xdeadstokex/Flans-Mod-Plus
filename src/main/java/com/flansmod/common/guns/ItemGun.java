@@ -1204,12 +1204,11 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             return false;
         //For playing sounds afterwards
         boolean reloadedSomething = false;
-
+        String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
             //Get the stack in the slot
             ItemStack bulletStack = getBulletItemStack(gunStack, i);
-
             //If there is no magazine, if the magazine is empty or if this is a forced reload
             if (bulletStack == null || bulletStack.getItemDamage() == bulletStack.getMaxDamage() || forceReload) {
                 //Iterate over all inventory slots and find the magazine / bullet item with the most bullets
@@ -1218,11 +1217,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 boolean bestSlotIsPreferred = false;
                 for (int j = 0; j < inventory.getSizeInventory(); j++) {
                     ItemStack item = inventory.getStackInSlot(j);
-
                     if (item != null && item.getItem() instanceof ItemShootable && gunType.isAmmo(((ItemShootable) (item.getItem())).type, gunStack)) {
                         int bulletsInThisSlot = item.getMaxDamage() - item.getItemDamage();
                         boolean isPreferred = ((ItemShootable) item.getItem()).type.shortName.equals(preferredAmmoShortname);
-
                         if (isPreferred) {
                             if ((bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) || !bestSlotIsPreferred) {
                                 bestSlot = j;
@@ -1230,7 +1227,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             }
                         } else if (!bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) {
                             bestSlot = j;
-                            bestSlotIsPreferred = true;
+                            bulletsInBestSlot = bulletsInThisSlot;
+                            bestSlotIsPreferred = false;
                         }
                     }
                 }
@@ -1238,6 +1236,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 if (bestSlot != -1) {
                     //TODO
                     ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
+                    System.out.println(newBulletStack);
                     ShootableType newBulletType = ((ItemShootable) newBulletStack.getItem()).type;
                     //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
                     if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
@@ -1269,7 +1268,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
         return reloadedSomething;
     }
-
+	
     /**
      * Method for dropping items on reload and on shoot
      */
@@ -1577,5 +1576,27 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         float result = value * pow;
 
         return (float) (int) ((result - (int) result) >= 0.5f ? result + 1 : result) / pow;
+    }
+	
+    public void setPreferredAmmoStack(ItemStack gun, String ammoName) {
+        if (!gun.hasTagCompound()) {
+            gun.stackTagCompound = new NBTTagCompound();
+        }
+        String s = "preferredAmmo";
+        if (!gun.stackTagCompound.hasKey(s)) {
+            gun.stackTagCompound.setString(s, ammoName);
+        }
+        gun.stackTagCompound.setString(s, ammoName);
+    }
+
+    public String getPreferredAmmoStack(ItemStack gun) {
+        if (!gun.hasTagCompound()) {
+            gun.stackTagCompound = new NBTTagCompound();
+        }
+        String s = "preferredAmmo";
+        if (gun.stackTagCompound.hasKey(s)) {
+            return gun.stackTagCompound.getString(s);
+        }
+        return null;
     }
 }
