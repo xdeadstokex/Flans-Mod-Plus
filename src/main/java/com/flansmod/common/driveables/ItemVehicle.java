@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
@@ -146,22 +147,13 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
             int j = movingobjectposition.blockY;
             int k = movingobjectposition.blockZ;
             Block block = world.getBlock(i, j, k);
-            if(type.placeableOnLand || block instanceof BlockLiquid)
+            if((type.placeableOnLand || block instanceof BlockLiquid) || (type.placeableOnSponge && block instanceof BlockSponge))
             {
 	            if(!world.isRemote)
 	            {
-					world.spawnEntityInWorld(new EntityVehicle(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, getData(itemstack, world)));
-	            }
-				if(!entityplayer.capabilities.isCreativeMode)
-				{
-					itemstack.stackSize--;
-				}
-            }
-            if(!type.placeableOnLand && type.placeableOnSponge && block instanceof BlockSponge)
-            {
-            	if(!world.isRemote)
-	            {
-					world.spawnEntityInWorld(new EntityVehicle(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, getData(itemstack, world)));
+	            	Entity e = new EntityVehicle(world, (double)i + 0.5F, (double)j + 2.5F, (double)k + 0.5F, entityplayer, type, getData(itemstack, world));
+					world.spawnEntityInWorld(e);
+					if (!world.isRemote) { FlansMod.log("Player %s placed vehicle %s (%d) at (%d, %d, %d)", entityplayer.getDisplayName(), type.shortName, e.getEntityId(), i, j, k); }
 	            }
 				if(!entityplayer.capabilities.isCreativeMode)
 				{

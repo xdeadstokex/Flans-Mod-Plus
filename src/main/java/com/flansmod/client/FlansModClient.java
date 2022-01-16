@@ -285,16 +285,12 @@ public class FlansModClient extends FlansMod {
         minecraft.thePlayer.rotationYaw -= playerRecoilYaw;
         antiRecoilPitch += playerRecoilPitch;
         antiRecoilYaw += playerRecoilYaw;
-        if(!FlansMod.enableSightDownwardMovement) {
-            if (!Mouse.isButtonDown(fireButton.getButton()) && minecraft.thePlayer.getHeldItem() != null && minecraft.thePlayer.getHeldItem().getItem() instanceof ItemGun) {
-                if (!FlansMod.realisticRecoil) {
-                    minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
-                }
-            }
-        } else {
-            if (!FlansMod.realisticRecoil) {
-                minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
-            }
+
+        // No anti-recoil if realistic recoil is on,
+        // and no anti-recoil if firing and enable sight downward movement is off
+        boolean firingGun = Mouse.isButtonDown(fireButton.getButton()) && minecraft.thePlayer.getHeldItem() != null && minecraft.thePlayer.getHeldItem().getItem() instanceof ItemGun;
+        if (!FlansMod.realisticRecoil && ((!firingGun) || FlansMod.enableSightDownwardMovement)) {
+            minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
         }
         minecraft.thePlayer.rotationYaw += antiRecoilYaw * 0.2F;
         antiRecoilPitch *= 0.8F;

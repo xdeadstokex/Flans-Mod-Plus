@@ -1243,14 +1243,13 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     private float averageAngles(float a, float b) {
         float pi = (float) Math.PI;
-        for (; a > b + pi; a -= 2 * pi) ;
-        for (; a < b - pi; a += 2 * pi) ;
+        while (a > b + pi) { a -= 2 * pi; }
+        while (a < b - pi) { a += 2 * pi; }
 
         float avg = (a + b) / 2F;
 
-        for (; avg > pi; avg -= 2 * pi) ;
-        for (; avg < -pi; avg += 2 * pi) ;
-
+        while (avg > pi) { avg -= 2 * pi; }
+        while (avg < -pi) { avg += 2 * pi; }
 
         return avg;
     }
@@ -1275,10 +1274,14 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
         VehicleType type = getVehicleType();
 
-        if (damagesource.damageType.equals("player") && damagesource.getEntity().onGround && (seats[0] == null || seats[0].riddenByEntity == null)) {
+        if (damagesource.damageType.equals("player")
+                && damagesource.getEntity().onGround
+                && (seats[0] == null || seats[0].riddenByEntity == null)
+                && ((damagesource.getEntity() instanceof EntityPlayer && ((EntityPlayer)damagesource.getEntity()).capabilities.isCreativeMode) || TeamsManager.survivalCanBreakVehicles)) {
             ItemStack vehicleStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             vehicleStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(vehicleStack.stackTagCompound);
+            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke vehicle %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
             entityDropItem(vehicleStack, 0.5F);
             setDead();
         }
@@ -1292,12 +1295,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
     @Override
     public float getPlayerRoll() {
         return axes.getRoll();
-    }
-
-    public float getAvgWheelSpeedXYZ() {
-        float speed = (float) (wheels[0].getSpeedXYZ() + wheels[1].getSpeedXYZ() + wheels[2].getSpeedXYZ() + wheels[3].getSpeedXYZ()) / 4;
-
-        return speed;
     }
 
     public void Recoil() {

@@ -63,7 +63,9 @@ public class ItemAAGun extends Item implements IFlanItem
 			int k = movingobjectposition.blockZ;
 			if (!world.isRemote && world.isSideSolid(i, j, k, ForgeDirection.UP))
 			{
-				world.spawnEntityInWorld(new EntityAAGun(world, type, (double) i + 0.5F, (double) j + 1F, (double) k + 0.5F, entityplayer));
+				EntityAAGun aaGun = new EntityAAGun(world, type, (double) i + 0.5F, (double) j + 1F, (double) k + 0.5F, entityplayer);
+				if (!world.isRemote) { FlansMod.log("Player %s placed AA Gun %s (%d) at (%d, %d, %d)", entityplayer.getDisplayName(), type.shortName, aaGun.getEntityId(), i, j, k); }
+				world.spawnEntityInWorld(aaGun);
 			}
 			if (!entityplayer.capabilities.isCreativeMode)
 			{

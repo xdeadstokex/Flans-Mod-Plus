@@ -48,6 +48,12 @@ BAB
 | RecoilYaw | Float | 0 | Sideways view recoil |
 | RandomRecoilRange | Float | 0.5 | Maximum divergence of the recoil vertically |
 | RandomRecoilYawRange | Float | 0.5 | ~ Horizontally |
+| DecreaseRecoil | Float | 0 | DEPRECATED DO NOT USE! Amount to subtract from recoil when sneaking. WILL result in negative recoil. |
+| DecreaseRecoilYaw | Float | 0 | DEPRECATED DO NOT USE! Divisor for yaw recoil when sneaking. |
+| RecoilSneakingMultiplier | Float | Backwards Compatibility (DecreaseRecoil 0.5) | Multiplies recoil when sneaking. 1 = no change |
+| RecoilSprintingMultiplier | Float | 1 | Multiplies recoil when sprinting. 1 = no change |
+| RecoilSneakingMultiplierYaw | Float | 0.8 | Multiplies horizontal recoil when sneaking. 1 = no change |
+| RecoilSprintingMultiplierYaw | Float | 1.2 | Multiplies horizontal recoil when sprinting. 1 = no change |
 | Knockback | Float | 0 | Amount of knockback to push the player when shot |
 | Accuracy / Spread | Float | 0 | Amount that the bullets spread out. Higher = wider cone |
 | SprintSpreadMultiplier | Float | 1.75 | Multiplier for spread applied when player is sprinting. |

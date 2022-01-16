@@ -42,15 +42,25 @@ public class GunType extends PaintableType implements IScope {
      * Modifier for setting the maximum yaw divergence when randomizing recoil (Recoil 2 + rndRecoil 0.5 == 1.5-2.5 Recoil range)
      */
     public float rndRecoilYawRange = 0.3F;
+
     /**
-     * Modifier for decreasing the final pitch recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range)
+     * DEPRECATED DO NOT USE. Subtracts from pitch recoil when crouching.
      */
-    public float decreaseRecoilPitch = 0.5F;
+    public float decreaseRecoilPitch = 0F;
     /**
-     * Modifier for decreasing the final yaw recoil while crouching (Recoil 2 + rndRecoil 0.5 + decreaseRecoil 0.5 == 1.0-2.0 Recoil range)
+     * DEPRECATED DO NOT USE. Divisor for yaw recoil when crouching.
      */
-    //This must never be set to 0, will cause massive issues
-    public float decreaseRecoilYaw = 0.5F;
+    public float decreaseRecoilYaw = 0F;
+
+    /**
+     * The alternatives to the above. Simple multipliers for sneaking, sprinting on yaw and pitch respectively. 1F = no change.
+     * -1F is to be used to enable backwards compatibility for sneaking (-2F rather than multiplying)
+     */
+    public float recoilSneakingMultiplier = -1F;
+    public float recoilSprintingMultiplier = 1F;
+    public float recoilSneakingMultiplierYaw = 0.8F;
+    public float recoilSprintingMultiplierYaw = 1.2F;
+
     /* Countering gun recoil can be modelled with angle=n^tick where n is the coefficient here. */
     /**
      * HIGHER means less force to center, meaning it takes longer to return.
@@ -517,6 +527,14 @@ public class GunType extends PaintableType implements IScope {
                 decreaseRecoilPitch = Float.parseFloat(split[1]);
             else if (split[0].equals("DecreaseRecoilYaw"))
                 decreaseRecoilYaw = Float.parseFloat(split[1]) > 0 ? Float.parseFloat(split[1]) : 0.5F;
+            else if (split[0].equals("RecoilSneakingMultiplier"))
+                recoilSneakingMultiplier = Float.parseFloat(split[1]);
+            else if (split[0].equals("RecoilSprintingMultiplier"))
+                recoilSprintingMultiplier = Float.parseFloat(split[1]);
+            else if (split[0].equals("RecoilSneakingMultiplierYaw"))
+                recoilSneakingMultiplierYaw = Float.parseFloat(split[1]);
+            else if (split[0].equals("RecoilSprintingMultiplierYaw"))
+                recoilSprintingMultiplierYaw = Float.parseFloat(split[1]);
             else if (split[0].equals("Accuracy") || split[0].equals("Spread"))
                 defaultSpread = bulletSpread = Float.parseFloat(split[1]);
             else if (split[0].equals("ADSSpreadModifier"))
@@ -1423,17 +1441,8 @@ public class GunType extends PaintableType implements IScope {
     }
 
     /**
-     * Get the recoil of a specific gun, taking into account attachments
+     * Get the pitch recoil mean, without any randomness but including attachments.
      */
-    public float getRecoilPitch(ItemStack stack) {
-        float stackRecoil = this.recoilPitch + (rand.nextFloat() * this.rndRecoilPitchRange);
-        for (AttachmentType attachment : getCurrentAttachments(stack)) {
-            stackRecoil *= attachment.recoilMultiplier;
-        }
-        return stackRecoil;
-    }
-
-    //Used for displaying static recoil stats
     public float getRecoilDisplay(ItemStack stack) {
         float stackRecoil = this.recoilPitch;
         for (AttachmentType attachment : getCurrentAttachments(stack)) {
@@ -1442,11 +1451,51 @@ public class GunType extends PaintableType implements IScope {
         return stackRecoil;
     }
 
-    public float getRecoilYaw(ItemStack stack) {
+    /**
+     * Get the pitch recoil of a specific gun, taking into account attachments, randomess and sneak/sprint
+     */
+    public float getRecoilPitch(ItemStack stack, boolean sneaking, boolean sprinting) {
+        float stackRecoil = this.recoilPitch + (rand.nextFloat() * this.rndRecoilPitchRange);
+        for (AttachmentType attachment : getCurrentAttachments(stack)) {
+            stackRecoil *= attachment.recoilMultiplier;
+        }
+
+        if (sneaking) {
+            if (decreaseRecoilPitch != 0) {
+                // backwards compatibility
+                stackRecoil -= decreaseRecoilPitch;
+            } else if (recoilSneakingMultiplier == -1) {
+                // backwards compatibility 2: simulate decreaseRecoilPitch 2
+                stackRecoil = stackRecoil < 0.5F ? 0 : stackRecoil - 0.5F;
+            } else {
+                stackRecoil *= recoilSneakingMultiplier;
+            }
+        } else if (sprinting) {
+            stackRecoil *= recoilSprintingMultiplier;
+        }
+        return stackRecoil;
+    }
+
+
+    /**
+     * Get the yaw recoil of a specific gun, taking into account attachments, randomess and sneak/sprint
+     */
+    public float getRecoilYaw(ItemStack stack, boolean sneaking, boolean sprinting) {
         float stackRecoilYaw = this.recoilYaw + ((rand.nextFloat() - 0.5F) * this.rndRecoilYawRange);
         for (AttachmentType attachment : getCurrentAttachments(stack)) {
             stackRecoilYaw *= attachment.recoilMultiplier;
         }
+
+        if (sneaking) {
+            if (decreaseRecoilYaw < 0) {
+                stackRecoilYaw /= decreaseRecoilYaw;
+            } else {
+                stackRecoilYaw *= recoilSneakingMultiplierYaw;
+            }
+        } else if (sprinting) {
+            stackRecoilYaw *= recoilSprintingMultiplierYaw;
+        }
+
         return stackRecoilYaw;
     }
 
@@ -1581,13 +1630,8 @@ public class GunType extends PaintableType implements IScope {
             }
         }
 
-        if (control > 1) {
-            return 1;
-        } else if (control < 0) {
-            return 0;
-        } else {
-            return control;
-        }
+        // Clamp to [0, 1]
+        return Math.max(0, Math.min(1, control));
     }
 
     public void setFireMode(ItemStack stack, int fireMode) {

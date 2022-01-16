@@ -10,6 +10,7 @@ import com.flansmod.common.vector.Matrix4f;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
@@ -788,11 +789,13 @@ public class EntityPlane extends EntityDriveable {
 
         if (damagesource.damageType.equals("player")
                 && damagesource.getEntity().onGround
-                && (seats[0] == null || seats[0].riddenByEntity == null)) {
+                && (seats[0] == null || seats[0].riddenByEntity == null)
+                && ((damagesource.getEntity() instanceof EntityPlayer && ((EntityPlayer)damagesource.getEntity()).capabilities.isCreativeMode) || TeamsManager.survivalCanBreakVehicles)) {
             ItemStack planeStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             planeStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(planeStack.stackTagCompound);
             entityDropItem(planeStack, 0.5F);
+            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke plane %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
             setDead();
         }
         return super.attackEntityFrom(damagesource, i);

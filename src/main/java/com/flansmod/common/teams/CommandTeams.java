@@ -61,6 +61,7 @@ public class CommandTeams extends CommandBase {
             TeamsManager.forceAdventureMode = false;
             TeamsManager.overrideHunger = false;
             TeamsManager.canBreakGuns = true;
+            TeamsManager.survivalCanBreakVehicles = true;
             TeamsManager.canBreakGlass = true;
             TeamsManager.armourDrops = true;
             TeamsManager.weaponDrops = 1;
@@ -77,6 +78,7 @@ public class CommandTeams extends CommandBase {
             TeamsManager.forceAdventureMode = true;
             TeamsManager.overrideHunger = true;
             TeamsManager.canBreakGuns = true;
+            TeamsManager.survivalCanBreakVehicles = true;
             TeamsManager.canBreakGlass = false;
             TeamsManager.armourDrops = false;
             TeamsManager.weaponDrops = 2;
@@ -430,6 +432,15 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Glass and glowstone can " + (TeamsManager.canBreakGlass ? "now" : "no longer") + " be broken"));
             return;
         }
+        if (split[0].equals("survivalCanBreakVehicles")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
+                return;
+            }
+            TeamsManager.survivalCanBreakVehicles = Boolean.parseBoolean(split[1]);
+            sender.addChatMessage(new ChatComponentText("Vehicles, Planes, Mechas, AAGuns can " + (TeamsManager.survivalCanBreakVehicles? "now" : "no longer") + " be broken by players in survival"));
+            return;
+        }
         if (split[0].equals("armourDrops") || split[0].equals("armorDrops")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
@@ -668,6 +679,7 @@ public class CommandTeams extends CommandBase {
                     "explosions",
                     "canBreakGuns",
                     "canBreakGlass",
+                    "survivalCanBreakVehicles",
                     "armourDrops",
                     "weaponDrops",
                     "fuelNeeded",

@@ -1372,7 +1372,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         gunType));
             }
 
-            FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack), gunType.getRecoilYaw(stack), gunType.decreaseRecoilPitch, gunType.decreaseRecoilYaw), (EntityPlayerMP) entityPlayer);
+            FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting()), gunType.getRecoilYaw(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting())), (EntityPlayerMP) entityPlayer);
 
             // Drop item on shooting if bullet requires it
             if (bullet.dropItemOnShoot != null && !entityPlayer.capabilities.isCreativeMode)

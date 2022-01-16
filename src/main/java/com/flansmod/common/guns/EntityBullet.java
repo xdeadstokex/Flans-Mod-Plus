@@ -89,13 +89,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
      * For homing missiles
      */
     public Entity lockedOnTo;
-    //public double distanceToEntity = 0;
     public double prevDistanceToEntity = 0;
-    public int cnt;
-    //public Vector3f firstVector = new Vector3f(motionX, motionY, motionZ);
     public boolean toggleLock = false;
-    //public Vector3f prevPos;
-    public double lockedOnToSpeed = 0;
+
     public double thisSpeed = 0;
     public int closeCount = 0;
     public int soundTime = 0;
