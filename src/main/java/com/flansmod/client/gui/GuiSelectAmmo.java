@@ -15,7 +15,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+//import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 @SideOnly(Side.CLIENT)
 public class GuiSelectAmmo extends GuiScreen {
 
-    private static final ResourceLocation texture = new ResourceLocation("FlansMod:" + "gui/baseEdit.png");
+    //private static final ResourceLocation texture = new ResourceLocation("FlansMod:" + "gui/baseEdit.png");
 
 
     protected int xSize = 256;
