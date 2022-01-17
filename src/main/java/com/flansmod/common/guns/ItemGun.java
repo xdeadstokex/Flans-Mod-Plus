@@ -1236,7 +1236,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 if (bestSlot != -1) {
                     //TODO
                     ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
-                    System.out.println(newBulletStack);
                     ShootableType newBulletType = ((ItemShootable) newBulletStack.getItem()).type;
                     //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
                     if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
