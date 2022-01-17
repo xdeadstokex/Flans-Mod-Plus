@@ -163,13 +163,13 @@ public class PlayerHitbox {
                 instanceof ItemTeamArmour)) ? 1F : ((ItemTeamArmour) player.getCurrentArmor(3).getItem())
                 .type.penetrationResistance;
         float chestPenRes = (player.getCurrentArmor(2) == null || !(player.getCurrentArmor(2).getItem()
-                instanceof ItemTeamArmour)) ? 0.5F : ((ItemTeamArmour) player.getCurrentArmor(2).getItem())
+                instanceof ItemTeamArmour)) ? 1F : ((ItemTeamArmour) player.getCurrentArmor(2).getItem())
                 .type.penetrationResistance;
         float legsPenRes = (player.getCurrentArmor(1) == null || !(player.getCurrentArmor(1).getItem()
-                instanceof ItemTeamArmour)) ? 0.35F : ((ItemTeamArmour) player.getCurrentArmor(1).getItem())
+                instanceof ItemTeamArmour)) ? 0.65F : ((ItemTeamArmour) player.getCurrentArmor(1).getItem())
                 .type.penetrationResistance;
         float feetPenRes = (player.getCurrentArmor(0) == null || !(player.getCurrentArmor(0).getItem()
-                instanceof ItemTeamArmour)) ? 0.15F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
+                instanceof ItemTeamArmour)) ? 0.35F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
                 .type.penetrationResistance;
 
         float totalPenetrationResistance = 0;
