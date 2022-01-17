@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 //import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+// import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 
@@ -118,7 +118,7 @@ public class GuiSelectAmmo extends GuiScreen {
         super.drawScreen(mouseX, mouseY, parTick);
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.NORMALIZE);
         for (int i = 0; i < ammoForThisGun.size(); i++) {
             int x = i > 5 ? 95 : 45;
             int y = i > 5 ? i - 6 : i;
