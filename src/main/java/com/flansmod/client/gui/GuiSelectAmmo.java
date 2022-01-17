@@ -80,9 +80,6 @@ public class GuiSelectAmmo extends GuiScreen {
     public void actionPerformed(GuiButton btn) {
         if (btn.enabled) {
             FlansMod.getPacketHandler().sendToServer(new PacketSetPreferredAmmo(ammoForThisGun.get(btn.id - 1).shortName));
-            System.out.println(ammoForThisGun.get(btn.id - 1).shortName);
-            System.out.println(btn.id);
-            System.out.println(ammoForThisGun);
             for (Object obj : buttonList) {
                 GuiButton button = (GuiButton) obj;
                 button.enabled = true;
