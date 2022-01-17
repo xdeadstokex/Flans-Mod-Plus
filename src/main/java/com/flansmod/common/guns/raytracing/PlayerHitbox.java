@@ -197,7 +197,6 @@ public class PlayerHitbox {
         } else if(type == EnumHitboxType.LEGS) {
             damageModifier *=0.6F;
         }
-        System.out.println(damageModifier);
         switch (type) {
             case LEGS:
             case BODY:
@@ -208,7 +207,6 @@ public class PlayerHitbox {
                 float hitDamage = bullet.damage * bullet.type.damageVsPlayer * damageModifier;
                 //Create a damage source object
                 DamageSource damagesource = bullet.owner == null ? DamageSource.generic : bullet.getBulletDamage(type == EnumHitboxType.HEAD);
-                System.out.println(hitDamage);
                 //When the damage is 0 (such as with Nerf guns) the entityHurt Forge hook is not called, so this hacky thing is here
                 if (!player.worldObj.isRemote && hitDamage == 0 && TeamsManager.getInstance().currentRound != null)
                     TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) player, damagesource);
