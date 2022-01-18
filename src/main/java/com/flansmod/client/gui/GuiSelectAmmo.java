@@ -115,7 +115,7 @@ public class GuiSelectAmmo extends GuiScreen {
         super.drawScreen(mouseX, mouseY, parTick);
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glEnable(GL11.NORMALIZE);
+        GL11.glEnable(GL11.GL_NORMALIZE);
         for (int i = 0; i < ammoForThisGun.size(); i++) {
             int x = i > 5 ? 95 : 45;
             int y = i > 5 ? i - 6 : i;
