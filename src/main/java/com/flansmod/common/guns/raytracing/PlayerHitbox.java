@@ -163,21 +163,23 @@ public class PlayerHitbox {
                 instanceof ItemTeamArmour)) ? 1F : ((ItemTeamArmour) player.getCurrentArmor(3).getItem())
                 .type.penetrationResistance;
         float chestPenRes = (player.getCurrentArmor(2) == null || !(player.getCurrentArmor(2).getItem()
-                instanceof ItemTeamArmour)) ? 0.5F : ((ItemTeamArmour) player.getCurrentArmor(2).getItem())
+                instanceof ItemTeamArmour)) ? 1F : ((ItemTeamArmour) player.getCurrentArmor(2).getItem())
                 .type.penetrationResistance;
         float legsPenRes = (player.getCurrentArmor(1) == null || !(player.getCurrentArmor(1).getItem()
-                instanceof ItemTeamArmour)) ? 0.35F : ((ItemTeamArmour) player.getCurrentArmor(1).getItem())
+                instanceof ItemTeamArmour)) ? 0.65F : ((ItemTeamArmour) player.getCurrentArmor(1).getItem())
                 .type.penetrationResistance;
         float feetPenRes = (player.getCurrentArmor(0) == null || !(player.getCurrentArmor(0).getItem()
-                instanceof ItemTeamArmour)) ? 0.15F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
+                instanceof ItemTeamArmour)) ? 0.35F : ((ItemTeamArmour) player.getCurrentArmor(0).getItem())
                 .type.penetrationResistance;
 
         float totalPenetrationResistance = 0;
 
         if (type == EnumHitboxType.HEAD) {
             totalPenetrationResistance = headPenRes;
+        } else if(type == EnumHitboxType.LEGS){
+            totalPenetrationResistance = legsPenRes + feetPenRes;
         } else {
-            totalPenetrationResistance = chestPenRes + legsPenRes + feetPenRes;
+            totalPenetrationResistance = chestPenRes;
         }
 
         float damageModifier = 1;
@@ -192,9 +194,11 @@ public class PlayerHitbox {
         if (type == EnumHitboxType.HEAD) {
             damageModifier *= 2F;
             bullet.lastHitHeadshot = true;
+        } else if(type == EnumHitboxType.LEGS) {
+            damageModifier *=0.6F;
         }
-
         switch (type) {
+            case LEGS:
             case BODY:
             case HEAD:
             case LEFTARM:
@@ -203,7 +207,6 @@ public class PlayerHitbox {
                 float hitDamage = bullet.damage * bullet.type.damageVsPlayer * damageModifier;
                 //Create a damage source object
                 DamageSource damagesource = bullet.owner == null ? DamageSource.generic : bullet.getBulletDamage(type == EnumHitboxType.HEAD);
-
                 //When the damage is 0 (such as with Nerf guns) the entityHurt Forge hook is not called, so this hacky thing is here
                 if (!player.worldObj.isRemote && hitDamage == 0 && TeamsManager.getInstance().currentRound != null)
                     TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) player, damagesource);
