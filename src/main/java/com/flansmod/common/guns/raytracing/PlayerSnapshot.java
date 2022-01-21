@@ -41,13 +41,33 @@ public class PlayerSnapshot
 		if(FlansMod.proxy.isThePlayer(p))
 			pos = new Vector3f(p.posX, p.posY - 1.6F, p.posZ);
 		hitboxes = new ArrayList<PlayerHitbox>();
-		
+
 		RotatedAxes bodyAxes = new RotatedAxes(p.renderYawOffset, 0F, 0F);
-		RotatedAxes headAxes = new RotatedAxes(p.rotationYawHead - p.renderYawOffset, 0F, -p.rotationPitch);
-		
-		hitboxes.add(new PlayerHitbox(player, bodyAxes, new Vector3f(0F, 0F, 0F), new Vector3f(-0.25F, 0F, -0.15F), new Vector3f(0.5F, 1.4F, 0.3F), vel, EnumHitboxType.BODY));
-		hitboxes.add(new PlayerHitbox(player, bodyAxes.findLocalAxesGlobally(headAxes), new Vector3f(0.0F, 1.4F, 0F), new Vector3f(-0.25F, 0F, -0.25F), new Vector3f(0.5F, 0.5F, 0.5F), vel, EnumHitboxType.HEAD));
-		
+		RotatedAxes headAxes = new RotatedAxes(p.rotationYawHead - p.renderYawOffset + 90, 0F, -p.rotationPitch);
+		Vector3f bodyBox = new Vector3f(0.5F, 0.67F, 0.3F);
+		Vector3f bodyPos = new Vector3f(-0.25F, 0.75F, -0.15F);
+
+		Vector3f headPos = new Vector3f(-0.25F, 0F, -0.25F);
+		Vector3f headBox = new Vector3f(0.5F, 0.5F, 0.5F);
+
+		Vector3f legPos = new Vector3f(-0.25F, 0F, -0.15F);
+		Vector3f legBox = new Vector3f(0.5F, 0.75F, 0.3F);
+
+
+//		RotatedAxes bodyAxes = new RotatedAxes(p.renderYawOffset, 0F, 0F);
+//		RotatedAxes headAxes = new RotatedAxes(p.rotationYawHead - p.renderYawOffset, 0F, -p.rotationPitch);
+
+		//body
+		hitboxes.add(new PlayerHitbox(player, bodyAxes, new Vector3f(0F, 0F, 0F), bodyPos, bodyBox, vel,
+				EnumHitboxType.BODY));
+
+		hitboxes.add(new PlayerHitbox(player, bodyAxes.findLocalAxesGlobally(headAxes),
+				new Vector3f(0.0F, 1.4F, 0F), headPos, headBox, vel, EnumHitboxType.HEAD));
+
+		//legs TODO
+		hitboxes.add(new PlayerHitbox(player, bodyAxes, new Vector3f(0F, 0F, 0F), legPos, legBox, vel,
+				EnumHitboxType.LEGS));
+
 		//Calculate rotation of arms using modified code from ModelBiped
 		float yHead = (p.rotationYawHead - p.renderYawOffset) / (180F / (float)Math.PI);
         float xHead = p.rotationPitch / (180F / (float)Math.PI);

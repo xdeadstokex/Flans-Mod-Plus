@@ -133,11 +133,11 @@ public class TeamsManager {
     /**
      * Whether to use autobalance
      */
-    public static boolean autoBalance;
+    public static boolean autoBalance=true;
     /**
      * Time between autobalance attempts
      */
-    public static int autoBalanceInterval;
+    public static int autoBalanceInterval=20*20;
     public static boolean allowVehicleZoom;
     public static int bulletSnapshotMin = 0;
     public static int bulletSnapshotDivisor = 50;
@@ -247,14 +247,6 @@ public class TeamsManager {
 
         //If in a round
         if (currentRound != null && roundTimeLeft > 0) {
-            //10 seconds before autobalance, display a message
-            if (autoBalance() && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance()) {
-                TeamsManager.messageAll("\u00a7fAutobalancing teams...");
-            }
-            if (autoBalance() && time % autoBalanceInterval == 0 && needAutobalance()) {
-                autobalance();
-            }
-
             roundTimeLeft--;
             boolean roundEnded = roundTimeLeft == 0;
             if (roundEnded)
@@ -266,6 +258,15 @@ public class TeamsManager {
                 }
             }
 
+            if(autoBalance() && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance())
+            {
+                TeamsManager.messageAll("\u00a7fAutobalancing teams...");
+            }
+            if(autoBalance() && time % autoBalanceInterval == 0 && needAutobalance())
+            {
+                autobalance();
+            }
+
             if (roundEnded) {
                 //The round has ended on a timer, so display the scoreboard summary
                 roundTimeLeft = 0;
@@ -273,6 +274,47 @@ public class TeamsManager {
                 displayScoreboardGUI();
                 currentRound.gametype.roundEnd();
                 PlayerHandler.roundEnded();
+            }
+        }
+    }
+
+    public boolean needAutobalance()
+    {
+        if(!autoBalance() || currentRound == null || currentRound.teams.length != 2)
+            return false;
+        int membersTeamA = currentRound.teams[0].members.size();
+        int membersTeamB = currentRound.teams[1].members.size();
+        if(Math.abs(membersTeamA - membersTeamB) > 1)
+            return true;
+        return false;
+    }
+    
+    public void autobalance()
+    {
+        if(!autoBalance() || currentRound == null || currentRound.teams.length != 2)
+            return;
+        int membersTeamA = currentRound.teams[0].members.size();
+        int membersTeamB = currentRound.teams[1].members.size();
+        if(membersTeamA - membersTeamB > 1)
+        {
+            for(int i = 0; i < (membersTeamA - membersTeamB) / 2; i++)
+            {
+                //My goodness this is convoluted...
+                EntityPlayerMP playerToKick = getPlayer(currentRound.teams[1]
+                        .addPlayer(currentRound.teams[0].removeWorstPlayer()));
+                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
+                sendClassMenuToPlayer(playerToKick);
+            }
+        }
+        if(membersTeamB - membersTeamA > 1)
+        {
+            for(int i = 0; i < (membersTeamB - membersTeamA) / 2; i++)
+            {
+                EntityPlayerMP playerToKick = getPlayer(currentRound.teams[0]
+                        .addPlayer(currentRound.teams[1].removeWorstPlayer()));
+                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
+                sendClassMenuToPlayer(playerToKick);
+                setPlayersNextSpawnpoint(playerToKick);
             }
         }
     }
@@ -288,37 +330,6 @@ public class TeamsManager {
         currentMap = entry.map;
         teams = entry.teams;
         currentGameType.roundStart();
-    }
-
-    public boolean needAutobalance() {
-        if (!autoBalance() || currentRound == null || currentRound.teams.length != 2)
-            return false;
-        int membersTeamA = currentRound.teams[0].members.size();
-        int membersTeamB = currentRound.teams[1].members.size();
-
-        return Math.abs(membersTeamA - membersTeamB) > 1;
-    }
-
-    public void autobalance() {
-        if (!autoBalance() || currentRound == null || currentRound.teams.length != 2)
-            return;
-        int membersTeamA = currentRound.teams[0].members.size();
-        int membersTeamB = currentRound.teams[1].members.size();
-        if (membersTeamA - membersTeamB > 1) {
-            for (int i = 0; i < (membersTeamA - membersTeamB) / 2; i++) {
-                //My goodness this is convoluted...
-                EntityPlayerMP playerToKick = getPlayer(currentRound.teams[1].addPlayer(currentRound.teams[0].removeWorstPlayer()));
-                messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
-                sendClassMenuToPlayer(playerToKick);
-            }
-        }
-        if (membersTeamB - membersTeamA > 1) {
-            for (int i = 0; i < (membersTeamB - membersTeamA) / 2; i++) {
-                EntityPlayerMP playerToKick = getPlayer(currentRound.teams[0].addPlayer(currentRound.teams[1].removeWorstPlayer()));
-                messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
-                sendClassMenuToPlayer(playerToKick);
-            }
-        }
     }
 
     public String randomTimeOutString() {
@@ -766,7 +777,7 @@ public class TeamsManager {
         player.setSpawnChunk(coords, true);
     }
 
-    private void setPlayersNextSpawnpoint(EntityPlayerMP player) {
+    protected void setPlayersNextSpawnpoint(EntityPlayerMP player) {
         if (!enabled || currentRound == null)
             return;
 
@@ -824,11 +835,11 @@ public class TeamsManager {
         return MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
-    public boolean autoBalance() {
+    public boolean autoBalance()
+    {
         return !(currentRound != null && !currentRound.gametype.shouldAutobalance()) && autoBalance;
     }
 
-    //
     public void playerSelectedTeam(EntityPlayerMP player, String teamName) {
         if (!enabled || currentRound == null)
             return;
