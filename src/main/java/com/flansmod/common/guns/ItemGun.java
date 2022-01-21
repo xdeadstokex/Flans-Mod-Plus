@@ -676,7 +676,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     data.isShootingRight = data.isShootingLeft = false;
                     data.offHandGunSlot = 0;
                     isScoped = false;
-                    (new PacketSelectOffHandGun(0)).handleServerSide(player);
+/*                    (new PacketSelectOffHandGun(0)).handleServerSide(player);*/
                 }
                 return;
             }
