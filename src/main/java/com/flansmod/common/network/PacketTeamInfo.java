@@ -188,9 +188,7 @@ public class PacketTeamInfo extends PacketBase
 		TeamsManager.vehiclesNeedFuel = data.readBoolean();
 		TeamsManager.driveablesBreakBlocks = data.readBoolean();
 		TeamsManager.allowVehicleZoom = data.readBoolean();
-		FlansMod.log("e " + TeamsManager.survivalCanBreakVehicles);
 		TeamsManager.survivalCanBreakVehicles = data.readBoolean();
-		FlansMod.log("f " + TeamsManager.survivalCanBreakVehicles);
 		gametype = readUTF(data);
 		if(gametype.equals("No Gametype"))
 		{
