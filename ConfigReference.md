@@ -87,8 +87,7 @@ BAB
 | ReloadSoundRange | Integer | 50 | ~ |
 | GunSoundRange | Integer | 50 | ~ |
 | ShootSound | String | ~ |  |
-| BulletInsertSound | String | ~ |  |
-| BulletInsertSound | String | ~ |  |
+| BulletInsertSound | String | ~ | Only works for guns with an animation type of SHOTGUN, STRIKER, CUSTOMSHOTGUN, CUSTOMSTRIKER, CUSTOMRIFLE |
 | ActionSound | String | ~ |  |
 | LastShootSound | String | ~ |  |
 | SuppressedShootSound | String | ~ |  |
