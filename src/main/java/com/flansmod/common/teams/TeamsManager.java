@@ -288,7 +288,7 @@ public class TeamsManager {
             return true;
         return false;
     }
-    
+
     public void autobalance()
     {
         if(!autoBalance() || currentRound == null || currentRound.teams.length != 2)
@@ -302,8 +302,8 @@ public class TeamsManager {
                 //My goodness this is convoluted...
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[1]
                         .addPlayer(currentRound.teams[0].removeWorstPlayer()));
-                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
-                sendClassMenuToPlayer(playerToKick);
+                PlayerData data = PlayerHandler.getPlayerData(playerToKick);
+                movePlayerProcedure(playerToKick, data);
             }
         }
         if(membersTeamB - membersTeamA > 1)
@@ -312,11 +312,17 @@ public class TeamsManager {
             {
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[0]
                         .addPlayer(currentRound.teams[1].removeWorstPlayer()));
-                this.messagePlayer(playerToKick, "You were moved to the other team by the autobalancer.");
-                sendClassMenuToPlayer(playerToKick);
-                setPlayersNextSpawnpoint(playerToKick);
+                PlayerData data = PlayerHandler.getPlayerData(playerToKick);
+                movePlayerProcedure(playerToKick, data);
             }
         }
+    }
+
+    private void movePlayerProcedure(EntityPlayerMP playerMP, PlayerData data){
+        data.playerMovedByAutobalancer=true;
+        messagePlayer(playerMP, "You were moved to the other team by the autobalancer.");
+        sendClassMenuToPlayer(playerMP);
+        setPlayersNextSpawnpoint(playerMP);
     }
 
     public void switchToNextGameType() {
@@ -924,7 +930,7 @@ public class TeamsManager {
 
         //Check cases
         //1 : Player switched class only
-        if (data.team == data.newTeam && data.playerClass != playerClass) {
+        if (data.team == data.newTeam && data.playerClass != playerClass && !data.playerMovedByAutobalancer) {
             currentRound.gametype.playerChoseNewClass(player, playerClass);
             data.newPlayerClass = playerClass;
             player.addChatMessage(new ChatComponentText("You will respawn with the " + playerClass.name + " class"));
@@ -950,6 +956,17 @@ public class TeamsManager {
             data.newPlayerClass = playerClass;
             currentRound.gametype.playerChoseNewClass(player, playerClass);
             respawnPlayer(player, true);
+        }
+        //4 : Player has moved my autobalancer
+        else if (data.team == data.newTeam && data.playerClass != playerClass && data.playerMovedByAutobalancer) {
+            currentRound.gametype.playerChoseNewClass(player, playerClass);
+            data.newPlayerClass = playerClass;
+            player.addChatMessage(new ChatComponentText("test test test Все игроки брейкдауна были нагнуты раком кланом GetBetter"));
+            resetInventory(player);
+            Vec3 spawnPoint = currentRound.gametype.getSpawnPoint(player);
+            if (spawnPoint != null) {
+                player.setPositionAndUpdate(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+            }
         }
     }
 
