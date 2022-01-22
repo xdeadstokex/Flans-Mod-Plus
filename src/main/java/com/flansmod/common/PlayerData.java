@@ -84,6 +84,8 @@ public class PlayerData
 	public PlayerClass newPlayerClass;
 	/** Keeps the player out of having to rechose their team each round */
 	public boolean builder;
+	/** e.e */
+	public boolean playerMovedByAutobalancer=false;
 	/** Save the player's skin here, to replace after having done a swap for a certain class override */
 	@SideOnly(Side.CLIENT)
 	public ResourceLocation skin;
