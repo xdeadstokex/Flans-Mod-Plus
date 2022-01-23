@@ -1223,11 +1223,11 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         if (isPreferred) {
                             if ((bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) || !bestSlotIsPreferred) {
                                 bestSlot = j;
+				bulletsInBestSlot = bulletsInThisSlot;
                                 bestSlotIsPreferred = true;
                             }
                         } else if (!bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) {
                             bestSlot = j;
-                            bulletsInBestSlot = bulletsInThisSlot;
                             bestSlotIsPreferred = false;
                         }
                     }
