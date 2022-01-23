@@ -961,7 +961,6 @@ public class TeamsManager {
         else if (data.team == data.newTeam && data.playerClass != playerClass && data.playerMovedByAutobalancer) {
             currentRound.gametype.playerChoseNewClass(player, playerClass);
             data.newPlayerClass = playerClass;
-            player.addChatMessage(new ChatComponentText("test test test Все игроки брейкдауна были нагнуты раком кланом GetBetter"));
             resetInventory(player);
             Vec3 spawnPoint = currentRound.gametype.getSpawnPoint(player);
             if (spawnPoint != null) {
