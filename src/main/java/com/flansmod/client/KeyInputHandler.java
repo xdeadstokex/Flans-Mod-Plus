@@ -38,7 +38,7 @@ public class KeyInputHandler {
     public static KeyBinding gunKey = new KeyBinding("Gun Key", Keyboard.KEY_B, "Flan's Mod");
     public static KeyBinding controlSwitchKey = new KeyBinding("Control Switch key", Keyboard.KEY_C, "Flan's Mod");
     public static KeyBinding reloadKey = new KeyBinding("Reload key", Keyboard.KEY_R, "Flan's Mod");
-    public static KeyBinding selectPreferredAmmo = new KeyBinding("Select Preferred Ammo key", Keyboard.KEY_R, "Flan's Mod");
+    public static KeyBinding selectPreferredAmmo = new KeyBinding("Select Preferred Ammo key", Keyboard.KEY_P, "Flan's Mod");
     public static KeyBinding gunModeKey = new KeyBinding("Gun Mode key", Keyboard.KEY_F, "Flan's Mod");
     public static KeyBinding teamsMenuKey = new KeyBinding("Teams Menu Key", Keyboard.KEY_G, "Flan's Mod");
     public static KeyBinding teamsScoresKey = new KeyBinding("Teams Scores Key", Keyboard.KEY_H, "Flan's Mod");
