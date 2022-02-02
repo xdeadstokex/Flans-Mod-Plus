@@ -965,6 +965,7 @@ public class TeamsManager {
             Vec3 spawnPoint = currentRound.gametype.getSpawnPoint(player);
             if (spawnPoint != null) {
                 player.setPositionAndUpdate(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
+                data.playerMovedByAutobalancer=false;
             }
         }
     }
