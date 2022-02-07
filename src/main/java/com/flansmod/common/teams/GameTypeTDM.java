@@ -28,8 +28,49 @@ public class GameTypeTDM extends GameType {
     }
 
     @Override
-    public void roundEnd() {
+    public void roundEnd()
+    {
+        if(teamsManager.currentRound.teams!=null && teamsManager.currentRound.teams[0]!=null && teamsManager.currentRound.teams[1]!=null){
+            Team teamA = teamsManager.currentRound.teams[0];
+            Team teamB = teamsManager.currentRound.teams[1];
+            teamA.sortPlayers();
+            teamB.sortPlayers();
+            EntityPlayerMP bestPlayerA = null;
+            EntityPlayerMP bestPlayerB = null;
+            for(String name : teamA.members){
+                getPlayerInfo(getPlayer(name)).playedRounds++;
+                getPlayerInfo(getPlayer(name)).updateAVG();
+                getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+            }
+            for(String name : teamB.members){
+                getPlayerInfo(getPlayer(name)).playedRounds++;
+                getPlayerInfo(getPlayer(name)).updateAVG();
+                getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+            }
+            for(String name : teamA.members){
+                PlayerData data = getPlayerData(getPlayer(name));
+                int bestScore=0;
+                if(data.score>bestScore){
+                    bestPlayerA=getPlayer(name);
+                    bestScore=data.score;
+                }
+            }
+            for(String name : teamB.members){
+                PlayerData data = getPlayerData(getPlayer(name));
+                int bestScore=0;
+                if(data.score>bestScore){
+                    bestPlayerB=getPlayer(name);
+                    bestScore=data.score;
+                }
+            }
 
+            getPlayerInfo(bestPlayerA).addExp(250);
+            getPlayerInfo(bestPlayerB).addExp(250);
+            getPlayerInfo(bestPlayerA).MVPCount++;
+            getPlayerInfo(bestPlayerB).MVPCount++;
+            getPlayerInfo(bestPlayerA).savePlayerInfoData();
+            getPlayerInfo(bestPlayerB).savePlayerInfoData();
+        }
     }
 
     @Override
@@ -39,49 +80,49 @@ public class GameTypeTDM extends GameType {
 
     @Override
     public void tick() {
-        if (autoBalance && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance()) {
-            TeamsManager.messageAll("\u00a7fAutobalancing teams...");
-        }
-        if (autoBalance && time % autoBalanceInterval == 0 && needAutobalance()) {
-            autobalance();
-        }
+//        if (autoBalance && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance()) {
+//            TeamsManager.messageAll("\u00a7fAutobalancing teams...");
+//        }
+//        if (autoBalance && time % autoBalanceInterval == 0 && needAutobalance()) {
+//            autobalance();
+//        }
     }
 
-    public boolean needAutobalance() {
-        if (teamsManager.currentRound == null || teamsManager.currentRound.teams[0] == null || teamsManager.currentRound.teams[1] == null)
-            return false;
-        int membersTeamA = teamsManager.currentRound.teams[0].members.size();
-        int membersTeamB = teamsManager.currentRound.teams[1].members.size();
-        if (Math.abs(membersTeamA - membersTeamB) > 1)
-            return true;
-        return false;
-    }
-
-    public void autobalance() {
-        if (teamsManager.currentRound.teams == null || teamsManager.currentRound.teams[0] == null || teamsManager.currentRound.teams[1] == null)
-            return;
-        int membersTeamA = teamsManager.currentRound.teams[0].members.size();
-        int membersTeamB = teamsManager.currentRound.teams[1].members.size();
-        if (membersTeamA - membersTeamB > 1) {
-            for (int i = 0; i < (membersTeamA - membersTeamB) / 2; i++) {
-                //My goodness this is convoluted...
-                EntityPlayerMP player = getPlayer(teamsManager.currentRound.teams[1].addPlayer(teamsManager.currentRound.teams[0].removeWorstPlayer()));
-                if (!player.isDead) {
-                    teamsManager.messagePlayer(player, "You have been moved to " + teamsManager.currentRound.teams[1].name);
-                    teamsManager.sendClassMenuToPlayer(player);
-                }
-            }
-        }
-        if (membersTeamB - membersTeamA > 1) {
-            for (int i = 0; i < (membersTeamB - membersTeamA) / 2; i++) {
-                EntityPlayerMP player = getPlayer(teamsManager.currentRound.teams[0].addPlayer(teamsManager.currentRound.teams[1].removeWorstPlayer()));
-                if (!player.isDead) {
-                    teamsManager.messagePlayer(player, "You have been moved to " + teamsManager.currentRound.teams[0].name);
-                    teamsManager.sendClassMenuToPlayer(player);
-                }
-            }
-        }
-    }
+//    public boolean needAutobalance() {
+//        if (teamsManager.currentRound == null || teamsManager.currentRound.teams[0] == null || teamsManager.currentRound.teams[1] == null)
+//            return false;
+//        int membersTeamA = teamsManager.currentRound.teams[0].members.size();
+//        int membersTeamB = teamsManager.currentRound.teams[1].members.size();
+//        if (Math.abs(membersTeamA - membersTeamB) > 1)
+//            return true;
+//        return false;
+//    }
+//
+//    public void autobalance() {
+//        if (teamsManager.currentRound.teams == null || teamsManager.currentRound.teams[0] == null || teamsManager.currentRound.teams[1] == null)
+//            return;
+//        int membersTeamA = teamsManager.currentRound.teams[0].members.size();
+//        int membersTeamB = teamsManager.currentRound.teams[1].members.size();
+//        if (membersTeamA - membersTeamB > 1) {
+//            for (int i = 0; i < (membersTeamA - membersTeamB) / 2; i++) {
+//                //My goodness this is convoluted...
+//                EntityPlayerMP player = getPlayer(teamsManager.currentRound.teams[1].addPlayer(teamsManager.currentRound.teams[0].removeWorstPlayer()));
+//                if (!player.isDead) {
+//                    teamsManager.messagePlayer(player, "You have been moved to " + teamsManager.currentRound.teams[1].name);
+//                    teamsManager.sendClassMenuToPlayer(player);
+//                }
+//            }
+//        }
+//        if (membersTeamB - membersTeamA > 1) {
+//            for (int i = 0; i < (membersTeamB - membersTeamA) / 2; i++) {
+//                EntityPlayerMP player = getPlayer(teamsManager.currentRound.teams[0].addPlayer(teamsManager.currentRound.teams[1].removeWorstPlayer()));
+//                if (!player.isDead) {
+//                    teamsManager.messagePlayer(player, "You have been moved to " + teamsManager.currentRound.teams[0].name);
+//                    teamsManager.sendClassMenuToPlayer(player);
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void playerJoined(EntityPlayerMP player) {
@@ -127,11 +168,17 @@ public class GameTypeTDM extends GameType {
             else {
                 givePoints(attacker, 1);
                 getPlayerData(attacker).kills++;
+                getPlayerInfo(attacker).kills++;
+                getPlayerInfo(attacker).addExp(getPlayerInfo(player).rank*2);
+                getPlayerInfo(attacker).updateLongestKill(attacker.getDistanceToEntity(player));
+                getPlayerInfo(attacker).savePlayerInfoData();
             }
         } else {
             getPlayerData(player).score--;
         }
         getPlayerData(player).deaths++;
+        getPlayerInfo(player).deaths++;
+        getPlayerInfo(player).savePlayerInfoData();
     }
 
     @Override
