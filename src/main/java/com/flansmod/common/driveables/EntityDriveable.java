@@ -449,6 +449,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     @Override
     public void setDead() {
+
+        TeamsManager teamsManager = TeamsManager.instance;
+        if(teamsManager.currentRound!=null){
+
+        }
+
         super.setDead();
 
         //Unregister to Radar
@@ -2386,6 +2392,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (!worldObj.isRemote) {
             checkParts();
             //If it hit, send a damage update packet
+            if(part.type.equals(EnumDriveablePart.core) && part.dead){
+                if(TeamsManager.instance.currentRound!=null)
+                    TeamsManager.instance.currentRound.gametype.vehicleDestroyed(part.owner, bullet);
+            }
             FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
         }
 
