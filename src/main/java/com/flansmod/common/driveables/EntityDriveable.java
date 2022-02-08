@@ -449,14 +449,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     @Override
     public void setDead() {
-
-        TeamsManager teamsManager = TeamsManager.instance;
-        if(teamsManager.currentRound!=null){
-
-        }
-
         super.setDead();
-
         //Unregister to Radar
         //RadarRegistry.unregister(this);
         if (worldObj.isRemote)

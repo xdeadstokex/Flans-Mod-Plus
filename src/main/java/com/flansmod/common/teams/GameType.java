@@ -143,26 +143,25 @@ public abstract class GameType {
 //                if(driveable.riddenByEntity!=null &&
 //                        driveable.riddenByEntity instanceof EntityPlayer &&
 //                        !getPlayerData((EntityPlayerMP) driveable.riddenByEntity).team.equals(getPlayerData(attacker).team)) {
-                    if(true){
+                    if(true){ //this if() need for next changes
                         getPlayerInfo(attacker).vehiclesDestroyed++;
-                        FlansMod.log("Minigames: "+driveable.getDriveableType().name + " destroyed by "+attacker+" with using "+bullet.firedFrom.name);
                         if (driveable instanceof EntityPlane) {
                         EntityPlane plane = (EntityPlane) driveable;
                         if (plane.mode == EnumPlaneMode.PLANE || plane.mode == EnumPlaneMode.VTOL) {
                             getPlayerInfo(attacker).addExp(100);
-                            getPlayerInfo(attacker).savePlayerInfoData();
+                            getPlayerInfo(attacker).savePlayerStats();
                         } else if (plane.mode == EnumPlaneMode.HELI) {
                             getPlayerInfo(attacker).addExp(75);
-                            getPlayerInfo(attacker).savePlayerInfoData();
+                            getPlayerInfo(attacker).savePlayerStats();
                         }
                     } else if (driveable instanceof EntityVehicle) {
                         EntityVehicle vehicle = (EntityVehicle) driveable;
                         if (vehicle.getVehicleType().tank) {
                             getPlayerInfo(attacker).addExp(75);
-                            getPlayerInfo(attacker).savePlayerInfoData();
+                            getPlayerInfo(attacker).savePlayerStats();
                         } else {
                             getPlayerInfo(attacker).addExp(50);
-                            getPlayerInfo(attacker).savePlayerInfoData();
+                            getPlayerInfo(attacker).savePlayerStats();
                         }
                     }
                 }
@@ -192,8 +191,8 @@ public abstract class GameType {
         return PlayerHandler.getPlayerData(player);
     }
 
-    public static PlayerInfo getPlayerInfo(EntityPlayerMP player) {
-        return PlayerHandler.getPlayerInfo(player);
+    public static PlayerStats getPlayerInfo(EntityPlayerMP player) {
+        return PlayerHandler.getPlayerStats(player);
     }
 
     public static void sendPacketToPlayer(PacketBase packet, EntityPlayerMP player) {

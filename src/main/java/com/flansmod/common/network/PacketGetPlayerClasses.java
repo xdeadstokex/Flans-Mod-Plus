@@ -3,10 +3,7 @@ package com.flansmod.common.network;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.guns.ItemGun;
-import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.teams.PlayerClass;
-import com.flansmod.common.teams.PlayerInfo;
 import com.flansmod.common.teams.TeamsManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,9 +11,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 
 public class PacketGetPlayerClasses extends PacketBase {
 
@@ -37,7 +31,6 @@ public class PacketGetPlayerClasses extends PacketBase {
 
     @Override
     public void handleServerSide(EntityPlayerMP playerEntity) {
-        System.out.println("recievedGPC");
         if(TeamsManager.instance.currentRound!=null&&TeamsManager.instance.currentRound.teams!=null){
             PlayerData data = PlayerHandler.getPlayerData(playerEntity);
             if(data!=null&data.team!=null){

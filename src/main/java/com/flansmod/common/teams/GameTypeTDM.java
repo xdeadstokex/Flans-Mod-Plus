@@ -14,9 +14,7 @@ public class GameTypeTDM extends GameType {
     public boolean friendlyFire = false;
     public boolean autoBalance = true;
     public int scoreLimit = 25;
-    public int newRoundTimer = 0;
     public int time;
-    public int autoBalanceInterval = 1200;
 
     public GameTypeTDM() {
         super("Team Deathmatch", "TDM", 2);
@@ -40,12 +38,12 @@ public class GameTypeTDM extends GameType {
             for(String name : teamA.members){
                 getPlayerInfo(getPlayer(name)).playedRounds++;
                 getPlayerInfo(getPlayer(name)).updateAVG();
-                getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+                getPlayerInfo(getPlayer(name)).savePlayerStats();
             }
             for(String name : teamB.members){
                 getPlayerInfo(getPlayer(name)).playedRounds++;
                 getPlayerInfo(getPlayer(name)).updateAVG();
-                getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+                getPlayerInfo(getPlayer(name)).savePlayerStats();
             }
             for(String name : teamA.members){
                 PlayerData data = getPlayerData(getPlayer(name));
@@ -68,8 +66,8 @@ public class GameTypeTDM extends GameType {
             getPlayerInfo(bestPlayerB).addExp(250);
             getPlayerInfo(bestPlayerA).MVPCount++;
             getPlayerInfo(bestPlayerB).MVPCount++;
-            getPlayerInfo(bestPlayerA).savePlayerInfoData();
-            getPlayerInfo(bestPlayerB).savePlayerInfoData();
+            getPlayerInfo(bestPlayerA).savePlayerStats();
+            getPlayerInfo(bestPlayerB).savePlayerStats();
         }
     }
 
@@ -171,14 +169,14 @@ public class GameTypeTDM extends GameType {
                 getPlayerInfo(attacker).kills++;
                 getPlayerInfo(attacker).addExp(getPlayerInfo(player).rank*2);
                 getPlayerInfo(attacker).updateLongestKill(attacker.getDistanceToEntity(player));
-                getPlayerInfo(attacker).savePlayerInfoData();
+                getPlayerInfo(attacker).savePlayerStats();
             }
         } else {
             getPlayerData(player).score--;
         }
         getPlayerData(player).deaths++;
         getPlayerInfo(player).deaths++;
-        getPlayerInfo(player).savePlayerInfoData();
+        getPlayerInfo(player).savePlayerStats();
     }
 
     @Override

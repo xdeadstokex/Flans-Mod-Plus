@@ -40,12 +40,12 @@ public class GameTypeDM extends GameType
 			for(String name : teamA.members){
 				getPlayerInfo(getPlayer(name)).playedRounds++;
 				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
 			}
 			for(String name : teamB.members){
 				getPlayerInfo(getPlayer(name)).playedRounds++;
 				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
 			}
 			for(String name : teamA.members){
 				PlayerData data = getPlayerData(getPlayer(name));
@@ -66,11 +66,11 @@ public class GameTypeDM extends GameType
 			if(getPlayerData(bestPlayerA).score>getPlayerData(bestPlayerB).score){
 				getPlayerInfo(bestPlayerA).addExp(250);
 				getPlayerInfo(bestPlayerA).MVPCount++;
-				getPlayerInfo(bestPlayerA).savePlayerInfoData();
+				getPlayerInfo(bestPlayerA).savePlayerStats();
 			} else if(getPlayerData(bestPlayerA).score<getPlayerData(bestPlayerB).score){
 				getPlayerInfo(bestPlayerB).addExp(250);
 				getPlayerInfo(bestPlayerB).MVPCount++;
-				getPlayerInfo(bestPlayerB).savePlayerInfoData();
+				getPlayerInfo(bestPlayerB).savePlayerStats();
 			}
 		}
 	}
@@ -126,7 +126,7 @@ public class GameTypeDM extends GameType
 				getPlayerInfo(attacker).kills++;
 				getPlayerInfo(attacker).addExp(getPlayerInfo(player).rank*2.2F);
 				getPlayerInfo(attacker).updateLongestKill(attacker.getDistanceToEntity(player));
-				getPlayerInfo(attacker).savePlayerInfoData();
+				getPlayerInfo(attacker).savePlayerStats();
 			}
 		}
 		else
@@ -135,7 +135,7 @@ public class GameTypeDM extends GameType
 		}
 		getPlayerData(player).deaths++;
 		getPlayerInfo(player).deaths++;
-		getPlayerInfo(player).savePlayerInfoData();
+		getPlayerInfo(player).savePlayerStats();
 	}
 
 	@Override

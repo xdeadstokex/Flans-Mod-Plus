@@ -3,8 +3,6 @@ package com.flansmod.common.teams;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flansmod.common.PlayerHandler;
-import ibxm.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
@@ -17,7 +15,6 @@ public class GameTypeCTF extends GameType
 	public boolean friendlyFire = false;
 	public boolean autoBalance = true;
 	public int time;
-	public int autoBalanceInterval = 1200;
 	public int flagReturnTime = 60;
 
 	public GameTypeCTF()
@@ -43,12 +40,12 @@ public class GameTypeCTF extends GameType
 			for(String name : teamA.members){
 				getPlayerInfo(getPlayer(name)).playedRounds++;
 				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
 			}
 			for(String name : teamB.members){
 				getPlayerInfo(getPlayer(name)).playedRounds++;
 				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerInfoData();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
 			}
 			for(String name : teamA.members){
 				PlayerData data = getPlayerData(getPlayer(name));
@@ -71,8 +68,8 @@ public class GameTypeCTF extends GameType
 			getPlayerInfo(bestPlayerB).addExp(250);
 			getPlayerInfo(bestPlayerA).MVPCount++;
 			getPlayerInfo(bestPlayerB).MVPCount++;
-			getPlayerInfo(bestPlayerA).savePlayerInfoData();
-			getPlayerInfo(bestPlayerB).savePlayerInfoData();
+			getPlayerInfo(bestPlayerA).savePlayerStats();
+			getPlayerInfo(bestPlayerB).savePlayerStats();
 		}
 	}
 
@@ -178,7 +175,7 @@ public class GameTypeCTF extends GameType
 				if(player.riddenByEntity instanceof EntityFlag){
 					getPlayerInfo(attacker).addExp(10);
 				}
-				getPlayerInfo(attacker).savePlayerInfoData();
+				getPlayerInfo(attacker).savePlayerStats();
 			}
 		}
 		else
@@ -187,7 +184,7 @@ public class GameTypeCTF extends GameType
 		}
 		getPlayerData(player).deaths++;
 		getPlayerInfo(player).deaths++;
-		getPlayerInfo(player).savePlayerInfoData();
+		getPlayerInfo(player).savePlayerStats();
 		if(player.riddenByEntity instanceof EntityFlag)
 		{
 			Team flagTeam = teamsManager.getTeam(((EntityFlag)player.riddenByEntity).getBase().getOwnerID());
@@ -244,7 +241,7 @@ public class GameTypeCTF extends GameType
 							playerData.score += 2;
 							getPlayerInfo(player).savedFlags++;
 							getPlayerInfo(player).addExp(10);
-							getPlayerInfo(player).savePlayerInfoData();
+							getPlayerInfo(player).savePlayerStats();
 							TeamsManager.messageAll("\u00a7f" + player.getCommandSenderName() + " returned the \u00a7" + flagTeam.textColour + flagTeam.name + "\u00a7f flag");		
 						}
 						
@@ -261,7 +258,7 @@ public class GameTypeCTF extends GameType
 								playerTeam.score++;
 								playerData.score += 10;
 								getPlayerInfo(player).capturedFlags++;
-								getPlayerInfo(player).savePlayerInfoData();
+								getPlayerInfo(player).savePlayerStats();
 								getPlayerInfo(player).addExp(20);
 								otherFlag.reset();
 								TeamsManager.messageAll("\u00a7f" + player.getCommandSenderName() + " captured the \u00a7" + otherFlagTeam.textColour + otherFlagTeam.name + "\u00a7f flag");
