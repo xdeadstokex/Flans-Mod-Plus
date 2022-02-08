@@ -199,10 +199,12 @@ public class PlayerStats {
                 case 9:
                     sender.addChatMessage(new ChatComponentText("\u00a7l10. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
+                case 10:
+                    sender.addChatMessage(new ChatComponentText("\u00a7b\u00a7l"+nameList.indexOf(sender.getCommandSenderName())+1+". " + sender.getCommandSenderName() + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
+                    break;
             }
-            sender.addChatMessage(new ChatComponentText("\u00a7b\u00a7l"+nameList.indexOf(sender.getCommandSenderName())+1 + sender.getCommandSenderName() + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
             counter1++;
-            if (counter1 >= 10) break;
+            if (counter1 >= 11) break;
         }
         counter1 = 0;
     }
