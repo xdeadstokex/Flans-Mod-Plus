@@ -135,10 +135,9 @@ public abstract class GameType {
 
     }
 
-    public void vehicleDestroyed(EntityDriveable driveable2, EntityBullet bullet){
-        if (bullet!=null && driveable2!=null) {
-            if (bullet.owner != null) {
-                EntityPlayerMP attacker = (EntityPlayerMP) bullet.owner;
+    public void vehicleDestroyed(EntityDriveable driveable2, EntityPlayerMP attacker){
+        if (driveable2!=null) {
+            if (attacker != null) {
                 EntityDriveable driveable = driveable2;
 //                if(driveable.riddenByEntity!=null &&
 //                        driveable.riddenByEntity instanceof EntityPlayer &&
