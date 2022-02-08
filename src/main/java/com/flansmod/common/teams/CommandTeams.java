@@ -267,17 +267,27 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Autobalance is now " + (TeamsManager.autoBalance ? "enabled" : "disabled")));
             return;
         }
+        if (split[0].equals("useRotation")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
+                return;
+            }
+            TeamsManager.voting = !Boolean.parseBoolean(split[1]);
+            sender.addChatMessage(new ChatComponentText("Voting is now " + (TeamsManager.voting ? "enabled" : "disabled")));
+            return;
+        }
 
         if (split[0].equalsIgnoreCase("stats")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <nickname>"));
                 return;
             }
-            PlayerInfo info = PlayerInfo.getPlayerInfoFromFile(split[1]);
+            PlayerStats info = PlayerStats.getPlayerStatsFromFile(split[1]);
             if(info==null){
                 sender.addChatMessage(new ChatComponentText("Player not found/Error reading player info"));
                 return;
             }
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lUsername: "+"\u00a7a\u00a7l"+info.nickname));
             sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lKills: "+"\u00a7a\u00a7l"+info.kills));
             sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lDeaths: "+"\u00a7a\u00a7l"+info.deaths));
             sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lK/D Ratio: "+"\u00a7a\u00a7l"+(double)info.kills/info.deaths));
@@ -292,7 +302,7 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lVehicles Destroyed: "+"\u00a7a\u00a7l"+info.kills));
         }
         if(split[0].equalsIgnoreCase("leaderboard")){
-            PlayerInfo.printLeaderboardExp(sender);
+            PlayerStats.printLeaderboardExp(sender);
         }
 
         if (split[0].equals("voting")) {
