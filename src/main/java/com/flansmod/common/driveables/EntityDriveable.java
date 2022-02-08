@@ -2385,10 +2385,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (!worldObj.isRemote) {
             checkParts();
             //If it hit, send a damage update packet
-            if(part.type.equals(EnumDriveablePart.core) && part.dead){
-                if(TeamsManager.instance.currentRound!=null)
-                    TeamsManager.instance.currentRound.gametype.vehicleDestroyed(part.owner, bullet);
-            }
             FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
         }
 
@@ -2485,7 +2481,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
             setDead();
-
+            if(lastAtkEntity!=null&&lastAtkEntity instanceof EntityPlayerMP) {
+                if (TeamsManager.instance.currentRound != null) {
+                    TeamsManager.instance.currentRound.gametype.vehicleDestroyed(this, (EntityPlayerMP) lastAtkEntity);
+                }
+            }
         }
 
     }
