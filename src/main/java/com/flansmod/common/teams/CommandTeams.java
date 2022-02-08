@@ -276,6 +276,35 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Voting is now " + (TeamsManager.voting ? "enabled" : "disabled")));
             return;
         }
+
+        if (split[0].equalsIgnoreCase("stats")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <nickname>"));
+                return;
+            }
+            PlayerStats info = PlayerStats.getPlayerStatsFromFile(split[1]);
+            if(info==null){
+                sender.addChatMessage(new ChatComponentText("Player not found/Error reading player info"));
+                return;
+            }
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lUsername: "+"\u00a7a\u00a7l"+info.nickname));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lKills: "+"\u00a7a\u00a7l"+info.kills));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lDeaths: "+"\u00a7a\u00a7l"+info.deaths));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lK/D Ratio: "+"\u00a7a\u00a7l"+(double)info.kills/info.deaths));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lRank: "+"\u00a7a\u00a7l"+info.rank));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lAVG: "+"\u00a7a\u00a7l"+info.avg));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMax Kill Distance: "+"\u00a7a\u00a7l"+info.longestKill));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlayed Rounds: "+"\u00a7a\u00a7l"+info.playedRounds));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlaytime: "+"\u00a7a\u00a7l"+info.playTime));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMVP Count: "+"\u00a7a\u00a7l"+info.MVPCount));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Captured: "+"\u00a7a\u00a7l"+info.capturedFlags));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Saved: "+"\u00a7a\u00a7l"+info.savedFlags));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lVehicles Destroyed: "+"\u00a7a\u00a7l"+info.kills));
+        }
+        if(split[0].equalsIgnoreCase("leaderboard")){
+            PlayerStats.printLeaderboardExp(sender);
+        }
+
         if (split[0].equals("voting")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
@@ -438,7 +467,7 @@ public class CommandTeams extends CommandBase {
                 return;
             }
             TeamsManager.survivalCanBreakVehicles = Boolean.parseBoolean(split[1]);
-            sender.addChatMessage(new ChatComponentText("Vehicles, Planes, Mechas, AAGuns can " + (TeamsManager.survivalCanBreakVehicles? "now" : "no longer") + " be broken by players in survival"));
+            sender.addChatMessage(new ChatComponentText("Vehicles, Planes, Mechas, AAGuns can " + (TeamsManager.survivalCanBreakVehicles ? "now" : "no longer") + " be broken by players in survival"));
             return;
         }
         if (split[0].equals("armourDrops") || split[0].equals("armorDrops")) {
@@ -691,7 +720,9 @@ public class CommandTeams extends CommandBase {
                     "ping",
                     "bltss",
                     "showbltss",
-                    "vehiclesCanZoom");
+                    "vehiclesCanZoom",
+                    "leaderboard",
+                    "stats");
         }
 
         return null;
@@ -759,6 +790,10 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams bltss <0 ... 100> <0 ... 1000>"));
                 sender.addChatMessage(new ChatComponentText("/teams showbltss"));
                 sender.addChatMessage(new ChatComponentText("/teams vehiclesCanZoom <true / false>"));
+                sender.addChatMessage(new ChatComponentText("/teams leaderboard"));
+                sender.addChatMessage(new ChatComponentText("/teams stats <nickname>"));
+
+
                 break;
             }
         }

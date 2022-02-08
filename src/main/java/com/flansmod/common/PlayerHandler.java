@@ -7,6 +7,7 @@ import com.flansmod.common.guns.EntityDamageSourceFlans;
 import com.flansmod.common.guns.EntityGrenade;
 import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.network.PacketRequestDebug;
+import com.flansmod.common.teams.PlayerStats;
 import com.flansmod.common.teams.TeamsManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -37,6 +38,8 @@ public class PlayerHandler {
     private static final Random rand = new Random();
     public static Map<String, PlayerData> serverSideData = new HashMap<String, PlayerData>();
     public static Map<String, PlayerData> clientSideData = new HashMap<String, PlayerData>();
+    public static Map<String, PlayerStats> serverSidePlayerStats = new HashMap<String, PlayerStats>();
+    public static Map<String, PlayerStats> clientSidePlayerStats = new HashMap<String, PlayerStats>();
     public static ArrayList<String> clientsToRemoveAfterThisRound = new ArrayList<String>();
 
     public PlayerHandler() {
@@ -139,6 +142,26 @@ public class PlayerHandler {
         return side.isClient() ? clientSideData.get(username) : serverSideData.get(username);
     }
 
+    //---
+
+    public static PlayerStats getPlayerStats(EntityPlayerMP player) {
+        if (player == null)
+            return null;
+        return getPlayerStats(player, player.worldObj.isRemote ? Side.CLIENT : Side.SERVER);
+    }
+
+    public static PlayerStats getPlayerStats(EntityPlayerMP player, Side side) {
+        String username = player.getCommandSenderName();
+        if (side.isClient()) {
+            if (!clientSidePlayerStats.containsKey(username))
+                clientSidePlayerStats.put(username, new PlayerStats(player.worldObj, player));
+        } else {
+            if (!serverSidePlayerStats.containsKey(username))
+                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, player));
+        }
+        return side.isClient() ? clientSidePlayerStats.get(username) : serverSidePlayerStats.get(username);
+    }
+
     @SubscribeEvent
     public void onPlayerEvent(PlayerEvent event) {
         if (event instanceof PlayerLoggedInEvent) {
@@ -151,6 +174,9 @@ public class PlayerHandler {
             if (!serverSideData.containsKey(username))
                 serverSideData.put(username, new PlayerData(username));
             clientsToRemoveAfterThisRound.remove(username);
+            if (!serverSidePlayerStats.containsKey(username))
+                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, (EntityPlayerMP)player));
+
         } else if (event instanceof PlayerLoggedOutEvent) {
             EntityPlayer player = event.player;
             String username = player.getCommandSenderName();
@@ -162,6 +188,9 @@ public class PlayerHandler {
             String username = player.getCommandSenderName();
             if (!serverSideData.containsKey(username))
                 serverSideData.put(username, new PlayerData(username));
+            if (!serverSidePlayerStats.containsKey(username))
+                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, (EntityPlayerMP)player));
+
         }
     }
 

@@ -450,7 +450,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     @Override
     public void setDead() {
         super.setDead();
-
         //Unregister to Radar
         //RadarRegistry.unregister(this);
         if (worldObj.isRemote)
@@ -2482,7 +2481,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
             setDead();
-
+            if(lastAtkEntity!=null&&lastAtkEntity instanceof EntityPlayerMP) {
+                if (TeamsManager.instance.currentRound != null) {
+                    TeamsManager.instance.currentRound.gametype.vehicleDestroyed(this, (EntityPlayerMP) lastAtkEntity);
+                }
+            }
         }
 
     }
