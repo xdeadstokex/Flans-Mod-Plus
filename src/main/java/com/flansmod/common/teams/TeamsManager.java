@@ -1012,8 +1012,7 @@ public class TeamsManager {
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (stack != null && stack.getItem() instanceof ItemGun) {
-                new ItemStack(GunType.getGun("mtar").getItem());
-                ((ItemGun) stack.getItem()).reload(stack, ((ItemGun) stack.getItem()).type, player.worldObj, player, true, false);
+                ((ItemGun) stack.getItem()).reload(stack, ((ItemGun) stack.getItem()).type, player.worldObj, player, true, false); //this line does works
             }
         }
     }
