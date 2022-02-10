@@ -30,7 +30,49 @@ public class GameTypeDM extends GameType
 	@Override
 	public void roundEnd()
 	{
-		
+		if(teamsManager.currentRound.teams!=null && teamsManager.currentRound.teams[0]!=null && teamsManager.currentRound.teams[1]!=null){
+			Team teamA = teamsManager.currentRound.teams[0];
+			Team teamB = teamsManager.currentRound.teams[1];
+			teamA.sortPlayers();
+			teamB.sortPlayers();
+			EntityPlayerMP bestPlayerA = null;
+			EntityPlayerMP bestPlayerB = null;
+			for(String name : teamA.members){
+				getPlayerInfo(getPlayer(name)).playedRounds++;
+				getPlayerInfo(getPlayer(name)).updateAVG();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
+			}
+			for(String name : teamB.members){
+				getPlayerInfo(getPlayer(name)).playedRounds++;
+				getPlayerInfo(getPlayer(name)).updateAVG();
+				getPlayerInfo(getPlayer(name)).savePlayerStats();
+			}
+			for(String name : teamA.members){
+				PlayerData data = getPlayerData(getPlayer(name));
+				int bestScore=0;
+				if(data.score>bestScore){
+					bestPlayerA=getPlayer(name);
+					bestScore=data.score;
+				}
+			}
+			for(String name : teamB.members){
+				PlayerData data = getPlayerData(getPlayer(name));
+				int bestScore=0;
+				if(data.score>bestScore){
+					bestPlayerB=getPlayer(name);
+					bestScore=data.score;
+				}
+			}
+			if(getPlayerData(bestPlayerA).score>getPlayerData(bestPlayerB).score){
+				getPlayerInfo(bestPlayerA).addExp(250);
+				getPlayerInfo(bestPlayerA).MVPCount++;
+				getPlayerInfo(bestPlayerA).savePlayerStats();
+			} else if(getPlayerData(bestPlayerA).score<getPlayerData(bestPlayerB).score){
+				getPlayerInfo(bestPlayerB).addExp(250);
+				getPlayerInfo(bestPlayerB).MVPCount++;
+				getPlayerInfo(bestPlayerB).savePlayerStats();
+			}
+		}
 	}
 
 	@Override
@@ -81,6 +123,10 @@ public class GameTypeDM extends GameType
 			{	
 				getPlayerData(attacker).score++;
 				getPlayerData(attacker).kills++;
+				getPlayerInfo(attacker).kills++;
+				getPlayerInfo(attacker).addExp(getPlayerInfo(player).rank*2.2F);
+				getPlayerInfo(attacker).updateLongestKill(attacker.getDistanceToEntity(player));
+				getPlayerInfo(attacker).savePlayerStats();
 			}
 		}
 		else
@@ -88,6 +134,8 @@ public class GameTypeDM extends GameType
 			getPlayerData(player).score--;
 		}
 		getPlayerData(player).deaths++;
+		getPlayerInfo(player).deaths++;
+		getPlayerInfo(player).savePlayerStats();
 	}
 
 	@Override

@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import com.flansmod.common.driveables.EntityDriveable;
+import com.flansmod.common.driveables.EntityPlane;
+import com.flansmod.common.driveables.EntityVehicle;
+import com.flansmod.common.driveables.EnumPlaneMode;
+import com.flansmod.common.guns.EntityBullet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.Vec3;
 
 import com.flansmod.common.FlansMod;
@@ -128,6 +132,40 @@ public abstract class GameType {
      * Called when any entity is killed. This allows one to track mob deaths too
      */
     public void entityKilled(Entity entity, DamageSource source) {
+
+    }
+
+    public void vehicleDestroyed(EntityDriveable driveable2, EntityPlayerMP attacker){
+        if (driveable2!=null) {
+            if (attacker != null) {
+                EntityDriveable driveable = driveable2;
+//                if(driveable.riddenByEntity!=null &&
+//                        driveable.riddenByEntity instanceof EntityPlayer &&
+//                        !getPlayerData((EntityPlayerMP) driveable.riddenByEntity).team.equals(getPlayerData(attacker).team)) {
+                    if(true){ //this if() need for next changes
+                        getPlayerInfo(attacker).vehiclesDestroyed++;
+                        if (driveable instanceof EntityPlane) {
+                        EntityPlane plane = (EntityPlane) driveable;
+                        if (plane.mode == EnumPlaneMode.PLANE || plane.mode == EnumPlaneMode.VTOL) {
+                            getPlayerInfo(attacker).addExp(100);
+                            getPlayerInfo(attacker).savePlayerStats();
+                        } else if (plane.mode == EnumPlaneMode.HELI) {
+                            getPlayerInfo(attacker).addExp(75);
+                            getPlayerInfo(attacker).savePlayerStats();
+                        }
+                    } else if (driveable instanceof EntityVehicle) {
+                        EntityVehicle vehicle = (EntityVehicle) driveable;
+                        if (vehicle.getVehicleType().tank) {
+                            getPlayerInfo(attacker).addExp(75);
+                            getPlayerInfo(attacker).savePlayerStats();
+                        } else {
+                            getPlayerInfo(attacker).addExp(50);
+                            getPlayerInfo(attacker).savePlayerStats();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void playerChoseTeam(EntityPlayerMP player, Team team, Team newTeam) {
@@ -146,12 +184,14 @@ public abstract class GameType {
     // Helper methods - Do not override
     //--------------------------------------
 
-    public EntityPlayerMP getPlayer(String username) {
-        return MinecraftServer.getServer().getConfigurationManager().func_152612_a(username);
-    }
+
 
     public static PlayerData getPlayerData(EntityPlayerMP player) {
         return PlayerHandler.getPlayerData(player);
+    }
+
+    public static PlayerStats getPlayerInfo(EntityPlayerMP player) {
+        return PlayerHandler.getPlayerStats(player);
     }
 
     public static void sendPacketToPlayer(PacketBase packet, EntityPlayerMP player) {
@@ -181,6 +221,10 @@ public abstract class GameType {
                 attacker = (EntityPlayerMP) source.getEntity();
         }
         return attacker;
+    }
+
+    public EntityPlayerMP getPlayer(String username) {
+        return MinecraftServer.getServer().getConfigurationManager().func_152612_a(username);
     }
 
     public boolean shouldAutobalance() {

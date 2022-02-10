@@ -169,6 +169,9 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         registerPacket(PacketMuzzleFlash.class);
         registerPacket(PacketHitMarker.class);
         registerPacket(PacketSetPreferredAmmo.class);
+        registerPacket(PacketGetPlayerClasses.class);
+        registerPacket(PacketSendPlayerClasses.class);
+
     }
 
     /**
