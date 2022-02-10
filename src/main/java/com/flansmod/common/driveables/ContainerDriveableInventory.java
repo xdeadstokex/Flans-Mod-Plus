@@ -212,7 +212,7 @@ public class ContainerDriveableInventory extends Container
 						flag = true;
 						
 					} else if (itemstack.stackSize < maxLimit) {
-						stack.stackSize = maxLimit;
+						stack.stackSize -= maxLimit -itemstack.stackSize;
 						itemstack.stackSize = maxLimit;
 						slot.onSlotChanged();
 						flag = true;
