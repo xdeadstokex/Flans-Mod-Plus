@@ -37,40 +37,50 @@ public class GameTypeDM extends GameType
 			teamB.sortPlayers();
 			EntityPlayerMP bestPlayerA = null;
 			EntityPlayerMP bestPlayerB = null;
-			for(String name : teamA.members){
-				getPlayerInfo(getPlayer(name)).playedRounds++;
-				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerStats();
-			}
-			for(String name : teamB.members){
-				getPlayerInfo(getPlayer(name)).playedRounds++;
-				getPlayerInfo(getPlayer(name)).updateAVG();
-				getPlayerInfo(getPlayer(name)).savePlayerStats();
-			}
-			for(String name : teamA.members){
-				PlayerData data = getPlayerData(getPlayer(name));
-				int bestScore=0;
-				if(data.score>bestScore){
-					bestPlayerA=getPlayer(name);
-					bestScore=data.score;
+			if(teamA.members!=null) {
+				for (String name : teamA.members) {
+					getPlayerInfo(getPlayer(name)).playedRounds++;
+					getPlayerInfo(getPlayer(name)).updateAVG();
+					getPlayerInfo(getPlayer(name)).savePlayerStats();
 				}
 			}
-			for(String name : teamB.members){
-				PlayerData data = getPlayerData(getPlayer(name));
-				int bestScore=0;
-				if(data.score>bestScore){
-					bestPlayerB=getPlayer(name);
-					bestScore=data.score;
+			if(teamB.members!=null) {
+				for (String name : teamB.members) {
+					getPlayerInfo(getPlayer(name)).playedRounds++;
+					getPlayerInfo(getPlayer(name)).updateAVG();
+					getPlayerInfo(getPlayer(name)).savePlayerStats();
 				}
 			}
-			if(getPlayerData(bestPlayerA).score>getPlayerData(bestPlayerB).score){
-				getPlayerInfo(bestPlayerA).addExp(250);
-				getPlayerInfo(bestPlayerA).MVPCount++;
-				getPlayerInfo(bestPlayerA).savePlayerStats();
-			} else if(getPlayerData(bestPlayerA).score<getPlayerData(bestPlayerB).score){
-				getPlayerInfo(bestPlayerB).addExp(250);
-				getPlayerInfo(bestPlayerB).MVPCount++;
-				getPlayerInfo(bestPlayerB).savePlayerStats();
+			if(teamA.members!=null) {
+				for (String name : teamA.members) {
+					PlayerData data = getPlayerData(getPlayer(name));
+					int bestScore = 0;
+					if (data.score > bestScore) {
+						bestPlayerA = getPlayer(name);
+						bestScore = data.score;
+					}
+				}
+			}
+			if(teamB.members!=null) {
+				for (String name : teamB.members) {
+					PlayerData data = getPlayerData(getPlayer(name));
+					int bestScore = 0;
+					if (data.score > bestScore) {
+						bestPlayerB = getPlayer(name);
+						bestScore = data.score;
+					}
+				}
+			}
+			if(bestPlayerA!=null&&bestPlayerB!=null) {
+				if (getPlayerData(bestPlayerA).score > getPlayerData(bestPlayerB).score) {
+					getPlayerInfo(bestPlayerA).addExp(250);
+					getPlayerInfo(bestPlayerA).MVPCount++;
+					getPlayerInfo(bestPlayerA).savePlayerStats();
+				} else if (getPlayerData(bestPlayerA).score < getPlayerData(bestPlayerB).score) {
+					getPlayerInfo(bestPlayerB).addExp(250);
+					getPlayerInfo(bestPlayerB).MVPCount++;
+					getPlayerInfo(bestPlayerB).savePlayerStats();
+				}
 			}
 		}
 	}
