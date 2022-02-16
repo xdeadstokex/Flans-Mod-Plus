@@ -36,6 +36,7 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class PlayerHandler {
     private static final Random rand = new Random();
+    private boolean statsSynced=false;
     public static Map<String, PlayerData> serverSideData = new HashMap<String, PlayerData>();
     public static Map<String, PlayerData> clientSideData = new HashMap<String, PlayerData>();
     public static Map<String, PlayerStats> serverSidePlayerStats = new HashMap<String, PlayerStats>();
@@ -103,6 +104,11 @@ public class PlayerHandler {
         for (WorldServer world : MinecraftServer.getServer().worldServers) {
             for (Object player : world.playerEntities) {
                 getPlayerData((EntityPlayer) player).tick((EntityPlayer) player);
+            }
+        }
+        if(!statsSynced){
+            for(PlayerStats stats : PlayerStats.getAllPlayersStats()){
+                serverSidePlayerStats.put(stats.nickname,stats);
             }
         }
     }
