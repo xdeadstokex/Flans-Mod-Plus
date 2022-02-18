@@ -107,6 +107,7 @@ public class PlayerHandler {
             }
         }
         if(!statsSynced){
+            if(PlayerStats.getAllPlayersStats()==null) statsSynced=true;
             for(PlayerStats stats : PlayerStats.getAllPlayersStats()){
                 serverSidePlayerStats.put(stats.nickname,stats);
             }
