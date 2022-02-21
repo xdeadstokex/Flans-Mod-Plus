@@ -106,10 +106,13 @@ public class PlayerHandler {
                 getPlayerData((EntityPlayer) player).tick((EntityPlayer) player);
             }
         }
-        if(!statsSynced){
-            if(PlayerStats.getAllPlayersStats()==null) statsSynced=true;
-            for(PlayerStats stats : PlayerStats.getAllPlayersStats()){
-                serverSidePlayerStats.put(stats.nickname,stats);
+        if(TeamsManager.getInstance().currentRound!=null) {
+            if (!statsSynced) {
+                if (PlayerStats.getAllPlayersStats() == null) statsSynced = true;
+                for (PlayerStats stats : PlayerStats.getAllPlayersStats()) {
+                    serverSidePlayerStats.put(stats.nickname, stats);
+                    statsSynced = true;
+                }
             }
         }
     }
