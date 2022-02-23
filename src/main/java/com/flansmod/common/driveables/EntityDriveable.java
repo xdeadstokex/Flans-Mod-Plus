@@ -7,6 +7,8 @@ import com.flansmod.client.EntityCamera;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.debug.EntityDebugVector;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.driveables.DriveableType.ShootParticle;
@@ -1302,21 +1304,21 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
         if (seats[0] != null && seats[0].riddenByEntity != null && seats[0].riddenByEntity instanceof EntityPlayer && worldObj.isRemote) {
             EntityPlayer p = (EntityPlayer) seats[0].riddenByEntity;
-            if (this.ticksExisted < getDriveableType().placeTimePrimary && (getShootDelay(false) % 100) == 0 ) {
-                p.addChatComponentMessage(new ChatComponentText("Primary gun ready to use in " + getShootDelay(false)/20 + " seconds."));
+            if (this.ticksExisted < getDriveableType().placeTimePrimary && (getShootDelay(false) % 100) == 0) {
+                p.addChatComponentMessage(new ChatComponentText("Primary gun ready to use in " + getShootDelay(false) / 20 + " seconds."));
             } else if (this.ticksExisted == getDriveableType().placeTimePrimary) {
                 p.addChatComponentMessage(new ChatComponentText("Primary gun ready to use!"));
             }
 
             if (this.ticksExisted < getDriveableType().placeTimeSecondary && (getShootDelay(true) % 100) == 0) {
                 p.addChatComponentMessage(
-                        new ChatComponentText("Secondary gun ready to use in " + getShootDelay(true)/20 + " seconds."));
+                        new ChatComponentText("Secondary gun ready to use in " + getShootDelay(true) / 20 + " seconds."));
             } else if (this.ticksExisted == getDriveableType().placeTimeSecondary) {
                 p.addChatComponentMessage(new ChatComponentText("Secondary gun ready to use!"));
             }
 
-            if (engineStartDelay > 0 && engineStartDelay % (2.5*20) == 0) {
-                p.addChatComponentMessage(new ChatComponentText("Engine starting.. " + (float)engineStartDelay/20 + " seconds remaining."));
+            if (engineStartDelay > 0 && engineStartDelay % (2.5 * 20) == 0) {
+                p.addChatComponentMessage(new ChatComponentText("Engine starting.. " + (float) engineStartDelay / 20 + " seconds remaining."));
             } else if (engineStartDelay == 1) {
                 p.addChatComponentMessage(new ChatComponentText("Engine started!"));
             }
@@ -1343,7 +1345,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         prevDeckCheck = deckCheck;
 
-        if (engineStartDelay > 0) { engineStartDelay--; }
+        if (engineStartDelay > 0) {
+            engineStartDelay--;
+        }
         //Handle fuel
 
         int fuelMultiplier = 2;
@@ -1572,7 +1576,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (FlansMod.seatCollisions) {
             // This is for preventing vehicle glitching. It makes seats collideable, and stops their motion if 
             for (EntitySeat seat : seats) {
-                if (seat == null || wheels == null ||wheels[0] == null || wheels[1] == null || seat.riddenByEntity == null) 
+                if (seat == null || wheels == null || wheels[0] == null || wheels[1] == null || seat.riddenByEntity == null)
                     continue;
                 DriveablePosition p = seat.getAsDriveablePosition();
                 if (driveableData.parts.get(p.part).dead)
@@ -1587,9 +1591,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                     }
                 }
 
-                double checkY = Math.max((wheels[0].posY + wheels[1].posY)/2F + (this instanceof EntityVehicle ?  1.5 : 0), seat.posY);
+                double checkY = Math.max((wheels[0].posY + wheels[1].posY) / 2F + (this instanceof EntityVehicle ? 1.5 : 0), seat.posY);
                 Vec3 seatPos = Vec3.createVectorHelper(seat.posX + fwd.x * a, checkY + fwd.y * a, seat.posZ + fwd.z * a);
-                Vec3 wheelMidPos = Vec3.createVectorHelper((wheels[0].posX + wheels[1].posX)/2F, checkY, (wheels[0].posZ + wheels[1].posZ)/2F);
+                Vec3 wheelMidPos = Vec3.createVectorHelper((wheels[0].posX + wheels[1].posX) / 2F, checkY, (wheels[0].posZ + wheels[1].posZ) / 2F);
 
                 MovingObjectPosition hit = worldObj.rayTraceBlocks(seatPos, wheelMidPos, crashInWater);
                 if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK) {
@@ -1638,6 +1642,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
      * Attack a certain part of a driveable and return whether it broke or not
      */
     public boolean attackPart(EnumDriveablePart ep, DamageSource source, float damage) {
+        boolean isFriendly = false;
         if (ep == EnumDriveablePart.core) {
             if (source.getSourceOfDamage() instanceof EntityLivingBase) {
                 this.lastAtkEntity = source.getSourceOfDamage();
@@ -1647,9 +1652,28 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 this.lastAtkEntity = null;
             }
         }
+        if(TeamsManager.getInstance().currentRound!=null){
+            if(source instanceof EntityDamageSourceFlans){
+                EntityPlayerMP driver = null;
+                for(EntitySeat seat : this.seats){
+                    if(seat.riddenByEntity!=null && seat.riddenByEntity instanceof EntityPlayerMP){
+                        driver = (EntityPlayerMP)seat.riddenByEntity;
+                    }
+                }
+                if(driver!=null) {
+                    EntityDamageSourceFlans dsf = (EntityDamageSourceFlans) source;
+                    EntityPlayerMP attacker = (EntityPlayerMP) dsf.shooter;
+                    PlayerData attackerData = PlayerHandler.getPlayerData(attacker);
+                    PlayerData driverData = PlayerHandler.getPlayerData(driver);
+                    if(attackerData.team.shortName.equals(driverData.team.shortName)){
+                        isFriendly = true;
+                        damage=0;
+                    }
+                }
+
+            }
+        }
         DriveablePart part = driveableData.parts.get(ep);
-        //	FlansMod.log("EntityDriveable.attackPart %s : %s : damage=%.1f : %s : health=%d", ep.name(), ep.getName(), damage,
-        //			part.type.name(), part.health);
         return part.attack(damage, source.isFireDamage());
     }
 
@@ -2170,7 +2194,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 renderTri(p1, p2, p3);
                 renderTri(p3, p4, p1);
             }
-            
+
             if (tester.nearestDistance < topFaceDist) tester.isOnTop = false;
 
 
@@ -2376,6 +2400,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
      */
     public float bulletHit(EntityBullet bullet, DriveableHit hit, float penetratingPower) {
         DriveablePart part = getDriveableData().parts.get(hit.part);
+
         if (bullet != null)
             penetratingPower = part.hitByBullet(bullet, hit, penetratingPower);
         else
@@ -2449,31 +2474,26 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
                 if (type.isExplosionWhenDestroyed)
 //Create a flans mod explosion rather than a standard MC one. allows control over death boom   	
-    	        {
-        	        new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
-        		        	type.deathExplosionRadius, type.deathExplosionPower,TeamsManager.explosions && type.deathExplosionBreaksBlocks,
-        		        	type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
-        	
-        	        }
-        		if(!worldObj.isRemote && type.deathFireRadius > 0.1F)
-        		{
-        			for(float i = -type.deathFireRadius; i < type.deathFireRadius; i++)
-        			{
-        				for(float j = -type.deathFireRadius; j < type.deathFireRadius; j++)
-        				{
-        					for(float k = -type.deathFireRadius; k < type.deathFireRadius; k++)
-        					{
-        						int x = MathHelper.floor_double(i + posX);
-        						int y = MathHelper.floor_double(j + posY);
-        						int z = MathHelper.floor_double(k + posZ);
-        						if(i * i + j * j + k * k <= type.deathFireRadius * type.deathFireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean())
-        						{
-        							worldObj.setBlock(x, y, z, Blocks.fire, 0, 3);
-        						}
-        					}
-        				}
-        			}
-        		}
+                {
+                    new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
+                            type.deathExplosionRadius, type.deathExplosionPower, TeamsManager.explosions && type.deathExplosionBreaksBlocks,
+                            type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
+
+                }
+                if (!worldObj.isRemote && type.deathFireRadius > 0.1F) {
+                    for (float i = -type.deathFireRadius; i < type.deathFireRadius; i++) {
+                        for (float j = -type.deathFireRadius; j < type.deathFireRadius; j++) {
+                            for (float k = -type.deathFireRadius; k < type.deathFireRadius; k++) {
+                                int x = MathHelper.floor_double(i + posX);
+                                int y = MathHelper.floor_double(j + posY);
+                                int z = MathHelper.floor_double(k + posZ);
+                                if (i * i + j * j + k * k <= type.deathFireRadius * type.deathFireRadius && worldObj.getBlock(x, y, z) == Blocks.air && rand.nextBoolean()) {
+                                    worldObj.setBlock(x, y, z, Blocks.fire, 0, 3);
+                                }
+                            }
+                        }
+                    }
+                }
 
                 for (DriveablePart part : driveableData.parts.values()) {
                     if (part.health > 0 && !part.dead)
@@ -2481,13 +2501,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 }
             }
             setDead();
-            if(lastAtkEntity!=null&&lastAtkEntity instanceof EntityPlayerMP) {
+            if (lastAtkEntity != null && lastAtkEntity instanceof EntityPlayerMP) {
                 if (TeamsManager.instance.currentRound != null) {
                     TeamsManager.instance.currentRound.gametype.vehicleDestroyed(this, (EntityPlayerMP) lastAtkEntity);
                 }
             }
         }
-
     }
 
     public void checkPartsWhenAttacked() {
