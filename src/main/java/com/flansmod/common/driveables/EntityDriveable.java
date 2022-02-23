@@ -2503,7 +2503,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             setDead();
             if (lastAtkEntity != null && lastAtkEntity instanceof EntityPlayerMP) {
                 if (TeamsManager.instance.currentRound != null) {
-                    System.out.println();
                     TeamsManager.instance.currentRound.gametype.vehicleDestroyed(this, (EntityPlayerMP) lastAtkEntity);
                 }
             }
