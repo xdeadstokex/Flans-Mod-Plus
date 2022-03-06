@@ -1,6 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.client.gui.GuiSelectAmmo;
+import com.flansmod.common.network.PacketGetPlayerClasses;
 import org.lwjgl.input.Keyboard;
 
 import com.flansmod.api.IControllable;
@@ -40,8 +41,9 @@ public class KeyInputHandler {
     public static KeyBinding reloadKey = new KeyBinding("Reload key", Keyboard.KEY_R, "Flan's Mod");
     public static KeyBinding selectPreferredAmmo = new KeyBinding("Select Preferred Ammo key", Keyboard.KEY_P, "Flan's Mod");
     public static KeyBinding gunModeKey = new KeyBinding("Gun Mode key", Keyboard.KEY_F, "Flan's Mod");
-    public static KeyBinding teamsMenuKey = new KeyBinding("Teams Menu Key", Keyboard.KEY_G, "Flan's Mod");
-    public static KeyBinding teamsScoresKey = new KeyBinding("Teams Scores Key", Keyboard.KEY_H, "Flan's Mod");
+    public static KeyBinding teamsMenuKey = new KeyBinding("Minigames Select Team Key", Keyboard.KEY_G, "Flan's Mod");
+    public static KeyBinding teamsScoresKey = new KeyBinding("Minigames Scores Key", Keyboard.KEY_H, "Flan's Mod");
+    public static KeyBinding teamsSelectClassKey = new KeyBinding("Minigames Select Class Key", Keyboard.KEY_O, "Flan's Mod");
     public static KeyBinding leftRollKey = new KeyBinding("Roll Left Key", Keyboard.KEY_Z, "Flan's Mod");
     public static KeyBinding rightRollKey = new KeyBinding("Roll Right Key", Keyboard.KEY_X, "Flan's Mod");
     public static KeyBinding gearKey = new KeyBinding("Gear Up / Down Key", Keyboard.KEY_L, "Flan's Mod");
@@ -74,6 +76,7 @@ public class KeyInputHandler {
         ClientRegistry.registerKeyBinding(gunModeKey);
         ClientRegistry.registerKeyBinding(teamsMenuKey);
         ClientRegistry.registerKeyBinding(teamsScoresKey);
+        ClientRegistry.registerKeyBinding(teamsSelectClassKey);
         ClientRegistry.registerKeyBinding(leftRollKey);
         ClientRegistry.registerKeyBinding(rightRollKey);
         ClientRegistry.registerKeyBinding(gearKey);
@@ -105,6 +108,10 @@ public class KeyInputHandler {
         }
         if (teamsScoresKey.isPressed()) {
             mc.displayGuiScreen(new GuiTeamScores());
+            return;
+        }
+        if(teamsSelectClassKey.isPressed()){
+            FlansMod.getPacketHandler().sendToServer(new PacketGetPlayerClasses());
             return;
         }
         if (reloadKey.isPressed() && FlansModClient.shootTime(false) <= 0) {

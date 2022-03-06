@@ -1,5 +1,6 @@
 package com.flansmod.common.guns;
 
+import com.flansmod.common.driveables.*;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -33,10 +35,6 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.raytracing.BlockHit;
 import com.flansmod.common.guns.raytracing.BulletHit;
@@ -586,10 +584,25 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 if (bulletHit instanceof DriveableHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-
+                    boolean isFriendly=false;
                     DriveableHit driveableHit = (DriveableHit) bulletHit;
                     driveableHit.driveable.lastAtkEntity = owner;
-                    penetratingPower = driveableHit.driveable.bulletHit(this, driveableHit, penetratingPower);
+                    if(TeamsManager.getInstance().currentRound!=null) {
+                        for (EntitySeat seat : driveableHit.driveable.seats) {
+                            if (seat.riddenByEntity != null && seat.riddenByEntity instanceof EntityPlayerMP) {
+                                PlayerData dataDriver = PlayerHandler.getPlayerData((EntityPlayerMP) seat.riddenByEntity);
+                                PlayerData dataAttacker = PlayerHandler.getPlayerData((EntityPlayerMP) owner);
+                                if (dataDriver.team.shortName.equals(dataAttacker.team.shortName)) {
+                                    isFriendly = true;
+                                }
+                            }
+                        }
+                    }
+                    if(isFriendly){
+                        penetratingPower=0;
+                    } else {
+                        penetratingPower = driveableHit.driveable.bulletHit(this, driveableHit, penetratingPower);
+                    }
 
                     if (!worldObj.isRemote) {
                         if (owner instanceof EntityPlayer) {
