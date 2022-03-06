@@ -9,6 +9,7 @@ import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,12 @@ import java.util.Random;
 
 public class GunType extends PaintableType implements IScope {
     public static final Random rand = new Random();
+
+    /**Extended Recoil System
+     * ported by SecretAgent12
+     */
+    public GunRecoil recoil = new GunRecoil();
+    public boolean useFancyRecoil = false;
 
     //Gun Behaviour Variables
 
@@ -517,6 +524,33 @@ public class GunType extends PaintableType implements IScope {
                 reloadTime = Integer.parseInt(split[1]);
             else if (split[0].equals("Recoil"))
                 recoilPitch = Float.parseFloat(split[1]);
+            else if (split[0].equals("FancyRecoil")) {
+                try {
+                    if (split.length > 1) {
+                        recoil.read(split);
+                        useFancyRecoil =true;
+                    }
+                } catch (Exception e) {
+                    useFancyRecoil =false;
+                    System.out.println("Failed to read fancy recoil for " + shortName);
+                    e.printStackTrace();
+                }
+//                if(useExtendedRecoil){
+//                    recoilPitch=0;
+//                    recoilYaw=0;
+//                    recoilCounterCoefficient=0;
+//                    recoilCounterCoefficientSneaking=0;
+//                    recoilCounterCoefficientSprinting=0;
+//                    recoilSneakingMultiplier=0;
+//                    recoilSneakingMultiplierYaw=0;
+//                    recoilSprintingMultiplier=0;
+//                    recoilSprintingMultiplierYaw=0;
+//                }
+            }
+
+
+
+
             else if (split[0].equals("RecoilYaw"))
                 recoilYaw = Float.parseFloat(split[1]) / 10;
             else if (split[0].equals("RandomRecoilRange"))
@@ -1739,5 +1773,157 @@ public class GunType extends PaintableType implements IScope {
     @SideOnly(Side.CLIENT)
     public ModelBase GetModel() {
         return model;
+    }
+
+    public static class GunRecoil {
+
+        public float vertical;
+        public float horizontal;
+
+        //how fast the upwards motion stops after shooting. lower is better. 0-2, default 1
+        public float recovery;
+        //modifies how much scoping modifies recovery (usually 20%). default 1%, lower is better, 0-2
+        public float recoveryScope;
+        //how much the aim goes back down after shooting. lower is better. 0-2, default 1f
+        public float fall;
+        //how much spraying increases recoil over time. lower is better
+        public float increase;
+        //modifies how much sneaking modifies recovery (usually 10%). default 1%, lower is better, 0-2
+        public float sneak;
+        //how much walking speed affects recoil. lower is bettr
+        public float speed;
+
+        public float sprayLength;
+        public float antiRecoil;
+
+        public GunRecoil(float vertical, float horizontal, float recovery, float recoveryScope,
+                         float fall, float increase, float sneak, float speed) {
+            this.vertical = vertical;
+            this.horizontal = horizontal;
+            this.recovery = recovery;
+            this.recoveryScope = recoveryScope;
+            this.fall = fall;
+            this.increase = increase;
+            this.sneak = sneak;
+            this.speed = speed;
+        }
+
+        //create empty recoil
+        public GunRecoil(int n) {
+            this(0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        //default recoil
+        public GunRecoil() {
+            this(3, 2, 1, 1, 1, 1, 1, 1);
+        }
+
+        //copy
+        public GunRecoil(GunRecoil gunRecoil) {
+            this(gunRecoil.vertical, gunRecoil.horizontal, gunRecoil.recovery, gunRecoil.recoveryScope,
+                    gunRecoil.fall, gunRecoil.increase, gunRecoil.sneak, gunRecoil.speed);
+        }
+
+        public GunRecoil read(String[] split) {
+            vertical = read(split, 1, vertical);
+            horizontal = read(split, 2, horizontal);
+            recovery = read(split, 3, recovery);
+            recoveryScope = read(split, 4, recoveryScope);
+            fall = read(split, 5, fall);
+            increase = read(split, 6, increase);
+            sneak = read(split, 7, sneak);
+            speed = read(split, 8, speed);
+
+            if (split.length < 2) {
+                horizontal = vertical * 0.3f;
+            }
+            return this;
+        }
+
+        private float read(String[] split, int i, float alt) {
+            return split.length > i ? Float.parseFloat(
+                    split[i].indexOf('=') == -1 ? split[i] : split[i].substring(split[i].indexOf('=') + 1))
+                    : alt;
+        }
+
+        public GunRecoil copy() {
+            //
+            //  if (horizontal == 2 && recovery == 1 && recoveryScope == 1 && sneak == 1 && speed == 1) {
+
+            String rc = "Recoil 1.9 horizontal=1.9 recovery=1 recoveryScope=1 fall=0.9 increase=2 sneak=1 speed=1.2";
+            //   if(true)
+            //     return new GunRecoil().read(rc.split(" "));
+            //     {}
+
+            //     }
+
+            return new GunRecoil(this);
+        }
+
+        public void applyModifier(float recoilMultiplier) {
+            vertical *= recoilMultiplier;
+            horizontal *= recoilMultiplier;
+        }
+
+        public void addRecoil(GunRecoil recoil) {
+            Random rand = Minecraft.getMinecraft().theWorld.rand;
+            this.vertical += recoil.vertical;
+            this.horizontal += 0.2f * (Minecraft.getMinecraft().theWorld.rand.nextBoolean() ? -1 : 1)
+                    * recoil.horizontal;
+            this.recovery = recoil.recovery;
+            this.recoveryScope = recoil.recoveryScope;
+            this.increase = recoil.increase;
+            this.sneak = recoil.sneak;
+            this.fall = recoil.fall;
+            this.speed = recoil.speed;
+
+            this.sprayLength += 0.05;
+            vertical *= (1 + sprayLength * 2 * recoil.increase);
+            horizontal *= (1 + sprayLength * 2 * recoil.increase);
+
+            antiRecoil *= rand.nextFloat() * 0.1f;
+        }
+
+        public float update(boolean sneaking, boolean scoping, float playerSpeed) {
+            Random rand = Minecraft.getMinecraft().theWorld.rand;
+
+            float recov = 0.5F * recovery;
+            if (sneaking) {
+                recov *= 0.9f * sneak;
+            }
+            if (scoping) {
+                recov *= 0.8f * recoveryScope;
+            }
+
+            if (vertical > 0) {
+                vertical *= recov;
+            }
+            if (horizontal != 0) {
+                horizontal *= recov;
+            }
+
+            sprayLength *= 0.95f;
+
+            if (playerSpeed > 0.00f) {
+                float speedMod = (1 + playerSpeed * speed);
+                vertical *= speedMod;
+                horizontal *= speedMod;
+            }
+
+            float anti = antiRecoil * 0.2f;
+
+            antiRecoil *= 0.8F;
+            antiRecoil += vertical * Math.max(0, Math.min(1, 1 - rand.nextFloat() * 0.2f - (fall - 1)));
+
+            float add = -vertical + anti;
+            return add;
+        }
+    }
+    public GunRecoil getRecoil(ItemStack stack) {
+        GunRecoil stackRecoil = recoil.copy();
+        for (AttachmentType attachment : getCurrentAttachments(stack)) {
+            stackRecoil.applyModifier(attachment.recoilMultiplier);
+        }
+        return stackRecoil;
     }
 }
