@@ -1,8 +1,6 @@
 package com.flansmod.common.teams;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -17,7 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class PlayerInfo {
+public class PlayerStats {
 
     private World world;
     private EntityPlayerMP playerMP;
@@ -36,23 +34,27 @@ public class PlayerInfo {
     public int savedFlags = 0; //done
     public int vehiclesDestroyed = 0; //done 75%
 
-    public PlayerInfo(World world, EntityPlayerMP player) {
+    public PlayerStats(World world, EntityPlayerMP player) {
         playerMP = player;
         this.world = world;
         nickname = player.getDisplayName();
-        savePlayerInfoData();
+        savePlayerStats();
     }
 
-    private PlayerInfo() {
+    private PlayerStats() {
 
     }
 
-    public void savePlayerInfoData() {
-        File dir = new File(world.getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
+    public EntityPlayerMP getPlayer(String username) {
+        return MinecraftServer.getServer().getConfigurationManager().func_152612_a(username);
+    }
+
+    public void savePlayerStats() {
+        File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
         dir.mkdirs();
         dir.setReadable(true);
         dir.setWritable(true);
-        File file = new File(dir, playerMP.getDisplayName() + " " + playerMP.getUniqueID().toString() + ".dat");
+        File file = new File(dir, getPlayer(nickname).getDisplayName() + " " + getPlayer(nickname).getUniqueID().toString() + ".dat");
         dir.mkdirs();
         dir.setReadable(true);
         dir.setWritable(true);
@@ -60,7 +62,7 @@ public class PlayerInfo {
         try {
             NBTTagCompound tags = new NBTTagCompound();
 
-            tags.setString("Nickname", playerMP.getDisplayName());
+            tags.setString("Nickname", nickname);
             tags.setInteger("Kills", kills);
             tags.setInteger("Deaths", deaths);
             tags.setInteger("Exp", exp);
@@ -83,39 +85,6 @@ public class PlayerInfo {
         }
     }
 
-    public void loadPlayerInfoData() {
-        File dir = new File(world.getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
-        dir.mkdirs();
-        dir.setReadable(true);
-        dir.setWritable(true);
-        File file = new File(dir, playerMP.getDisplayName() + " " + playerMP.getUniqueID().toString() + ".dat");
-        dir.mkdirs();
-        dir.setReadable(true);
-        dir.setWritable(true);
-        checkFileExists(file);
-        try {
-            NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(new FileInputStream(file)));
-
-            nickname = tags.getString("Nickname");
-            kills = tags.getInteger("Kills");
-            deaths = tags.getInteger("Deaths");
-            exp = tags.getInteger("Exp");
-            totalExp = tags.getInteger("Total Exp");
-            rank = tags.getInteger("Rank");
-            avg = tags.getDouble("AVG");
-            longestKill = tags.getDouble("Longest Kill");
-            playedRounds = tags.getInteger("Rounds Played");
-            playTime = tags.getDouble("Play Time");
-            MVPCount = tags.getInteger("MVP Count");
-            capturedFlags = tags.getInteger("Flags Captured");
-            savedFlags = tags.getInteger("Flags Saved");
-            vehiclesDestroyed = tags.getInteger("Vehicles Destroyed");
-            savePlayerInfoData();
-        } catch (Exception e) {
-            FlansMod.log("Failed to save to teams.dat");
-            e.printStackTrace();
-        }
-    }
 
     private static boolean checkFileExists(File file) {
         if (!file.exists()) {
@@ -153,8 +122,8 @@ public class PlayerInfo {
     }
 
 
-    public static PlayerInfo getPlayerInfoFromFile(String name) {
-        PlayerInfo toSend = new PlayerInfo();
+    public static PlayerStats getPlayerStatsFromFile(String name) {
+        PlayerStats toSend = new PlayerStats();
         File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
         for (File file : dir.listFiles()) {
             if (file.getName().startsWith(name)) {
@@ -205,49 +174,84 @@ public class PlayerInfo {
         for (String name : nameList) {
             switch (counter1) {
                 case 0:
-                    sender.addChatMessage(new ChatComponentText("\u00a76\u00a7l1. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a76\u00a7l1. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 1:
-                    sender.addChatMessage(new ChatComponentText("\u00a74\u00a7l2. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a74\u00a7l2. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 2:
-                    sender.addChatMessage(new ChatComponentText("\u00a7a\u00a7l3. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7a\u00a7l3. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 3:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l4. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l4. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 4:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l5. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l5. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 5:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l6. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l6. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 6:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l7. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l7. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 7:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l8. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l8. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 8:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l9. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l9. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
                 case 9:
-                    sender.addChatMessage(new ChatComponentText("\u00a7l10. " + name + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
+                    sender.addChatMessage(new ChatComponentText("\u00a7l10. " + name + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
+                    break;
+                case 10:
+                    sender.addChatMessage(new ChatComponentText("\u00a7b\u00a7l"+nameList.indexOf(sender.getCommandSenderName())+1+". " + sender.getCommandSenderName() + " - Rank " + getPlayerStatsFromFile(name).rank + "(" + getPlayerStatsFromFile(name).totalExp + " Exp)"));
                     break;
             }
-            sender.addChatMessage(new ChatComponentText("\u00a7b\u00a7l"+nameList.indexOf(sender.getCommandSenderName())+1 + sender.getCommandSenderName() + " - Rank " + getPlayerInfoFromFile(name).rank + "(" + getPlayerInfoFromFile(name).totalExp + " Exp)"));
             counter1++;
-            if (counter1 >= 10) break;
+            if (counter1 >= 11) break;
         }
         counter1 = 0;
+    }
+
+    public static List<PlayerStats> getAllPlayersStats() {
+        List<PlayerStats> listToSend = new ArrayList<>();
+        File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
+        if(dir.listFiles()==null) return null;
+        for (File file : dir.listFiles()) {
+            checkFileExists(file);
+            try {
+                PlayerStats toSend = new PlayerStats();
+                NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(new FileInputStream(file)));
+                toSend.nickname = tags.getString("Nickname");
+                toSend.kills = tags.getInteger("Kills");
+                toSend.deaths = tags.getInteger("Deaths");
+                toSend.exp = tags.getInteger("Exp");
+                toSend.totalExp = tags.getInteger("Total Exp");
+                toSend.rank = tags.getInteger("Rank");
+                toSend.avg = tags.getDouble("AVG");
+                toSend.longestKill = tags.getDouble("Longest Kill");
+                toSend.playedRounds = tags.getInteger("Rounds Played");
+                toSend.playTime = tags.getDouble("Play Time");
+                toSend.MVPCount = tags.getInteger("MVP Count");
+                toSend.capturedFlags = tags.getInteger("Flags Captured");
+                toSend.savedFlags = tags.getInteger("Flags Saved");
+                toSend.vehiclesDestroyed = tags.getInteger("Vehicles Destroyed");
+                listToSend.add(toSend);
+            } catch (Exception e) {
+                FlansMod.log("Failed to save to teams.dat");
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return listToSend;
     }
 }
 
 class ComparatorExp implements Comparator<String> {
     @Override
     public int compare(String a, String b) {
-        PlayerInfo info1 = PlayerInfo.getPlayerInfoFromFile(a);
-        PlayerInfo info2 = PlayerInfo.getPlayerInfoFromFile(b);
+        PlayerStats info1 = PlayerStats.getPlayerStatsFromFile(a);
+        PlayerStats info2 = PlayerStats.getPlayerStatsFromFile(b);
         if (info1 == null || info2 == null)
             return 0;
         return info2.totalExp - info1.totalExp;
