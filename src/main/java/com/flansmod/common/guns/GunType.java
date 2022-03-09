@@ -9,7 +9,6 @@ import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -477,6 +476,8 @@ public class GunType extends PaintableType implements IScope {
     // Modifier for (usually decreasing) spread when gun is ADS. -1 uses default values from flansmod.cfg. For shotguns.
     public float adsSpreadModifierShotgun = -1F;
 
+    public float switchDelay = 0;
+
     public GunType(TypeFile file) {
         super(file);
     }
@@ -532,7 +533,7 @@ public class GunType extends PaintableType implements IScope {
                     }
                 } catch (Exception e) {
                     useFancyRecoil =false;
-                    System.out.println("Failed to read fancy recoil for " + shortName);
+                    FlansMod.log("Failed to read fancy recoil for " + shortName);
                     e.printStackTrace();
                 }
 //                if(useExtendedRecoil){
@@ -807,7 +808,8 @@ public class GunType extends PaintableType implements IScope {
                 moveSpeedModifier = Float.parseFloat(split[1]);
             else if (split[0].equals("KnockbackReduction") || split[0].equals("KnockbackModifier"))
                 knockbackModifier = Float.parseFloat(split[1]);
-
+            else if (split[0].equals("SwitchDelay"))
+                switchDelay = Float.parseFloat(split[1]);
                 //Attachment settings
             else if (split[0].equals("AllowAllAttachments"))
                 allowAllAttachments = Boolean.parseBoolean(split[1].toLowerCase());
@@ -1809,13 +1811,8 @@ public class GunType extends PaintableType implements IScope {
         }
 
         //create empty recoil
-        public GunRecoil(int n) {
-            this(0, 0, 0, 0, 0, 0, 0, 0);
-        }
-
-        //default recoil
         public GunRecoil() {
-            this(3, 2, 1, 1, 1, 1, 1, 1);
+            this(0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         //copy
@@ -1866,9 +1863,9 @@ public class GunType extends PaintableType implements IScope {
         }
 
         public void addRecoil(GunRecoil recoil) {
-            Random rand = Minecraft.getMinecraft().theWorld.rand;
+            Random rand = new Random();
             this.vertical += recoil.vertical;
-            this.horizontal += 0.2f * (Minecraft.getMinecraft().theWorld.rand.nextBoolean() ? -1 : 1)
+            this.horizontal += 0.2f * (rand.nextBoolean() ? -1 : 1)
                     * recoil.horizontal;
             this.recovery = recoil.recovery;
             this.recoveryScope = recoil.recoveryScope;
@@ -1885,7 +1882,7 @@ public class GunType extends PaintableType implements IScope {
         }
 
         public float update(boolean sneaking, boolean scoping, float playerSpeed) {
-            Random rand = Minecraft.getMinecraft().theWorld.rand;
+            Random rand = new Random();
 
             float recov = 0.5F * recovery;
             if (sneaking) {
