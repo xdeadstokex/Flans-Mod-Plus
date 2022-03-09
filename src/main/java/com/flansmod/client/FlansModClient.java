@@ -70,7 +70,7 @@ public class FlansModClient extends FlansMod {
     /**
      * Fancy Recoil System
      */
-    public static GunType.GunRecoil playerRecoil = new GunType.GunRecoil(0);
+    public static GunType.GunRecoil playerRecoil = new GunType.GunRecoil();
     /**
      * The recoil applied to the player view by shooting
      */
