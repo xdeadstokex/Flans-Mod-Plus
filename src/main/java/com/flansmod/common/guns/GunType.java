@@ -1863,7 +1863,6 @@ public class GunType extends PaintableType implements IScope {
         }
 
         public void addRecoil(GunRecoil recoil) {
-            Random rand = new Random();
             this.vertical += recoil.vertical;
             this.horizontal += 0.2f * (rand.nextBoolean() ? -1 : 1)
                     * recoil.horizontal;
@@ -1882,7 +1881,6 @@ public class GunType extends PaintableType implements IScope {
         }
 
         public float update(boolean sneaking, boolean scoping, float playerSpeed) {
-            Random rand = new Random();
 
             float recov = 0.5F * recovery;
             if (sneaking) {
