@@ -876,3 +876,29 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | 3 | Shoes | Boots |
 
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
+
+
+### [Team](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/Team.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) example https://pastebin.com/bWrarEpQ
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Name | String | ~ | Team name |
+| ShortName | String | ~ | Team shortname |
+| TextColour | String | ~ | This is used for player names and such. TextColour can be one of Black, Blue, Green, Aqua, Red, Purple, Orange, LGrey, Grey, LBlue, LGreen, LAqua, Red, Pink, Yellow, White |
+| TeamColour | int, int, int | ~ | TeamColour is a more specific colour for banners, flags and spawn points. It is specified by Red, Green and Blue, each ranging from 0 to 255 |
+| Hat | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskHelmet) |
+| Chest | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskBody) |
+| Legs | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskPants) |
+| Shoes | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskBoots) |
+| AddClass | String | ~ | Add class for this team(usage: AddClass classShortName)(example AddClass kskSniper1) |
+
+### [Class](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/Team.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) example - https://pastebin.com/TmCugK7j
+| Keyword | Type | Default | Purpose |
+|---------|------|---------|---------|
+| Name | String | ~ | Class name |
+| ShortName | String | ~ | Class shortname |
+| AddItem | String, int | ~ | Add item to class(usage: AddItem itemShortName ammount)(example: AddItem l96ammo 3) |
+| AddItem | String, int | ~ | Add gun with attachments to class(usage: AddItem gunShortName+attachmentShotName)(example: AddItem g3+flanMWSilencer+flanMW4xScope) |
+| Hat | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskHelmet) |
+| Chest | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskBody) |
+| Legs | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskPants) |
+| Shoes | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskBoots) |
