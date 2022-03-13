@@ -45,6 +45,7 @@ BAB
 | AllowRearm | Bool | true | Ammo bags give ammo when right clicked with the gun |
 | ReloadTime | Integer | ~ | Ticks taken to reload the gun |
 | Recoil | Float | 0 | Upwards view recoil |
+| FancyRecoil | String | ~ | Fancy Recoil System, when using this parameter, the rest of the recoil parameters will be ignored. there is no network synchronization with the server. template to use - FancyRecoil 1.9 horizontal=2 recovery=1 recoveryScope=1 fall=1.1 increase=1.1 sneak=0.9 speed=1.1 |
 | RecoilYaw | Float | 0 | Sideways view recoil |
 | RandomRecoilRange | Float | 0.5 | Maximum divergence of the recoil vertically |
 | RandomRecoilYawRange | Float | 0.5 | ~ Horizontally |
