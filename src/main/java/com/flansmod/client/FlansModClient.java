@@ -7,6 +7,7 @@ import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.IScope;
 import com.flansmod.common.guns.ItemGun;
@@ -25,6 +26,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -65,6 +67,10 @@ public class FlansModClient extends FlansMod {
     public static float shootTimeLeft, shootTimeRight;
 
     //Recoil variables
+    /**
+     * Fancy Recoil System
+     */
+    public static GunType.GunRecoil playerRecoil = new GunType.GunRecoil();
     /**
      * The recoil applied to the player view by shooting
      */
@@ -268,34 +274,69 @@ public class FlansModClient extends FlansMod {
             shootTimeRight--;
         if (scopeTime > 0)
             scopeTime--;
-        if (playerRecoilPitch > 0) {
-            ItemStack itemBeingUsed = minecraft.thePlayer.getCurrentEquippedItem();
-            GunType typeHeld = null;
-            if (itemBeingUsed != null && itemBeingUsed.getItem() instanceof ItemGun)
-                typeHeld = ((ItemGun) itemBeingUsed.getItem()).type;
+        if(minecraft.thePlayer.getCurrentEquippedItem() != null &&
+                minecraft.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemGun &&
+                ((ItemGun) minecraft.thePlayer.getCurrentEquippedItem().getItem()).type.useFancyRecoil) {
+            EntityPlayerSP p = minecraft.thePlayer;
+            float pspeed = Math.min(0.3f, 3f * (float) (p.motionX * minecraft.thePlayer.motionX
+                    + minecraft.thePlayer.motionY * minecraft.thePlayer.motionY
+                    + minecraft.thePlayer.motionZ * minecraft.thePlayer.motionZ));
+            boolean sneaking = minecraft.thePlayer.isSneaking();
+            float recoilToAdd = playerRecoil.update(sneaking, currentScope != null, pspeed);
+            boolean enableRecoil = true;
+            if (p.ridingEntity instanceof EntitySeat && ((EntitySeat) p.ridingEntity).seatInfo != null) {
+                EntitySeat s = (EntitySeat) p.ridingEntity;
+                float newPlayerPitch = s.playerLooking.getPitch() + recoilToAdd;
+                float horizontal = playerRecoil.horizontal;
+                float newPlayerYaw = s.playerLooking.getYaw() + horizontal;
+                if (newPlayerPitch > -s.seatInfo.minPitch) {
+                    newPlayerPitch = -s.seatInfo.minPitch;
+                }
+                if (newPlayerPitch < -s.seatInfo.maxPitch) {
+                    newPlayerPitch = -s.seatInfo.maxPitch;
+                }
+                s.playerLooking.setAngles(newPlayerYaw, newPlayerPitch, 0);
+            } else if(enableRecoil){
+                minecraft.thePlayer.rotationPitch += recoilToAdd;
 
-            if (typeHeld != null) {
-                playerRecoilPitch *= typeHeld.getRecoilControl(itemBeingUsed, minecraft.thePlayer.isSprinting(), minecraft.thePlayer.isSneaking());
-            } else {
-                // idk why this would happen.
-                playerRecoilPitch *= 0.8F;
+                if (minecraft.thePlayer.rotationPitch < -90) {
+                    minecraft.thePlayer.rotationPitch = -90;
+                } else if (minecraft.thePlayer.rotationPitch > 90) {
+                    minecraft.thePlayer.rotationPitch = 90;
+                } else {
+                    float horizontal = playerRecoil.horizontal;
+                    minecraft.thePlayer.rotationYaw += horizontal;
+                }
             }
-        }
-        minecraft.thePlayer.rotationPitch -= playerRecoilPitch;
-        minecraft.thePlayer.rotationYaw -= playerRecoilYaw;
-        antiRecoilPitch += playerRecoilPitch;
-        antiRecoilYaw += playerRecoilYaw;
+        } else {
+            if (playerRecoilPitch > 0) {
+                ItemStack itemBeingUsed = minecraft.thePlayer.getCurrentEquippedItem();
+                GunType typeHeld = null;
+                if (itemBeingUsed != null && itemBeingUsed.getItem() instanceof ItemGun)
+                    typeHeld = ((ItemGun) itemBeingUsed.getItem()).type;
 
-        // No anti-recoil if realistic recoil is on,
-        // and no anti-recoil if firing and enable sight downward movement is off
-        boolean firingGun = Mouse.isButtonDown(fireButton.getButton()) && minecraft.thePlayer.getHeldItem() != null && minecraft.thePlayer.getHeldItem().getItem() instanceof ItemGun;
-        if (!FlansMod.realisticRecoil && ((!firingGun) || FlansMod.enableSightDownwardMovement)) {
-            minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
-        }
-        minecraft.thePlayer.rotationYaw += antiRecoilYaw * 0.2F;
-        antiRecoilPitch *= 0.8F;
-        antiRecoilYaw *= 0.8F;
+                if (typeHeld != null) {
+                    playerRecoilPitch *= typeHeld.getRecoilControl(itemBeingUsed, minecraft.thePlayer.isSprinting(), minecraft.thePlayer.isSneaking());
+                } else {
+                    // idk why this would happen.
+                    playerRecoilPitch *= 0.8F;
+                }
+            }
+            minecraft.thePlayer.rotationPitch -= playerRecoilPitch;
+            minecraft.thePlayer.rotationYaw -= playerRecoilYaw;
+            antiRecoilPitch += playerRecoilPitch;
+            antiRecoilYaw += playerRecoilYaw;
 
+            // No anti-recoil if realistic recoil is on,
+            // and no anti-recoil if firing and enable sight downward movement is off
+            boolean firingGun = Mouse.isButtonDown(fireButton.getButton()) && minecraft.thePlayer.getHeldItem() != null && minecraft.thePlayer.getHeldItem().getItem() instanceof ItemGun;
+            if (!FlansMod.realisticRecoil && ((!firingGun) || FlansMod.enableSightDownwardMovement)) {
+                minecraft.thePlayer.rotationPitch += antiRecoilPitch * 0.2F;
+            }
+            minecraft.thePlayer.rotationYaw += antiRecoilYaw * 0.2F;
+            antiRecoilPitch *= 0.8F;
+            antiRecoilYaw *= 0.8F;
+        }
         //Update gun animations for the gun in hand
         for (GunAnimations g : gunAnimationsRight.values()) {
             g.update();

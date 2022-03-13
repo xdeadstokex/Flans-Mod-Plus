@@ -573,7 +573,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
 //				animations.onGunEmpty(onLastBullet);
                 animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
-
+                if(type.useFancyRecoil) {`
+                    FlansModClient.playerRecoil.addRecoil(type.getRecoil(stack));
+                }
                 //Old client side recoil, moved to PacketGunRecoil
 				/*if(!player.isSneaking())
 				{
@@ -1369,9 +1371,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         bulletStack.getItemDamage(),
                         gunType));
             }
-
-            FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting()), gunType.getRecoilYaw(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting())), (EntityPlayerMP) entityPlayer);
-
+            if(!gunType.useFancyRecoil) {
+                FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting()), gunType.getRecoilYaw(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting())), (EntityPlayerMP) entityPlayer);
+            }
             // Drop item on shooting if bullet requires it
             if (bullet.dropItemOnShoot != null && !entityPlayer.capabilities.isCreativeMode)
                 dropItem(world, entityPlayer, bullet.dropItemOnShoot);
