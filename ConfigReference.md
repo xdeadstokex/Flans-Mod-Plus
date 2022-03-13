@@ -878,7 +878,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 I apologise for mistakes in this file. Please PR if you spot any, or modify when things change.
 
 
-### [Team](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/Team.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) example https://pastebin.com/bWrarEpQ
+### [Team](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/Team.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) | example - https://pastebin.com/bWrarEpQ
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Name | String | ~ | Team name |
@@ -891,7 +891,7 @@ I apologise for mistakes in this file. Please PR if you spot any, or modify when
 | Shoes | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskBoots) |
 | AddClass | String | ~ | Add class for this team(usage: AddClass classShortName)(example AddClass kskSniper1) |
 
-### [Class](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/Team.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) example - https://pastebin.com/TmCugK7j
+### [Class](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/PlayerClass.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) | example - https://pastebin.com/TmCugK7j
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Name | String | ~ | Class name |
