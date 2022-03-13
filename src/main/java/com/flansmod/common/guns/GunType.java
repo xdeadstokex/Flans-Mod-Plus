@@ -1778,7 +1778,7 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public static class GunRecoil {
-
+        public static final Random rand = new Random();
         public float vertical;
         public float horizontal;
 
