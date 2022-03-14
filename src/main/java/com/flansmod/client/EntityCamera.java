@@ -45,9 +45,7 @@ public class EntityCamera extends EntityLivingBase
 		double dY = driveable.posY + cameraPosition.y - posY;
 		double dZ = driveable.posZ + cameraPosition.z - posZ;
 		
-		float lerpAmount = 0.1F;
-		
-		setPosition(posX + dX * lerpAmount, posY + dY * lerpAmount, posZ + dZ * lerpAmount);
+		setPosition(posX + dX, posY + dY, posZ + dZ);
 		
 		if(FlansMod.proxy.mouseControlEnabled())
 			{
