@@ -27,7 +27,7 @@ public class GuiTeamSelect extends GuiScreen
 	//This is updated because the server forces players to pick teams when the teams change
 	public static Team[] teamChoices;
 	private PlayerClass[] classChoices;
-	
+	private int playerLvl=0;
 	private int guiHeight;
 	
 	//For changing team when you want to, as opposed to when the server forces you to.
@@ -49,8 +49,9 @@ public class GuiTeamSelect extends GuiScreen
 		guiHeight = 29 + 24 * teams.length;
 	}
 	
-	public GuiTeamSelect(PlayerClass[] classes)
+	public GuiTeamSelect(PlayerClass[] classes,int lvl)
 	{
+		playerLvl = lvl;
 		classMenu = true;
 		classChoices = classes;
 		guiHeight = 29 + 24 * classes.length;
@@ -64,8 +65,14 @@ public class GuiTeamSelect extends GuiScreen
 		{
 			for(int i = 0; i < classChoices.length; i++)
 			{
-				if(classChoices[i] != null)
-					buttonList.add(new GuiButton(i, width / 2 - 128 + 9, height / 2 - guiHeight / 2 + 24 + 24 * i, 73, 20, classChoices[i].name));
+				if(classChoices[i] != null) {
+					GuiButton toAdd = new GuiButton(i, width / 2 - 128 + 9, height / 2 - guiHeight / 2 + 24 + 24 * i, 73, 20, classChoices[i].name);
+					if(playerLvl<classChoices[i].lvl){
+						toAdd.enabled=false;
+					}
+					buttonList.add(toAdd);
+				}
+
 			}
 		}
 		else
