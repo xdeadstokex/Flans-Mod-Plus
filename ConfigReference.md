@@ -892,11 +892,12 @@ I apologise for mistakes in this file. Please PR if you spot any, or modify when
 | Shoes | String | ~ | Specify the armour this team should spawn with(usage: Shoes armorShortName)(example Shoes kskBoots) |
 | AddClass | String | ~ | Add class for this team(usage: AddClass classShortName)(example AddClass kskSniper1) |
 
-### [Class](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/PlayerClass.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) | example - https://pastebin.com/TmCugK7j
+### [PlayerClass](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/teams/PlayerClass.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java) | example - https://pastebin.com/TmCugK7j
 | Keyword | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Name | String | ~ | Class name |
 | ShortName | String | ~ | Class shortname |
+| lvl | int | 0 | Required level to select this class |
 | AddItem | String, int | ~ | Add item to class(usage: AddItem itemShortName ammount)(example: AddItem l96ammo 3) |
 | AddItem | String, int | ~ | Add gun with attachments to class(usage: AddItem gunShortName+attachmentShotName)(example: AddItem g3+flanMWSilencer+flanMW4xScope) |
 | Hat | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskHelmet) |
