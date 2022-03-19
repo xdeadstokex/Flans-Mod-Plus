@@ -26,6 +26,7 @@ public class PlayerClass extends InfoType
 	
 	public List<String[]> startingItemStrings = new ArrayList<String[]>();
 	public List<ItemStack> startingItems = new ArrayList<ItemStack>();
+	public int lvl=0;
 	public boolean horse = false;
 	
 	/** Override armour. If this is set, then it will override the team armour */
@@ -44,6 +45,10 @@ public class PlayerClass extends InfoType
 		if (split[0].equals("AddItem"))
 		{
 			startingItemStrings.add(split);
+		}
+		if (split[0].equals("lvl"))
+		{
+			lvl=Integer.parseInt(split[1]);
 		}
 		if(split[0].equals("SkinOverride"))
 			texture = split[1];
