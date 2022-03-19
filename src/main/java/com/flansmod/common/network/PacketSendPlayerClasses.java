@@ -18,6 +18,7 @@ import scala.collection.parallel.ParIterableLike;
 
 public class PacketSendPlayerClasses extends PacketBase {
     public PlayerClass[] classes;
+    public int playerLvl;
 
     @SuppressWarnings("unused")
     public PacketSendPlayerClasses() {
@@ -29,7 +30,7 @@ public class PacketSendPlayerClasses extends PacketBase {
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) {
-
+        data.writeInt(playerLvl);
         data.writeByte(classes.length);
         for (PlayerClass playerClass : classes) {
             writeUTF(data, playerClass.shortName);
@@ -38,6 +39,7 @@ public class PacketSendPlayerClasses extends PacketBase {
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        playerLvl = data.readInt();
         byte numClasses = data.readByte();
         classes = new PlayerClass[numClasses];
         for(int i = 0; i < numClasses; i++)
@@ -54,7 +56,7 @@ public class PacketSendPlayerClasses extends PacketBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void handleClientSide(EntityPlayer clientPlayer) {
-        Minecraft.getMinecraft().displayGuiScreen(new GuiTeamSelect(classes));
+        Minecraft.getMinecraft().displayGuiScreen(new GuiTeamSelect(classes,playerLvl));
     }
 }
 
