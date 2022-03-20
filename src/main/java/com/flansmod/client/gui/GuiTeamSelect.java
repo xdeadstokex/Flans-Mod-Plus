@@ -16,7 +16,7 @@ import com.flansmod.common.network.PacketTeamSelect;
 import com.flansmod.common.teams.PlayerClass;
 import com.flansmod.common.teams.Team;
 
-public class GuiTeamSelect extends GuiScreen 
+public class GuiTeamSelect extends GuiTooltipScreen
 {
 	private static final ResourceLocation texture = new ResourceLocation("flansmod", "gui/teams.png");
 
@@ -127,7 +127,13 @@ public class GuiTeamSelect extends GuiScreen
 			}
 		}
 	}
-	
+
+	@Override
+	protected String GetButtonTooltip(int buttonId) {
+		if(classMenu) return "Needed LVL: "+classChoices[buttonId].lvl;
+		return null;
+	}
+
 	@Override
 	protected void actionPerformed(GuiButton button)
     {
