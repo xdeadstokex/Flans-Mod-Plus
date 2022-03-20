@@ -46,7 +46,7 @@ public class PlayerClass extends InfoType
 		{
 			startingItemStrings.add(split);
 		}
-		if (split[0].equals("lvl"))
+		if (split[0].equals("UnlockLevel"))
 		{
 			lvl=Integer.parseInt(split[1]);
 		}
