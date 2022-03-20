@@ -833,7 +833,7 @@ public class TeamsManager {
         if (team == null) {
             sendTeamsMenuToPlayer(player);
         } else if (team != Team.spectators && team.classes.size() > 0) {
-            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[team.classes.size()])), player);
+            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[team.classes.size()]),PlayerStats.getPlayerLvl(player)), player);
         }
     }
 
@@ -1257,7 +1257,7 @@ public class TeamsManager {
         FlansMod.getPacketHandler().sendTo(packet, player);
     }
 
-    public static List<EntityPlayer> getPlayers() {
+    public static List<EntityPlayerMP> getPlayers() {
         return MinecraftServer.getServer().getConfigurationManager().playerEntityList;
     }
 
