@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiScreen;
 
 /**
  * A GuiScreen replacement that supports putting tooltips onto GuiButtons.
+ * Sources - https://forums.minecraftforge.net/topic/17845-172-solved-draw-hovering-text-for-guibutton/
  */
 public abstract class GuiTooltipScreen extends GuiScreen
 {
