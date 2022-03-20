@@ -897,7 +897,7 @@ I apologise for mistakes in this file. Please PR if you spot any, or modify when
 |---------|------|---------|---------|
 | Name | String | ~ | Class name |
 | ShortName | String | ~ | Class shortname |
-| lvl | int | 0 | Required level to select this class |
+| UnlockLevel | int | 0 | Required level to select this class |
 | AddItem | String, int | ~ | Add item to class(usage: AddItem itemShortName ammount)(example: AddItem l96ammo 3) |
 | AddItem | String, int | ~ | Add gun with attachments to class(usage: AddItem gunShortName+attachmentShotName)(example: AddItem g3+flanMWSilencer+flanMW4xScope) |
 | Hat | String | ~ | Optional parameters, used to replace the armor originally specified in the team configuration(usage: Shoes armorShortName)(example Shoes kskHelmet) |
