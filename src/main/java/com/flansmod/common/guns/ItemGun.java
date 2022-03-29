@@ -573,7 +573,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
 //				animations.onGunEmpty(onLastBullet);
                 animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
-                if(type.useFancyRecoil) {`
+                if(type.useFancyRecoil) {
                     FlansModClient.playerRecoil.addRecoil(type.getRecoil(stack));
                 }
                 //Old client side recoil, moved to PacketGunRecoil
@@ -1206,7 +1206,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             return false;
         //For playing sounds afterwards
         boolean reloadedSomething = false;
-        String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
+        String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack)!=null?((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack):this.type.ammo.get(0).shortName;
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
             //Get the stack in the slot
