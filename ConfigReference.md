@@ -852,7 +852,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | DamageReduction / Defence | Double | ~ | Damage modifier between 0 and 1 that stacks with other armours. Sets both BulletDefence and OtherDefence |
 | BulletDefence | ~ | Double | Damage modifier between 0 and 1 that stacks with other armours. For bullet damage specifically. |
 | OtherDefence | ~ | Double | Damage modifier between 0 and 1 that stacks with other armours. For NON-bullet damage specifically. |
-| Penetration Resistance | Float | 0 | Resistance to penetration of a bullet. Same units as bullet penetration. | 
+| PenetrationResistance | Float | 0 | Resistance to penetration of a bullet. Same units as bullet penetration. | 
 | MoveSpeedModifier / Slowness | Float | 1 | Modifier for player movement speed |
 | JumpModifier | Float | 1 | Modifier for player jump height |
 | KnockbackReduction / KnockbackModifier | Float | 0.2 | Modifier for knockback |
