@@ -172,52 +172,46 @@ public class GameTypeDM extends GameType
 		
 	}
 
-	@Override
-	public Vec3 getSpawnPoint(EntityPlayerMP player) 
-	{
-		if(teamsManager.currentRound == null)
-			return null;
-		PlayerData data = getPlayerData(player);
-		List<ITeamObject> validSpawnPoints = new ArrayList<ITeamObject>();
-		if(data.newTeam == null)
-			return null;
-		
-		//Check each team's spawnpoints
-		if(data.newTeam == Team.spectators)
-		{
-			ArrayList<ITeamBase> bases = teamsManager.currentRound.map.getBasesPerTeam(teamsManager.currentRound.getTeamID(data.newTeam));
-			for (ITeamBase base : bases) {
-				if (base.getMap() != teamsManager.currentRound.map)
-					continue;
-				for (int i = 0; i < base.getObjects().size(); i++) {
-					if (base.getObjects().get(i).isSpawnPoint())
-						validSpawnPoints.add(base.getObjects().get(i));
-				}
-			}
-		}
-		else
-		{
-			for(int k = 2; k < 4; k++)
-			{
-				ArrayList<ITeamBase> bases = teamsManager.currentRound.map.getBasesPerTeam(k);
-				for (ITeamBase base : bases) {
-					if (base.getMap() != teamsManager.currentRound.map)
-						continue;
-					for (int i = 0; i < base.getObjects().size(); i++) {
-						if (base.getObjects().get(i).isSpawnPoint())
-							validSpawnPoints.add(base.getObjects().get(i));
-					}
-				}
-			}
-		}
-		if(validSpawnPoints.size() > 0)
-		{
-			ITeamObject spawnPoint = validSpawnPoints.get(rand.nextInt(validSpawnPoints.size()));
-			return Vec3.createVectorHelper(spawnPoint.getPosX(), spawnPoint.getPosY(), spawnPoint.getPosZ());
-		}
-		
-		return null;
-	}
+        @Override
+        public Vec3 getSpawnPoint(EntityPlayerMP player) {
+        if (teamsManager.currentRound == null)
+            return null;
+        PlayerData data = getPlayerData(player);
+        List<ITeamObject> validSpawnPoints = new ArrayList<ITeamObject>();
+        if (data.newTeam == null)
+            return null;
+
+        //Check each team's spawnpoints
+        if (data.newTeam == Team.spectators) {
+            ArrayList<ITeamBase> bases = teamsManager.currentRound.map.getBasesPerTeam(teamsManager.currentRound.getTeamID(data.newTeam));
+            for (ITeamBase base : bases) {
+                if (base.getMap().equals(teamsManager.currentRound.map)) {
+                    for (int i = 0; i < base.getObjects().size(); i++) {
+                        if (base.getObjects().get(i).isSpawnPoint())
+                            validSpawnPoints.add(base.getObjects().get(i));
+                    }
+                }
+            }
+        } else {
+            for (int k = 2; k < 4; k++) {
+                ArrayList<ITeamBase> bases = teamsManager.currentRound.map.getBasesPerTeam(k);
+                for (ITeamBase base : bases) {
+                    if (base.getMap() != teamsManager.currentRound.map)
+                        continue;
+                    for (int i = 0; i < base.getObjects().size(); i++) {
+                        if (base.getObjects().get(i).isSpawnPoint())
+                            validSpawnPoints.add(base.getObjects().get(i));
+                    }
+                }
+            }
+        }
+        if (validSpawnPoints.size() > 0) {
+            ITeamObject spawnPoint = validSpawnPoints.get(rand.nextInt(validSpawnPoints.size()));
+            return Vec3.createVectorHelper(spawnPoint.getPosX(), spawnPoint.getPosY(), spawnPoint.getPosZ());
+        }
+
+        return null;
+        }
 
 	@Override
 	public void playerRespawned(EntityPlayerMP player) 
