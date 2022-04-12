@@ -33,6 +33,7 @@ public class Team extends InfoType
 	
 	public int teamColour = 0xffffff;
 	public char textColour = 'f';
+	public boolean allowedForRoundsGenerator = false;
 	
 	public ItemStack hat;
 	public ItemStack chest;
@@ -159,6 +160,9 @@ public class Team extends InfoType
 			if(split[0].equals("AddDefaultClass") || split[0].equals("AddClass"))
 			{
 				classes.add(PlayerClass.getClass(split[1]));
+			}
+			if(split[0].equals("allowedForRoundsGenerator")){
+				this.allowedForRoundsGenerator = Boolean.parseBoolean(split[1]);
 			}
 		} catch (Exception e)
 		{
