@@ -20,7 +20,7 @@ public class GameTypeZombies extends GameType
 	
 	public GameTypeZombies()
 	{
-		super("Zombies", "ZOM", 2);
+		super("Zombies", "ZOM", 2,false);
 	}
 
 	@Override
