@@ -302,20 +302,22 @@ public class GameTypeCTF extends GameType
 	@Override
 	public Vec3 getSpawnPoint(EntityPlayerMP player) 
 	{
-		if(teamsManager.currentRound == null)
+		if(teamsManager.currentRound == null) {
 			return null;
+		}
 		PlayerData data = getPlayerData(player);
 		List<ITeamObject> validSpawnPoints = new ArrayList<ITeamObject>();
-		if(data.newTeam == null)
+		if(data.newTeam == null){
 			return null;
+		}
 		
 		ArrayList<ITeamBase> bases = teamsManager.currentRound.map.getBasesPerTeam(teamsManager.currentRound.getTeamID(data.newTeam));
 		for (ITeamBase base : bases) {
-			if (base.getMap() != teamsManager.currentRound.map)
-				continue;
-			for (int i = 0; i < base.getObjects().size(); i++) {
-				if (base.getObjects().get(i).isSpawnPoint())
-					validSpawnPoints.add(base.getObjects().get(i));
+			if (base.getMap().equals(teamsManager.currentRound.map)) {
+				for (int i = 0; i < base.getObjects().size(); i++) {
+					if (base.getObjects().get(i).isSpawnPoint())
+						validSpawnPoints.add(base.getObjects().get(i));
+				}
 			}
 		}
 		
@@ -324,7 +326,6 @@ public class GameTypeCTF extends GameType
 			ITeamObject spawnPoint = validSpawnPoints.get(rand.nextInt(validSpawnPoints.size()));
 			return Vec3.createVectorHelper(spawnPoint.getPosX(), spawnPoint.getPosY(), spawnPoint.getPosZ());
 		}
-		
 		return null;
 	}
 
