@@ -1201,12 +1201,15 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         //Deployable guns cannot be reloaded in the inventory
         if (gunType.deployable)
             return false;
+        //Melee cannot be reloaded
+        if (gunType.ammo.isEmpty())
+            return false;
         //If you cannot reload half way through a clip, reject the player for trying to do so
         if (forceReload && !gunType.canForceReload)
             return false;
         //For playing sounds afterwards
         boolean reloadedSomething = false;
-        String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack)!=null?((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack):this.type.ammo.get(0).shortName;
+        String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
             //Get the stack in the slot
@@ -1595,9 +1598,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             gun.stackTagCompound = new NBTTagCompound();
         }
         String s = "preferredAmmo";
-        if (gun.stackTagCompound.hasKey(s)) {
-            return gun.stackTagCompound.getString(s);
+        if (!gun.stackTagCompound.hasKey(s)) {
+            setPreferredAmmoStack(gun,type.ammo.get(0).shortName);
         }
-        return null;
+        return gun.stackTagCompound.getString(s);
     }
 }
