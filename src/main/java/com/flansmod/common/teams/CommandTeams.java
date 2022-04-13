@@ -425,6 +425,15 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Expolsions are now " + (TeamsManager.explosions ? "enabled" : "disabled")));
             return;
         }
+        if (split[0].equals("roundsGenerator")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
+                return;
+            }
+            TeamsManager.roundsGenerator = Boolean.parseBoolean(split[1]);
+            sender.addChatMessage(new ChatComponentText("Rounds generator are now " + (TeamsManager.roundsGenerator ? "enabled" : "disabled")));
+            return;
+        }
         if (split[0].equals("bombs") || split[0].equals("allowBombs")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
@@ -627,7 +636,7 @@ public class CommandTeams extends CommandBase {
         if (split[0].equals("ping")) {
             int ping_sum = 0;
             int ping_cnt = 0;
-            List<EntityPlayer> list = TeamsManager.getPlayers();
+            List<EntityPlayerMP> list = TeamsManager.getPlayers();
             for (EntityPlayer player : list) {
                 if (player instanceof EntityPlayerMP) {
                     EntityPlayerMP pm = (EntityPlayerMP) player;
@@ -706,6 +715,7 @@ public class CommandTeams extends CommandBase {
                     "forceAdventure",
                     "overrideHunger",
                     "explosions",
+                    "roundsGenerator",
                     "canBreakGuns",
                     "canBreakGlass",
                     "survivalCanBreakVehicles",
@@ -772,6 +782,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams forceAdventure <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams overrideHunger <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams explosions <true / false>"));
+                sender.addChatMessage(new ChatComponentText("/teams roundsGenerator <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams canBreakGuns <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams canBreakGlass <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams armourDrops <true / false>"));
@@ -782,10 +793,10 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams vehicleLife <time>"));
                 sender.addChatMessage(new ChatComponentText("/teams aaLife <time>"));
                 sender.addChatMessage(new ChatComponentText("/teams autobalance <true / false>"));
-                sender.addChatMessage(new ChatComponentText("/teams vehiclesBreakBlocks <true / false>"));
                 break;
             }
             case 4: {
+                sender.addChatMessage(new ChatComponentText("/teams vehiclesBreakBlocks <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams ping <PlayerName>"));
                 sender.addChatMessage(new ChatComponentText("/teams bltss <0 ... 100> <0 ... 1000>"));
                 sender.addChatMessage(new ChatComponentText("/teams showbltss"));

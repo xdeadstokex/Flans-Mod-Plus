@@ -60,8 +60,9 @@ public class PlayerData
 	public int meleeProgress, meleeLength;
 	/** When the player shoots a burst fire weapon, one shot is fired immediately and this counter keeps track of how many more should be fired */
 	public int burstRoundsRemainingLeft = 0, burstRoundsRemainingRight = 0;
-	
+
 	public boolean isAmmoEmpty;
+	public boolean reloadedAfterRespawn = false;
 
 	public Vector3f[] lastMeleePositions;
 	

@@ -92,6 +92,10 @@ public class PacketReload extends PacketBase {
 
             if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left)) {
                 float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+                if(!data.reloadedAfterRespawn){
+                    reloadTime=0;
+                    data.reloadedAfterRespawn=true;
+                }
                 data.shootTimeRight += reloadTime;
                 data.shootTimeLeft += reloadTime;
                 //Set the reload delay
@@ -113,7 +117,7 @@ public class PacketReload extends PacketBase {
                 else if (type.reloadSound != null)
                     soundToPlay = type.reloadSound;
 
-                if (soundToPlay != null)
+                if (soundToPlay != null && reloadTime>0)
                     PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true);
             }
         }

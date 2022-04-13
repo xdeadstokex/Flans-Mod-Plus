@@ -19,7 +19,7 @@ public class GameTypeCTF extends GameType
 
 	public GameTypeCTF()
 	{
-		super("Capture the Flag", "CTF", 2);
+		super("Capture the Flag", "CTF", 2,true);
 	}
 	
 	@Override

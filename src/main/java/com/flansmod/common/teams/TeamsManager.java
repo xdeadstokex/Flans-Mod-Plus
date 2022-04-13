@@ -5,11 +5,9 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import com.flansmod.common.network.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,11 +52,6 @@ import com.flansmod.common.guns.ItemBullet;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.ItemShootable;
 import com.flansmod.common.guns.ShootableType;
-import com.flansmod.common.network.PacketBase;
-import com.flansmod.common.network.PacketRoundFinished;
-import com.flansmod.common.network.PacketTeamInfo;
-import com.flansmod.common.network.PacketTeamSelect;
-import com.flansmod.common.network.PacketVoting;
 import com.flansmod.common.types.InfoType;
 
 @SuppressWarnings("unchecked")
@@ -74,7 +67,7 @@ public class TeamsManager {
 
     //Configuration variables
     // Player changeable stuff
-    public static boolean voting = false, explosions = true, driveablesBreakBlocks = true,
+    public static boolean voting = false, explosions = true, roundsGenerator = false, driveablesBreakBlocks = true,
             bombsEnabled = true, shellsEnabled = true, bulletsEnabled = true, forceAdventureMode = true, canBreakGuns = true, canBreakGlass = true,
             armourDrops = true, vehiclesNeedFuel = true, overrideHunger = true, survivalCanBreakVehicles = true;
 
@@ -133,11 +126,11 @@ public class TeamsManager {
     /**
      * Whether to use autobalance
      */
-    public static boolean autoBalance=true;
+    public static boolean autoBalance = true;
     /**
      * Time between autobalance attempts
      */
-    public static int autoBalanceInterval=20*20;
+    public static int autoBalanceInterval = 20 * 20;
     public static boolean allowVehicleZoom;
     public static int bulletSnapshotMin = 0;
     public static int bulletSnapshotDivisor = 50;
@@ -258,12 +251,10 @@ public class TeamsManager {
                 }
             }
 
-            if(autoBalance() && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance())
-            {
+            if (autoBalance() && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance()) {
                 TeamsManager.messageAll("\u00a7fAutobalancing teams...");
             }
-            if(autoBalance() && time % autoBalanceInterval == 0 && needAutobalance())
-            {
+            if (autoBalance() && time % autoBalanceInterval == 0 && needAutobalance()) {
                 autobalance();
             }
 
@@ -278,27 +269,23 @@ public class TeamsManager {
         }
     }
 
-    public boolean needAutobalance()
-    {
-        if(!autoBalance() || currentRound == null || currentRound.teams.length != 2)
+    public boolean needAutobalance() {
+        if (!autoBalance() || currentRound == null || currentRound.teams.length != 2)
             return false;
         int membersTeamA = currentRound.teams[0].members.size();
         int membersTeamB = currentRound.teams[1].members.size();
-        if(Math.abs(membersTeamA - membersTeamB) > 1)
+        if (Math.abs(membersTeamA - membersTeamB) > 1)
             return true;
         return false;
     }
 
-    public void autobalance()
-    {
-        if(!autoBalance() || currentRound == null || currentRound.teams.length != 2)
+    public void autobalance() {
+        if (!autoBalance() || currentRound == null || currentRound.teams.length != 2)
             return;
         int membersTeamA = currentRound.teams[0].members.size();
         int membersTeamB = currentRound.teams[1].members.size();
-        if(membersTeamA - membersTeamB > 1)
-        {
-            for(int i = 0; i < (membersTeamA - membersTeamB) / 2; i++)
-            {
+        if (membersTeamA - membersTeamB > 1) {
+            for (int i = 0; i < (membersTeamA - membersTeamB) / 2; i++) {
                 //My goodness this is convoluted...
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[1]
                         .addPlayer(currentRound.teams[0].removeWorstPlayer()));
@@ -306,10 +293,8 @@ public class TeamsManager {
                 movePlayerProcedure(playerToKick, data);
             }
         }
-        if(membersTeamB - membersTeamA > 1)
-        {
-            for(int i = 0; i < (membersTeamB - membersTeamA) / 2; i++)
-            {
+        if (membersTeamB - membersTeamA > 1) {
+            for (int i = 0; i < (membersTeamB - membersTeamA) / 2; i++) {
                 EntityPlayerMP playerToKick = getPlayer(currentRound.teams[0]
                         .addPlayer(currentRound.teams[1].removeWorstPlayer()));
                 PlayerData data = PlayerHandler.getPlayerData(playerToKick);
@@ -318,8 +303,8 @@ public class TeamsManager {
         }
     }
 
-    private void movePlayerProcedure(EntityPlayerMP playerMP, PlayerData data){
-        data.playerMovedByAutobalancer=true;
+    private void movePlayerProcedure(EntityPlayerMP playerMP, PlayerData data) {
+        data.playerMovedByAutobalancer = true;
         messagePlayer(playerMP, "You were moved to the other team by the autobalancer.");
         sendClassMenuToPlayer(playerMP);
         setPlayersNextSpawnpoint(playerMP);
@@ -470,6 +455,13 @@ public class TeamsManager {
     }
 
     private void startRound() {
+
+        if (roundsGenerator && rounds.size() < 4) {
+            int roundCountForGenerate = 4 - rounds.size();
+            generateRounds(roundCountForGenerate);
+        }
+
+
         currentRound.gametype.roundStart();
         roundTimeLeft = currentRound.timeLimit * 60 * 20;
         for (ITeamBase base : bases) {
@@ -482,6 +474,41 @@ public class TeamsManager {
         showTeamsMenuToAll();
 
         messageAll("\u00a7fA new round has started!");
+    }
+
+    private void generateRounds(int roundCountForGenerate) {
+        Random rand = new Random();
+        List<Team> allowedTeams = new ArrayList<>();
+        List<GameType> allowedGameTypes = new ArrayList<>();
+        for (Team team : Team.teams) {
+            if (team.allowedForRoundsGenerator) allowedTeams.add(team);
+        }
+        for (GameType gameType : GameType.gameTypeList) {
+            if (gameType.allowedForRoundsGenerator) allowedGameTypes.add(gameType);
+        }
+
+        for (int i = 0; i <= roundCountForGenerate; i++) {
+            GameType nextGameType = allowedGameTypes.get(rand.nextInt(allowedGameTypes.size()));
+            Team[] teamsToAdd = new Team[nextGameType.numTeamsRequired];
+            teamsToAdd[0] = allowedTeams.get(rand.nextInt(allowedTeams.size()));
+            teamsToAdd[1] = allowedTeams.get(rand.nextInt(allowedTeams.size()));
+            int timeLimit=10;
+            int scoreLimit=10;
+            if(nextGameType instanceof GameTypeCTF){
+                scoreLimit=5;
+            } else if(nextGameType instanceof GameTypeTDM){
+                scoreLimit=30;
+            } else if(nextGameType instanceof GameTypeDM){
+                scoreLimit=20;
+            }
+            rounds.add(new TeamsRound(
+                    TeamsMap.mapList.get(rand.nextInt(TeamsMap.mapList.size())),
+                    allowedGameTypes.get(rand.nextInt(allowedGameTypes.size())),
+                    teamsToAdd,
+                    timeLimit+rand.nextInt(10),scoreLimit
+            ));
+        }
+
     }
 
     /**
@@ -833,7 +860,7 @@ public class TeamsManager {
         if (team == null) {
             sendTeamsMenuToPlayer(player);
         } else if (team != Team.spectators && team.classes.size() > 0) {
-            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[team.classes.size()]),PlayerStats.getPlayerLvl(player)), player);
+            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[team.classes.size()]), PlayerStats.getPlayerLvl(player)), player);
         }
     }
 
@@ -841,8 +868,7 @@ public class TeamsManager {
         return MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
-    public boolean autoBalance()
-    {
+    public boolean autoBalance() {
         return !(currentRound != null && !currentRound.gametype.shouldAutobalance()) && autoBalance;
     }
 
@@ -965,7 +991,7 @@ public class TeamsManager {
             Vec3 spawnPoint = currentRound.gametype.getSpawnPoint(player);
             if (spawnPoint != null) {
                 player.setPositionAndUpdate(spawnPoint.xCoord, spawnPoint.yCoord, spawnPoint.zCoord);
-                data.playerMovedByAutobalancer=false;
+                data.playerMovedByAutobalancer = false;
             }
         }
     }
@@ -1007,14 +1033,16 @@ public class TeamsManager {
             player.inventory.addItemStackToInventory(stack.copy());
             //Load up as many guns as possible
         }
-
-        //Preload each gun
-//         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-//             ItemStack stack = player.inventory.getStackInSlot(i);
-//             if (stack != null && stack.getItem() instanceof ItemGun) {
-//                 ((ItemGun) stack.getItem()).reload(stack, ((ItemGun) stack.getItem()).type, player.worldObj, player, true, false);
-//             }
-//         }
+        PlayerData data = PlayerHandler.getPlayerData(player);
+        data.reloadedAfterRespawn=false;
+        FlansMod.getPacketHandler().sendTo(new PacketRespawnFinished(),getPlayer(player.getDisplayName()));
+//        Preload each gun
+//        for (ItemStack stack : player.inventory.mainInventory) {
+//            if (stack != null && stack.getItem() instanceof ItemGun && !((ItemGun) stack.getItem()).type.ammo.isEmpty()) {
+//                ItemStack ammo = new ItemStack(((ItemGun) stack.getItem()).type.ammo.get(0).item);
+//                ((ItemGun) stack.getItem()).setBulletItemStack(stack,ammo,0);
+//            }
+//        }
     }
 
     //---------------------------------------------------------
@@ -1065,6 +1093,7 @@ public class TeamsManager {
             //Read maps
             for (int i = 0; i < tags.getInteger("NumberOfMaps"); i++) {
                 TeamsMap map = new TeamsMap(world, tags.getCompoundTag("Map_" + i));
+                TeamsMap.mapList.add(map);
                 maps.put(map.shortName, map);
             }
 

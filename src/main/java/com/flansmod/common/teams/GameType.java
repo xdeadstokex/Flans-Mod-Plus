@@ -1,5 +1,6 @@
 package com.flansmod.common.teams;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -26,9 +27,11 @@ import com.flansmod.common.network.PacketBase;
 import com.flansmod.common.types.InfoType;
 
 public abstract class GameType {
+    public static List<GameType> gameTypeList = new ArrayList<>();
     public static HashMap<String, GameType> gameTypes = new HashMap<>();
     public static TeamsManager teamsManager = TeamsManager.getInstance();
     public static Random rand = new Random();
+    public boolean allowedForRoundsGenerator;
 
     public static GameType getGameType(String type) {
         return gameTypes.get(type);
@@ -38,11 +41,13 @@ public abstract class GameType {
     public String shortName;
     public int numTeamsRequired;
 
-    public GameType(String name, String shortName, int numTeams) {
+    public GameType(String name, String shortName, int numTeams, boolean allowedForRoundsGenerator) {
         this.name = name;
         this.shortName = shortName;
         numTeamsRequired = numTeams;
         gameTypes.put(this.shortName, this);
+        gameTypeList.add(this);
+        this.allowedForRoundsGenerator = allowedForRoundsGenerator;
     }
 
     /**

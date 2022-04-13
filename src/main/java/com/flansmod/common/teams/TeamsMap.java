@@ -1,6 +1,7 @@
 package com.flansmod.common.teams;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.flansmod.common.FlansMod;
 
@@ -12,6 +13,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 
 public class TeamsMap {
+    public static List<TeamsMap> mapList = new ArrayList<>();
     public String shortName;
     public String name;
     public Ticket chunkLoadingTicket;
