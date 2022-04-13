@@ -10,6 +10,7 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.guns.*;
+import com.flansmod.common.network.PacketReload;
 import com.flansmod.common.network.PacketTeamInfo;
 import com.flansmod.common.teams.ItemTeamArmour;
 import com.flansmod.common.types.InfoType;
@@ -54,6 +55,7 @@ public class TickHandlerClient {
     public static ArrayList<Vector3i> vehicleLightOverrides = new ArrayList<>();
     public static int lightOverrideRefreshRate = 5;
     public static int vehicleLightOverrideRefreshRate = 1;
+    public static int respawnReloadingTicker = 0;
     int tickCount = 0;
     int tickCountFlash = 0;
     int tickCountWounded = 0;
@@ -571,6 +573,13 @@ public class TickHandlerClient {
      * Handle flashlight block light override
      */
     public void clientTickStart(Minecraft mc) {
+        if(respawnReloadingTicker>0){
+            respawnReloadingTicker--;
+            if(respawnReloadingTicker==0){
+                FlansMod.getPacketHandler().sendToServer(new PacketReload());
+            }
+        }
+
         if (tickCount > 0) {
             tickCount--;
         }
