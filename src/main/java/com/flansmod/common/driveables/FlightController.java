@@ -618,14 +618,16 @@ public class FlightController {
 		if(throttle < 0.52F && throttle > 0.48F && up.y >= 0.7F){
 			upwardsForce = gravity/up.y;
 		}
-		if(plane.getPlaneType().mode != EnumPlaneMode.VTOL){
-			//Move up
-			if(up.y < 0){
-				up.y*=-1;
-				up.x*=-1;
-				up.z*=-1;
-			}
-		}
+//		if(plane.getPlaneType().mode != EnumPlaneMode.VTOL){
+//
+//			//Move up
+//			if(up.y < 0){
+//				FlansMod.log("BINGUS");
+//				up.y*=-1;
+//				up.x*=-1;
+//				up.z*=-1;
+//			}
+//		}
 
 		//Throttle - 0.5 means that the positive throttle scales from -0.5 to +0.5. Thus it accounts for gravity-ish
 		plane.motionX += upwardsForce * up.x * 0.5F;
