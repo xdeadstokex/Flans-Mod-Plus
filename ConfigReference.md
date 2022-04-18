@@ -40,7 +40,7 @@ BAB
 | CounterRecoilForce | Float | 0.8 | Constant to determine how quickly the gun returns to centre after firing. Higher = longer |
 | CounterRecoilForceSneaking | Float | 0.7 | ~ |
 | CounterRecoilForceSprinting | Float | 0.9 | ~ |
-| CanHipFireWhileSprinting | Boolean | true (can be changed in flansmod.cfg) | Whether the gun can fire when a player is sprinting and in hip position |
+| HipFireWhileSprinting | Boolean | true (can be changed in flansmod.cfg) | Whether the gun can fire when a player is sprinting and in hip position |
 | CanForceReload | Bool | true | Whether R can be used to reload the gun |
 | AllowRearm | Bool | true | Ammo bags give ammo when right clicked with the gun |
 | ReloadTime | Integer | ~ | Ticks taken to reload the gun |
@@ -494,7 +494,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Boat | ~ | false | placeableOnLand = false, placeableOnWater = true, floatOnWater = true, wheelStepHeight = 0 |
 | Buoyancy | Float | 0.0165 | Upwards force per wheel when a driveable is on water |
 | FloatOffset | Float | 0 | ? |
-| CanMountEntity | Boolean | false | ? |
+| CanMountEntity | Boolean | false | Sets vanilla CanMountEntity NBT value. True allows this entity to mount another. (Horse, other vehicle e.t.c). |
 | EngineStartTime | Float | 0 | Time between the vehicle being placed, and it being driveable. |
 | Wheel / WheelPosition | (Integer) ID (Float) X Y Z (partName) | ~ | Add a wheel position with ID. partName is optional and will default to coreWheel unless stated. |
 | WheelRadius / WheelStepHeight | Float | 1 | The wheel radius. Allows travelling up blocks when > 1 or root2 (Not sure which) |
