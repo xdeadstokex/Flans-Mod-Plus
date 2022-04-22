@@ -493,7 +493,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | FloatOnWater | Boolean | false | Whether the driveable floats on water |
 | Boat | ~ | false | placeableOnLand = false, placeableOnWater = true, floatOnWater = true, wheelStepHeight = 0 |
 | Buoyancy | Float | 0.0165 | Upwards force per wheel when a driveable is on water |
-| FloatOffset | Float | 0 | ? |
+| FloatOffset | Float | 0 | Offset in blocks for floating above/below wheel positions. |
 | CanMountEntity | Boolean | false | Sets vanilla CanMountEntity NBT value. True allows this entity to mount another. (Horse, other vehicle e.t.c). |
 | EngineStartTime | Float | 0 | Time between the vehicle being placed, and it being driveable. |
 | Wheel / WheelPosition | (Integer) ID (Float) X Y Z (partName) | ~ | Add a wheel position with ID. partName is optional and will default to coreWheel unless stated. |
