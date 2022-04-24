@@ -917,11 +917,11 @@ public class TeamsManager {
             if (data.team != null)
                 data.team.removePlayer(player);
             data.newTeam = data.team = Team.spectators;
-            player.inventory.armorInventory = new ItemStack[4];
-            player.inventory.mainInventory = new ItemStack[36];
             data.team.addPlayer(player);
             player.heal(9001);
             respawnPlayer(player, true);
+            player.inventory.armorInventory = new ItemStack[4];
+            player.inventory.mainInventory = new ItemStack[36];
         }
         //Give other players the chance to select a class
         else {
