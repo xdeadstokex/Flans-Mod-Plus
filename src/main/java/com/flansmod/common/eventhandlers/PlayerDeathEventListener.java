@@ -53,7 +53,7 @@ public class PlayerDeathEventListener {
 			Team killedTeam = null;
 			killerTeam = PlayerHandler.getPlayerData(killer).team;
 			killedTeam = PlayerHandler.getPlayerData(killed).team;
-
+			if(FlansMod.enableKillMessages)
 			FlansMod.getPacketHandler().sendToDimension(
 				new PacketKillMessage(false,
 					info,
