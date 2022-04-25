@@ -500,7 +500,7 @@ public class GunType extends PaintableType implements IScope {
         super.read(split, file);
         try {
             if (split[0].equals("Damage"))
-                damage = Float.parseFloat(split[1]);
+                damage = Float.parseFloat(split[1])*FlansMod.globalWeaponDamageMultiplier;
             else if (split[0].equals("MeleeDamage")) {
                 meleeDamage = Float.parseFloat(split[1]);
                 if (meleeDamage > 0F)
@@ -775,7 +775,7 @@ public class GunType extends PaintableType implements IScope {
             } else if (split[0].equals("NumAmmoSlots") || split[0].equals("NumAmmoItemsInGun") || split[0].equals("LoadIntoGun"))
                 numPrimaryAmmoItems = Integer.parseInt(split[1]);
             else if (split[0].equals("BulletSpeed"))
-                bulletSpeed = Float.parseFloat(split[1]);
+                bulletSpeed = Float.parseFloat(split[1])*FlansMod.globalBulletSpeedMultiplier;
             else if (split[0].equals("CanShootUnderwater"))
                 canShootUnderwater = Boolean.parseBoolean(split[1].toLowerCase());
             else if (split[0].equals("CanSetPosition"))
