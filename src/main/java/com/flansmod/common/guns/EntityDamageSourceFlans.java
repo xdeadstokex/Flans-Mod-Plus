@@ -45,7 +45,7 @@ public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
         Team killerTeam = PlayerHandler.getPlayerData(shooter).team;
 
         float dist = player.getDistanceToEntity(shooter);
-
+        if(FlansMod.enableKillMessages)
         FlansMod.getPacketHandler().sendToDimension(
                 new PacketKillMessage(
                         headshot,
@@ -56,15 +56,15 @@ public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
                         dist
                     ),
                 living.dimension);
-        return new ChatComponentText(
+        return new ChatComponentText(FlansMod.enableKillMessages?
             EnumChatFormatting.DARK_GRAY + "[" + EnumChatFormatting.RED + "Flansmod" + EnumChatFormatting.DARK_GRAY + "] "
             + EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_RED + player.getCommandSenderName() +
             EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " Was killed by " +
             EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_GREEN + shooter.getCommandSenderName() +
-            (FlansMod.showDistanceInKillMessage ? 
+            (FlansMod.showDistanceInKillMessage ?
             "" + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " from " +
             EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_AQUA + String.format("%.1f", dist) + "m" +
-            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " away" : "")
+            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " away" : ""):""
             );
     }
 }
