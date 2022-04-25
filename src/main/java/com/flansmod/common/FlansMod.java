@@ -668,7 +668,7 @@ public class FlansMod {
         TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
 
         //Server/Gameplay Settings (Server-client synced)
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable Enable killMessage display");
+        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
@@ -721,7 +721,7 @@ public class FlansMod {
         TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
 
         //Server/Gameplay Settings (Server-client synced)
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable Enable killMessage display");
+        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
