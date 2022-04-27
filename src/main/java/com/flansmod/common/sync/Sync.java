@@ -12,16 +12,16 @@ import com.flansmod.common.FlansMod;
 
 
 public class Sync {
-	public static TreeMap<String, String> hashes = new TreeMap<String, String>();
+	private static TreeMap<String, String> hashes = new TreeMap<String, String>();
 
-	public static String cachedHash = "";
+	private static String cachedHash = "";
 
 	public static String getStringHash(String str) {
 		String hash = "";
 		try {
 			MessageDigest digester = MessageDigest.getInstance("SHA-512");
-			byte[] encodedhash = digester.digest(validateString(str).getBytes(StandardCharsets.US_ASCII));
-			hash =  Hex.encodeHexString(encodedhash);
+			byte[] encodedHash = digester.digest(validateString(str).getBytes(StandardCharsets.US_ASCII));
+			hash =  Hex.encodeHexString(encodedHash);
 		} catch (Exception e) {
 			FlansMod.log("[Sync] Error has occured.");
 			e.printStackTrace(); 
@@ -30,13 +30,16 @@ public class Sync {
 	}
 
 	public static String getUnifiedHash() {
-		String str = "";
-		for (Map.Entry<String, String> hash : hashes.entrySet()) {
-			str += hash.getKey();
-			FlansMod.log(hash.getKey() + " " +hash.getValue());
+		if (cachedHash.isEmpty()) {
+			StringBuilder str = new StringBuilder();
+			for (Map.Entry<String, String> hash : hashes.entrySet()) {
+				str.append(hash.getKey());
+				FlansMod.log(hash.getKey() + " " + hash.getValue());
+			}
+
+			cachedHash = getStringHash(str.toString());
 		}
 
-		cachedHash = getStringHash(str);
 		return cachedHash;
 	}
 
@@ -45,13 +48,13 @@ public class Sync {
 	}
 
 	private static String validateString(String e) {
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		for (char c : e.toCharArray()) {
 			if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ+=-()[]{}#%^&$£@?.,<>0123456789".contains("" + Character.toUpperCase(c))) {
-				out += c;
+				out.append(c);
 			}
 		}
-		return out;
+		return out.toString();
 
 	}
 }

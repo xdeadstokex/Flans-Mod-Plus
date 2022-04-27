@@ -628,7 +628,7 @@ public class FlansMod {
             log("Loaded " + type.name() + ".");
         }
         Sync.getUnifiedHash();
-        log("Client Hash: " + Sync.cachedHash);
+        log("Client Hash: " + Sync.getUnifiedHash());
         Team.spectators = spectators;
     }
 

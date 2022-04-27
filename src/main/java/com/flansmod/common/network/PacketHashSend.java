@@ -32,7 +32,7 @@ public class PacketHashSend extends PacketBase {
     @Override
     public void handleServerSide(EntityPlayerMP player) {
         FlansMod.log("Received pack hash from %s (%s)", player.getCommandSenderName(), hash);
-        if (!hash.equals(Sync.cachedHash) && FlansMod.kickNonMatchingHashes) {
+        if (!hash.equals(Sync.getUnifiedHash()) && FlansMod.kickNonMatchingHashes) {
             player.playerNetServerHandler.kickPlayerFromServer("[Sync] Client-server mismatch.");
         }
     }
@@ -40,13 +40,13 @@ public class PacketHashSend extends PacketBase {
     @Override
     public void handleClientSide(EntityPlayer clientPlayer) {
         if (FlansMod.printDebugLog) {
-            FlansMod.log("Received packet %s", hash);
+            FlansMod.log("Received pack hash %s", hash);
         }
-        if (!hash.equals(Sync.cachedHash) && FlansMod.kickNonMatchingHashes) {
-            clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch detected."));
+        if (!hash.equals(Sync.getUnifiedHash()) && FlansMod.kickNonMatchingHashes) {
+            clientPlayer.addChatComponentMessage(new ChatComponentText("[Sync] Client-Server mismatch."));
             FlansMod.log("Kicked from server, invalid hash. Make sure your packs are the same as the server's.");
             FlansMod.log("S: " + hash);
-            FlansMod.log("C: " + Sync.cachedHash);
+            FlansMod.log("C: " + Sync.getUnifiedHash());
         }
         FlansMod.getPacketHandler().sendToServer(new PacketHashSend(Sync.getUnifiedHash()));
     }
