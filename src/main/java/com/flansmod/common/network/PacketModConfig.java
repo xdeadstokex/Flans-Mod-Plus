@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import com.flansmod.common.FlansMod;
 
 public class PacketModConfig extends PacketBase {
+    boolean enableKillMessages;
     public boolean hitCrossHairEnable;
     public boolean bulletGuiEnable;
     public boolean crosshairEnable;
@@ -34,6 +35,7 @@ public class PacketModConfig extends PacketBase {
     public boolean showWoundFlashes;
 
     public PacketModConfig() {
+        enableKillMessages = FlansMod.enableKillMessages;
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
         bulletGuiEnable = FlansMod.bulletGuiEnable;
         crosshairEnable = FlansMod.crosshairEnable;
@@ -59,6 +61,7 @@ public class PacketModConfig extends PacketBase {
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        data.writeBoolean(enableKillMessages);
         data.writeBoolean(hitCrossHairEnable);
         data.writeBoolean(bulletGuiEnable);
         data.writeBoolean(crosshairEnable);
@@ -84,6 +87,7 @@ public class PacketModConfig extends PacketBase {
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data) {
+        enableKillMessages = data.readBoolean();
         hitCrossHairEnable = data.readBoolean();
         bulletGuiEnable = data.readBoolean();
         crosshairEnable = data.readBoolean();
@@ -115,6 +119,7 @@ public class PacketModConfig extends PacketBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void handleClientSide(EntityPlayer clientPlayer) {
+        FlansMod.enableKillMessages = enableKillMessages;
         FlansMod.hitCrossHairEnable = hitCrossHairEnable;
         FlansMod.bulletGuiEnable = bulletGuiEnable;
         FlansMod.crosshairEnable = crosshairEnable;
