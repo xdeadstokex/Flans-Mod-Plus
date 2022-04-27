@@ -429,7 +429,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             //checkParts();
             checkPartsWhenAttacked();
             //If it hit, send a damage update packet
-            FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
+            FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
         }
         return true;
     }
@@ -642,7 +642,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
             FlansMod.getPacketHandler().sendToAllAround(
                     new PacketParticle(s.name, posX + v.x, posY + v.y, posZ + v.z, velocity.x, velocity.y, velocity.z),
-                    posX + v.x, posY + v.y, posZ + v.z, 150, dimension);
+                    posX + v.x, posY + v.y, posZ + v.z, FlansMod.driveableUpdateRange, dimension);
 
             shootPoint.rootPos.position.x = bkx;
             shootPoint.rootPos.position.y = bky;
@@ -1612,7 +1612,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             if (!worldObj.isRemote) {
 //				checkParts();
                 //If it hit, send a damage update packet
-                FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
+                FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
             }
         }
     }
@@ -2410,7 +2410,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (!worldObj.isRemote) {
             checkParts();
             //If it hit, send a damage update packet
-            FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100, dimension);
+            FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
         }
 
         return penetratingPower;
