@@ -7,6 +7,7 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.driveables.DriveablePart;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.guns.EntityGrenade;
+import com.flansmod.common.network.PacketDriveableDamage;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -179,7 +180,7 @@ public class ItemTool extends ItemFood {
 						//If we hit something that is healable
 						if(part != null && part.maxHealth > 0)
 						{
-							//If its broken and the tool is inifinite or has durability left
+							//If its broken and the tool is infinite or has durability left
 							if(part.health < part.maxHealth && (type.toolLife == 0 || itemstack.getItemDamage() < itemstack.getMaxDamage()))
 							{
 								//Heal it
@@ -187,10 +188,14 @@ public class ItemTool extends ItemFood {
 								//If it is over full health, cap it
 								if(part.health > part.maxHealth)
 									part.health = part.maxHealth;
+
+								// I don't think sending this is necessary.
+								//FlansMod.packetHandler.sendToAllAround(new PacketDriveableDamage(driveable), driveable.posX, driveable.posY, driveable.posZ, FlansMod.driveableUpdateRange, driveable.dimension);
+
 								//If not in creative and the tool should decay, damage it
 								if(!entityplayer.capabilities.isCreativeMode && type.toolLife > 0)
 									itemstack.setItemDamage(itemstack.getItemDamage() + 1);
-								//If the tool is damagable and is destroyed upon being used up, then destroy it
+								//If the tool is damageable and is destroyed upon being used up, then destroy it
 								if(type.toolLife > 0 && type.destroyOnEmpty && itemstack.getItemDamage() == itemstack.getMaxDamage())
 									itemstack.stackSize--;
 								//Our work here is done. Let's be off
