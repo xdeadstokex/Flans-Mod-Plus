@@ -299,6 +299,7 @@ This will override the value set in the gun's model!
 | HitSound | String | ~ | The hit sound to play if enabled |
 | HitSoundRange | Float | ~ | The range that the hit sound will play |
 | Penetration / PenetratingPower | Float | 1 | Penetration power |
+| PenetrationDecay | Float | 0 | Penetration to remove each tick, e.g. 0.01 -> 1% loss each tick |
 | DragInAir | Float | 0.99 | Drag coefficient (Possibly 1 - )? Between 0 and 1 |
 | DragInWater | Float | 0.80 | Drag coefficient in water (Possibly 1 - )? Between 0 and 1 |
 | NumBullets | Integer | -1 | Number of bullets to fire per shot. -1 is "let gun decide"? |
