@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.parts.PartType;
+import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -111,6 +112,11 @@ public class ItemPlane extends Item implements IPaintableItem {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+        if (!(TeamsManager.survivalCanPlaceVehicles || entityplayer.capabilities.isCreativeMode)) {
+            // player isn't allowed to place vehicles.
+            return itemstack;
+        }
+
         //Raytracing
         float cosYaw = MathHelper.cos(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);
         float sinYaw = MathHelper.sin(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);
