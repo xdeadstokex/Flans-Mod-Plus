@@ -262,8 +262,8 @@ This will override the value set in the gun's model!
 | DamageVsEntity | Float | 1 | Amount of damage to do when hit. |
 | DamageVsVehicles | Float | 1 | Amount of damage to do when hit. |
 | DamageVsPlanes | Float | 1 | Amount of damage to do when hit. |
-| IgnoreArmorProbability | Float | 0 | Not entirely sure. |
-| IgnoreArmorDamageFactor | Float | 0 | Not entirely sure. |
+| IgnoreArmorProbability | Float | 0 | Probability that a hit will ignore armourm 0=no chance, 1=always |
+| IgnoreArmorDamageFactor | Float | 0 | If a hit ignores armour, additional multiplier for damage. 1=normal damage |
 | BreaksGlass | Bool | false | Whether the projecticle breaks glass on impact. |
 | Fuse | Integer | 0 | Ticks until a grenade explodes. 0 = explode on impact |
 | DespawnTime | Integer | 0 | Time until the grenade despawns, without exploding. 0 = no despawn |
