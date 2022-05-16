@@ -229,6 +229,7 @@ This will override the value set in the gun's model!
 | SecondaryReloadSound | String | ~ | ~ |
 | ModeSwitchSound | String | ~ | The sound to play when toggling between primary and underbarrel gun |
 | MeleeDamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| MoveSpeedModifier | Float | 1 | Modifier for player movement speed, stacks on gun's modifier |
 | DamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
 | SpreadMultiplier | Float | 1 | The multiplier to the X stat of the gun |
 | RecoilMultiplier | Float | 1 | The multiplier to the X stat of the gun |
