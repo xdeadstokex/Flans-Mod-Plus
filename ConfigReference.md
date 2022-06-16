@@ -252,6 +252,7 @@ This will override the value set in the gun's model!
 | DropItemOnShoot | String | null | Items dropped on various events |
 | DropItemOnReload | String | null | Items dropped on various events |
 | DropItemOnHit | String | null | Items dropped on various events |
+| Bounciness | Float | 0.9 | When grenade or bullet hits an entity or block, the velocity will multiply by this amount |
 | RoundsPerItem | Integer | 1 | The number of rounds fired by a gun per item |
 | FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired |
 | ThrowSpeed / ShootSpeed | Float | 1 | The speed at which the projectile should be launched. 0 Will give it no velocity and drop instantly. |
@@ -359,7 +360,6 @@ This will override the value set in the gun's model!
 | ThrowSound | String | ~ | Sound to play when throwing grenade |
 | DropItemOnThrow | String | ~ | Whether to drop an item when grenade is thrown |
 | CanThrow | Bool | true | Whether the grenade can be thrown with right click |
-| Bounciness | Float | 0.9 | When grenade hits an entity or block, the velocity will multiply by this amount |
 | PenetratesEntities | Boolean | false | Whether it can go through entities |
 | PenetratesBlocks | Boolean | false | Whether it can go through blocks |
 | BounceSound | String | ~ | Sound on bound |
