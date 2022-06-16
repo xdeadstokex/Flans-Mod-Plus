@@ -57,6 +57,8 @@ public abstract class ShootableType extends InfoType {
      * Hit box size
      */
     public float hitBoxSize = 0.5F;
+    /** Upon hitting a block or entity, the grenade will be deflected and its motion will be multiplied by this constant */
+    public float bounciness = 0.9F;
 
     //Damage to hit entities
     /**
@@ -219,6 +221,8 @@ public abstract class ShootableType extends InfoType {
 
             else if (split[0].equals("BreaksGlass"))
                 breaksGlass = Boolean.parseBoolean(split[1].toLowerCase());
+            else if(split[0].equals("Bounciness"))
+                bounciness = Float.parseFloat(split[1]);
 
             else if (split[0].equals("HasLight"))
                 hasLight = Boolean.parseBoolean(split[1].toLowerCase());
