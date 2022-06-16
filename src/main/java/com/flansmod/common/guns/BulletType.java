@@ -123,7 +123,7 @@ public class BulletType extends ShootableType
 	{
 		super(file);
 		texture = "defaultBullet";
-		bounciness = 0.05f;
+		bounciness = 0f;
 		bullets.add(this);
 	}
 
