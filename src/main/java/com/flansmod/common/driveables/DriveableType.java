@@ -312,6 +312,8 @@ public class DriveableType extends PaintableType {
     public boolean fixedPrimaryFire = false;
     public Vector3f primaryFireAngle = new Vector3f(0, 0, 0);
 
+    public boolean fixedSecondaryFire = false;
+    public Vector3f secondaryFireAngle = new Vector3f(0, 0, 0);
     /**
      * backwards compatibility attempt
      */
@@ -781,8 +783,12 @@ public class DriveableType extends PaintableType {
                 IT1 = Boolean.parseBoolean(split[1].toLowerCase());
             if (split[0].equals("FixedPrimary"))
                 fixedPrimaryFire = Boolean.parseBoolean(split[1].toLowerCase());
+            if (split[0].equals("FixedSecondary"))
+                fixedSecondaryFire = Boolean.parseBoolean(split[1].toLowerCase());
             if (split[0].equals("PrimaryAngle"))
                 primaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+            if (split[0].equals("SecondaryAngle"))
+                secondaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
 
                 //Backwards compatibility stuff
             else if (split[0].equals("AddGun")) {

@@ -545,8 +545,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ShootParticlesSecondary | particleName (float) X Y Z | ~ | Add shoot particles |
 | SetPlayerInvisible | Boolean | false | Whether riding players should have invis effect |
 | IT1 | Boolean | false | Whether this uses IT1 reloads. I bet you it doesn't ;) |
-| FixedPrimary | Boolean | false | Whether the primary gun can be aimed or not |
-| PrimaryAngle | (float) X Y Z | 0 0 0 | The angle at which the primary might be fixed at |
+| FixedPrimary | Boolean | false | Fixes the gun to PrimaryAngle relative to the turret. Otherwise, free to aim. |
+| PrimaryAngle | (float) X Y Z | 0 0 0 | The angle at which the primary should be fixed at. Expressed as a vector direction. |
+| FixedSecondary | Boolean | false | Fixes the gun to SecondaryAngle relative to the turret. Otherwise, free to aim. |
+| SecondaryAngle | (float) X Y Z | 0 0 0 | The angle at which the secondary should be fixed at. Expressed as a vector direction. |
 | AddGun | (float) X Y Z partName gunName (offset)(float) (X Y Z) | ~ | Add gun. Offset is not required. | 
 | BombPosition | X Y Z (offset)(X Y Z) | ~ | Sets primary to BOMB, adds a bomb position. Offset is not required. | 
 | BarrelPosition | X Y Z (offset)(X Y Z) | ~ | Adds a new barrel position and changes primary to SHELL. Offset is not required. | 
