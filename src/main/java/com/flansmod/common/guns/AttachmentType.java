@@ -206,7 +206,7 @@ public class AttachmentType extends PaintableType implements IScope
 				bulletSpeedMultiplier = Float.parseFloat(split[1]);
 			else if(split[0].equals("ReloadTimeMultiplier"))
 				reloadTimeMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("MovementSpeedMultiplier"))
+			else if(split[0].equals("MovementSpeedMultiplier") || split[0].equals("MoveSpeedModifier"))
 				moveSpeedMultiplier = Float.parseFloat(split[1]);
 			//Scope Variables
 			else if(split[0].equals("ZoomLevel"))

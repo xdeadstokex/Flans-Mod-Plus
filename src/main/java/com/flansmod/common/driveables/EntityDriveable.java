@@ -666,6 +666,16 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             }
         }
 
+        if (secondary && type.fixedSecondaryFire) {
+            lookVector = axes.findLocalVectorGlobally(type.secondaryFireAngle);
+            if (shootPoint.rootPos.part == EnumDriveablePart.turret) {
+                lookVector = getPositionOnTurret(type.secondaryFireAngle, false);
+            }
+            if (shootPoint.rootPos.part == EnumDriveablePart.barrel) {
+                lookVector = getPositionOnTurret(type.secondaryFireAngle, true);
+            }
+        }
+
         if (weaponType == EnumWeaponType.SHELL)
             isRecoil = true;
         if (shootPoint.rootPos.part == null) return;

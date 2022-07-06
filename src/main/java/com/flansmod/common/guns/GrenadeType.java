@@ -27,8 +27,6 @@ public class GrenadeType extends ShootableType
 	public boolean canThrow = true;
 
 	//Physics
-	/** Upon hitting a block or entity, the grenade will be deflected and its motion will be multiplied by this constant */
-	public float bounciness = 0.9F;
 	/** Whether this grenade may pass through entities or blocks */
 	public boolean penetratesEntities = false, penetratesBlocks = false;
 	/** The sound to play upon bouncing off a surface */
@@ -150,8 +148,6 @@ public class GrenadeType extends ShootableType
 				canThrow = Boolean.parseBoolean(split[1]);
 
 			//Grenade Physics
-			else if(split[0].equals("Bounciness"))
-				bounciness = Float.parseFloat(split[1]);
 			else if(split[0].equals("PenetratesEntities"))
 				penetratesEntities = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("PenetratesBlocks"))

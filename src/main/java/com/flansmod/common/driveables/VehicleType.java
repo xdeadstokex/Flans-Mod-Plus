@@ -51,6 +51,9 @@ public class VehicleType extends DriveableType {
 
     public boolean useRealisticAcceleration = false;
 
+    // Braking modifier.
+    public float brakingModifier = 1;
+
     public float maxFallSpeed = 0.85F;
     public float gravity = 0.175F;
 
@@ -119,6 +122,8 @@ public class VehicleType extends DriveableType {
                 gravity = Float.parseFloat(split[1]);
             if (split[0].equals("MaxFallSpeed"))
                 maxFallSpeed = Float.parseFloat(split[1]);
+            if (split[0].equals(("BrakingModifier")))
+                brakingModifier = Float.parseFloat(split[1]);
 
             //Visuals
             if (split[0].equals("HasDoor"))

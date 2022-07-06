@@ -229,6 +229,7 @@ This will override the value set in the gun's model!
 | SecondaryReloadSound | String | ~ | ~ |
 | ModeSwitchSound | String | ~ | The sound to play when toggling between primary and underbarrel gun |
 | MeleeDamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
+| MovementSpeedMultiplier / MoveSpeedModifier | Float | 1 | Modifier for player movement speed, stacks on gun's modifier |
 | DamageMultiplier | Float | 1 | The multiplier to the X stat of the gun |
 | SpreadMultiplier | Float | 1 | The multiplier to the X stat of the gun |
 | RecoilMultiplier | Float | 1 | The multiplier to the X stat of the gun |
@@ -252,6 +253,7 @@ This will override the value set in the gun's model!
 | DropItemOnShoot | String | null | Items dropped on various events |
 | DropItemOnReload | String | null | Items dropped on various events |
 | DropItemOnHit | String | null | Items dropped on various events |
+| Bounciness | Float | (Grenade: 0.9), (Bullet 0) | When grenade or bullet hits an entity or block, the velocity will multiply by this amount |
 | RoundsPerItem | Integer | 1 | The number of rounds fired by a gun per item |
 | FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired |
 | ThrowSpeed / ShootSpeed | Float | 1 | The speed at which the projectile should be launched. 0 Will give it no velocity and drop instantly. |
@@ -262,8 +264,8 @@ This will override the value set in the gun's model!
 | DamageVsEntity | Float | 1 | Amount of damage to do when hit. |
 | DamageVsVehicles | Float | 1 | Amount of damage to do when hit. |
 | DamageVsPlanes | Float | 1 | Amount of damage to do when hit. |
-| IgnoreArmorProbability | Float | 0 | Not entirely sure. |
-| IgnoreArmorDamageFactor | Float | 0 | Not entirely sure. |
+| IgnoreArmorProbability | Float | 0 | Probability that a hit will ignore armourm 0=no chance, 1=always |
+| IgnoreArmorDamageFactor | Float | 0 | If a hit ignores armour, additional multiplier for damage. 1=normal damage |
 | BreaksGlass | Bool | false | Whether the projecticle breaks glass on impact. |
 | Fuse | Integer | 0 | Ticks until a grenade explodes. 0 = explode on impact |
 | DespawnTime | Integer | 0 | Time until the grenade despawns, without exploding. 0 = no despawn |
@@ -299,6 +301,7 @@ This will override the value set in the gun's model!
 | HitSound | String | ~ | The hit sound to play if enabled |
 | HitSoundRange | Float | ~ | The range that the hit sound will play |
 | Penetration / PenetratingPower | Float | 1 | Penetration power |
+| PenetrationDecay | Float | 0 | Penetration to remove each tick, e.g. 0.01 -> 1% loss each tick |
 | DragInAir | Float | 0.99 | Drag coefficient (Possibly 1 - )? Between 0 and 1 |
 | DragInWater | Float | 0.80 | Drag coefficient in water (Possibly 1 - )? Between 0 and 1 |
 | NumBullets | Integer | -1 | Number of bullets to fire per shot. -1 is "let gun decide"? |
@@ -358,7 +361,6 @@ This will override the value set in the gun's model!
 | ThrowSound | String | ~ | Sound to play when throwing grenade |
 | DropItemOnThrow | String | ~ | Whether to drop an item when grenade is thrown |
 | CanThrow | Bool | true | Whether the grenade can be thrown with right click |
-| Bounciness | Float | 0.9 | When grenade hits an entity or block, the velocity will multiply by this amount |
 | PenetratesEntities | Boolean | false | Whether it can go through entities |
 | PenetratesBlocks | Boolean | false | Whether it can go through blocks |
 | BounceSound | String | ~ | Sound on bound |
@@ -543,8 +545,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ShootParticlesSecondary | particleName (float) X Y Z | ~ | Add shoot particles |
 | SetPlayerInvisible | Boolean | false | Whether riding players should have invis effect |
 | IT1 | Boolean | false | Whether this uses IT1 reloads. I bet you it doesn't ;) |
-| FixedPrimary | Boolean | false | Whether the primary gun can be aimed or not |
-| PrimaryAngle | (float) X Y Z | 0 0 0 | The angle at which the primary might be fixed at |
+| FixedPrimary | Boolean | false | Fixes the gun to PrimaryAngle relative to the turret. Otherwise, free to aim. |
+| PrimaryAngle | (float) X Y Z | 0 0 0 | The angle at which the primary should be fixed at. Expressed as a vector direction. |
+| FixedSecondary | Boolean | false | Fixes the gun to SecondaryAngle relative to the turret. Otherwise, free to aim. |
+| SecondaryAngle | (float) X Y Z | 0 0 0 | The angle at which the secondary should be fixed at. Expressed as a vector direction. |
 | AddGun | (float) X Y Z partName gunName (offset)(float) (X Y Z) | ~ | Add gun. Offset is not required. | 
 | BombPosition | X Y Z (offset)(X Y Z) | ~ | Sets primary to BOMB, adds a bomb position. Offset is not required. | 
 | BarrelPosition | X Y Z (offset)(X Y Z) | ~ | Adds a new barrel position and changes primary to SHELL. Offset is not required. | 
@@ -761,6 +765,7 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | Mass | Float | 1000 | The mass of the vehicle, for realistic acceleration. Roughly in KG? |
 | UseRealisticAcceleration | Boolean | false | Use a system which uses vehicle mass and engine power to calculate acceleration. |
 | ThrottleDecay | Float | 0.0035F | Amount to decrease the throttle by each tick |
+| BrakingModifier | Float | 1 | Multiplier for braking force (slowing down in opposite direction to travel). See also: ThrottleDecay |
 | Gravity | Float | 0.175 | The rate at which to increase speed downwards when falling. |
 | MaxFallSpeed | Float | 0.85 | Terminal velocity of the vehicle. |
 | HasDoor | Boolean | false | Whether this has openable doors |

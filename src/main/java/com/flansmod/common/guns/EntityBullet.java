@@ -95,6 +95,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public int soundTime = 0;
     //Used to store speed for submunitions
     public float speedA;
+    public float initialSpeed;
 
     public int impactX;
     public int impactY;
@@ -118,6 +119,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public Vector3f lookVector;
     public Vector3f initialPos;
     public boolean hasSetLook = false;
+
+    public boolean initialTick = true;
 
 
     public EntityBullet(World world) {
@@ -270,6 +273,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     @Override
     public void onUpdate() {
         super.onUpdate();
+
+        if (initialTick) {
+            initialSpeed = (float)Math.sqrt((motionX * motionX) + (motionY * motionY) + (motionZ * motionZ));
+            initialTick = false;
+        }
 
         // Update the ping for hit detection
         if (!worldObj.isRemote && owner instanceof  EntityPlayerMP) {
@@ -589,7 +597,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     driveableHit.driveable.lastAtkEntity = owner;
                     if(TeamsManager.getInstance().currentRound!=null) {
                         for (EntitySeat seat : driveableHit.driveable.seats) {
-                            if (seat.riddenByEntity != null && seat.riddenByEntity instanceof EntityPlayerMP) {
+                            if (seat.riddenByEntity instanceof EntityPlayerMP) {
                                 PlayerData dataDriver = PlayerHandler.getPlayerData((EntityPlayerMP) seat.riddenByEntity);
                                 PlayerData dataAttacker = PlayerHandler.getPlayerData((EntityPlayerMP) owner);
                                 if (dataDriver.team.shortName.equals(dataAttacker.team.shortName)) {
@@ -703,12 +711,54 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         }
                     }
 
-                    //penetratingPower -= block.getBlockHardness(worldObj, zTile, zTile, zTile);
-                    setPosition(hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord);
-                    //play sound when bullet hits block
                     if (type.hitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-                    setDead();
+
+                    if (type.bounciness > 0) {
+                        Vector3f hitPos = new Vector3f(raytraceResult.hitVec);
+                        Vector3f preHitVel = Vector3f.sub(hitPos, origin, null);
+                        Vector3f postHitVel = Vector3f.sub(motion, preHitVel, null);
+
+                        Vector3f surfaceNormal;
+
+                        int sideHit = raytraceResult.sideHit;
+                        switch (sideHit) {
+                            case 0: surfaceNormal = new Vector3f(0, -1, 0); break;
+                            case 1: surfaceNormal = new Vector3f(0, 1, 0); break;
+                            case 2: surfaceNormal = new Vector3f(0, 0, -1); break;
+                            case 3: surfaceNormal = new Vector3f(0, 0, 1); break;
+                            case 5: surfaceNormal = new Vector3f(1, 0, 0); break;
+                            case 4: default: surfaceNormal = new Vector3f(-1, 0, 0); break;
+                        }
+
+                        if (motion.lengthSquared() < 0.1F * initialSpeed) {
+                            setPosition(raytraceResult.hitVec.xCoord, raytraceResult.hitVec.yCoord, raytraceResult.hitVec.zCoord);
+                            setDead();
+                        } else {
+                            float lambda = postHitVel.length() / motion.length();
+
+                            float normalProjection = Vector3f.dot(surfaceNormal, postHitVel);
+                            Vector3f normal = (Vector3f) (new Vector3f(surfaceNormal)).scale(-normalProjection); // massively scale down the normal collision
+
+                            Vector3f orthog = Vector3f.add(postHitVel, normal, null);
+
+                            normal.scale(type.bounciness / 3);
+                            orthog.scale(type.bounciness);
+
+                            postHitVel = Vector3f.add(orthog, normal, null);
+
+                            Vector3f totalVel = Vector3f.add(preHitVel, postHitVel, null);
+
+                            setPosition(posX + totalVel.x,
+                                    posY + totalVel.y,
+                                    posZ + totalVel.z);
+                            setVelocity(postHitVel.x / lambda, postHitVel.y / lambda, postHitVel.z / lambda);
+                        }
+                    } else {
+                        setPosition(raytraceResult.hitVec.xCoord, raytraceResult.hitVec.yCoord, raytraceResult.hitVec.zCoord);
+                        setDead();
+                    }
+
                     break;
                 }
                 if (penetratingPower <= 0F || (type.explodeOnImpact && ticksInAir > 1)) {

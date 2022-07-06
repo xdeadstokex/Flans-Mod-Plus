@@ -236,9 +236,9 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             {
                 if (isEngineActive()) {
                     if (type.useRealisticAcceleration) {
-                        throttle += data.engine.enginePower / type.mass;
+                        throttle += (data.engine.enginePower * (throttle < 0 ? type.brakingModifier : 1))  / type.mass;
                     } else {
-                        throttle += 0.01F;
+                        throttle += 0.01F * (throttle < 0 ? type.brakingModifier : 1);
                     }
                 }
 
@@ -251,9 +251,9 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             {
                 if (isEngineActive()) {
                     if (type.useRealisticAcceleration) {
-                        throttle -= data.engine.enginePower / type.mass;
+                        throttle -= (data.engine.enginePower * (throttle > 0 ? type.brakingModifier : 1)) / type.mass;
                     } else {
-                        throttle -= 0.01F;
+                        throttle -= 0.01F * (throttle > 0 ? type.brakingModifier : 1);
                     }
                 }
 
