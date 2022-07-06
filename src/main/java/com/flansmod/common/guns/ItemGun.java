@@ -1148,7 +1148,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     else if (gunType.reloadSound != null)
                         soundToPlay = gunType.reloadSound;
 
-                    if (soundToPlay != null && type.getNumAmmoItemsInGun(gunStack) == 1) {
+                    if (soundToPlay != null) {
                         PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ,
                                 type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
                     }
