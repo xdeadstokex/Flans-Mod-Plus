@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import com.flansmod.common.teams.TeamsManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockSponge;
@@ -126,6 +127,10 @@ public class ItemVehicle extends ItemMapBase implements IPaintableItem
     @Override
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
     {
+    	if (!(TeamsManager.survivalCanPlaceVehicles || entityplayer.capabilities.isCreativeMode)) {
+    		// player isn't allowed to place vehicles.
+    		return itemstack;
+		}
     	//Raytracing
         float cosYaw = MathHelper.cos(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);
         float sinYaw = MathHelper.sin(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);

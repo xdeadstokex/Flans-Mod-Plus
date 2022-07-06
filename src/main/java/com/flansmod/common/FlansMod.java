@@ -76,7 +76,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate (Stability Edition)", version = FlansMod.VERSION, acceptableRemoteVersions = FlansMod.VERSION, guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
+@Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate (Stability Edition)", version = FlansMod.VERSION, acceptableRemoteVersions = "[" + FlansMod.VERSION + "]", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
 public class FlansMod {
     //Core mod stuff
     public static Logger logger = LogManager.getLogger("Flan's Mod Ultimate");
@@ -94,8 +94,6 @@ public class FlansMod {
     public static int gunCarryLimit = 3;
     public static int breakableArmor = 0;
     public static int defaultArmorDurability = 500;
-    public static float globalBulletSpeedMultiplier = 1.0F;
-    public static float globalWeaponDamageMultiplier = 1.0F;
     public static boolean armsEnable = true;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
@@ -392,6 +390,7 @@ public class FlansMod {
     @EventHandler
     public void registerCommand(FMLServerStartedEvent e) {
         CommandHandler handler = ((CommandHandler) FMLCommonHandler.instance().getSidedDelegate().getServer().getCommandManager());
+	    //handler.registerCommand(new CommandFlans());
         handler.registerCommand(new CommandTeams());
     }
 
@@ -629,7 +628,7 @@ public class FlansMod {
             log("Loaded " + type.name() + ".");
         }
         Sync.getUnifiedHash();
-        log("Client Hash: " + Sync.cachedHash);
+        log("Client Hash: " + Sync.getUnifiedHash());
         Team.spectators = spectators;
     }
 
@@ -669,9 +668,7 @@ public class FlansMod {
         TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
 
         //Server/Gameplay Settings (Server-client synced)
-        globalBulletSpeedMultiplier = configFile.getFloat("globalBulletSpeedMultiplier", "Gameplay Settings (synced)", 1.0F, 0F, 100F, "Set the global bullet speed multiplier");
-        globalWeaponDamageMultiplier = configFile.getFloat("globalWeaponDamageMultiplier", "Gameplay Settings (synced)", 1.0F, 0F, 100F, "Set the global weapon damage multiplier");
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable Enable killMessage display");
+        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
@@ -724,16 +721,14 @@ public class FlansMod {
         TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
 
         //Server/Gameplay Settings (Server-client synced)
-        globalBulletSpeedMultiplier = configFile.getFloat("globalBulletSpeedMultiplier", "Gameplay Settings (synced)", 1.0F, 0F, 100F, "Set the global bullet speed multiplier");
-        globalWeaponDamageMultiplier = configFile.getFloat("globalWeaponDamageMultiplier", "Gameplay Settings (synced)", 1.0F, 0F, 100F, "Set the global weapon damage multiplier");
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable Enable killMessage display");
+        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
-	    crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+	crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");

@@ -194,7 +194,7 @@ public class ContentManager {
             FlansMod.logger.info("Loaded " + type.folderNames[0] + ".");
         }
         Sync.getUnifiedHash();
-        FlansMod.logger.info("Client Hash: " + Sync.cachedHash);
+        FlansMod.logger.info("Client Hash: " + Sync.getUnifiedHash());
     }
 
     @SuppressWarnings("ConstantConditions")

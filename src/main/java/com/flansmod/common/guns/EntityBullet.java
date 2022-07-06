@@ -797,6 +797,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             motionY -= gravity * type.fallSpeed;
         }
 
+        // Damp penetration too
+
+        penetratingPower *= (1 - type.penetrationDecay);
+
         // Apply homing action
         if (lockedOnTo != null) {
             if (lockedOnTo instanceof EntityDriveable) {

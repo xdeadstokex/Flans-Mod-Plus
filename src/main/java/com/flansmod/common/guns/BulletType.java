@@ -46,6 +46,8 @@ public class BulletType extends ShootableType
 	public boolean entityHitSoundEnable = false;
 
 	public float penetratingPower = 1F;
+	// In % of penetration to remove per tick.
+	public float penetrationDecay = 0F;
 	// Knocback modifier. less gives less kb, more gives more kb, 1 = normal kb.
 	public float knockbackModifier;
 	/** Lock on variables. If true, then the bullet will search for a target at the moment it is fired */
@@ -152,7 +154,8 @@ public class BulletType extends ShootableType
 				penetratingPower = (Boolean.parseBoolean(split[1].toLowerCase()) ? 1F : 0.7F);
 			else if(split[0].equals("Penetration") || split[0].equals("PenetratingPower"))
 				penetratingPower = Float.parseFloat(split[1]);
-
+			else if(split[0].equals("PenetrationDecay"))
+				penetrationDecay = Float.parseFloat(split[1]);
 			else if(split[0].equals("DragInAir"))
 			{
 				dragInAir = Float.parseFloat(split[1]);
