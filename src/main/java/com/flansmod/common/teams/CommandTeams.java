@@ -62,6 +62,7 @@ public class CommandTeams extends CommandBase {
             TeamsManager.overrideHunger = false;
             TeamsManager.canBreakGuns = true;
             TeamsManager.survivalCanBreakVehicles = true;
+            TeamsManager.survivalCanPlaceVehicles = true;
             TeamsManager.canBreakGlass = true;
             TeamsManager.armourDrops = true;
             TeamsManager.weaponDrops = 1;
@@ -79,6 +80,7 @@ public class CommandTeams extends CommandBase {
             TeamsManager.overrideHunger = true;
             TeamsManager.canBreakGuns = true;
             TeamsManager.survivalCanBreakVehicles = true;
+            TeamsManager.survivalCanPlaceVehicles = true;
             TeamsManager.canBreakGlass = false;
             TeamsManager.armourDrops = false;
             TeamsManager.weaponDrops = 2;
@@ -479,6 +481,15 @@ public class CommandTeams extends CommandBase {
             sender.addChatMessage(new ChatComponentText("Vehicles, Planes, Mechas, AAGuns can " + (TeamsManager.survivalCanBreakVehicles ? "now" : "no longer") + " be broken by players in survival"));
             return;
         }
+        if (split[0].equals("survivalCanPlaceVehicles")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
+                return;
+            }
+            TeamsManager.survivalCanPlaceVehicles = Boolean.parseBoolean(split[1]);
+            sender.addChatMessage(new ChatComponentText("Vehicles, Planes, Mechas, AAGuns can " + (TeamsManager.survivalCanPlaceVehicles ? "now" : "no longer") + " be placed by players in survival"));
+            return;
+        }
         if (split[0].equals("armourDrops") || split[0].equals("armorDrops")) {
             if (split.length != 2) {
                 sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
@@ -719,6 +730,7 @@ public class CommandTeams extends CommandBase {
                     "canBreakGuns",
                     "canBreakGlass",
                     "survivalCanBreakVehicles",
+                    "survivalCanPlaceVehicles",
                     "armourDrops",
                     "weaponDrops",
                     "fuelNeeded",
@@ -803,7 +815,8 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams vehiclesCanZoom <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams leaderboard"));
                 sender.addChatMessage(new ChatComponentText("/teams stats <nickname>"));
-
+                sender.addChatMessage(new ChatComponentText("/teams survivalCanBreakVehicles <true / false>"));
+                sender.addChatMessage(new ChatComponentText("/teams survivalCanPlaceVehicles <true / false>"));
 
                 break;
             }

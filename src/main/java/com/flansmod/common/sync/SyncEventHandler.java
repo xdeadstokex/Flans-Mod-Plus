@@ -20,7 +20,7 @@ public class SyncEventHandler {
         MinecraftServer mc = MinecraftServer.getServer();
         if (mc.isDedicatedServer() && event.player instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP)event.player;
-            FlansMod.getPacketHandler().sendTo(new PacketHashSend(Sync.cachedHash), player);
+            FlansMod.getPacketHandler().sendTo(new PacketHashSend(Sync.getUnifiedHash()), player);
         }
     }
 }

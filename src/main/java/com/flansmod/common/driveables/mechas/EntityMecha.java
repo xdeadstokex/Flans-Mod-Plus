@@ -602,8 +602,7 @@ public class EntityMecha extends EntityDriveable
 		if (!worldObj.isRemote) {
 			checkParts();
 			// If it hit, send a damage update packet
-			FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, 100,
-					dimension);
+			FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(this), posX, posY, posZ, FlansMod.driveableUpdateRange, dimension);
 		}
 
 		return penetratingPower;

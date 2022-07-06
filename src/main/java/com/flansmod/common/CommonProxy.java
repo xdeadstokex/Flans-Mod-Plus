@@ -8,6 +8,7 @@ import com.flansmod.common.guns.ContainerGunModTable;
 import com.flansmod.common.guns.boxes.ContainerGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.network.PacketBreakSound;
+import com.flansmod.common.network.PacketDriveableDamage;
 import com.flansmod.common.paintjob.ContainerPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
@@ -356,6 +357,7 @@ public class CommonProxy {
             part.onFire = false;
             part.dead = false;
             driving.checkParts();
+            FlansMod.packetHandler.sendToAllAround(new PacketDriveableDamage(driving), driving.posX, driving.posY, driving.posZ, FlansMod.driveableUpdateRange, driving.dimension);
         }
     }
 
