@@ -119,7 +119,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     //This one deals with spawning from a vehicle spawner
     public EntityVehicle(World world, double x, double y, double z, VehicleType type, DriveableData data) {
-        super(world, type, data);
+        super(world, type, data,null);
         stepHeight = 1.0F;
         setPosition(x, y, z);
         initType(type, false);
@@ -127,7 +127,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     //This one allows you to deal with spawning from items
     public EntityVehicle(World world, double x, double y, double z, EntityPlayer p, VehicleType type, DriveableData data) {
-        super(world, type, data);
+        super(world, type, data,p);
         placer = p;
         placerName = p.getCommandSenderName();
         stepHeight = 1.0F;

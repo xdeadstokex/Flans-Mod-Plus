@@ -206,6 +206,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     //public ArrayList<EntityPlayer> playerIDs = new ArrayList<EntityPlayer>();
 
+    public EntityPlayer owner = null;
+    public String ownerName = null;
+
     public EntityDriveable(World world) {
         super(world);
         axes = new RotatedAxes();
@@ -222,10 +225,12 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     }
 
 
-    public EntityDriveable(World world, DriveableType t, DriveableData d) {
+    public EntityDriveable(World world, DriveableType t, DriveableData d,EntityPlayer owner) {
         this(world);
         driveableType = t.shortName;
         driveableData = d;
+        this.owner=owner;
+        ownerName=owner.getCommandSenderName();
     }
 
     protected void initType(DriveableType type, boolean clientSide) {
@@ -286,6 +291,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         tag.setFloat("RotationYaw", axes.getYaw());
         tag.setFloat("RotationPitch", axes.getPitch());
         tag.setFloat("RotationRoll", axes.getRoll());
+        tag.setString("Owner",ownerName);
     }
 
     @Override
@@ -298,6 +304,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         prevRotationPitch = tag.getFloat("RotationPitch");
         prevRotationRoll = tag.getFloat("RotationRoll");
         axes = new RotatedAxes(prevRotationYaw, prevRotationPitch, prevRotationRoll);
+        ownerName=tag.getString("Owner");
     }
 
     @Override
@@ -977,6 +984,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         //playerIDs.clear();
         DriveableType type = getDriveableType();
         DriveableData data = getDriveableData();
+        if(owner==null&&ownerName!=null)owner = worldObj.getPlayerEntityByName(ownerName);
         //if(type.fancyCollision)
         //checkCollsionBox();
         hugeBoat = (getDriveableType().floatOnWater && getDriveableType().wheelStepHeight == 0);

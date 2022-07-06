@@ -87,8 +87,8 @@ public class EntityPlane extends EntityDriveable {
         super(world);
     }
 
-    public EntityPlane(World world, double x, double y, double z, PlaneType type, DriveableData data) {
-        super(world, type, data);
+    public EntityPlane(World world, double x, double y, double z, PlaneType type, DriveableData data, EntityPlayer p) {
+        super(world, type, data,p);
         setPosition(x, y, z);
         prevPosX = x;
         prevPosY = y;
@@ -97,7 +97,7 @@ public class EntityPlane extends EntityDriveable {
     }
 
     public EntityPlane(World world, double x, double y, double z, EntityPlayer placer, PlaneType type, DriveableData data) {
-        this(world, x, y + 90 / 16F, z, type, data);
+        this(world, x, y + 90 / 16F, z, type, data,placer);
         rotateYaw(placer.rotationYaw + 90F);
         rotatePitch(type.restingPitch);
     }
