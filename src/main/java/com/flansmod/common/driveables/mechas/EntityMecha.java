@@ -149,9 +149,9 @@ public class EntityMecha extends EntityDriveable
 		isMecha = true;
 	}
 	
-	public EntityMecha(World world, double x, double y, double z, MechaType type, DriveableData data, NBTTagCompound tags) 
+	public EntityMecha(World world, double x, double y, double z, MechaType type, DriveableData data, NBTTagCompound tags, EntityPlayer p)
 	{
-		super(world, type, data);
+		super(world, type, data, p);
 		legAxes = new RotatedAxes();
 		setSize(2F, 3F);
 		stepHeight = 3;
@@ -163,7 +163,7 @@ public class EntityMecha extends EntityDriveable
 	
 	public EntityMecha(World world, double x, double y, double z, EntityPlayer placer, MechaType type, DriveableData data, NBTTagCompound tags) 
 	{
-		this(world, x, y, z, type, data, tags);
+		this(world, x, y, z, type, data, tags, placer);
 		rotateYaw(placer.rotationYaw + 90F);
 		legAxes.rotateGlobalYaw(placer.rotationYaw + 90F);
 		prevLegsYaw = legAxes.getYaw();

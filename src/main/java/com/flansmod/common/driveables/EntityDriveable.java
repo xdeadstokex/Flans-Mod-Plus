@@ -45,11 +45,13 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public abstract class EntityDriveable extends Entity implements IControllable, IExplodeable, IEntityAdditionalSpawnData {
     public boolean syncFromServer = true;
@@ -206,6 +208,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
     //public ArrayList<EntityPlayer> playerIDs = new ArrayList<EntityPlayer>();
 
+    public EntityPlayer owner = null;
+    public String ownerUUID = null;
+
+
     public EntityDriveable(World world) {
         super(world);
         axes = new RotatedAxes();
@@ -222,10 +228,14 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     }
 
 
-    public EntityDriveable(World world, DriveableType t, DriveableData d) {
+    public EntityDriveable(World world, DriveableType t, DriveableData d,EntityPlayer owner) {
         this(world);
         driveableType = t.shortName;
         driveableData = d;
+        if(owner!=null) {
+            this.owner = owner;
+            ownerUUID = owner.getUniqueID().toString();
+        }
     }
 
     protected void initType(DriveableType type, boolean clientSide) {
@@ -286,6 +296,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         tag.setFloat("RotationYaw", axes.getYaw());
         tag.setFloat("RotationPitch", axes.getPitch());
         tag.setFloat("RotationRoll", axes.getRoll());
+        tag.setString("OwnerUUID", ownerUUID);
     }
 
     @Override
@@ -298,6 +309,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         prevRotationPitch = tag.getFloat("RotationPitch");
         prevRotationRoll = tag.getFloat("RotationRoll");
         axes = new RotatedAxes(prevRotationYaw, prevRotationPitch, prevRotationRoll);
+        ownerUUID = tag.getString("OwnerUUID");
     }
 
     @Override
@@ -971,12 +983,25 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         }
     }
 
+    public EntityPlayer getPlayerByUUID(UUID playerID) {
+        if (MinecraftServer.getServer() != null) {
+            for (Object object : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+                EntityPlayerMP player = (EntityPlayerMP) object;
+                if (player.getUniqueID().equals(playerID))
+                    return player;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void onUpdate() {
         super.onUpdate();
         //playerIDs.clear();
         DriveableType type = getDriveableType();
         DriveableData data = getDriveableData();
+        if(owner==null&& ownerUUID !=null)owner = getPlayerByUUID(UUID.fromString(ownerUUID));
         //if(type.fancyCollision)
         //checkCollsionBox();
         hugeBoat = (getDriveableType().floatOnWater && getDriveableType().wheelStepHeight == 0);
