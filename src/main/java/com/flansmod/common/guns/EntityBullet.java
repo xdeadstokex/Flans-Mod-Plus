@@ -65,10 +65,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     private int ticksInAir;
     public BulletType type;
 
-    public ShootableType getType() {
-        return type;
-    }
-
+    public ShootableType getType() { return type; }
     /**
      * What type of weapon did this come from? For death messages
      */
@@ -125,7 +122,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     public boolean initialTick = true;
 
-    public ArrayList<EntityPlayer> hitsPlayers = new ArrayList<EntityPlayer>();
 
     public EntityBullet(World world) {
         super(world);
@@ -279,13 +275,13 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         super.onUpdate();
 
         if (initialTick) {
-            initialSpeed = (float) Math.sqrt((motionX * motionX) + (motionY * motionY) + (motionZ * motionZ));
+            initialSpeed = (float)Math.sqrt((motionX * motionX) + (motionY * motionY) + (motionZ * motionZ));
             initialTick = false;
         }
 
         // Update the ping for hit detection
-        if (!worldObj.isRemote && owner instanceof EntityPlayerMP) {
-            pingOfShooter = ((EntityPlayerMP) owner).ping;
+        if (!worldObj.isRemote && owner instanceof  EntityPlayerMP) {
+            pingOfShooter = ((EntityPlayerMP)owner).ping;
         }
 
         prevPosX = posX;
@@ -446,7 +442,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         // The shooter of this bullet is immune to it for the first second.
                         continue;
                     int snapshotToTry = TeamsManager.bulletSnapshotMin;
-                    float snapshotPortion = pingOfShooter / (float) TeamsManager.bulletSnapshotDivisor;
+                    float snapshotPortion = pingOfShooter / (float)TeamsManager.bulletSnapshotDivisor;
                     if (TeamsManager.bulletSnapshotDivisor > 0) {
                         snapshotToTry += snapshotPortion;
                     }
@@ -466,8 +462,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (snapshot == null)
                         shouldDoNormalHitDetect = true;
                     else {
-                        boolean snapshotBeforeExists = snapshotToTry != 0 && data.snapshots[snapshotToTry - 1] != null;
-                        boolean snapshotAfterExists = snapshotToTry + 1 < data.snapshots.length && data.snapshots[snapshotToTry + 1] != null;
+                        boolean snapshotBeforeExists = snapshotToTry != 0 && data.snapshots[snapshotToTry-1] != null;
+                        boolean snapshotAfterExists = snapshotToTry + 1 < data.snapshots.length && data.snapshots[snapshotToTry+1] != null;
 
                         // -0.5 = before
                         // 0 = centered
@@ -528,7 +524,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         if (hitLambda < 0)
                             hitLambda = -hitLambda;
 
-                        hits.add(new PlayerBulletHit(new PlayerHitbox(player, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f(), EnumHitboxType.BODY), hitLambda));
+                        hits.add(new PlayerBulletHit(new PlayerHitbox(player, new RotatedAxes(), new Vector3f(), new Vector3f(), new Vector3f(),  new Vector3f(), EnumHitboxType.BODY), hitLambda));
                     }
                 }
             } else {
@@ -596,10 +592,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 if (bulletHit instanceof DriveableHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
-                    boolean isFriendly = false;
+                    boolean isFriendly=false;
                     DriveableHit driveableHit = (DriveableHit) bulletHit;
                     driveableHit.driveable.lastAtkEntity = owner;
-                    if (TeamsManager.getInstance().currentRound != null) {
+                    if(TeamsManager.getInstance().currentRound!=null) {
                         for (EntitySeat seat : driveableHit.driveable.seats) {
                             if (seat.riddenByEntity instanceof EntityPlayerMP) {
                                 PlayerData dataDriver = PlayerHandler.getPlayerData((EntityPlayerMP) seat.riddenByEntity);
@@ -610,8 +606,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                             }
                         }
                     }
-                    if (isFriendly) {
-                        penetratingPower = 0;
+                    if(isFriendly){
+                        penetratingPower=0;
                     } else {
                         penetratingPower = driveableHit.driveable.bulletHit(this, driveableHit, penetratingPower);
                     }
@@ -636,20 +632,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                             showCrosshair = true;
                         }
                     }
-                    //double hit fix
+
                     PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
-                    boolean hasHit = false;
-                    for (EntityPlayer player : hitsPlayers) {
-                        if (player != null && player.equals(((PlayerBulletHit) bulletHit).hitbox.player)) {
-                            hasHit = true;
-                        }
-                    }
-                    if (!hasHit) {
-                        hitsPlayers.add(((PlayerBulletHit) bulletHit).hitbox.player);
-                        penetratingPower = playerHit.hitbox.hitByBullet(this, penetratingPower);
-                        if (FlansMod.DEBUG)
-                            worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * playerHit.intersectTime, posY + motionY * playerHit.intersectTime, posZ + motionZ * playerHit.intersectTime), 1000, 1F, 0F, 0F));
-                    }
+                    penetratingPower = playerHit.hitbox.hitByBullet(this, penetratingPower);
+                    if (FlansMod.DEBUG)
+                        worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * playerHit.intersectTime, posY + motionY * playerHit.intersectTime, posZ + motionZ * playerHit.intersectTime), 1000, 1F, 0F, 0F));
                 } else if (bulletHit instanceof EntityHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
@@ -736,25 +723,12 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
                         int sideHit = raytraceResult.sideHit;
                         switch (sideHit) {
-                            case 0:
-                                surfaceNormal = new Vector3f(0, -1, 0);
-                                break;
-                            case 1:
-                                surfaceNormal = new Vector3f(0, 1, 0);
-                                break;
-                            case 2:
-                                surfaceNormal = new Vector3f(0, 0, -1);
-                                break;
-                            case 3:
-                                surfaceNormal = new Vector3f(0, 0, 1);
-                                break;
-                            case 5:
-                                surfaceNormal = new Vector3f(1, 0, 0);
-                                break;
-                            case 4:
-                            default:
-                                surfaceNormal = new Vector3f(-1, 0, 0);
-                                break;
+                            case 0: surfaceNormal = new Vector3f(0, -1, 0); break;
+                            case 1: surfaceNormal = new Vector3f(0, 1, 0); break;
+                            case 2: surfaceNormal = new Vector3f(0, 0, -1); break;
+                            case 3: surfaceNormal = new Vector3f(0, 0, 1); break;
+                            case 5: surfaceNormal = new Vector3f(1, 0, 0); break;
+                            case 4: default: surfaceNormal = new Vector3f(-1, 0, 0); break;
                         }
 
                         if (motion.lengthSquared() < 0.1F * initialSpeed) {
@@ -796,7 +770,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             }
 
             if (showCrosshair && owner instanceof EntityPlayerMP) {
-                FlansMod.getPacketHandler().sendTo(new PacketHitMarker(lastHitHeadshot, lastHitPenAmount, false), (EntityPlayerMP) owner);
+                FlansMod.getPacketHandler().sendTo(new PacketHitMarker(lastHitHeadshot, lastHitPenAmount, false), (EntityPlayerMP)owner);
             }
 
         }
