@@ -1289,7 +1289,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             vehicleStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(vehicleStack.stackTagCompound);
             
-            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, vehicleStack);
+            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, (EntityPlayer)damagesource.getEntity(), vehicleStack);
             MinecraftForge.EVENT_BUS.post(driveableDeathByHandEvent);
             
             if(!driveableDeathByHandEvent.isCanceled()) {

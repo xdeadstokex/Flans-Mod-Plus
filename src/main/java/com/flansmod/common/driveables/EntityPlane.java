@@ -803,7 +803,7 @@ public class EntityPlane extends EntityDriveable {
             planeStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(planeStack.stackTagCompound);
             
-            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, planeStack);
+            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, (EntityPlayer)damagesource.getEntity(), planeStack);
             MinecraftForge.EVENT_BUS.post(driveableDeathByHandEvent);
             
             if(!driveableDeathByHandEvent.isCanceled()) {
