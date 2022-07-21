@@ -3,11 +3,18 @@ package com.flansmod.common.driveables;
 import com.flansmod.client.model.animation.AnimationController;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.network.*;
+import com.flansmod.common.eventhandlers.DriveableDeathByHandEvent;
+import com.flansmod.common.network.PacketDriveableControl;
+import com.flansmod.common.network.PacketDriveableKey;
+import com.flansmod.common.network.PacketParticle;
+import com.flansmod.common.network.PacketPlaneAnimator;
+import com.flansmod.common.network.PacketPlaneControl;
+import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.vector.Matrix4f;
 import com.flansmod.common.vector.Vector3f;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,6 +24,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 public class EntityPlane extends EntityDriveable {
     /**
@@ -794,9 +802,16 @@ public class EntityPlane extends EntityDriveable {
             ItemStack planeStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             planeStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(planeStack.stackTagCompound);
-            entityDropItem(planeStack, 0.5F);
-            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke plane %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
-            setDead();
+            
+            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, planeStack);
+            MinecraftForge.EVENT_BUS.post(driveableDeathByHandEvent);
+            
+            if(!driveableDeathByHandEvent.isCanceled()) {
+            	entityDropItem(planeStack, 0.5F);
+                if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke plane %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
+                setDead();
+            } 
+            
         }
         return super.attackEntityFrom(damagesource, i);
     }
