@@ -108,6 +108,8 @@ public class ItemBullet extends ItemShootable implements IFlanItem, IGunboxDescr
                     lines.add("\u00a79Guidance:" + "\u00a77: " + "LockOn");
                 } else if (type.manualGuidance) {
                     lines.add("\u00a79Guidance:" + "\u00a77: " + "Manual");
+                } else if (type.laserGuidance) {
+                    lines.add("\u00a79Guidance:" + "\u00a77: " + "Laser");
                 } else if (type.weaponType == EnumWeaponType.MISSILE) {
                     lines.add("\u00a79Guidance:" + "\u00a77: " + "Unguided");
                 }

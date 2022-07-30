@@ -347,6 +347,7 @@ This will override the value set in the gun's model!
 | IsDoTopAttack | Boolean | false | Whether to hit from the top of the entitity it's locked on to |
 | PotionEffect | String | ~ | The effects done to the entity hit |
 | ManualGuidance | Boolean | false | Whether this is manually guided |
+| LaserGuidance | Boolean | false | Whether this is laser guided |
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 | FancyDescription | Boolean | true | Whether to display information about the bullet/mag in the description, like a gun. |
