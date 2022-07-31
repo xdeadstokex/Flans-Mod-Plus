@@ -161,6 +161,7 @@ BAB
 | AllowAccessoryAttachments | Bool | false | Allow x attachments to be used with this gun |
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | Shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Shield setup for riot shields |
+| SwitchDelay | Integer | 0 | The time (in ticks) required to draw a weapon |
 
 
 Special note for guns - all animation variables that you can change in the gun's model file can be changed from here as well. Simply:

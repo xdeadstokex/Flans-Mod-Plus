@@ -287,6 +287,29 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayer player = (EntityPlayer) entity;
             PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
+            //Switch Delay
+            if (mc.thePlayer == entity
+                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                    != GunAnimations.lastInventorySlot) {
+                GunAnimations.lastInventorySlot = mc.thePlayer.inventory.currentItem;
+                ItemStack stack = mc.thePlayer.getHeldItem();
+                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+                if (stack != null && stack.getItem() instanceof ItemGun) {
+                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                    if (animationLength == 0) {
+                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                    } else {
+                        animations.switchAnimationProgress = 1;
+                        animations.switchAnimationLength = animationLength;
+                        PlayerHandler
+                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight = Math
+                                .max(PlayerHandler
+                                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight,
+                                        animationLength);
+                    }
+
+                }
+            }
 
             //Play idle sounds
             if (soundDelay <= 0 && type.idleSound != null) {
@@ -393,7 +416,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             if (clientSideShoot(player, itemstack, type, false))
                                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                         }
-                    }
+		    }
                 }
                 IScope currentScope = type.getCurrentScope(itemstack);
 
