@@ -416,8 +416,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             if (clientSideShoot(player, itemstack, type, false))
                                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                         }
-                    }
-                }
+		    }
                 }
                 IScope currentScope = type.getCurrentScope(itemstack);
 
