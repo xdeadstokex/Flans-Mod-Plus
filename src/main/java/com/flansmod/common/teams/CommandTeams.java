@@ -285,25 +285,25 @@ public class CommandTeams extends CommandBase {
                 return;
             }
             PlayerStats info = PlayerStats.getPlayerStatsFromFile(split[1]);
-            if(info==null){
+            if (info == null) {
                 sender.addChatMessage(new ChatComponentText("Player not found/Error reading player info"));
                 return;
             }
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lUsername: "+"\u00a7a\u00a7l"+info.nickname));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lKills: "+"\u00a7a\u00a7l"+info.kills));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lDeaths: "+"\u00a7a\u00a7l"+info.deaths));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lK/D Ratio: "+"\u00a7a\u00a7l"+(double)info.kills/info.deaths));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lRank: "+"\u00a7a\u00a7l"+info.rank));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lAVG: "+"\u00a7a\u00a7l"+info.avg));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMax Kill Distance: "+"\u00a7a\u00a7l"+info.longestKill));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlayed Rounds: "+"\u00a7a\u00a7l"+info.playedRounds));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlaytime: "+"\u00a7a\u00a7l"+info.playTime));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMVP Count: "+"\u00a7a\u00a7l"+info.MVPCount));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Captured: "+"\u00a7a\u00a7l"+info.capturedFlags));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Saved: "+"\u00a7a\u00a7l"+info.savedFlags));
-            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lVehicles Destroyed: "+"\u00a7a\u00a7l"+info.kills));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lUsername: " + "\u00a7a\u00a7l" + info.nickname));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lKills: " + "\u00a7a\u00a7l" + info.kills));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lDeaths: " + "\u00a7a\u00a7l" + info.deaths));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lK/D Ratio: " + "\u00a7a\u00a7l" + (double) info.kills / info.deaths));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lRank: " + "\u00a7a\u00a7l" + info.rank));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lAVG: " + "\u00a7a\u00a7l" + info.avg));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMax Kill Distance: " + "\u00a7a\u00a7l" + info.longestKill));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlayed Rounds: " + "\u00a7a\u00a7l" + info.playedRounds));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lPlaytime: " + "\u00a7a\u00a7l" + info.playTime));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lMVP Count: " + "\u00a7a\u00a7l" + info.MVPCount));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Captured: " + "\u00a7a\u00a7l" + info.capturedFlags));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lFlags Saved: " + "\u00a7a\u00a7l" + info.savedFlags));
+            sender.addChatMessage(new ChatComponentText("\u00a74\u00a7lVehicles Destroyed: " + "\u00a7a\u00a7l" + info.kills));
         }
-        if(split[0].equalsIgnoreCase("leaderboard")){
+        if (split[0].equalsIgnoreCase("leaderboard")) {
             PlayerStats.printLeaderboardExp(sender);
         }
 
@@ -687,6 +687,15 @@ public class CommandTeams extends CommandBase {
 
             return;
         }
+        if (split[0].equals("autoBLTSS")) {
+            if (split.length != 2) {
+                sender.addChatMessage(new ChatComponentText("Incorrect Usage : Should be /teams " + split[0] + " <true/false>"));
+                return;
+            }
+            TeamsManager.autoBLTSS = Boolean.parseBoolean(split[1]);
+            sender.addChatMessage(new ChatComponentText("[BulletDelay] Automatic BLTSS correction " + (TeamsManager.autoBLTSS ? "enabled" : "disabled")));
+            return;
+        }
         if (split[0].equals("showbltss")) {
             sender.addChatMessage(new ChatComponentText("[BulletDelay] Min=" + TeamsManager.bulletSnapshotMin + " : Divisor=" + TeamsManager.bulletSnapshotDivisor));
             return;
@@ -741,6 +750,7 @@ public class CommandTeams extends CommandBase {
                     "vehiclesBreakBlocks",
                     "ping",
                     "bltss",
+                    "autoBLTSS",
                     "showbltss",
                     "vehiclesCanZoom",
                     "leaderboard",
@@ -811,6 +821,7 @@ public class CommandTeams extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("/teams vehiclesBreakBlocks <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams ping <PlayerName>"));
                 sender.addChatMessage(new ChatComponentText("/teams bltss <0 ... 100> <0 ... 1000>"));
+                sender.addChatMessage(new ChatComponentText("/teams autoBLTSS <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams showbltss"));
                 sender.addChatMessage(new ChatComponentText("/teams vehiclesCanZoom <true / false>"));
                 sender.addChatMessage(new ChatComponentText("/teams leaderboard"));
