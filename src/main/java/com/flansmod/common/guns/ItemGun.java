@@ -282,35 +282,34 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
     @SideOnly(Side.CLIENT)
     private void onUpdateClient(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-
-        if (Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer == entity
-                && Minecraft.getMinecraft().thePlayer.inventory.currentItem
-                != GunAnimations.lastInventorySlot) {
-            GunAnimations.lastInventorySlot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-            ItemStack stack = Minecraft.getMinecraft().thePlayer.getHeldItem();
-            GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
-            if (stack != null && stack.getItem() instanceof ItemGun) {
-                float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
-                if (animationLength == 0) {
-                    animations.switchAnimationLength = animations.switchAnimationProgress = 0;
-                } else {
-                    animations.switchAnimationProgress = 1;
-                    animations.switchAnimationLength = animationLength;
-                    PlayerHandler
-                            .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight = Math
-                            .max(PlayerHandler
-                                            .getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT).shootTimeRight,
-                                    animationLength);
-                }
-
-            }
-        }
-
         if (entity instanceof EntityPlayer && ((EntityPlayer) entity).inventory.getCurrentItem() == itemstack) {
             //Get useful objects
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayer player = (EntityPlayer) entity;
             PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
+            //Switch Delay
+            if (mc.thePlayer == entity
+                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                    != GunAnimations.lastInventorySlot) {
+                GunAnimations.lastInventorySlot = mc.thePlayer.inventory.currentItem;
+                ItemStack stack = mc.thePlayer.getHeldItem();
+                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+                if (stack != null && stack.getItem() instanceof ItemGun) {
+                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                    if (animationLength == 0) {
+                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                    } else {
+                        animations.switchAnimationProgress = 1;
+                        animations.switchAnimationLength = animationLength;
+                        PlayerHandler
+                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight = Math
+                                .max(PlayerHandler
+                                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight,
+                                        animationLength);
+                    }
+
+                }
+            }
 
             //Play idle sounds
             if (soundDelay <= 0 && type.idleSound != null) {
@@ -398,14 +397,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
                 //--------------------------------- Main hand item ---------------------------------------------
                 if (type.usableByPlayers) {
-                    GunAnimations animations = FlansModClient.getGunAnimations(player, false);
-//                    animations.lookAt = LookAtState.NONE;
-                    float shootTime = data.shootTimeRight;
-
-                    // For each
-                    while (shootTime <= 0.0f) {
-                        // Add the delay for this shot and shoot it!
-                        shootTime += type.shootDelay;
                     //If we are using a burst mode gun, and there is burst left to be done, try to do it
                     if (type.getFireMode(itemstack) == EnumFireMode.BURST && data.burstRoundsRemainingRight > 0) {
                         if (clientSideShoot(player, itemstack, type, false))
