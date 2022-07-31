@@ -28,6 +28,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.flansmod.api.IEntityBullet;
 import com.flansmod.client.debug.EntityDebugDot;
@@ -36,6 +37,7 @@ import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.eventhandlers.BulletHitEvent;
 import com.flansmod.common.guns.raytracing.BlockHit;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.DriveableHit;
@@ -589,6 +591,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             lastHitHeadshot = false;
 
             for (BulletHit bulletHit : hits) {
+            	BulletHitEvent bulletHitEvent = new BulletHitEvent(this, bulletHit);
+            	MinecraftForge.EVENT_BUS.post(bulletHitEvent);
+            	if(bulletHitEvent.isCanceled()) continue;
+            	
                 if (bulletHit instanceof DriveableHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
@@ -632,13 +638,13 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                             showCrosshair = true;
                         }
                     }
-
+                    
                     PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
                     penetratingPower = playerHit.hitbox.hitByBullet(this, penetratingPower);
                     if (FlansMod.DEBUG)
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * playerHit.intersectTime, posY + motionY * playerHit.intersectTime, posZ + motionZ * playerHit.intersectTime), 1000, 1F, 0F, 0F));
                 } else if (bulletHit instanceof EntityHit) {
-                    if (type.entityHitSoundEnable)
+                	if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
 
                     if (!worldObj.isRemote) {
@@ -673,7 +679,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (FlansMod.DEBUG) {
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * entityHit.intersectTime, posY + motionY * entityHit.intersectTime, posZ + motionZ * entityHit.intersectTime), 1000, 1F, 1F, 0F));
                         FlansMod.log(entityHit.entity.toString() + ": d=" + d + ": damage=" + damage + ": type.damageVsEntity=" + type.damageVsEntity);
-                    }
+                    }    
                 } else if (bulletHit instanceof BlockHit) {
                     BlockHit blockHit = (BlockHit) bulletHit;
                     MovingObjectPosition raytraceResult = blockHit.raytraceResult;
@@ -683,7 +689,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     int zTile = raytraceResult.blockZ;
                     if (FlansMod.DEBUG)
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(raytraceResult.hitVec.xCoord, raytraceResult.hitVec.yCoord, raytraceResult.hitVec.zCoord), 1000, 0F, 1F, 0F));
-
+                    
                     Block block = worldObj.getBlock(xTile, yTile, zTile);
                     Material mat = block.getMaterial();
                     //If the bullet breaks glass, and can do so according to FlansMod, do so.

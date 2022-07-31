@@ -1,6 +1,8 @@
 package com.flansmod.common.driveables;
 
-import cofh.api.energy.IEnergyContainerItem;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.flansmod.api.IControllable;
 import com.flansmod.api.IExplodeable;
 import com.flansmod.client.EntityCamera;
@@ -16,7 +18,17 @@ import com.flansmod.common.driveables.collisions.CollisionPlane;
 import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 import com.flansmod.common.driveables.collisions.CollisionTest;
 import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.guns.*;
+import com.flansmod.common.eventhandlers.GunFiredEvent;
+import com.flansmod.common.guns.EntityBullet;
+import com.flansmod.common.guns.EntityDamageSourceFlans;
+import com.flansmod.common.guns.EntityShootable;
+import com.flansmod.common.guns.EnumFireMode;
+import com.flansmod.common.guns.FlansModExplosion;
+import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.InventoryHelper;
+import com.flansmod.common.guns.ItemBullet;
+import com.flansmod.common.guns.ItemShootable;
+import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.DriveableHit;
 import com.flansmod.common.network.PacketDriveableDamage;
@@ -27,6 +39,8 @@ import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.vector.Vector3f;
+
+import cofh.api.energy.IEnergyContainerItem;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -46,12 +60,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.UUID;
+import net.minecraftforge.common.MinecraftForge;
 
 public abstract class EntityDriveable extends Entity implements IControllable, IExplodeable, IEntityAdditionalSpawnData {
     public boolean syncFromServer = true;
@@ -609,6 +627,10 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
 
         if (!canFire || (isUnderWater() && !type.worksUnderWater)) return;
 
+        GunFiredEvent gunFiredEvent = new GunFiredEvent(this);
+        MinecraftForge.EVENT_BUS.post(gunFiredEvent);
+        if(gunFiredEvent.isCanceled()) return;
+        
         //Check shoot delay
         if (getShootDelay(secondary) <= 0) {
             //We can shoot, so grab the available shoot points and the weaponType
@@ -2558,6 +2580,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     private void killPart(DriveablePart part) {
         if (part.dead)
             return;
+        
         part.health = 0;
         part.dead = true;
 
