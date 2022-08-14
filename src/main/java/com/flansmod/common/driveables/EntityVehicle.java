@@ -1,5 +1,7 @@
 package com.flansmod.common.driveables;
 
+import java.util.List;
+
 import com.flansmod.api.IExplodeable;
 import com.flansmod.client.model.AnimTankTrack;
 import com.flansmod.client.model.AnimTrackLink;
@@ -8,6 +10,7 @@ import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.VehicleType.SmokePoint;
+import com.flansmod.common.eventhandlers.DriveableDeathByHandEvent;
 import com.flansmod.common.network.PacketDriveableKey;
 import com.flansmod.common.network.PacketParticle;
 import com.flansmod.common.network.PacketPlaySound;
@@ -16,6 +19,7 @@ import com.flansmod.common.teams.Team;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.vector.Vector3f;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -27,10 +31,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import java.util.List;
+import net.minecraftforge.common.MinecraftForge;
 
 
 public class EntityVehicle extends EntityDriveable implements IExplodeable {
@@ -119,7 +126,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     //This one deals with spawning from a vehicle spawner
     public EntityVehicle(World world, double x, double y, double z, VehicleType type, DriveableData data) {
-        super(world, type, data);
+        super(world, type, data,null);
         stepHeight = 1.0F;
         setPosition(x, y, z);
         initType(type, false);
@@ -127,7 +134,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     //This one allows you to deal with spawning from items
     public EntityVehicle(World world, double x, double y, double z, EntityPlayer p, VehicleType type, DriveableData data) {
-        super(world, type, data);
+        super(world, type, data,p);
         placer = p;
         placerName = p.getCommandSenderName();
         stepHeight = 1.0F;
@@ -1281,9 +1288,16 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             ItemStack vehicleStack = new ItemStack(type.item, 1, driveableData.paintjobID);
             vehicleStack.stackTagCompound = new NBTTagCompound();
             driveableData.writeToNBT(vehicleStack.stackTagCompound);
-            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke vehicle %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
-            entityDropItem(vehicleStack, 0.5F);
-            setDead();
+            
+            DriveableDeathByHandEvent driveableDeathByHandEvent = new DriveableDeathByHandEvent(this, (EntityPlayer)damagesource.getEntity(), vehicleStack);
+            MinecraftForge.EVENT_BUS.post(driveableDeathByHandEvent);
+            
+            if(!driveableDeathByHandEvent.isCanceled()) {
+	            if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) { FlansMod.log("Player %s broke vehicle %s (%d) at (%f, %f, %f)", ((EntityPlayerMP)damagesource.getEntity()).getDisplayName(), type.shortName, getEntityId(), posX, posY, posZ); }
+	            entityDropItem(vehicleStack, 0.5F);
+	            setDead();
+            }
+            
         }
         return super.attackEntityFrom(damagesource, i);
     }

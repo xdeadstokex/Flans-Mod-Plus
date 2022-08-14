@@ -22,6 +22,7 @@ import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.eventhandlers.GunFiredEvent;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.EntityHit;
 import com.flansmod.common.guns.raytracing.EnumHitboxType;
@@ -74,6 +75,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -287,6 +289,29 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayer player = (EntityPlayer) entity;
             PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
+            //Switch Delay
+            if (mc.thePlayer == entity
+                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                    != GunAnimations.lastInventorySlot) {
+                GunAnimations.lastInventorySlot = mc.thePlayer.inventory.currentItem;
+                ItemStack stack = mc.thePlayer.getHeldItem();
+                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+                if (stack != null && stack.getItem() instanceof ItemGun) {
+                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                    if (animationLength == 0) {
+                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                    } else {
+                        animations.switchAnimationProgress = 1;
+                        animations.switchAnimationLength = animationLength;
+                        PlayerHandler
+                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight = Math
+                                .max(PlayerHandler
+                                                .getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight,
+                                        animationLength);
+                    }
+
+                }
+            }
 
             //Play idle sounds
             if (soundDelay <= 0 && type.idleSound != null) {
@@ -393,7 +418,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             if (clientSideShoot(player, itemstack, type, false))
                                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                         }
-                    }
+		    }
                 }
                 IScope currentScope = type.getCurrentScope(itemstack);
 
@@ -1163,6 +1188,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             //A bullet stack was found, so try shooting with it
             else if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(entityplayer.ridingEntity instanceof EntitySeat)) {
                 //Shoot
+            	GunFiredEvent gunFireEvent = new GunFiredEvent(entityplayer);
+            	MinecraftForge.EVENT_BUS.post(gunFireEvent);
+            	if(gunFireEvent.isCanceled()) return gunStack;
+            	
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;
 

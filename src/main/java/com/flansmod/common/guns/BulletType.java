@@ -114,6 +114,8 @@ public class BulletType extends ShootableType
 	public boolean torpedo = false;
 
 	public boolean fancyDescription = true;
+	
+	public boolean laserGuidance = false;
 
 	/** The static bullets list */
 	
@@ -262,6 +264,8 @@ public class BulletType extends ShootableType
 				hitEffects.add(getPotionEffect(split));
 			else if(split[0].equals("ManualGuidance"))
 				manualGuidance = Boolean.parseBoolean(split[1].toLowerCase());
+			else if(split[0].equals("LaserGuidance"))
+				laserGuidance = Boolean.parseBoolean(split[1].toLowerCase());
 			else if(split[0].equals("LockOnFuse"))
 				lockOnFuse = Integer.parseInt(split[1]);
 			else if(split[0].equals("MaxRange"))

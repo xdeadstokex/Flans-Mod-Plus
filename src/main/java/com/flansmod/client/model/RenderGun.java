@@ -222,6 +222,22 @@ public class RenderGun implements IItemRenderer {
 					GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
 				}
 
+				if (animations.switchAnimationProgress > 0 && animations.switchAnimationLength > 0) {
+
+					Vector3f pos1 = new Vector3f(0, -0.4f, 0);
+					Vector3f pos2 = new Vector3f(0, 0, 0);
+					Vector3f startAngles = new Vector3f(90, 30, -40);
+					Vector3f endAngles = new Vector3f(0, 0, 0);
+					float interp =
+							(animations.switchAnimationProgress + smoothing) / animations.switchAnimationLength;
+
+					GL11.glTranslatef(pos2.x + (pos2.x - pos1.x) * interp,
+							pos1.y + (pos2.y - pos1.y) * interp, pos1.z + (pos2.z - pos1.z) * interp);
+
+					GL11.glRotatef(startAngles.y + (endAngles.y - startAngles.y) * interp, 0f, 1f, 0f);
+					GL11.glRotatef(startAngles.z + (endAngles.z - startAngles.z) * interp, 0f, 0f, 1f);
+				}
+
 				if (animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
 				{
 					Vector3f meleePos = gunType.meleePath.get(animations.meleeAnimationProgress);

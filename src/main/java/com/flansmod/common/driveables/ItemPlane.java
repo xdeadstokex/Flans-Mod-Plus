@@ -156,7 +156,7 @@ public class ItemPlane extends Item implements IPaintableItem {
     public Entity spawnPlane(World world, double x, double y, double z, ItemStack stack) {
         DriveableData data = getPlaneData(stack, world);
         if (data != null) {
-            Entity entity = new EntityPlane(world, x, y, z, type, data);
+            Entity entity = new EntityPlane(world, x, y, z, type, data,null);
             if (!world.isRemote) {
                 world.spawnEntityInWorld(entity);
             }

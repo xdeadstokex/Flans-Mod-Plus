@@ -4,6 +4,7 @@ import com.flansmod.api.IControllable;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
+import com.flansmod.common.eventhandlers.PlayerEnterSeatEvent;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.network.*;
 import com.flansmod.common.teams.TeamsManager;
@@ -25,6 +26,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
 
@@ -711,10 +713,15 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
     @Override
     public boolean interactFirst(EntityPlayer entityplayer) //interact : change back when Forge updates
     {
-        if (isDead)
+    	if (isDead)
             return false;
         if (worldObj.isRemote)
             return false;
+        
+        PlayerEnterSeatEvent playerEnterSeatEvent = new PlayerEnterSeatEvent(this, entityplayer);
+        MinecraftForge.EVENT_BUS.post(playerEnterSeatEvent);
+        if(playerEnterSeatEvent.isCanceled()) return false;
+        
         //If they are using a repair tool, don't put them in
         ItemStack currentItem = entityplayer.getCurrentEquippedItem();
         if (currentItem != null && currentItem.getItem() instanceof ItemTool && ((ItemTool) currentItem.getItem()).type.healDriveables)

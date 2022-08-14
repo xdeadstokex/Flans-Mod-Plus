@@ -28,6 +28,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.flansmod.api.IEntityBullet;
 import com.flansmod.client.debug.EntityDebugDot;
@@ -36,6 +37,7 @@ import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.eventhandlers.BulletHitEvent;
 import com.flansmod.common.guns.raytracing.BlockHit;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.DriveableHit;
@@ -589,6 +591,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             lastHitHeadshot = false;
 
             for (BulletHit bulletHit : hits) {
+            	BulletHitEvent bulletHitEvent = new BulletHitEvent(this, bulletHit);
+            	MinecraftForge.EVENT_BUS.post(bulletHitEvent);
+            	if(bulletHitEvent.isCanceled()) continue;
+            	
                 if (bulletHit instanceof DriveableHit) {
                     if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
@@ -632,13 +638,13 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                             showCrosshair = true;
                         }
                     }
-
+                    
                     PlayerBulletHit playerHit = (PlayerBulletHit) bulletHit;
                     penetratingPower = playerHit.hitbox.hitByBullet(this, penetratingPower);
                     if (FlansMod.DEBUG)
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * playerHit.intersectTime, posY + motionY * playerHit.intersectTime, posZ + motionZ * playerHit.intersectTime), 1000, 1F, 0F, 0F));
                 } else if (bulletHit instanceof EntityHit) {
-                    if (type.entityHitSoundEnable)
+                	if (type.entityHitSoundEnable)
                         PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
 
                     if (!worldObj.isRemote) {
@@ -673,7 +679,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     if (FlansMod.DEBUG) {
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(posX + motionX * entityHit.intersectTime, posY + motionY * entityHit.intersectTime, posZ + motionZ * entityHit.intersectTime), 1000, 1F, 1F, 0F));
                         FlansMod.log(entityHit.entity.toString() + ": d=" + d + ": damage=" + damage + ": type.damageVsEntity=" + type.damageVsEntity);
-                    }
+                    }    
                 } else if (bulletHit instanceof BlockHit) {
                     BlockHit blockHit = (BlockHit) bulletHit;
                     MovingObjectPosition raytraceResult = blockHit.raytraceResult;
@@ -683,7 +689,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     int zTile = raytraceResult.blockZ;
                     if (FlansMod.DEBUG)
                         worldObj.spawnEntityInWorld(new EntityDebugDot(worldObj, new Vector3f(raytraceResult.hitVec.xCoord, raytraceResult.hitVec.yCoord, raytraceResult.hitVec.zCoord), 1000, 0F, 1F, 0F));
-
+                    
                     Block block = worldObj.getBlock(xTile, yTile, zTile);
                     Material mat = block.getMaterial();
                     //If the bullet breaks glass, and can do so according to FlansMod, do so.
@@ -934,6 +940,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             } else if (lockedOnTo != null && lockedOnTo.getEntityData().getBoolean("FlareUsing")) {
                 lockedOnTo = null;
             }
+        } else if (type.laserGuidance) {
+            MovingObjectPosition mop = getSpottedPoint((EntityLivingBase) owner, 1F, type.maxRangeOfMissile, false);
+            if (mop != null) {
+                applyLaserGuidance(new Vector3f(mop.blockX, mop.blockY, mop.blockZ), motion);
+            }
         }
 
         //FlansMod.log((int)posX+","+(int)posY+","+(int)posZ);
@@ -1090,6 +1101,52 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         //Temporary fire glitch fix
         if (worldObj.isRemote)
             extinguish();
+    }
+
+    private static MovingObjectPosition getSpottedPoint(EntityLivingBase entity_base, float fasc, double dist, boolean interact) {
+        Vec3 vec3 = Vec3.createVectorHelper(entity_base.posX, entity_base.posY + entity_base.getEyeHeight(), entity_base.posZ);
+        Vec3 vec31 = entity_base.getLook(fasc);
+        Vec3 vec32 = vec3.addVector(vec31.xCoord * dist, vec31.yCoord * dist, vec31.zCoord * dist);
+        return entity_base.worldObj.rayTraceBlocks(vec3, vec32, interact);
+    }
+
+    private void applyLaserGuidance(Vector3f targetPos, Vector3f motion) {
+        if (this.ticksExisted > type.tickStartHoming) {
+            double dX = targetPos.x - posX;
+            double dY = targetPos.y - posY;
+            double dZ = targetPos.z - posZ;
+            double dXYZ;
+            float f = (float) (this.posX - targetPos.x);
+            float f1 = (float) (this.posY - targetPos.y);
+            float f2 = (float) (this.posZ - targetPos.z);
+            dXYZ = MathHelper.sqrt_float(f * f + f1 * f1 + f2 * f2);
+            if (this.toggleLock) {
+                if (dXYZ > type.maxRangeOfMissile)
+                    targetPos = null;
+                toggleLock = false;
+            }
+            double dmotion = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+            Vector3f motionVector = new Vector3f(dX * dmotion / dXYZ, dY * dmotion / dXYZ, dZ * dmotion / dXYZ);
+            double angle = Math.abs(Vector3f.angle(motion, motionVector));
+            if (angle > Math.toRadians(type.maxDegreeOfMissile)) {
+                targetPos = null;
+            } else {
+                motionX = motionVector.x;
+                motionY = motionVector.y;
+                motionZ = motionVector.z;
+            }
+
+            if (this.ticksExisted > 4 && dXYZ > getPrevDistanceToTarget) {
+                closeCount++;
+                if (closeCount > 15) {
+                    targetPos = null;
+                }
+            } else {
+                if (closeCount > 0)
+                    closeCount--;
+            }
+            getPrevDistanceToTarget = dXYZ;
+        }
     }
 
     @SideOnly(Side.CLIENT)
