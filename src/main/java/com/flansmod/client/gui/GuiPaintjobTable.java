@@ -1,6 +1,8 @@
 package com.flansmod.client.gui;
 
+import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.lwjgl.input.Mouse;
@@ -276,8 +278,19 @@ public class GuiPaintjobTable extends GuiContainer
             if(gunStack != null && gunStack.getItem() instanceof IPaintableItem)
             {
             	PaintableType gunType = ((IPaintableItem)gunStack.getItem()).GetPaintableType();
-            	
-            	int numPaintjobs = gunType.paintjobs.size();
+
+				ArrayList<Paintjob> availablePaintjobs = new ArrayList<>();
+
+				if (gunType.addAnyPaintjobToTables)
+				{
+					for (Paintjob paintjob : gunType.paintjobs) {
+						if (paintjob.addToTables) {
+							availablePaintjobs.add(paintjob);
+						}
+					}
+				}
+
+            	int numPaintjobs = availablePaintjobs.size();
             	int numRows = numPaintjobs / 9 + 1;
             	
                 for(int y = 0; y < numRows; y++)
@@ -288,7 +301,7 @@ public class GuiPaintjobTable extends GuiContainer
                 		if(9 * y + x >= numPaintjobs)
                 			continue;
                 		
-                		Paintjob paintjob = gunType.paintjobs.get(9 * y + x);
+                		Paintjob paintjob = availablePaintjobs.get(9 * y + x);
                 		ItemStack stack = gunStack.copy();
                 		stack.setItemDamage(paintjob.ID);
                 		itemRender.renderItemIntoGUI(mc.fontRenderer, mc.getTextureManager(), stack, xOrigin + 8 + x * 18, yOrigin + 130 + y * 18);
@@ -495,7 +508,19 @@ public class GuiPaintjobTable extends GuiContainer
 	        if(gunStack != null && gunStack.getItem() instanceof IPaintableItem)
 	        {
 	        	PaintableType paintableType = ((IPaintableItem)gunStack.getItem()).GetPaintableType();
-	        	int numPaintjobs = paintableType.paintjobs.size();
+
+				ArrayList<Paintjob> availablePaintjobs = new ArrayList<>();
+
+				if (paintableType.addAnyPaintjobToTables)
+				{
+					for (Paintjob paintjob : paintableType.paintjobs) {
+						if (paintjob.addToTables) {
+							availablePaintjobs.add(paintjob);
+						}
+					}
+				}
+
+	        	int numPaintjobs = availablePaintjobs.size();
 	        	int numRows = numPaintjobs / 9 + 1;
 	        	
 	            for(int j = 0; j < numRows; j++)
@@ -505,7 +530,7 @@ public class GuiPaintjobTable extends GuiContainer
 	            		if(9 * j + i >= numPaintjobs)
 	            			continue;
 	            		
-	            		Paintjob paintjob = paintableType.paintjobs.get(9 * j + i);
+	            		Paintjob paintjob = availablePaintjobs.get(9 * j + i);
 	            		ItemStack stack = gunStack.copy();
                         try {
 	            		 stack.getTagCompound().setString("Paint", paintjob.iconName);

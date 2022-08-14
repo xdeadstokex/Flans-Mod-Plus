@@ -30,7 +30,8 @@ BAB
 |-------------|------------------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Paintjob | iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Sets up a new paintjob with the dyes required dyeDamage is optional and I'm not entirely sure how that works. The dye setup in [] can be repeated. (you don't need to add the []) |
 | AdvPaintjob | displayName iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Creates an advanced paintjob |
-
+| AddPaintableToTables | bool | true | Whether any (other than default) skins should be added to the gun mod table/paintable table. |
+| AddPaintableToTables | textureName true/false | true | Whether an individual texture should be added to the tables. |
 ### [GunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GunType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
 | Keyword | Type | Default | Purpose |
 |-----------------------------|------------|----------------|-------------------------------------------------------------------------------------------|
