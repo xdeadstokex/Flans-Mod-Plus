@@ -134,7 +134,6 @@ public class TeamsManager {
     public static boolean allowVehicleZoom;
     public static int bulletSnapshotMin = 0;
     public static int bulletSnapshotDivisor = 50;
-    public static boolean autoBLTSS = false;
 
     //Disused. Delete when done
     public GameType currentGameType;
@@ -170,12 +169,16 @@ public class TeamsManager {
 
     public void reset() {
         currentGameType = null;
+        //currentMap = TeamsMap.def;
         teams = null;
+
         currentRound = null;
+
         bases = new ArrayList<>();
         objects = new ArrayList<>();
         maps = new HashMap<>();
         rounds = new ArrayList<>();
+
         rotation = new ArrayList<>();
     }
 
@@ -184,30 +187,7 @@ public class TeamsManager {
     }
 
     public void tick() {
-        //Correct BLTSS every 30 seconds
-        if (time % 600 == 0) {
-            if(autoBLTSS){
-                int ping_sum = 0;
-                int ping_cnt = 0;
-                int ping_min = Integer.MAX_VALUE;
-                List<EntityPlayerMP> list = TeamsManager.getPlayers();
-                for (EntityPlayer player : list) {
-                    if (player instanceof EntityPlayerMP) {
-                        EntityPlayerMP pm = (EntityPlayerMP) player;
-                        if (pm.ping > 0 && pm.ping<130) {
-                            ping_sum += pm.ping;
-                            ping_cnt++;
-                            if(pm.ping<ping_min)ping_min=pm.ping;
-                        }
-                    }
-                }
-                if(ping_cnt>0){
-                    TeamsManager.bulletSnapshotMin=ping_min;
-                    TeamsManager.bulletSnapshotDivisor=ping_sum / ping_cnt;
-                }
-            }
-        }
-        //------
+        //Send a full team info update to players every 2 seconds.
         if (time % 40 == 0) {
             FlansMod.getPacketHandler().sendToAll(new PacketTeamInfo());
             showTeamsMenuToAll(true);
