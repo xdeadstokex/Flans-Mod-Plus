@@ -124,6 +124,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     public boolean initialTick = true;
 
+    private double getPrevDistanceToTarget;
 
     public EntityBullet(World world) {
         super(world);
