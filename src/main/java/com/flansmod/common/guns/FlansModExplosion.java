@@ -192,10 +192,12 @@ public class FlansModExplosion extends Explosion
                     else if(entity instanceof EntityWheel)
                     {
                     	entityDriveable = ((EntityWheel) entity).vehicle;
+                    	damage *= FlansMod.vehicleWheelSeatExplosionModifier;
                     }
                     else if(entity instanceof EntitySeat)
                     {
                     	entityDriveable = ((EntitySeat) entity).driveable;
+						damage *= FlansMod.vehicleWheelSeatExplosionModifier;
                     }
 
                     if(entityDriveable instanceof EntityPlane)      damage *= damageVsPlane;
