@@ -20,6 +20,7 @@ import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class GuiGunModTable extends GuiContainer {
@@ -151,9 +152,21 @@ public class GuiGunModTable extends GuiContainer {
                 }
             }
 
+            ArrayList<Paintjob> applicablePaintjobs = new ArrayList<>();
+
+            if (gunType.addAnyPaintjobToTables)
+            {
+                for (Paintjob paintjob : gunType.paintjobs)
+                {
+                    if (paintjob.addToTables)
+                    {
+                        applicablePaintjobs.add(paintjob);
+                    }
+                }
+            }
 
             //For Paintjobs
-            int numPaintjobs = gunType.paintjobs.size();
+            int numPaintjobs = applicablePaintjobs.size();
             int numRows = numPaintjobs / 2 + 1;
 
             for (int y = 0; y < numRows; y++) {
@@ -173,7 +186,7 @@ public class GuiGunModTable extends GuiContainer {
                     if (2 * y + x >= numPaintjobs)
                         continue;
 
-                    Paintjob paintjob = gunType.paintjobs.get(2 * y + x);
+                    Paintjob paintjob = applicablePaintjobs.get(2 * y + x);
                     ItemStack stack = gunStack.copy();
                     stack.setItemDamage(paintjob.ID);
                     itemRender.renderItemIntoGUI(mc.fontRenderer, mc.getTextureManager(), stack, xOrigin + 182 + (x * 18), yOrigin + 151 + (y * 18));
@@ -296,7 +309,21 @@ public class GuiGunModTable extends GuiContainer {
         ItemStack gunStack = inventorySlots.getSlot(0).getStack();
         if (gunStack != null && gunStack.getItem() instanceof ItemGun) {
             GunType gunType = ((ItemGun) gunStack.getItem()).type;
-            int numPaintjobs = gunType.paintjobs.size();
+
+            ArrayList<Paintjob> applicablePaintjobs = new ArrayList<>();
+
+            if (gunType.addAnyPaintjobToTables)
+            {
+                for (Paintjob paintjob : gunType.paintjobs)
+                {
+                    if (paintjob.addToTables)
+                    {
+                        applicablePaintjobs.add(paintjob);
+                    }
+                }
+            }
+
+            int numPaintjobs = applicablePaintjobs.size();
             int numRows = numPaintjobs / 2 + 1;
 
             for (int j = 0; j < numRows; j++) {
@@ -304,7 +331,7 @@ public class GuiGunModTable extends GuiContainer {
                     if (2 * j + i >= numPaintjobs)
                         continue;
 
-                    Paintjob paintjob = gunType.paintjobs.get(2 * j + i);
+                    Paintjob paintjob = applicablePaintjobs.get(2 * j + i);
                     int slotX = 181 + i * 18;
                     int slotY = 150 + j * 18;
                     if (mouseXInGUI >= slotX && mouseXInGUI < slotX + 18 && mouseYInGUI >= slotY && mouseYInGUI < slotY + 18)

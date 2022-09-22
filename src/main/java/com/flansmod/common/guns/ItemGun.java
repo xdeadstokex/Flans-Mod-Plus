@@ -22,6 +22,7 @@ import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
+import com.flansmod.common.eventhandlers.GunFiredEvent;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.EntityHit;
 import com.flansmod.common.guns.raytracing.EnumHitboxType;
@@ -74,6 +75,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -1171,7 +1173,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     else if (gunType.reloadSound != null)
                         soundToPlay = gunType.reloadSound;
 
-                    if (soundToPlay != null && type.getNumAmmoItemsInGun(gunStack) == 1) {
+                    if (soundToPlay != null) {
                         PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ,
                                 type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
                     }
@@ -1186,6 +1188,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             //A bullet stack was found, so try shooting with it
             else if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(entityplayer.ridingEntity instanceof EntitySeat)) {
                 //Shoot
+            	GunFiredEvent gunFireEvent = new GunFiredEvent(entityplayer);
+            	MinecraftForge.EVENT_BUS.post(gunFireEvent);
+            	if(gunFireEvent.isCanceled()) return gunStack;
+            	
                 shoot(gunStack, gunType, world, bulletStack, entityplayer, left);
                 canClick = true;
 

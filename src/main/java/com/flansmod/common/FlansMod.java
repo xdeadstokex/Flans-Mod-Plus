@@ -130,6 +130,7 @@ public class FlansMod {
     public static boolean showItemDescriptions = true;
     public static boolean showMuzzleFlashParticlesDefault = true;
     public static boolean showFlashesWhenWounded = true;
+    public static float vehicleWheelSeatExplosionModifier = 1F;
 
     public static int armourSpawnRate = 20;
 
@@ -694,6 +695,7 @@ public class FlansMod {
         seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default (Synced)", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
+        vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -728,7 +730,7 @@ public class FlansMod {
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
-	crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+	    crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
@@ -747,6 +749,7 @@ public class FlansMod {
         seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
+        vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

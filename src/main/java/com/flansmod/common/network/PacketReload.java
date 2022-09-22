@@ -1,6 +1,7 @@
 package com.flansmod.common.network;
 
 import com.flansmod.common.guns.*;
+import com.flansmod.common.teams.TeamsManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,7 +93,7 @@ public class PacketReload extends PacketBase {
 
             if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left)) {
                 float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
-                if(!data.reloadedAfterRespawn){
+                if(!data.reloadedAfterRespawn && TeamsManager.getInstance().currentMap != null){
                     reloadTime=0;
                     data.reloadedAfterRespawn=true;
                 }
