@@ -195,7 +195,7 @@ public class PlayerHitbox {
             damageModifier *= 2F;
             bullet.lastHitHeadshot = true;
         } else if(type == EnumHitboxType.LEGS) {
-            damageModifier *=0.6F;
+            damageModifier *=0.5F;
         }
         switch (type) {
             case LEGS:
