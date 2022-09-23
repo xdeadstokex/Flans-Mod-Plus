@@ -603,7 +603,8 @@ public class EntityAAGun extends Entity implements IEntityAdditionalSpawnData
 						if(!entityplayer.capabilities.isCreativeMode)
 							entityplayer.inventory.decrStackSize(slot, 1);
 						reloadTimer = type.reloadTime;
-						worldObj.playSoundAtEntity(this, type.reloadSound, 1.0F, 1.0F / (rand.nextFloat() * 0.4F + 0.8F));
+						//PacketPlaySound.sendSoundPacket(this.posX, this.posY, this.posZ, 50, this.dimension, type.reloadSound, true);
+						//worldObj.playSoundAtEntity(this, type.reloadSound, 1.0F, 1.0F / (rand.nextFloat() * 0.4F + 0.8F));
 					}
 				}
 			}
