@@ -101,13 +101,6 @@ public class ModelVehicle extends ModelDriveable {
     // Change speed of leg movement depending on throttle
     public boolean legSpeedChange = true;
 
-    // Leg stuff: Animation state
-    private float lastRelSpeedRight = 0F;
-    private float lastRelSpeedLeft = 0F;
-
-    private float legAnimPosRight = 0;
-    private float legAnimPosLeft = 0;
-
     @Override
     public void render(EntityDriveable driveable, float f1) {
         render(0.0625F, (EntityVehicle) driveable, f1);
@@ -242,11 +235,11 @@ public class ModelVehicle extends ModelDriveable {
         animFrameRight = vehicle.animFrameRight;
 
         float bias = 0.1F;
-        lastRelSpeedRight = (lastRelSpeedRight * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 - (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
-        lastRelSpeedLeft = (lastRelSpeedLeft * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 + (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+        vehicle.lastRelSpeedRight = (vehicle.lastRelSpeedRight * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 - (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+        vehicle.lastRelSpeedLeft = (vehicle.lastRelSpeedLeft * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 + (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
 
-        float scaleRight = lastRelSpeedRight;
-        float scaleLeft = lastRelSpeedLeft;
+        float scaleRight = vehicle.lastRelSpeedRight;
+        float scaleLeft = vehicle.lastRelSpeedLeft;
         float adjScaleRight = Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight;
         float adjScaleLeft = Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft;
 
@@ -256,14 +249,14 @@ public class ModelVehicle extends ModelDriveable {
         scaleRight = scaleRight > 0.01 ? scaleRight : 0;
         scaleLeft = scaleLeft > 0.01 ? scaleLeft : 0;
 
-        legAnimPosRight += adjScaleRight * f;
-        legAnimPosLeft += adjScaleLeft * f;
+        vehicle.legAnimPosRight += adjScaleRight * f;
+        vehicle.legAnimPosLeft += adjScaleLeft * f;
 
-        float frLegYaw = (float)Math.sin((legAnimPosRight + 3.14 * 0.5) * legMoveSpeed) * scaleRight * legMaxMove;
-        float brLegYaw = (float)Math.sin((legAnimPosRight + 3.14 * 1.5) * legMoveSpeed) * scaleRight * legMaxMove;
+        float frLegYaw = (float)Math.sin((vehicle.legAnimPosRight + 3.14 * 0) * legMoveSpeed) * scaleRight * legMaxMove;
+        float brLegYaw = (float)Math.sin((vehicle.legAnimPosRight + 3.14 * 1.5) * legMoveSpeed) * scaleRight * legMaxMove;
 
-        float flLegYaw = (float)Math.sin((legAnimPosLeft) * legMoveSpeed) * scaleLeft * legMaxMove;
-        float blLegYaw = (float)Math.sin((legAnimPosLeft) * legMoveSpeed) * scaleLeft * legMaxMove;
+        float flLegYaw = (float)Math.sin((vehicle.legAnimPosLeft + 3.14 * 1) * legMoveSpeed) * scaleLeft * legMaxMove;
+        float blLegYaw = (float)Math.sin((vehicle.legAnimPosLeft + 3.14 * 2.5) * legMoveSpeed) * scaleLeft * legMaxMove;
 
         //Rendering the body
         if (vehicle.isPartIntact(EnumDriveablePart.core)) {
