@@ -240,8 +240,12 @@ public class ModelVehicle extends ModelDriveable {
 
         float scaleRight = vehicle.lastRelSpeedRight;
         float scaleLeft = vehicle.lastRelSpeedLeft;
-        float adjScaleRight = Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight;
-        float adjScaleLeft = Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft;
+        float adjScaleRight = legSpeedChange ?
+                (Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight) :
+                (scaleRight * vehicle.throttle);
+        float adjScaleLeft = legSpeedChange ?
+                (Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft) :
+                (scaleLeft * vehicle.throttle);
 
         scaleRight = (float)Math.sqrt(Math.abs(scaleRight));
         scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft));
@@ -252,11 +256,11 @@ public class ModelVehicle extends ModelDriveable {
         vehicle.legAnimPosRight += adjScaleRight * f;
         vehicle.legAnimPosLeft += adjScaleLeft * f;
 
-        float frLegYaw = (float)Math.sin((vehicle.legAnimPosRight + 3.14 * 0) * legMoveSpeed) * scaleRight * legMaxMove;
-        float brLegYaw = (float)Math.sin((vehicle.legAnimPosRight + 3.14 * 1.5) * legMoveSpeed) * scaleRight * legMaxMove;
+        float frLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 0  ) * scaleRight * legMaxMove;
+        float brLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 1.5) * scaleRight * legMaxMove;
 
-        float flLegYaw = (float)Math.sin((vehicle.legAnimPosLeft + 3.14 * 1) * legMoveSpeed) * scaleLeft * legMaxMove;
-        float blLegYaw = (float)Math.sin((vehicle.legAnimPosLeft + 3.14 * 2.5) * legMoveSpeed) * scaleLeft * legMaxMove;
+        float flLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 1  ) * scaleLeft * legMaxMove;
+        float blLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 2.5) * scaleLeft * legMaxMove;
 
         //Rendering the body
         if (vehicle.isPartIntact(EnumDriveablePart.core)) {
