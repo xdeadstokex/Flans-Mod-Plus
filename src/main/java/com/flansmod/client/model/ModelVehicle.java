@@ -242,13 +242,13 @@ public class ModelVehicle extends ModelDriveable {
         float scaleLeft = vehicle.lastRelSpeedLeft;
         float adjScaleRight = legSpeedChange ?
                 (Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight) :
-                (scaleRight * vehicle.throttle);
+                (scaleRight);
         float adjScaleLeft = legSpeedChange ?
                 (Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft) :
-                (scaleLeft * vehicle.throttle);
+                (scaleLeft);
 
-        scaleRight = (float)Math.sqrt(Math.abs(scaleRight));
-        scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft));
+        scaleRight = (float)Math.sqrt(Math.abs(scaleRight)) * (legSpeedChange ? 1 : Math.abs(vehicle.throttle));
+        scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft)) * (legSpeedChange ? 1 : Math.abs(vehicle.throttle));
 
         scaleRight = scaleRight > 0.01 ? scaleRight : 0;
         scaleLeft = scaleLeft > 0.01 ? scaleLeft : 0;
