@@ -101,6 +101,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     public boolean deployedSmoke = false;
 
+    // Leg stuff: Animation state
+    public float lastRelSpeedRight = 0F;
+    public float lastRelSpeedLeft = 0F;
+
+    public float legAnimPosRight = 0;
+    public float legAnimPosLeft = 0;
 
     //Dangerous sentry stuff
     /**
