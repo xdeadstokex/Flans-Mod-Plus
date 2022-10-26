@@ -1,7 +1,8 @@
 package com.flansmod.client;
 
 import com.flansmod.client.gui.GuiSelectAmmo;
-import com.flansmod.common.network.PacketGetPlayerClasses;
+import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.network.*;
 import org.lwjgl.input.Keyboard;
 
 import com.flansmod.api.IControllable;
@@ -9,9 +10,6 @@ import com.flansmod.client.gui.GuiModOptions;
 import com.flansmod.client.gui.GuiTeamScores;
 import com.flansmod.client.gui.GuiTeamSelect;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.network.PacketGunMode;
-import com.flansmod.common.network.PacketReload;
-import com.flansmod.common.network.PacketRequestDebug;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -56,6 +54,8 @@ public class KeyInputHandler {
     public static KeyBinding secondaryKey = new KeyBinding("Select Gun Underbarrel", Keyboard.KEY_K, "Flan's Mod");
     //public static KeyBinding zoomKey = new KeyBinding("Zoom Key", 2 - 100, "Flan's Mod");
     public static KeyBinding optionsKey = new KeyBinding("Mod Options", Keyboard.KEY_SEMICOLON, "Flan's Mod");
+    public static KeyBinding increaseZoom = new KeyBinding("Increase Scope Zoom", Keyboard.KEY_UP, "Flan's Mod");
+    public static KeyBinding decreaseZoom = new KeyBinding("Decrease Scope Zoom", Keyboard.KEY_DOWN, "Flan's Mod");
 
     Minecraft mc;
 
@@ -89,6 +89,8 @@ public class KeyInputHandler {
         ClientRegistry.registerKeyBinding(optionsKey);
         //ClientRegistry.registerKeyBinding(zoomKey);
         ClientRegistry.registerKeyBinding(secondaryKey);
+        ClientRegistry.registerKeyBinding(increaseZoom);
+        ClientRegistry.registerKeyBinding(decreaseZoom);
 
         mc = Minecraft.getMinecraft();
     }
@@ -102,6 +104,20 @@ public class KeyInputHandler {
         Entity ridingEntity = player.ridingEntity;
 
         //Handle universal keys
+        if(increaseZoom.isPressed()){
+            if(mc.thePlayer.getHeldItem()!=null&&mc.thePlayer.getHeldItem().getItem() instanceof ItemGun){
+                ItemGun gun = (ItemGun) mc.thePlayer.getHeldItem().getItem();
+                if(gun.type.getCurrentScope(mc.thePlayer.getHeldItem()).hasVariableZoom())
+                    FlansMod.getPacketHandler().sendToServer(new PacketIncreaseZoom());
+            }
+        }
+        if(decreaseZoom.isPressed()){
+            if(mc.thePlayer.getHeldItem()!=null&&mc.thePlayer.getHeldItem().getItem() instanceof ItemGun){
+                ItemGun gun = (ItemGun) mc.thePlayer.getHeldItem().getItem();
+                if(gun.type.getCurrentScope(mc.thePlayer.getHeldItem()).hasVariableZoom())
+                    FlansMod.getPacketHandler().sendToServer(new PacketDecreaseZoom());
+            }
+        }
         if (teamsMenuKey.isPressed()) {
             mc.displayGuiScreen(new GuiTeamSelect());
             return;
