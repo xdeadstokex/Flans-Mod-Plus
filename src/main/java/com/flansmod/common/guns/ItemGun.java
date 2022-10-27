@@ -430,7 +430,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 								isSlow = true;*/
                             FlansModClient.currentScope = currentScope;
                             FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?2F:currentScope.getFOVFactor();
+                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
                             float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
                             gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
@@ -474,7 +474,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 								isSlow = true;*/
                             FlansModClient.currentScope = currentScope;
                             FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?2F:currentScope.getFOVFactor();
+                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
                             float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
                             gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
