@@ -172,8 +172,7 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         registerPacket(PacketGetPlayerClasses.class);
         registerPacket(PacketSendPlayerClasses.class);
         registerPacket(PacketRespawnFinished.class);
-        registerPacket(PacketIncreaseZoom.class);
-        registerPacket(PacketDecreaseZoom.class);
+        registerPacket(PacketChangeZoom.class);
 
     }
 
