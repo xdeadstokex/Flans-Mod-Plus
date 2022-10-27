@@ -421,7 +421,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 		    }
                 }
                 IScope currentScope = type.getCurrentScope(itemstack);
-
                 if (FlansModClient.aimType == AimType.TOGGLE) {
                     if (!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null) {
                         if (FlansModClient.currentScope == null) {
@@ -430,10 +429,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 							if(type.allowSlow)
 								isSlow = true;*/
                             FlansModClient.currentScope = currentScope;
-                            FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+                            FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
+                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
                             float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
                             gameSettings.thirdPersonView = 0;
 
@@ -474,10 +473,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 							if(type.allowSlow)
 								isSlow = true;*/
                             FlansModClient.currentScope = currentScope;
-                            FlansModClient.lastZoomLevel = currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.getFOVFactor();
+                            FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
+                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
                             float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.getZoomFactor());
+                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
                             FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
                             gameSettings.thirdPersonView = 0;
 
@@ -510,14 +509,50 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         }
                     }
                 }
-
-
             }
         }
         if (soundDelay > 0) {
             soundDelay--;
         }
     }
+    public void increaseZoom(ItemStack gun){
+        if(getCurrentVariableZoom(gun)<type.getCurrentScope(gun).getMaxZoom()){
+            setVariableZoom(gun,getCurrentVariableZoom(gun)+type.getCurrentScope(gun).getZoomAugment());
+            FlansModClient.lastZoomLevel=getCurrentVariableZoom(gun);
+            FlansModClient.zoomProgress=0.9F;
+        }
+    }
+    public void decreaseZoom(ItemStack gun){
+        if(getCurrentVariableZoom(gun)>type.getCurrentScope(gun).getMinZoom()){
+            setVariableZoom(gun,getCurrentVariableZoom(gun)-type.getCurrentScope(gun).getZoomAugment());
+            FlansModClient.lastZoomLevel=getCurrentVariableZoom(gun);
+            FlansModClient.zoomProgress=0.9F;
+        }
+    }
+
+    public float getCurrentVariableZoom(ItemStack gun){
+        if (!gun.hasTagCompound()) {
+            gun.stackTagCompound = new NBTTagCompound();
+        }
+        String s = "currentZoom";
+        if (!gun.stackTagCompound.hasKey(s)) {
+            setVariableZoom(gun,type.getCurrentScope(gun).getMinZoom());
+        }
+        return gun.stackTagCompound.getFloat(s);
+    }
+
+    public void setVariableZoom(ItemStack gun, float zoom) {
+        if (!gun.hasTagCompound()) {
+            gun.stackTagCompound = new NBTTagCompound();
+        }
+        String s = "currentZoom";
+        if (!gun.stackTagCompound.hasKey(s)) {
+            gun.stackTagCompound.setFloat(s, zoom);
+        }
+        gun.stackTagCompound.setFloat(s, zoom);
+    }
+
+
 
     public void sendADSSpreadToServer(ItemStack stack, boolean sneaking, boolean sprinting) {
         //Send ads spread packet to server
