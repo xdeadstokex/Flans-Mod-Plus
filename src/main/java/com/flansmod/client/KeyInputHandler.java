@@ -108,14 +108,14 @@ public class KeyInputHandler {
             if(mc.thePlayer.getHeldItem()!=null&&mc.thePlayer.getHeldItem().getItem() instanceof ItemGun){
                 ItemGun gun = (ItemGun) mc.thePlayer.getHeldItem().getItem();
                 if(gun.type.getCurrentScope(mc.thePlayer.getHeldItem()).hasVariableZoom())
-                    FlansMod.getPacketHandler().sendToServer(new PacketIncreaseZoom());
+                    FlansMod.getPacketHandler().sendToServer(new PacketChangeZoom(true));
             }
         }
         if(decreaseZoom.isPressed()){
             if(mc.thePlayer.getHeldItem()!=null&&mc.thePlayer.getHeldItem().getItem() instanceof ItemGun){
                 ItemGun gun = (ItemGun) mc.thePlayer.getHeldItem().getItem();
                 if(gun.type.getCurrentScope(mc.thePlayer.getHeldItem()).hasVariableZoom())
-                    FlansMod.getPacketHandler().sendToServer(new PacketDecreaseZoom());
+                    FlansMod.getPacketHandler().sendToServer(new PacketChangeZoom(false));
             }
         }
         if (teamsMenuKey.isPressed()) {
