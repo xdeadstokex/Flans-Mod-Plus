@@ -592,6 +592,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ExitSound | string | ~ | The sound to play when a player exits a vehicle | 
 | StartSound | String | ~ | The name of the sound to play | 
 | EngineSound | String | ~ | The name of the sound to play | 
+| StompSoundFrontRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundFrontLeft | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackLeft | String | ~ | Stomp sound to play when leg hits ground |
 | IdleSound | String | ~ | The name of the sound to play | 
 | BackSound | String | ~ | The name of the sound to play | 
 | YawSound | String | ~ | The name of the sound to play | 
