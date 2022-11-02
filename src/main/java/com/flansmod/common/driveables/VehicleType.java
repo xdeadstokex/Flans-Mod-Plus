@@ -80,6 +80,11 @@ public class VehicleType extends DriveableType {
 
     public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
     public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
+    public String stompSoundFrontRight = null;
+    public String stompSoundFrontLeft = null;
+    public String stompSoundBackRight = null;
+    public String stompSoundBackLeft = null;
+
 
     public VehicleType(TypeFile file) {
         super(file);
@@ -183,6 +188,18 @@ public class VehicleType extends DriveableType {
                 driftSoundLength = Integer.parseInt(split[1]);
             else if (split[0].equals("DriftSound")) {
                 driftSound = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            } else if (split[0].equals("StompSoundFrontRight")) {
+                stompSoundFrontRight = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }else if (split[0].equals("StompSoundFrontLeft")) {
+                stompSoundFrontLeft = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }else if (split[0].equals("StompSoundBackRight")) {
+                stompSoundBackRight = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }else if (split[0].equals("StompSoundBackLeft")) {
+                stompSoundBackLeft = split[1];
                 FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
             }
             if (split[0].equalsIgnoreCase("AddSmokePoint") || split[0].equalsIgnoreCase("AddSmokeDispenser")) {

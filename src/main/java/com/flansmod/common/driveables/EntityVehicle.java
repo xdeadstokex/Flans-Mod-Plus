@@ -108,6 +108,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
     public float legAnimPosRight = 0;
     public float legAnimPosLeft = 0;
 
+    public float frLegYawLast = 0;
+    public float brLegYawLast = 0;
+    public float flLegYawLast = 0;
+    public float blLegYawLast = 0;
+
+
     //Dangerous sentry stuff
     /**
      * Stops the sentry shooting whoever placed it or their teammates
