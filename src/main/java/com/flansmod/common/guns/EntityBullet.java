@@ -534,7 +534,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 Entity entity = (Entity) obj;
                 if (entity != this && entity != owner && !entity.isDead && !(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb) && !(entity instanceof EntityArrow) &&
                         (!entity.getClass().toString().contains("flansmod.") || entity instanceof EntityAAGun || entity instanceof EntityGrenade)
-                        && !entity.getClass().toString().contains("holographicdisplays")) {
+                        && !entity.getClass().toString().contains("holographicdisplays") && !entity.getClass().toString().contains("EntityScent")) {
                     AxisAlignedBB bb = entity.boundingBox.addCoord(
                             -(entity.posX - entity.prevPosX) * 2,
                             -(entity.posY - entity.prevPosY) * 2,
