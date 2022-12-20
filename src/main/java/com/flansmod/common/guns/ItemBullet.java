@@ -74,7 +74,7 @@ public class ItemBullet extends ItemShootable implements IFlanItem, IGunboxDescr
         if (type.fancyDescription && FlansMod.showItemDescriptions) {
             KeyBinding shift = Minecraft.getMinecraft().gameSettings.keyBindSneak;
 
-            if (!type.packName.isEmpty()) {
+            if (!type.packName.isEmpty() && FlansMod.showPackNameInItemDescriptions) {
                 lines.add("\u00a7o" + type.packName);
             }
             if (type.description != null) {
@@ -118,7 +118,7 @@ public class ItemBullet extends ItemShootable implements IFlanItem, IGunboxDescr
 
             }
         } else {
-            if (!type.packName.isEmpty()) {
+            if (!type.packName.isEmpty() && FlansMod.showPackNameInItemDescriptions) {
                 lines.add(type.packName);
             }
             if (type.description != null) {

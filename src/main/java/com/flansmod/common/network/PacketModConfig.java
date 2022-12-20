@@ -34,6 +34,7 @@ public class PacketModConfig extends PacketBase {
     public boolean muzzleFlashParticles;
     public boolean showWoundFlashes;
     public float wheelSeatExpModifier;
+    public boolean showPackItemDescription;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
@@ -59,6 +60,7 @@ public class PacketModConfig extends PacketBase {
         muzzleFlashParticles = FlansMod.showMuzzleFlashParticlesDefault;
         showWoundFlashes = FlansMod.showFlashesWhenWounded;
         wheelSeatExpModifier = FlansMod.vehicleWheelSeatExplosionModifier;
+        showPackItemDescription = FlansMod.showPackNameInItemDescriptions;
     }
 
     @Override
@@ -86,6 +88,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(muzzleFlashParticles);
         data.writeBoolean(showWoundFlashes);
         data.writeFloat(wheelSeatExpModifier);
+        data.writeBoolean(showPackItemDescription);
     }
 
     @Override
@@ -113,6 +116,7 @@ public class PacketModConfig extends PacketBase {
         muzzleFlashParticles = data.readBoolean();
         showWoundFlashes = data.readBoolean();
         wheelSeatExpModifier = data.readFloat();
+        showPackItemDescription = data.readBoolean();
     }
 
     @Override
@@ -146,6 +150,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.showMuzzleFlashParticlesDefault = muzzleFlashParticles;
         FlansMod.showFlashesWhenWounded = showWoundFlashes;
         FlansMod.vehicleWheelSeatExplosionModifier = wheelSeatExpModifier;
+        FlansMod.showPackNameInItemDescriptions = showPackItemDescription;
         FlansMod.log("Config synced successfully");
     }
 }

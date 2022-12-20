@@ -131,6 +131,7 @@ public class FlansMod {
     public static boolean showMuzzleFlashParticlesDefault = true;
     public static boolean showFlashesWhenWounded = true;
     public static float vehicleWheelSeatExplosionModifier = 1F;
+    public static boolean showPackNameInItemDescriptions = true;
 
     public static int armourSpawnRate = 20;
 
@@ -696,6 +697,7 @@ public class FlansMod {
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default (Synced)", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
+        showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -750,6 +752,7 @@ public class FlansMod {
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
+        showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
