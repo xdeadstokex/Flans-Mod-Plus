@@ -478,6 +478,12 @@ public class GunType extends PaintableType implements IScope {
 
     public float switchDelay = 0;
 
+    private boolean hasVariableZoom = false;
+    private float minZoom = 1;
+    private float maxZoom = 4;
+    private float zoomAugment = 1;
+
+
     public GunType(TypeFile file) {
         super(file);
     }
@@ -523,6 +529,8 @@ public class GunType extends PaintableType implements IScope {
                 allowRearm = Boolean.parseBoolean(split[1].toLowerCase());
             else if (split[0].equals("ReloadTime"))
                 reloadTime = Integer.parseInt(split[1]);
+
+            //Recoil
             else if (split[0].equals("Recoil"))
                 recoilPitch = Float.parseFloat(split[1]);
             else if (split[0].equals("FancyRecoil")) {
@@ -536,22 +544,7 @@ public class GunType extends PaintableType implements IScope {
                     FlansMod.log("Failed to read fancy recoil for " + shortName);
                     e.printStackTrace();
                 }
-//                if(useExtendedRecoil){
-//                    recoilPitch=0;
-//                    recoilYaw=0;
-//                    recoilCounterCoefficient=0;
-//                    recoilCounterCoefficientSneaking=0;
-//                    recoilCounterCoefficientSprinting=0;
-//                    recoilSneakingMultiplier=0;
-//                    recoilSneakingMultiplierYaw=0;
-//                    recoilSprintingMultiplier=0;
-//                    recoilSprintingMultiplierYaw=0;
-//                }
             }
-
-
-
-
             else if (split[0].equals("RecoilYaw"))
                 recoilYaw = Float.parseFloat(split[1]) / 10;
             else if (split[0].equals("RandomRecoilRange"))
@@ -697,6 +690,24 @@ public class GunType extends PaintableType implements IScope {
             }
 
             //Modes and zoom settings
+
+            else if (split[0].equals("HasVariableZoom")){
+                hasVariableZoom = Boolean.parseBoolean(split[1]);
+            }
+            else if (split[0].equals("MinZoom")) {
+                minZoom = Float.parseFloat(split[1]);
+            }
+            else if (split[0].equals("MaxZoom")) {
+                maxZoom = Float.parseFloat(split[1]);
+                if(maxZoom>1F)
+                    secondaryFunction=EnumSecondaryFunction.ZOOM;
+            }
+            else if (split[0].equals("ZoomAugment")) {
+                zoomAugment = Float.parseFloat(split[1]);
+            }
+
+
+
             else if (split[0].equals("Mode")) {
                 mode = EnumFireMode.getFireMode(split[1]);
                 defaultmode = mode;
@@ -1920,5 +1931,22 @@ public class GunType extends PaintableType implements IScope {
             stackRecoil.applyModifier(attachment.recoilMultiplier);
         }
         return stackRecoil;
+    }
+    /**Variable Zoom*/
+    @Override
+    public float getMinZoom(){
+        return hasVariableZoom?minZoom:-1F;
+    }
+    @Override
+    public float getMaxZoom(){
+        return hasVariableZoom?maxZoom:-1F;
+    }
+    @Override
+    public float getZoomAugment(){
+        return hasVariableZoom?zoomAugment:-1F;
+    }
+    @Override
+    public boolean hasVariableZoom() {
+        return hasVariableZoom;
     }
 }

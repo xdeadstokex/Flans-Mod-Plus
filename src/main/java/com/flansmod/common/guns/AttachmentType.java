@@ -110,6 +110,12 @@ public class AttachmentType extends PaintableType implements IScope
 
 	/** Default spread of the underbarrel. Do not modify. */
 	public float secondaryDefaultSpread = 0F;
+
+	public boolean hasVariableZoom = false;
+	private float minZoom = 1;
+	private float maxZoom = 4;
+	private float zoomAugment = 1;
+
 	
 	public AttachmentType(TypeFile file)
 	{
@@ -209,6 +215,20 @@ public class AttachmentType extends PaintableType implements IScope
 			else if(split[0].equals("MovementSpeedMultiplier") || split[0].equals("MoveSpeedModifier"))
 				moveSpeedMultiplier = Float.parseFloat(split[1]);
 			//Scope Variables
+
+			else if (split[0].equals("HasVariableZoom")){
+				hasVariableZoom = Boolean.parseBoolean(split[1]);
+			}
+			else if (split[0].equals("MinZoom")) {
+				minZoom = Float.parseFloat(split[1]);
+			}
+			else if (split[0].equals("MaxZoom")) {
+				maxZoom = Float.parseFloat(split[1]);
+			}
+			else if (split[0].equals("ZoomAugment")) {
+				zoomAugment = Float.parseFloat(split[1]);
+			}
+
 			else if(split[0].equals("ZoomLevel"))
 				zoomLevel = Float.parseFloat(split[1]);
 			else if(split[0].equals("FOVZoomLevel"))
@@ -293,5 +313,24 @@ public class AttachmentType extends PaintableType implements IScope
 	public ModelBase GetModel() 
 	{
 		return model;
+	}
+
+	/**Variable Zoom*/
+
+	@Override
+	public float getMinZoom(){
+		return hasVariableZoom?minZoom:-1F;
+	}
+	@Override
+	public float getMaxZoom(){
+		return hasVariableZoom?maxZoom:-1F;
+	}
+	@Override
+	public float getZoomAugment(){
+		return hasVariableZoom?zoomAugment:-1F;
+	}
+	@Override
+	public boolean hasVariableZoom() {
+		return hasVariableZoom;
 	}
 }
