@@ -1170,7 +1170,7 @@ public class DriveableType extends PaintableType {
         }
         //Add the items required for the guns connected to this part
         for (PilotGun gun : pilotGuns) {
-            if (gun.part == part.type)
+            if (gun != null && gun.part == part.type)
                 stacks.add(new ItemStack(gun.type.item));
         }
         for (Seat seat : seats) {
