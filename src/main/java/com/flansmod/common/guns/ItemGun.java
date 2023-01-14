@@ -1260,8 +1260,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
         //Load the gun without having the ammo if gunDevMode is enabled
         if (FlansMod.gunDevMode) {
-            ItemStack stackToLoad = new ItemStack(type.getDefaultAmmo().item);
-            if (stackToLoad != null) {
+            ShootableType ammo = type.getDefaultAmmo();
+            if (ammo != null) {
+                ItemStack stackToLoad = new ItemStack(ammo.item);
                 stackToLoad.stackSize = 1;
                 setBulletItemStack(gunStack, stackToLoad, 0);
                 return true;
