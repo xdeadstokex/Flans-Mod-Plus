@@ -14,6 +14,7 @@ public class PacketModConfig extends PacketBase {
     boolean enableKillMessages;
     public boolean hitCrossHairEnable;
     public boolean bulletGuiEnable;
+    public boolean fancyBulletGui;
     public boolean crosshairEnable;
     public boolean gunCarryLimitEnable;
     public int gunCarryLimit;
@@ -35,11 +36,16 @@ public class PacketModConfig extends PacketBase {
     public boolean showWoundFlashes;
     public float wheelSeatExpModifier;
     public boolean showPackItemDescription;
+    public float masterDamageModifier;
+    public float masterRecoilModifier;
+    public boolean masterDualWieldDisable;
+    public boolean gunDevMode;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
         hitCrossHairEnable = FlansMod.hitCrossHairEnable;
         bulletGuiEnable = FlansMod.bulletGuiEnable;
+        fancyBulletGui = FlansMod.fancyBulletGui;
         crosshairEnable = FlansMod.crosshairEnable;
         gunCarryLimitEnable = FlansMod.gunCarryLimitEnable;
         gunCarryLimit = FlansMod.gunCarryLimit;
@@ -61,6 +67,10 @@ public class PacketModConfig extends PacketBase {
         showWoundFlashes = FlansMod.showFlashesWhenWounded;
         wheelSeatExpModifier = FlansMod.vehicleWheelSeatExplosionModifier;
         showPackItemDescription = FlansMod.showPackNameInItemDescriptions;
+        masterDamageModifier = FlansMod.masterDamageModifier;
+        masterRecoilModifier = FlansMod.masterRecoilModifier;
+        masterDualWieldDisable = FlansMod.masterDualWieldDisable;
+        gunDevMode = FlansMod.gunDevMode;
     }
 
     @Override
@@ -68,6 +78,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(enableKillMessages);
         data.writeBoolean(hitCrossHairEnable);
         data.writeBoolean(bulletGuiEnable);
+        data.writeBoolean(fancyBulletGui);
         data.writeBoolean(crosshairEnable);
         data.writeBoolean(gunCarryLimitEnable);
         data.writeInt(gunCarryLimit);
@@ -89,6 +100,10 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(showWoundFlashes);
         data.writeFloat(wheelSeatExpModifier);
         data.writeBoolean(showPackItemDescription);
+        data.writeFloat(masterDamageModifier);
+        data.writeFloat(masterRecoilModifier);
+        data.writeBoolean(masterDualWieldDisable);
+        data.writeBoolean(gunDevMode);
     }
 
     @Override
@@ -96,6 +111,7 @@ public class PacketModConfig extends PacketBase {
         enableKillMessages = data.readBoolean();
         hitCrossHairEnable = data.readBoolean();
         bulletGuiEnable = data.readBoolean();
+        fancyBulletGui = data.readBoolean();
         crosshairEnable = data.readBoolean();
         gunCarryLimitEnable = data.readBoolean();
         gunCarryLimit = data.readInt();
@@ -117,6 +133,11 @@ public class PacketModConfig extends PacketBase {
         showWoundFlashes = data.readBoolean();
         wheelSeatExpModifier = data.readFloat();
         showPackItemDescription = data.readBoolean();
+        masterDamageModifier = data.readFloat();
+        masterRecoilModifier = data.readFloat();
+        masterDualWieldDisable = data.readBoolean();
+        gunDevMode = data.readBoolean();
+
     }
 
     @Override
@@ -130,6 +151,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.enableKillMessages = enableKillMessages;
         FlansMod.hitCrossHairEnable = hitCrossHairEnable;
         FlansMod.bulletGuiEnable = bulletGuiEnable;
+        FlansMod.fancyBulletGui = fancyBulletGui;
         FlansMod.crosshairEnable = crosshairEnable;
         FlansMod.gunCarryLimitEnable = gunCarryLimitEnable;
         FlansMod.gunCarryLimit = gunCarryLimit;
@@ -151,6 +173,10 @@ public class PacketModConfig extends PacketBase {
         FlansMod.showFlashesWhenWounded = showWoundFlashes;
         FlansMod.vehicleWheelSeatExplosionModifier = wheelSeatExpModifier;
         FlansMod.showPackNameInItemDescriptions = showPackItemDescription;
+        FlansMod.masterDamageModifier = masterDamageModifier;
+        FlansMod.masterRecoilModifier = masterRecoilModifier;
+        FlansMod.masterDualWieldDisable = masterDualWieldDisable;
+        FlansMod.gunDevMode = gunDevMode;
         FlansMod.log("Config synced successfully");
     }
 }

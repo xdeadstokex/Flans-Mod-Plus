@@ -29,7 +29,6 @@ import com.flansmod.common.guns.raytracing.EnumHitboxType;
 import com.flansmod.common.guns.raytracing.PlayerBulletHit;
 import com.flansmod.common.guns.raytracing.PlayerHitbox;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
-//import com.flansmod.common.network.PacketUpdateSpeed;
 import com.flansmod.common.paintjob.IPaintableItem;
 import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
@@ -1257,6 +1256,17 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
      * Reload method. Called automatically when firing with an empty clip
      */
     public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload) {
+        boolean reloadedSomething = false;
+
+        //Load the gun without having the ammo if gunDevMode is enabled
+        if (FlansMod.gunDevMode) {
+            ItemStack stackToLoad = new ItemStack(type.getDefaultAmmo().item);
+            if (stackToLoad != null) {
+                stackToLoad.stackSize = 1;
+                setBulletItemStack(gunStack, stackToLoad, 0);
+                return true;
+            }
+        }
 
         //Deployable guns cannot be reloaded in the inventory
         if (gunType.deployable)
@@ -1267,8 +1277,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         //If you cannot reload half way through a clip, reject the player for trying to do so
         if (forceReload && !gunType.canForceReload)
             return false;
-        //For playing sounds afterwards
-        boolean reloadedSomething = false;
+
         String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
@@ -1286,9 +1295,9 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         int bulletsInThisSlot = item.getMaxDamage() - item.getItemDamage();
                         boolean isPreferred = ((ItemShootable) item.getItem()).type.shortName.equals(preferredAmmoShortname);
                         if (isPreferred) {
-                            if ((bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) || !bestSlotIsPreferred) {
+                            if (!bestSlotIsPreferred || bulletsInThisSlot > bulletsInBestSlot) {
                                 bestSlot = j;
-				bulletsInBestSlot = bulletsInThisSlot;
+				                bulletsInBestSlot = bulletsInThisSlot;
                                 bestSlotIsPreferred = true;
                             }
                         } else if (!bestSlotIsPreferred && bulletsInThisSlot > bulletsInBestSlot) {
@@ -1299,9 +1308,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 }
                 //If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
                 if (bestSlot != -1) {
-                    //TODO
                     ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
-                    ShootableType newBulletType = ((ItemShootable) newBulletStack.getItem()).type;
                     //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
                     if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
                         dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
@@ -1322,7 +1329,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     if (newBulletStack.stackSize <= 0)
                         newBulletStack = null;
                     inventory.setInventorySlotContents(bestSlot, newBulletStack);
-
 
                     //Tell the sound player that we reloaded something
                     reloadedSomething = true;
