@@ -133,7 +133,7 @@ public class PlayerData
 	
 	public void clientTick(EntityPlayer player)
 	{
-		if(player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof ItemGun) || ((ItemGun)player.getCurrentEquippedItem().getItem()).type.oneHanded || player.getCurrentEquippedItem() == offHandGunStack)
+		if(player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof ItemGun) || ((ItemGun)player.getCurrentEquippedItem().getItem()).type.getOneHanded() || player.getCurrentEquippedItem() == offHandGunStack)
 		{
 			//offHandGunSlot = 0;
 			offHandGunStack = null;
@@ -179,7 +179,7 @@ public class PlayerData
 		if(stackInSlot.getItem() instanceof ItemGun)
 		{
 			ItemGun item = ((ItemGun)stackInSlot.getItem());
-			if(item.type.oneHanded)
+			if(item.type.getOneHanded())
 				return true;
 		}
 		return false;

@@ -73,7 +73,7 @@ public class TickHandlerClient {
     public void eventHandler(MouseEvent event) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun) {
-            if (((ItemGun) player.getCurrentEquippedItem().getItem()).type.oneHanded && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) && Math.abs(event.dwheel) > 0)
+            if (((ItemGun) player.getCurrentEquippedItem().getItem()).type.getOneHanded() && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) && Math.abs(event.dwheel) > 0)
                 event.setCanceled(true);
         }
     }
@@ -261,7 +261,7 @@ public class TickHandlerClient {
             ItemStack currentStack = mc.thePlayer.inventory.getCurrentItem();
             PlayerData data = PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT);
 
-            if (currentStack != null && currentStack.getItem() instanceof ItemGun && ((ItemGun) currentStack.getItem()).type.oneHanded) {
+            if (currentStack != null && currentStack.getItem() instanceof ItemGun && ((ItemGun) currentStack.getItem()).type.getOneHanded()) {
                 for (int n = 0; n < 9; n++) {
                     if (data.offHandGunSlot == n + 1) {
                         tessellator.startDrawingQuads();
@@ -822,7 +822,7 @@ public class TickHandlerClient {
             GunType gunType = gunItem.type;
             int x = 0;
             PlayerData data = PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT);
-            if (gunType.oneHanded && data.offHandGunSlot != 0) {
+            if (gunType.getOneHanded() && data.offHandGunSlot != 0) {
                 ItemStack offHandStack = mc.thePlayer.inventory.getStackInSlot(data.offHandGunSlot - 1);
                 if (offHandStack != null && offHandStack.getItem() instanceof ItemGun) {
                     GunType offHandGunType = ((ItemGun) offHandStack.getItem()).type;

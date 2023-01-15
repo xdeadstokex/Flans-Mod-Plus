@@ -171,7 +171,7 @@ public class GunType extends PaintableType implements IScope {
     /**
      * If true, then this gun can be dual wielded
      */
-    public boolean oneHanded = false;
+    private boolean oneHanded = false;
     /**
      * For one shot items like a panzerfaust
      */
@@ -792,7 +792,7 @@ public class GunType extends PaintableType implements IScope {
             else if (split[0].equals("CanSetPosition"))
                 canSetPosition = Boolean.parseBoolean(split[1].toLowerCase());
             else if (split[0].equals("OneHanded")) {
-                oneHanded =  !FlansMod.masterDualWieldDisable && Boolean.parseBoolean(split[1].toLowerCase());
+                oneHanded = Boolean.parseBoolean(split[1].toLowerCase());
             }
             else if (split[0].equals("SecondaryFunction"))
                 secondaryFunction = EnumSecondaryFunction.get(split[1]);
@@ -1246,6 +1246,10 @@ public class GunType extends PaintableType implements IScope {
             return ammo.get(0);
         }
         return null;
+    }
+
+    public boolean getOneHanded() {
+        return !FlansMod.masterDualWieldDisable && oneHanded;
     }
 
     public Vector3f parseVector3f(String[] inp) {

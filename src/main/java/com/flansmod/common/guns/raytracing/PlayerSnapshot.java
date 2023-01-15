@@ -108,7 +108,7 @@ public class PlayerSnapshot
 			
 			//Add left hand shield box
 			PlayerData data = PlayerHandler.getPlayerData(player);
-			if(gunType.oneHanded && data.offHandGunSlot != 0)
+			if(gunType.getOneHanded() && data.offHandGunSlot != 0)
 			{
 				ItemStack leftHandStack = null;
 				//Client side other players

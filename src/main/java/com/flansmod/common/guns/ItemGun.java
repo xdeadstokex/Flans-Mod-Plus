@@ -351,7 +351,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 boolean offHandFull = false;
 
                 //----------------------------- Off hand item ---------------------------------------------------------------------
-                if (type.oneHanded) {
+                if (type.getOneHanded()) {
                     if (data.offHandGunSlot == player.inventory.currentItem + 1)
                         data.offHandGunSlot = 0;
                     //Cycle selection
@@ -766,7 +766,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             lastIsShooting = data.isShootingRight;
 
             //Left hand gun - offhand gun.
-            if (type.oneHanded && data.offHandGunSlot != 0) {
+            if (type.getOneHanded() && data.offHandGunSlot != 0) {
                 ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
                 if (offHandGunStack != null && offHandGunStack.getItem() instanceof ItemGun) {
                     GunType offHandGunType = ((ItemGun) offHandGunStack.getItem()).type;
