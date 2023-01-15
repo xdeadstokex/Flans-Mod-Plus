@@ -116,11 +116,6 @@ public enum EnumDriveablePart
 	port(new EnumDriveablePart[] { }, "port", "Portside (Left)"),
 	starboard(new EnumDriveablePart[] { }, "starboard", "Starboard (Right)"),
 
-	//ToDo:
-	// - Make losing certain parts negate speed by 10-+% such as bow, stern;
-	// - make losing steering hitbox lock steering to a bearing
-	// - engines loss dramatically slow speed.
-
 
 	//Mecha parts
 	leftArm(new EnumDriveablePart[] { }, "leftArm", "Left Arm"),
@@ -230,7 +225,37 @@ public enum EnumDriveablePart
 				return part;
 		return null;
 	}
-	
+
+	public static ArrayList<EnumDriveablePart> getEngineRooms() {
+		ArrayList<EnumDriveablePart> engineRooms = new ArrayList<EnumDriveablePart>();
+
+		engineRooms.add(engineRoom1);
+		engineRooms.add(engineRoom2);
+		engineRooms.add(engineRoom3);
+		engineRooms.add(engineRoom4);
+		engineRooms.add(engineRoom5);
+		engineRooms.add(engineRoom6);
+		engineRooms.add(engineRoom7);
+		engineRooms.add(engineRoom8);
+
+		return engineRooms;
+	}
+
+	public static ArrayList<EnumDriveablePart> getBoilerRooms() {
+		ArrayList<EnumDriveablePart> boilerRooms = new ArrayList<EnumDriveablePart>();
+
+		boilerRooms.add(boilerRoom1);
+		boilerRooms.add(boilerRoom2);
+		boilerRooms.add(boilerRoom3);
+		boilerRooms.add(boilerRoom4);
+		boilerRooms.add(boilerRoom5);
+		boilerRooms.add(boilerRoom6);
+		boilerRooms.add(boilerRoom7);
+		boilerRooms.add(boilerRoom8);
+
+		return boilerRooms;
+	}
+
 	public static boolean isWheel(EnumDriveablePart part)
 	{
 		return part == coreWheel || part == tailWheel || part == leftWingWheel || part == rightWingWheel;

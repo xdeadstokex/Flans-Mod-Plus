@@ -2639,59 +2639,32 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     public float getThrottleNerf() {
         int totalEngineRooms = 0;
         int deadEngineRooms = 0;
-        if (isPartExisting(EnumDriveablePart.engineRoom1)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom1))
-                deadEngineRooms += 1;
+
+        int totalBoilerRooms = 0;
+        int deadBoilerRooms = 0;
+
+        for (EnumDriveablePart part : EnumDriveablePart.getEngineRooms()) {
+            if (isPartExisting(part)) {
+                totalEngineRooms += 1;
+                if(!isPartIntact(part)) {
+                    deadEngineRooms += 1;
+                }
+            }
         }
 
-        if (isPartExisting(EnumDriveablePart.engineRoom2)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom2))
-                deadEngineRooms += 1;
+        for (EnumDriveablePart part : EnumDriveablePart.getBoilerRooms()) {
+            if (isPartExisting(part)) {
+                totalBoilerRooms += 1;
+                if(!isPartIntact(part)) {
+                    deadBoilerRooms += 1;
+                }
+            }
         }
 
-        if (isPartExisting(EnumDriveablePart.engineRoom3)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom3))
-                deadEngineRooms += 1;
-        }
+        float engineNerf = totalEngineRooms > 0 ? ((float) deadEngineRooms / totalEngineRooms) : 0;
+        float boilerNerf = totalBoilerRooms > 0 ? ((float) deadBoilerRooms / totalBoilerRooms) : 0;
 
-        if (isPartExisting(EnumDriveablePart.engineRoom4)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom4))
-                deadEngineRooms += 1;
-        }
-
-        if (isPartExisting(EnumDriveablePart.engineRoom5)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom5))
-                deadEngineRooms += 1;
-        }
-
-        if (isPartExisting(EnumDriveablePart.engineRoom6)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom6))
-                deadEngineRooms += 1;
-        }
-
-        if (isPartExisting(EnumDriveablePart.engineRoom7)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom7))
-                deadEngineRooms += 1;
-        }
-
-        if (isPartExisting(EnumDriveablePart.engineRoom8)) {
-            totalEngineRooms += 1;
-            if (!isPartIntact(EnumDriveablePart.engineRoom8))
-                deadEngineRooms += 1;
-        }
-
-        float overallNerf = 0F;
-
-        if (totalEngineRooms > 0) {
-            overallNerf += ((float) deadEngineRooms / totalEngineRooms) * 0.8F;
-        }
+        float overallNerf = Math.max(engineNerf, boilerNerf) * 0.8F;
 
         if (!isPartIntact(EnumDriveablePart.stern)) {
             overallNerf += 0.1F;
