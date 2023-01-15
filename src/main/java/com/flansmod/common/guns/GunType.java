@@ -22,6 +22,7 @@ import java.util.Random;
 
 public class GunType extends PaintableType implements IScope {
     public static final Random rand = new Random();
+    private static final int DEFAULT_SHOOT_DELAY = 2;
 
     /**Extended Recoil System
      * ported by SecretAgent12
@@ -1602,32 +1603,35 @@ public class GunType extends PaintableType implements IScope {
      * Get the fire rate of a specific gun
      */
     public float getShootDelay(ItemStack stack) {
-        //Legacy system input as direct ticks
-        if (shootDelay != 0) {
-            float fireRate = shootDelay;
-            if (getGrip(stack) != null && getSecondaryFire(stack))
+        float fireRate;
+        if (roundsPerMin != 0) {
+            fireRate = roundsPerMin;
+            if (getGrip(stack) != null && getSecondaryFire(stack)) {
                 fireRate = getGrip(stack).secondaryShootDelay;
+            }
+
+            return 1200 / fireRate;
+        } else if (shootDelay != 0) {
+            fireRate = shootDelay;
+            if (getGrip(stack) != null && getSecondaryFire(stack)) {
+                fireRate = getGrip(stack).secondaryShootDelay;
+            }
 
             return fireRate;
+        } else {
+            return DEFAULT_SHOOT_DELAY;
         }
-        //New system, input as RPM
-        else {
-            float fireRate = roundsPerMin;
 
-            if (getGrip(stack) != null && getSecondaryFire(stack))
-                fireRate = getGrip(stack).secondaryShootDelay;
 
-            float fireTicks = 1200 / fireRate;
-
-            return fireRate = fireTicks;
-        }
     }
 
     public float getShootDelay() {
-        if (shootDelay != 0) {
+        if (roundsPerMin != 0) {
+            return 1200 / roundsPerMin;
+        } else if (shootDelay != 0) {
             return shootDelay;
         } else {
-            return 1200 / roundsPerMin;
+            return DEFAULT_SHOOT_DELAY;
         }
     }
 
