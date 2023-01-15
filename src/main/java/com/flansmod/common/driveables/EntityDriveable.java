@@ -237,6 +237,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (owner != null) {
             this.owner = owner;
             ownerUUID = owner.getUniqueID().toString();
+        } else {
+            ownerUUID = null;
         }
     }
 
@@ -298,7 +300,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         tag.setFloat("RotationYaw", axes.getYaw());
         tag.setFloat("RotationPitch", axes.getPitch());
         tag.setFloat("RotationRoll", axes.getRoll());
-        tag.setString("OwnerUUID", ownerUUID);
+        if (!StringUtils.isNullOrEmpty(ownerUUID)) {
+            tag.setString("OwnerUUID", ownerUUID);
+        }
     }
 
     @Override
