@@ -83,7 +83,7 @@ public class RenderGun implements IItemRenderer {
 		}
 
 		// Render off-hand gun
-		if (gunType.oneHanded && type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+		if (gunType.getOneHanded() && type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
 			EntityLivingBase entity = (EntityLivingBase) data[1];
 			if (entity instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) entity;
@@ -98,7 +98,7 @@ public class RenderGun implements IItemRenderer {
 					if (offHandItem == null || !(offHandItem.getItem() instanceof ItemGun))
 						return;
 					GunType offHandGunType = ((ItemGun) offHandItem.getItem()).type;
-					if (!offHandGunType.oneHanded)
+					if (!offHandGunType.getOneHanded())
 						return;
 
 					renderGun(type, offHandItem, offHandGunType, animations, true, data);
@@ -116,7 +116,7 @@ public class RenderGun implements IItemRenderer {
 			FlansModClient.gunAnimationsLeft.put(player, animations);
 		}
 		GunType offHandGunType = ((ItemGun) offHandItemStack.getItem()).type;
-		if (!offHandGunType.oneHanded)
+		if (!offHandGunType.getOneHanded())
 			return;
 
 		renderGun(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);

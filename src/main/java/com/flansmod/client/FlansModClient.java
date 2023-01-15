@@ -162,7 +162,7 @@ public class FlansModClient extends FlansMod {
             gunStack = data.offHandGunStack;
         } else {
             ItemStack currentStack = player.getCurrentEquippedItem();
-            if (currentStack == null || !(currentStack.getItem() instanceof ItemGun) || !((ItemGun) currentStack.getItem()).type.oneHanded || data.offHandGunSlot == 0)
+            if (currentStack == null || !(currentStack.getItem() instanceof ItemGun) || !((ItemGun) currentStack.getItem()).type.getOneHanded() || data.offHandGunSlot == 0)
                 return;
             gunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
         }

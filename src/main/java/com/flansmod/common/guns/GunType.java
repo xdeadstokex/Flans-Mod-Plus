@@ -171,7 +171,7 @@ public class GunType extends PaintableType implements IScope {
     /**
      * If true, then this gun can be dual wielded
      */
-    public boolean oneHanded = false;
+    private boolean oneHanded = false;
     /**
      * For one shot items like a panzerfaust
      */
@@ -537,10 +537,10 @@ public class GunType extends PaintableType implements IScope {
                 try {
                     if (split.length > 1) {
                         recoil.read(split);
-                        useFancyRecoil =true;
+                        useFancyRecoil = true;
                     }
                 } catch (Exception e) {
-                    useFancyRecoil =false;
+                    useFancyRecoil = false;
                     FlansMod.log("Failed to read fancy recoil for " + shortName);
                     e.printStackTrace();
                 }
@@ -791,8 +791,9 @@ public class GunType extends PaintableType implements IScope {
                 canShootUnderwater = Boolean.parseBoolean(split[1].toLowerCase());
             else if (split[0].equals("CanSetPosition"))
                 canSetPosition = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("OneHanded"))
+            else if (split[0].equals("OneHanded")) {
                 oneHanded = Boolean.parseBoolean(split[1].toLowerCase());
+            }
             else if (split[0].equals("SecondaryFunction"))
                 secondaryFunction = EnumSecondaryFunction.get(split[1]);
             else if (split[0].equals("UsableByPlayers"))
@@ -1240,6 +1241,17 @@ public class GunType extends PaintableType implements IScope {
         return result;
     }
 
+    public ShootableType getDefaultAmmo() {
+        if (ammo.size() >= 1) {
+            return ammo.get(0);
+        }
+        return null;
+    }
+
+    public boolean getOneHanded() {
+        return !FlansMod.masterDualWieldDisable && oneHanded;
+    }
+
     public Vector3f parseVector3f(String[] inp) {
         return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
     }
@@ -1449,7 +1461,8 @@ public class GunType extends PaintableType implements IScope {
         for (AttachmentType attachment : getCurrentAttachments(stack)) {
             stackDamage *= attachment.damageMultiplier;
         }
-        return stackDamage;
+
+        return stackDamage * FlansMod.masterDamageModifier;
     }
 
     /**
@@ -1520,7 +1533,8 @@ public class GunType extends PaintableType implements IScope {
         } else if (sprinting) {
             stackRecoil *= recoilSprintingMultiplier;
         }
-        return stackRecoil;
+
+        return stackRecoil * FlansMod.masterRecoilModifier;
     }
 
 
@@ -1543,7 +1557,7 @@ public class GunType extends PaintableType implements IScope {
             stackRecoilYaw *= recoilSprintingMultiplierYaw;
         }
 
-        return stackRecoilYaw;
+        return stackRecoilYaw * FlansMod.masterRecoilModifier;
     }
 
 
