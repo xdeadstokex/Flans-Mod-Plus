@@ -63,12 +63,12 @@ public class RenderArms {
 	private static void handleRotate(Vector3f rotationPoint, ModelGun model)
 	{
 		if (model.easyArms)
-			GL11.glTranslatef(+0.4F * 0.8F, +0.75F * 0.8F, -0F * 0.8F);
+			GL11.glTranslatef(+0.4F * model.armScale.getX(), +0.75F * model.armScale.getY(), -0F * model.armScale.getZ());
 		GL11.glRotatef(rotationPoint.y, 0F, 1F, 0F);
 		GL11.glRotatef(rotationPoint.z, 0F, 0F, 1F);
 		GL11.glRotatef(rotationPoint.x, 1F, 0F, 0F);
 		if (model.easyArms)
-			GL11.glTranslatef(-0.4F * 0.8F, -0.75F * 0.8F, +0F * 0.8F);
+			GL11.glTranslatef(-0.4F * model.armScale.getX(), -0.75F * model.armScale.getY(), +0F * model.armScale.getZ());
 	}
 
 }
