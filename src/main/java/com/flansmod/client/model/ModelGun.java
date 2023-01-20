@@ -60,6 +60,8 @@ public class ModelGun extends ModelBase
 
 	//Arms rendering
 	public boolean hasArms = false;
+	//Changes the rotation point to be the hand for easier animation setup
+	public boolean easyArms = false;
 	public Vector3f leftArmPos = new Vector3f(0,0,0);
 	public Vector3f leftArmRot = new Vector3f(0,0,0);
 	public Vector3f leftArmScale = new Vector3f(1,1,1);
