@@ -902,6 +902,11 @@ public class GunType extends PaintableType implements IScope {
             model.hasFlash = Boolean.parseBoolean(split[1]);
         else if (split[0].equals("animHasArms"))
             model.hasArms = Boolean.parseBoolean(split[1]);
+        else if (split[0].equals("easyArms"))
+            model.easyArms = Boolean.parseBoolean(split[1]);
+        else if (split[0].equals("armScale"))
+            model.armScale = parseVector3f(split);
+
 
         else if (split[0].equals("animLeftArmPos"))
             model.leftArmPos = parseVector3f(split);
