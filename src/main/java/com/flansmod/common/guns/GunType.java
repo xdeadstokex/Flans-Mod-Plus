@@ -22,6 +22,7 @@ import java.util.Random;
 
 public class GunType extends PaintableType implements IScope {
     public static final Random rand = new Random();
+    private static final int DEFAULT_SHOOT_DELAY = 2;
 
     /**Extended Recoil System
      * ported by SecretAgent12
@@ -171,7 +172,7 @@ public class GunType extends PaintableType implements IScope {
     /**
      * If true, then this gun can be dual wielded
      */
-    public boolean oneHanded = false;
+    private boolean oneHanded = false;
     /**
      * For one shot items like a panzerfaust
      */
@@ -537,10 +538,10 @@ public class GunType extends PaintableType implements IScope {
                 try {
                     if (split.length > 1) {
                         recoil.read(split);
-                        useFancyRecoil =true;
+                        useFancyRecoil = true;
                     }
                 } catch (Exception e) {
-                    useFancyRecoil =false;
+                    useFancyRecoil = false;
                     FlansMod.log("Failed to read fancy recoil for " + shortName);
                     e.printStackTrace();
                 }
@@ -791,8 +792,9 @@ public class GunType extends PaintableType implements IScope {
                 canShootUnderwater = Boolean.parseBoolean(split[1].toLowerCase());
             else if (split[0].equals("CanSetPosition"))
                 canSetPosition = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("OneHanded"))
+            else if (split[0].equals("OneHanded")) {
                 oneHanded = Boolean.parseBoolean(split[1].toLowerCase());
+            }
             else if (split[0].equals("SecondaryFunction"))
                 secondaryFunction = EnumSecondaryFunction.get(split[1]);
             else if (split[0].equals("UsableByPlayers"))
@@ -900,6 +902,11 @@ public class GunType extends PaintableType implements IScope {
             model.hasFlash = Boolean.parseBoolean(split[1]);
         else if (split[0].equals("animHasArms"))
             model.hasArms = Boolean.parseBoolean(split[1]);
+        else if (split[0].equals("easyArms"))
+            model.easyArms = Boolean.parseBoolean(split[1]);
+        else if (split[0].equals("armScale"))
+            model.armScale = parseVector3f(split);
+
 
         else if (split[0].equals("animLeftArmPos"))
             model.leftArmPos = parseVector3f(split);
@@ -1240,6 +1247,17 @@ public class GunType extends PaintableType implements IScope {
         return result;
     }
 
+    public ShootableType getDefaultAmmo() {
+        if (ammo.size() >= 1) {
+            return ammo.get(0);
+        }
+        return null;
+    }
+
+    public boolean getOneHanded() {
+        return !FlansMod.masterDualWieldDisable && oneHanded;
+    }
+
     public Vector3f parseVector3f(String[] inp) {
         return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
     }
@@ -1449,7 +1467,8 @@ public class GunType extends PaintableType implements IScope {
         for (AttachmentType attachment : getCurrentAttachments(stack)) {
             stackDamage *= attachment.damageMultiplier;
         }
-        return stackDamage;
+
+        return stackDamage * FlansMod.masterDamageModifier;
     }
 
     /**
@@ -1520,7 +1539,8 @@ public class GunType extends PaintableType implements IScope {
         } else if (sprinting) {
             stackRecoil *= recoilSprintingMultiplier;
         }
-        return stackRecoil;
+
+        return stackRecoil * FlansMod.masterRecoilModifier;
     }
 
 
@@ -1543,7 +1563,7 @@ public class GunType extends PaintableType implements IScope {
             stackRecoilYaw *= recoilSprintingMultiplierYaw;
         }
 
-        return stackRecoilYaw;
+        return stackRecoilYaw * FlansMod.masterRecoilModifier;
     }
 
 
@@ -1602,32 +1622,35 @@ public class GunType extends PaintableType implements IScope {
      * Get the fire rate of a specific gun
      */
     public float getShootDelay(ItemStack stack) {
-        //Legacy system input as direct ticks
-        if (shootDelay != 0) {
-            float fireRate = shootDelay;
-            if (getGrip(stack) != null && getSecondaryFire(stack))
+        float fireRate;
+        if (roundsPerMin != 0) {
+            fireRate = roundsPerMin;
+            if (getGrip(stack) != null && getSecondaryFire(stack)) {
                 fireRate = getGrip(stack).secondaryShootDelay;
+            }
+
+            return 1200 / fireRate;
+        } else if (shootDelay != 0) {
+            fireRate = shootDelay;
+            if (getGrip(stack) != null && getSecondaryFire(stack)) {
+                fireRate = getGrip(stack).secondaryShootDelay;
+            }
 
             return fireRate;
+        } else {
+            return DEFAULT_SHOOT_DELAY;
         }
-        //New system, input as RPM
-        else {
-            float fireRate = roundsPerMin;
 
-            if (getGrip(stack) != null && getSecondaryFire(stack))
-                fireRate = getGrip(stack).secondaryShootDelay;
 
-            float fireTicks = 1200 / fireRate;
-
-            return fireRate = fireTicks;
-        }
     }
 
     public float getShootDelay() {
-        if (shootDelay != 0) {
+        if (roundsPerMin != 0) {
+            return 1200 / roundsPerMin;
+        } else if (shootDelay != 0) {
             return shootDelay;
         } else {
-            return 1200 / roundsPerMin;
+            return DEFAULT_SHOOT_DELAY;
         }
     }
 
