@@ -230,7 +230,7 @@ public class DriveableType extends PaintableType {
     /**
      * The radius within which to check for bullets
      */
-    public float bulletDetectionRadius = 5F;
+    public float bulletDetectionRadius = -1F;
 
     /**
      * Plane is shown on ICBM Radar and engaged by AA Guns
@@ -469,6 +469,14 @@ public class DriveableType extends PaintableType {
     @Override
     public void postRead(TypeFile file) {
         super.postRead(file);
+
+        if (bulletDetectionRadius == -1F) {
+            for (CollisionBox box : health.values()) {
+                bulletDetectionRadius = Math.max(bulletDetectionRadius, box.getRootPosition().length()+ box.getRadius());
+            }
+
+            bulletDetectionRadius += 1;
+        }
     }
 
     @Override

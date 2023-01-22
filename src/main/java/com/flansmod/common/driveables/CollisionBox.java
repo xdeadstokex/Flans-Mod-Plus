@@ -38,4 +38,10 @@ public class CollisionBox
 	{
 		return new Vector3f(x + w / 2F, y + h / 2F, z + d / 2F);
 	}
+
+
+	/** @return The root position (in lobal co-ordinates) */
+	public Vector3f getRootPosition() { return new Vector3f(x, y, z); }
+
+	public float getRadius() { return new Vector3f(w / 2F, h / 2F, d / 2F).length(); }
 }
