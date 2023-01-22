@@ -2522,7 +2522,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 {
                     new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
                             type.deathExplosionRadius, type.deathExplosionPower, TeamsManager.explosions && type.deathExplosionBreaksBlocks,
-                            type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
+                            type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum, false);
 
                 }
                 if (!worldObj.isRemote && type.deathFireRadius > 0.1F) {
@@ -2580,6 +2580,17 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             //Get the midpoint of the part
             if (part.box != null)
                 pos = axes.findLocalVectorGlobally(new Vector3f(part.box.x / 16F + part.box.w / 32F, part.box.y / 16F + part.box.h / 32F, part.box.z / 16F + part.box.d / 32F));
+
+            if (type.partDeathExplosions.containsKey(part.type)) {
+                BoxExplosion exp = type.partDeathExplosions.get(part.type);
+
+                new FlansModExplosion(worldObj, this, null, type, posX + pos.x, posY + pos.y, posZ + pos.z,
+                        exp.radius, exp.power, TeamsManager.explosions && exp.breaksBlocks,
+                        exp.damageVsLiving, exp.damageVsPlayer, exp.damageVsPlane, exp.damageVsVehicle, exp.particles, exp.particles, true);
+
+            }
+
+
 
             ArrayList<ItemStack> drops = type.getItemsRequired(part, getDriveableData().engine);
             if (drops != null) {

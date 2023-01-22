@@ -102,7 +102,7 @@ public class GuiDriveableRepair extends GuiScreen {
                 y += part.health <= 0 ? 40 : 20;
             }
 
-            button.visible = (part.health <= 0) && ((button.yPosition + 8) < maxAllowableY) && (i >= scroll);
+            button.visible = (part.health <= 0) && ((button.yPosition - guiOriginY + 8) < maxAllowableY) && (i >= scroll);
         }
     }
 
