@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.Item;
@@ -51,15 +53,13 @@ public class GunBoxType extends InfoType
 	}
 	
 	@Override
-	public void preRead(TypeFile file)
-	{
+	public void preRead(TypeFile file) {
 		gunEntries = new GunBoxEntry[8];
 		currentPage = new GunPage("Default");
 	}
 	
 	@Override
-	public void postRead(TypeFile file)
-	{
+	public void postRead(TypeFile file) {
 		//Add any remaining gun entries to the pagelist if EOF.
 		currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 		gunPages.add(currentPage);
@@ -68,45 +68,52 @@ public class GunBoxType extends InfoType
 	}
 
 	@Override
-	protected void read(String[] split, TypeFile file)
-	{
-		super.read(split, file);
-		try
-		{
-			if (split[0].equals("TopTexture"))
-				topTexturePath = split[1];
-			if (split[0].equals("BottomTexture"))
-				bottomTexturePath = split[1];
-			if (split[0].equals("SideTexture"))
-				sideTexturePath = split[1];
-			if (split[0].equals("Page") || split[0].equals("SetPage"))
-			{
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
+			//Block Textures
+			ConfigUtils.configString(config, "TopTexture", topTexturePath);
+			ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
+			ConfigUtils.configString(config, "SideTexture", sideTexturePath);
+
+			//GunBox gui customisation
+			ConfigUtils.configString(config, "GuiTexture", guiTexturePath);
+			ConfigUtils.configString(config, "GunBoxNameColor", gunBoxTextColor);
+			ConfigUtils.configString(config, "PageTextColor", pageTextColor);
+			ConfigUtils.configString(config, "ListTextColor", itemListTextColor);
+			ConfigUtils.configString(config, "ItemTextColor", itemTextColor);
+			ConfigUtils.configString(config, "ButtonTextColor", buttonTextColor);
+			ConfigUtils.configString(config, "ButtonTextHighlight", buttonTextHoverColor);
+
+
+			if (config.containsKey("Page") || config.containsKey("SetPage")) {
+				String key = "Page";
+				if (config.containsKey("SetPage"))
+					key = "SetPage";
+
+				String[] split = ConfigUtils.getSplitFromKey(config, key);
 				//If empty, rename the page. If not, add the current page to list and start next one.
 				String[] pageNameArray = Arrays.copyOfRange(split, 1, split.length);
 				StringBuilder pageName = new StringBuilder();
-				for(int i = 0; i < pageNameArray.length; i++)
-				{
+				for(int i = 0; i < pageNameArray.length; i++) {
 				    pageName.append(pageNameArray[i]);
 				    if((i + 1) < pageNameArray.length)
 				    {
 				        pageName.append(" ");
 				    }
 				}
-				if(gunEntries[0] != null)
-				{
+				if(gunEntries[0] != null) {
 					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 					iteratePage(pageName.toString());
-				}
-				else
-				{
+				} else {
 					currentPage.setPageName(pageName.toString());
 				}
-
 			}
-			if (split[0].equals("AddGun"))
+
+			if (config.containsKey("AddGun"))
 			{
 				try {
-					List<ItemStack> parts = getRecipe(split);
+					List<ItemStack> parts = getRecipe(ConfigUtils.getSplitFromKey(config, "AddGun"));
 					nextGun++;
 					if(nextGun > gunEntries.length - 1)
 					{
@@ -114,44 +121,30 @@ public class GunBoxType extends InfoType
 						iteratePage("Default " + (gunPages.size() + 2));
 						nextGun++;
 					}
-					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(split[1]), parts);
+					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(config.get("AddGun")), parts);
 				} catch(Exception e) {
 					if (FlansMod.printDebugLog) {
-						FlansMod.log("Failed to add gun %s to box %s", split[1], shortName);
+						FlansMod.log("Failed to add gun %s to box %s", config.get("AddGun"), shortName);
 					}
-					
+
 				}
 
 			}
-			if (split[0].equals("AddAmmo") || split[0].equals("AddAltAmmo") || split[0].equals("AddAlternateAmmo")) {
+			if (config.containsKey("AddAmmo") || config.containsKey("AddAltAmmo")) {
+				String key = "AddAmmo";
+				if (config.containsKey("AddAltAmmo"))
+					key = "AddAltAmmo";
 				try {
-					if	(InfoType.getType(split[1]) != null && InfoType.getType(split[1]).item != null) {
-						gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+					if	(InfoType.getType(config.get("key")) != null && InfoType.getType(config.get("key")).item != null) {
+						gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(config.get("key")), getRecipe(ConfigUtils.getSplitFromKey(config, key))));
 					}
 				} catch(Exception e) {
-					FlansMod.log("Failed to add ammo (%s) to box (%s)", split[1], shortName);
+					FlansMod.log("Failed to add ammo (%s) to box (%s)", config.get("key"), shortName);
 				}
 			}
 
-			//GunBox gui customisation
-			if(split[0].equals("GuiTexture"))
-				guiTexturePath = split[1];
-			if(split[0].equals("GunBoxNameColor"))
-				gunBoxTextColor = split[1];
-			if(split[0].equals("PageTextColor"))
-				pageTextColor = split[1];
-			if(split[0].equals("ListTextColor"))
-				itemListTextColor = split[1];
-			if(split[0].equals("ItemTextColor"))
-				itemTextColor = split[1];
-			if(split[0].equals("ButtonTextColor"))
-				buttonTextColor = split[1];
-			if(split[0].equals("ButtonTextHighlight"))
-				buttonTextHoverColor = split[1];
-
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			FlansMod.log("Reading gun box file failed : " + shortName);
 			if (FlansMod.printStackTrace) {
 				FlansMod.log(e.toString());
@@ -159,8 +152,7 @@ public class GunBoxType extends InfoType
 		}
 	}
 
-	public void iteratePage(String s)
-	{
+	public void iteratePage(String s) {
 		//Add current to the pages and setup a new current
 		gunPages.add(currentPage);
 		gunEntries = new GunBoxEntry[8];
@@ -168,15 +160,12 @@ public class GunBoxType extends InfoType
 		currentPage = new GunPage(s);
 	}
 
-	public static GunBoxType getBox(String s)
-	{
+	public static GunBoxType getBox(String s) {
 		return gunBoxMap.get(s);
 	}
 	
-	public static GunBoxType getBox(Block block)
-	{
-		for(GunBoxType type : gunBoxMap.values())
-		{
+	public static GunBoxType getBox(Block block) {
+		for(GunBoxType type : gunBoxMap.values()) {
 			if(type.block == block)
 				return type;
 		}
@@ -184,12 +173,10 @@ public class GunBoxType extends InfoType
 	}
 
 	//Gunbox Entry method
-	public List<ItemStack> getRecipe(String[] split)
-	{
+	public List<ItemStack> getRecipe(String[] split) {
 		List<ItemStack> recipe = new ArrayList<ItemStack>();
 
-		for (int i = 0; i < (split.length - 2) / 2; i++)
-		{
+		for (int i = 0; i < (split.length - 2) / 2; i++) {
 			if (split[i * 2 + 3].contains("."))
 				recipe.add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
 			else
@@ -201,49 +188,43 @@ public class GunBoxType extends InfoType
 	
 	/** Reimported from old code */
 	@Override
-	public void addRecipe(Item par1Item)
-	{
-		if (smeltableFrom != null)
-		{
+	public void addRecipe(Item par1Item) {
+		if (smeltableFrom != null) {
 			GameRegistry.addSmelting(getRecipeElement(smeltableFrom, 0), new ItemStack(item), 0.0F);
 		}
 		if (recipeLine == null)
 			return;
-		try
-		{
+		try {
 			if (!shapeless)
 			{
 				// Fix oversized recipes
 				int rows = 3;
 				// First column
-				if (((String) recipe[0]).charAt(0) == ' ' && ((String) recipe[1]).charAt(0) == ' ' && ((String) recipe[2]).charAt(0) == ' ')
-				{
-					for (int i = 0; i < 3; i++)
+				if (((String) recipe[0]).charAt(0) == ' ' && ((String) recipe[1]).charAt(0) == ' ' && ((String) recipe[2]).charAt(0) == ' ') {
+					for (int i = 0; i < 3; i++) {
 						recipe[i] = ((String) recipe[i]).substring(1);
+					}
+
 					// New first column
-					if (((String) recipe[0]).charAt(0) == ' ' && ((String) recipe[1]).charAt(0) == ' ' && ((String) recipe[2]).charAt(0) == ' ')
-					{
+					if (((String) recipe[0]).charAt(0) == ' ' && ((String) recipe[1]).charAt(0) == ' ' && ((String) recipe[2]).charAt(0) == ' ') {
 						for (int i = 0; i < 3; i++)
 							recipe[i] = ((String) recipe[i]).substring(1);
 					}
 				}
 				// Last column
 				int last = ((String) recipe[0]).length() - 1;
-				if (((String) recipe[0]).charAt(last) == ' ' && ((String) recipe[1]).charAt(last) == ' ' && ((String) recipe[2]).charAt(last) == ' ')
-				{
+				if (((String) recipe[0]).charAt(last) == ' ' && ((String) recipe[1]).charAt(last) == ' ' && ((String) recipe[2]).charAt(last) == ' ') {
 					for (int i = 0; i < 3; i++)
 						recipe[i] = ((String) recipe[i]).substring(0, last);
 					// New last column
 					last--;
-					if (((String) recipe[0]).charAt(last) == ' ' && ((String) recipe[1]).charAt(last) == ' ' && ((String) recipe[2]).charAt(last) == ' ')
-					{
+					if (((String) recipe[0]).charAt(last) == ' ' && ((String) recipe[1]).charAt(last) == ' ' && ((String) recipe[2]).charAt(last) == ' ') {
 						for (int i = 0; i < 3; i++)
 							recipe[i] = ((String) recipe[i]).substring(0, 0);
 					}
 				}
 				// Top row
-				if (recipe[0].equals(" ") || recipe[0].equals("  ") || recipe[0].equals("   "))
-				{
+				if (recipe[0].equals(" ") || recipe[0].equals("  ") || recipe[0].equals("   ")) {
 					Object[] newRecipe = new Object[recipe.length - 1];
 					newRecipe[0] = recipe[1];
 					newRecipe[1] = recipe[2];
@@ -259,24 +240,21 @@ public class GunBoxType extends InfoType
 					}
 				}
 				// Bottom row
-				if (recipe[rows - 1].equals(" ") || recipe[rows - 1].equals("  ") || recipe[rows - 1].equals("   "))
-				{
+				if (recipe[rows - 1].equals(" ") || recipe[rows - 1].equals("  ") || recipe[rows - 1].equals("   ")) {
 					Object[] newRecipe = new Object[recipe.length - 1];
 					newRecipe[0] = recipe[0];
 					newRecipe[1] = recipe[1];
 					recipe = newRecipe;
 					rows--;
 					// Next bottom row
-					if (recipe[rows - 1].equals(" ") || recipe[rows - 1].equals("  ") || recipe[rows - 1].equals("   "))
-					{
+					if (recipe[rows - 1].equals(" ") || recipe[rows - 1].equals("  ") || recipe[rows - 1].equals("   ")) {
 						Object[] newRecipe1 = new Object[recipe.length - 1];
 						newRecipe1[0] = recipe[0];
 						recipe = newRecipe1;
 						rows--;
 					}
 				}
-				for (int i = 0; i < (recipeLine.length - 1) / 2; i++)
-				{
+				for (int i = 0; i < (recipeLine.length - 1) / 2; i++) {
 					recipe[i * 2 + rows] = recipeLine[i * 2 + 1].charAt(0);
 					// Split ID with . and if it contains a second part, use it
 					// as damage value.
@@ -287,11 +265,9 @@ public class GunBoxType extends InfoType
 				}
 				GameRegistry.addRecipe(new ItemStack(block, recipeOutput, 0), recipe);
 			}
-			else
-			{
+			else {
 				recipe = new Object[recipeLine.length - 1];
-				for (int i = 0; i < (recipeLine.length - 1); i++)
-				{
+				for (int i = 0; i < (recipeLine.length - 1); i++) {
 					if (recipeLine[i + 1].contains("."))
 						recipe[i] = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.valueOf(recipeLine[i + 1].split("\\.")[1]));
 					else
@@ -300,35 +276,24 @@ public class GunBoxType extends InfoType
 				GameRegistry.addShapelessRecipe(new ItemStack(block, recipeOutput, 0), recipe);
 			}
 		}
-		catch (Exception e)
-		{
-			if(recipe!=null)
-			{
+		catch (Exception e) {
+			if(recipe!=null) {
 				StringBuilder msg = new StringBuilder(" : ");
 				for(Object o : recipe) msg.append(" ").append(o);
 				FlansMod.log("Failed to add recipe for : " + shortName + msg);
-			}
-			else
-			{
+			} else {
 				FlansMod.log("Failed to add recipe for : " + shortName);
 			}
-			if(FlansMod.printStackTrace)
-			{
+			if(FlansMod.printStackTrace) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public float GetRecommendedScale() 
-	{
-		return 50.0f;
-	}
+	public float GetRecommendedScale() { return 50.0f; }
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ModelBase GetModel() 
-	{
-		return null;
-	}
+	public ModelBase GetModel() { return null; }
 }

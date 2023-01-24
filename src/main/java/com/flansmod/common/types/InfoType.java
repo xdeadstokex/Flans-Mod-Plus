@@ -2,6 +2,8 @@ package com.flansmod.common.types;
 
 import com.flansmod.api.IInfoType;
 import com.flansmod.common.FlansMod;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class InfoType implements IInfoType {
+    public ConfigMap configMap = new ConfigMap();
     /**
      * infoTypes
      */
@@ -51,27 +54,6 @@ public abstract class InfoType implements IInfoType {
         infoTypes.add(this);
     }
 
-    public void read(TypeFile file) {
-        preRead(file);
-        for (; ; ) {
-            String line;
-            line = file.readLine();
-            if (line == null)
-                break;
-            if (line.startsWith("//"))
-                continue;
-            String[] split = line.split(" ");
-            if (split.length < 2)
-                continue;
-            read(split, file);
-        }
-        postRead(file);
-
-        if (shortName == null) {
-            infoTypes.remove(this);
-        }
-    }
-
     /**
      * Method for performing actions prior to reading the type file
      */
@@ -82,64 +64,107 @@ public abstract class InfoType implements IInfoType {
      */
     protected abstract void postRead(TypeFile file);
 
+    public void read(TypeFile file) {
+        preRead(file);
+        boolean readRecipe = false;
+        int recipePart = 0;
+        for (; ; ) {
+            String line = file.readLine();
+
+            //If its after a Recipe line, its a recipe
+            if (readRecipe && recipePart <= 2) {
+                if (line != null) {
+                    if (line.length() == 3)
+                        configMap.put("Recipe" + recipePart++, line);
+                    else if (line.length() == 2)
+                        configMap.put("Recipe" + recipePart++, line + " ");
+                    else if (line.length() == 1)
+                        configMap.put("Recipe" + recipePart++, line + "  ");
+                } else {
+                    configMap.put("Recipe" + recipePart++, "   ");
+                }
+                continue;
+            }
+
+                //Ignore the line in these cases
+                if (line == null)
+                    break;
+                if (line.startsWith("//"))
+                    continue;
+                String[] split = line.split(" ");
+
+                //If its ammo, add it to the ammo list
+                if (split[0].equalsIgnoreCase("ammo")) {
+                    configMap.ammos.add(split[1]);
+                    continue;
+                } else if (split[0].equalsIgnoreCase("additem")) {
+                    configMap.items.add(line);
+                    continue;
+                }
+
+                if (split.length > 2) {
+                    String data = "";
+                    for (int i = 1; i < split.length; i++) {
+                        data += split[i] + " ";
+                    }
+                    configMap.put(split[0].toLowerCase(), data.trim());
+                    if (split[0].equalsIgnoreCase("recipe")) {
+                        readRecipe = true;
+                    }
+                } else if (split.length == 2){
+                    configMap.put(split[0].toLowerCase(), split[1]);
+                } else {
+                    continue;
+                }
+        }
+
+        shortName = ConfigUtils.configString(configMap, "ShortName", shortName);
+
+        if (shortName == null ) {
+            infoTypes.remove(this);
+        } else {
+            read(configMap, file);
+            postRead(file);
+        }
+    }
+
     /**
      * Pack reader
      */
-    protected void read(String[] split, TypeFile file) {
-        try {
-            if (split[0].equals("Model"))
-                modelString = split[1];
-            else if (split[0].equals("ModelScale"))
-                modelScale = Float.parseFloat(split[1]);
-            else if (split[0].equals("Name")) {
-                name = split[1];
-                for (int i = 0; i < split.length - 2; i++)
-                    name += " " + split[i + 2];
-            } else if (split[0].equals("Description")) {
-                description = split[1];
-                for (int i = 0; i < split.length - 2; i++) {
-                    description = description + " " + split[i + 2];
-                }
-            } else if (split[0].equals("ShortName")) {
-                shortName = split[1];
-                if (iconPath == null || iconPath.isEmpty()) {
-                    // bogus default icon, if none is given at all - otherwise texture is blank.
-                    iconPath = "Missing-Icon-" + shortName;
-                }
-            } else if (split[0].equals("Colour") || split[0].equals("Color")) {
-                colour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
-            } else if (split[0].equals("Icon")) {
-                iconPath = split[1];
-            } else if (split[0].equals("RecipeOutput")) {
-                recipeOutput = Integer.parseInt(split[1]);
-            } else if (split[0].equals("Recipe")) {
-                recipe = new Object[split.length + 2];
-                for (int i = 0; i < 3; i++) {
-                    String line;
-                    line = file.readLine();
-                    if (line == null) {
-                        continue;
-                    }
-                    if (line.startsWith("//")) {
-                        i--;
-                        continue;
-                    }
-                    recipe[i] = line;
-                }
-                recipeLine = split;
-                shapeless = false;
-            } else if (split[0].equals("ShapelessRecipe")) {
-                recipeLine = split;
-                shapeless = true;
-            } else if (split[0].equals("SmeltableFrom")) {
-                smeltableFrom = split[1];
-            } else if (split[0].equals("CanDrop"))
-                canDrop = Boolean.parseBoolean(split[1]);
+    protected void read(ConfigMap config, TypeFile file) {
 
-        } catch (Exception e) {
-            FlansMod.log("Reading file failed : " + shortName);
-            e.printStackTrace();
+        modelString = ConfigUtils.configString(configMap, "Model", modelString);
+        if (config.containsKey("ModelScale"))
+            modelScale = Float.parseFloat(config.get("ModelScale"));
+        name = ConfigUtils.configString(configMap, "Name", name);
+        description = ConfigUtils.configString(configMap, "Description", description);
+        shortName = ConfigUtils.configString(configMap, "ShortName", shortName);
+
+        if (config.containsKey("Color")) {
+            String[] rgb = config.get("Color").split(" ");
+            colour = (Integer.parseInt(rgb[0]) << 16) + ((Integer.parseInt(rgb[1])) << 8) + ((Integer.parseInt(rgb[2])));
+        } else if (config.containsKey("Colour")) {
+            String[] rgb = config.get("Colour").split(" ");
+            colour = (Integer.parseInt(rgb[0]) << 16) + ((Integer.parseInt(rgb[1])) << 8) + ((Integer.parseInt(rgb[2])));
         }
+
+        iconPath = (config.get("Icon") == null || config.get("Icon").isEmpty()) ? "Missing-Icon-" + shortName : config.get("Icon");
+        if (config.containsKey("RecipeOutput"))
+            recipeOutput = ConfigUtils.configInt(config, "RecipeOutput", recipeOutput);
+        if (config.containsKey("Recipe")) {
+            recipeLine = ("Recipe " + config.get("Recipe")).split(" ");
+            String[] split = ConfigUtils.getSplitFromKey(config, "Recipe");
+            recipe = new Object[split.length + 2];
+            recipe[0] = config.get("recipe0");
+            recipe[1] = config.get("recipe1");
+            recipe[2] = config.get("recipe2");
+        } else if (config.containsKey("ShapelessRecipe")) {
+            recipeLine = ("Recipe " + config.get("Recipe")).split(" ");
+            shapeless = true;
+        }
+        smeltableFrom = ConfigUtils.configString(configMap, "SmeltableFrom", smeltableFrom);
+        if (config.containsKey("CanDrop"))
+            canDrop = Boolean.parseBoolean(config.get("CanDrop"));
     }
 
     public void addRecipe() {
@@ -220,8 +245,9 @@ public abstract class InfoType implements IInfoType {
                     else
                         recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2], 0);
                 }
-                GameRegistry.addRecipe(new ItemStack(item, recipeOutput), recipe);
+                    GameRegistry.addRecipe(new ItemStack(item, recipeOutput), recipe);
             } else {
+
                 recipe = new Object[recipeLine.length - 1];
                 for (int i = 0; i < (recipeLine.length - 1); i++) {
                     if (recipeLine[i + 1].contains("."))

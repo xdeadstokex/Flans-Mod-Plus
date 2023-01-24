@@ -1,7 +1,10 @@
 package com.flansmod.common.guns;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.potion.PotionEffect;
 
@@ -116,8 +119,7 @@ public class GrenadeType extends ShootableType
 	 * TODO : Give guns a "can get ammo from bag" variable. Stops miniguns and such getting ammo */
 	public int numClips = 0;
 
-	public GrenadeType(TypeFile file)
-	{
+	public GrenadeType(TypeFile file) {
 		super(file);
 		grenades.add(this);
 	}
@@ -129,151 +131,90 @@ public class GrenadeType extends ShootableType
 	}
 
 	@Override
-	protected void read(String[] split, TypeFile file)
-	{
-		super.read(split, file);
-		try
-		{
-			if(split[0].equals("MeleeDamage"))
-				meleeDamage = Integer.parseInt(split[1]);
-
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
+			meleeDamage = ConfigUtils.configInt(config, "MeleeDamage", meleeDamage);
 			//Grenade Throwing
-			else if(split[0].equals("ThrowDelay"))
-				throwDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("ThrowSound"))
-				throwSound = split[1];
-			else if(split[0].equals("DropItemOnThrow"))
-				dropItemOnThrow = split[1];
-			else if(split[0].equals("CanThrow"))
-				canThrow = Boolean.parseBoolean(split[1]);
+			throwDelay = ConfigUtils.configInt(config, "ThrowDelay", throwDelay);
+			meleeDamage = ConfigUtils.configInt(config, "MeleeDamage", meleeDamage);
+			throwSound = ConfigUtils.configString(config, "ThrowSound", throwSound);
+			dropItemOnThrow = ConfigUtils.configString(config, "DropItemOnThrow", dropItemOnThrow);
+			canThrow = ConfigUtils.configBool(config, "CanThrow", canThrow);
 
 			//Grenade Physics
-			else if(split[0].equals("PenetratesEntities"))
-				penetratesEntities = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("PenetratesBlocks"))
-				penetratesBlocks = Boolean.parseBoolean(split[1].toLowerCase());
+			penetratesEntities = ConfigUtils.configBool(config, "PenetratesEntities", penetratesEntities);
+			penetratesBlocks = ConfigUtils.configBool(config, "PenetratesBlocks", penetratesBlocks);
 
-			else if(split[0].equals("BounceSound"))
-				bounceSound = split[1];
-			else if(split[0].equals("Sticky"))
-				sticky = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("LivingProximityTrigger"))
-				livingProximityTrigger = Float.parseFloat(split[1]);
-			else if(split[0].equals("VehicleProximityTrigger"))
-				driveableProximityTrigger = Float.parseFloat(split[1]);
-			else if(split[0].equals("DamageToTriggerer"))
-				damageToTriggerer = Float.parseFloat(split[1]);
-			else if(split[0].equals("DetonateWhenShot"))
-				detonateWhenShot = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("PrimeDelay") || split[0].equals("TriggerDelay"))
-				primeDelay = Integer.parseInt(split[1]);
+			bounceSound = ConfigUtils.configString(config, "BounceSound", bounceSound);
+			livingProximityTrigger = ConfigUtils.configFloat(config, "LivingProximityTrigger", livingProximityTrigger);
+			driveableProximityTrigger = ConfigUtils.configFloat(config, "VehicleProximityTrigger", driveableProximityTrigger);
+			damageToTriggerer = ConfigUtils.configFloat(config, "DamageToTriggerer", damageToTriggerer);
+			primeDelay = ConfigUtils.configInt(config, "PrimeDelay", "TriggerDelay", primeDelay);
 
-			else if(split[0].equals("StickToThrower"))
-				stickToThrower = Boolean.parseBoolean(split[1]);
+			//Sticky settings
+			sticky = ConfigUtils.configBool(config, "Sticky", sticky);
+			stickToThrower = ConfigUtils.configBool(config, "StickToThrower", stickToThrower);
+			stickToEntity = ConfigUtils.configBool(config, "StickToEntity", stickToEntity);
+			stickToDriveable = ConfigUtils.configBool(config, "StickToDriveable", stickToDriveable);
+			stickToEntityAfter = ConfigUtils.configBool(config, "StickToEntityAfter", stickToEntityAfter);
+			allowStickSound = ConfigUtils.configBool(config, "AllowStickSound", allowStickSound);
+			stickSoundRange = ConfigUtils.configInt(config, "StickSoundRange", stickSoundRange);
+			stickSound = ConfigUtils.configSound(contentPack, config, "StickSound", stickSound);
 
-			else if(split[0].equals("StickToEntity"))
-				stickToEntity = Boolean.parseBoolean(split[1]);
+			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
+			explodeParticleType = ConfigUtils.configString(config, "ExplodeParticles", explodeParticleType);
+			smokeTime = ConfigUtils.configInt(config, "SmokeTime", smokeTime);
+			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
+			smokeParticleType = ConfigUtils.configString(config, "SmokeParticles", smokeParticleType);
+			if(config.containsKey("SmokeEffect"))
+				smokeEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, "SmokeEffect")));
+			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
+			spinWhenThrown = ConfigUtils.configBool(config, "SpinWhenThrown", spinWhenThrown);
+			remote = ConfigUtils.configBool(config, "Remote", remote);
 
-			else if(split[0].equals("StickToDriveable"))
-				stickToDriveable = Boolean.parseBoolean(split[1]);
+			flashBang = ConfigUtils.configBool(config, "FlashBang", flashBang);
+			flashTime = ConfigUtils.configInt(config, "FlashTime", flashTime);
+			flashRange = ConfigUtils.configInt(config, "FlashRange", flashRange);
+			flashSoundEnable = ConfigUtils.configBool(config, "FlashSoundEnable", flashSoundEnable);
+			flashSoundRange = ConfigUtils.configInt(config, "FlashSoundRange", flashSoundRange);
+			flashSound = ConfigUtils.configSound(contentPack, config, "FlashSound", flashSound);
+			flashDamageEnable = ConfigUtils.configBool(config, "FlashDamageEnable", flashDamageEnable);
+			flashDamage = ConfigUtils.configFloat(config, "FlashDamage", flashDamage);
+			flashEffects = ConfigUtils.configBool(config, "FlashEffects", flashEffects);
+			flashEffectsID = ConfigUtils.configInt(config, "FlashEffectsID", flashEffectsID);
+			flashEffectsDuration = ConfigUtils.configInt(config, "FlashEffectsDuration", flashEffectsDuration);
+			flashEffectsLevel = ConfigUtils.configInt(config, "FlashEffectsLevel", flashEffectsLevel);
+			flashBang = ConfigUtils.configBool(config, "FlashBang", flashBang);
 
-			else if(split[0].equals("StickToEntityAfter"))
-				stickToEntityAfter = Boolean.parseBoolean(split[1]);
-
-			else if(split[0].equals("AllowStickSound"))
-				allowStickSound = Boolean.parseBoolean(split[1]);
-
-			else if(split[0].equals("StickSoundRange"))
-				stickSoundRange = Integer.parseInt(split[1]);
-
-			else if(split[0].equals("StickSound"))
-			{
-				stickSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "sound", split[1]);
-			}
-
-			else if(split[0].equals("NumExplodeParticles"))
-				explodeParticles = Integer.parseInt(split[1]);
-			else if(split[0].equals("ExplodeParticles"))
-				explodeParticleType = split[1];
-			else if(split[0].equals("SmokeTime"))
-				smokeTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("SmokeParticles"))
-				smokeParticleType = split[1];
-			else if(split[0].equals("SmokeEffect"))
-				smokeEffects.add(getPotionEffect(split));
-			else if(split[0].equals("SmokeRadius"))
-				smokeRadius = Float.parseFloat(split[1]);
-			else if(split[0].equals("SpinWhenThrown"))
-				spinWhenThrown = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("Remote"))
-				remote = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("FlashBang"))
-				flashBang = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("FlashTime"))
-				flashTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlashRange"))
-				flashRange = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlashSoundEnable"))
-				flashSoundEnable = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("FlashSoundRange"))
-				flashSoundRange = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlashSound"))
-			{
-				flashSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "sound", split[1]);
-			}
-			else if(split[0].equals("FlashDamageEnable"))
-				flashDamageEnable = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("FlashDamage"))
-				flashDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("FlashEffects"))
-				flashEffects = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("FlashEffectsID"))
-				flashEffectsID = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlashEffectsDuration"))
-				flashEffectsDuration = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlashEffectsLevel"))
-				flashEffectsLevel = Integer.parseInt(split[1]);
-
-			else if(split[0].equals("MotionSensor"))
-				motionSensor = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("MotionSensorRange"))
-				motionSensorRange = Float.parseFloat(split[1]);
-			else if(split[0].equals("MotionSoundRange"))
-				motionSoundRange = Float.parseFloat(split[1]);
-			else if(split[0].equals("MotionSound"))
-			{
-				motionSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "sound", split[1]);
-			}
-			else if(split[0].equals("MotionTime"))
-				motionTime = Integer.parseInt(split[1]);
+			motionSensor = ConfigUtils.configBool(config, "MotionSensor", motionSensor);
+			motionSensorRange = ConfigUtils.configFloat(config, "MotionSensorRange", motionSensorRange);
+			motionSoundRange = ConfigUtils.configFloat(config, "MotionSoundRange", motionSoundRange);
+			motionSound = ConfigUtils.configSound(contentPack, config, "MotionSound", motionSound);
+			motionTime = ConfigUtils.configInt(config, "MotionTime", motionTime);
 
 
 			//Deployable Bag Stuff
-			else if(split[0].equals("DeployableBag"))
+			if(config.containsKey("DeployableBag"))
 				isDeployableBag = true;
-			else if(split[0].equals("NumUses"))
-				numUses = Integer.parseInt(split[1]);
-			else if(split[0].equals("HealAmount"))
-				healAmount = Float.parseFloat(split[1]);
-			else if(split[0].equals("AddPotionEffect") || split[0].equals("PotionEffect"))
-				potionEffects.add(getPotionEffect(split));
-			else if(split[0].equals("NumClips"))
-				numClips = Integer.parseInt(split[1]);
-		}
-		catch (Exception e)
-		{
+			numUses = ConfigUtils.configInt(config, "NumUses", numUses);
+			healAmount = ConfigUtils.configFloat(config, "HealAmount", healAmount);
+			if(config.containsKey("AddPotionEffect") || config.containsKey("PotionEffect")) {
+				String key = "AddPotionEffect";
+				if (config.containsKey("PotionEffect"))
+					key = "PotionEffect";
+				potionEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, key)));
+			}
+
+			numClips = ConfigUtils.configInt(config, "NumClips", numClips);
+		} catch (Exception e) {
 			FlansMod.log("Reading grenade file failed.");
 			e.printStackTrace();
 		}
 	}
 
-	public static GrenadeType getGrenade(String s)
-	{
-		for(GrenadeType grenade : grenades)
-		{
+	public static GrenadeType getGrenade(String s) {
+		for(GrenadeType grenade : grenades) {
 			if(grenade.shortName.equals(s))
 				return grenade;
 		}

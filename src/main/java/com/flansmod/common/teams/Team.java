@@ -1,10 +1,9 @@
 package com.flansmod.common.teams;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -40,8 +39,7 @@ public class Team extends InfoType
 	public ItemStack legs;
 	public ItemStack shoes;
 	
-	public Team(String s, String s1, int teamCol, char textCol)
-	{
+	public Team(String s, String s1, int teamCol, char textCol) {
 		super(new TypeFile(EnumType.team, s, "", false));
 		shortName = s;
 		name = s1;
@@ -50,119 +48,88 @@ public class Team extends InfoType
 		teams.add(this);
 	}
 	
-	public Team(TypeFile file)
-	{
+	public Team(TypeFile file) {
 		super(file);
 		teams.add(this);
 	}
-	
 
 	@Override
-	protected void preRead(TypeFile file) 
-	{
-	}
-	
-
+	protected void preRead(TypeFile file) { }
 	@Override
-	protected void postRead(TypeFile file) 
-	{
-	}
-	
+	protected void postRead(TypeFile file) { }
 	@Override
-	protected void read(String[] split, TypeFile file)
+	protected void read(ConfigMap config, TypeFile file)
 	{
-		super.read(split, file);
+		super.read(config, file);
 		try
 		{
-			if (split[0].equals("TeamColour"))
-			{
+			if (config.containsKey("TeamColour")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "TeamColour");
 				teamColour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
-			}			
-			if (split[0].equals("TextColour"))
-			{
-				if(split[1].equals("Black"))
-					textColour = '0';
-				if(split[1].equals("Blue"))
-					textColour = '1';
-				if(split[1].equals("Green"))
-					textColour = '2';
-				if(split[1].equals("Aqua"))
-					textColour = '3';
-				if(split[1].equals("Red"))
-					textColour = '4';
-				if(split[1].equals("Purple"))
-					textColour = '5';
-				if(split[1].equals("Orange"))
-					textColour = '6';
-				if(split[1].equals("LGrey"))
-					textColour = '7';
-				if(split[1].equals("Grey"))
-					textColour = '8';
-				if(split[1].equals("LBlue"))
-					textColour = '9';
-				if(split[1].equals("LGreen"))
-					textColour = 'a';
-				if(split[1].equals("LAqua"))
-					textColour = 'b';
-				if(split[1].equals("Red"))
-					textColour = 'c';
-				if(split[1].equals("Pink"))
-					textColour = 'd';
-				if(split[1].equals("Yellow"))
-					textColour = 'e';
-				if(split[1].equals("White"))
-					textColour = 'f';
 			}
-			if(split[0].equals("Hat") || split[0].equals("Helmet"))
-			{
-				if(split[1].equals("None"))
+			if (config.containsKey("TextColour")) {
+				getColourCode(config, config.get("TextColour"));
+			}
+			if(config.containsKey("Hat") || config.containsKey("Helmet")) {
+				String key = "Hat";
+				if (config.containsKey("Helmet"))
+					key = "Helmet";
+				if(config.get(key).equalsIgnoreCase("None"))
 					return;
 				for(Item item : FlansMod.armourItems)
 				{
 					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(split[1]))
+					if(armour != null && armour.shortName.equals(config.get(key)))
 						hat = new ItemStack(item);
 				}
 			}
-			if(split[0].equals("Chest") || split[0].equals("Top"))
-			{
-				if(split[1].equals("None"))
+			if(config.containsKey("Chest")  || config.containsKey("Top")) {
+				String key = "Chest";
+				if (config.containsKey("Top"))
+					key = "Top";
+				if(config.get(key).equalsIgnoreCase("None"))
 					return;
 				for(Item item : FlansMod.armourItems)
 				{
 					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(split[1]))
+					if(armour != null && armour.shortName.equals(config.get(key)))
 						chest = new ItemStack(item);
 				}
 			}
-			if(split[0].equals("Legs") || split[0].equals("Bottom"))
-			{
-				if(split[1].equals("None"))
+			if(config.containsKey("Legs")  || config.containsKey("Bottom")) {
+				String key = "Legs";
+				if (config.containsKey("Bottom"))
+					key = "Bottom";
+				if(config.get(key).equalsIgnoreCase("None"))
 					return;
 				for(Item item : FlansMod.armourItems)
 				{
 					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(split[1]))
+					if(armour != null && armour.shortName.equals(config.get(key)))
 						legs = new ItemStack(item);
 				}
 			}
-			if(split[0].equals("Shoes") || split[0].equals("Boots"))
-			{
-				if(split[1].equals("None"))
+			if(config.containsKey("Shoes")  || config.containsKey("Boots")) {
+				String key = "Shoes";
+				if (config.containsKey("Boots"))
+					key = "Boots";
+				if(config.get(key).equalsIgnoreCase("None"))
 					return;
 				for(Item item : FlansMod.armourItems)
 				{
 					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(split[1]))
+					if(armour != null && armour.shortName.equals(config.get(key)))
 						shoes = new ItemStack(item);
 				}
 			}
-			if(split[0].equals("AddDefaultClass") || split[0].equals("AddClass"))
-			{
-				classes.add(PlayerClass.getClass(split[1]));
+			if(config.containsKey("AddDefaultClass")  || config.containsKey("AddClass")) {
+				String key = "AddDefaultClass";
+				if (config.containsKey("AddClass"))
+					key = "AddClass";
+				classes.add(PlayerClass.getClass(config.get(key)));
 			}
-			if(split[0].equals("allowedForRoundsGenerator")){
-				this.allowedForRoundsGenerator = Boolean.parseBoolean(split[1]);
+			if(config.containsKey("allowedForRoundsGenerator")){
+				this.allowedForRoundsGenerator = Boolean.parseBoolean(config.get("allowedForRoundsGenerator"));
 			}
 		} catch (Exception e)
 		{
@@ -180,7 +147,62 @@ public class Team extends InfoType
 		}
 		return null;
 	}
-	
+
+	private static char getColourCode(ConfigMap config, String colour) {
+		char textCode;
+		switch(config.get("TextColour")) {
+			case "Black":
+				textCode = '0';
+				break;
+			case "Blue":
+				textCode = '1';
+				break;
+			case "Green":
+				textCode = '2';
+				break;
+			case "Aqua":
+				textCode = '3';
+				break;
+			case "Purple":
+				textCode = '5';
+				break;
+			case "Orange":
+				textCode = '6';
+				break;
+			case "LGrey":
+				textCode = '7';
+				break;
+			case "Grey":
+				textCode = '8';
+				break;
+			case "LBlue":
+				textCode = '9';
+				break;
+			case "LGreen":
+				textCode = 'a';
+				break;
+			case "LAqua":
+				textCode = 'b';
+				break;
+			case "Red":
+				textCode = 'c';
+				break;
+			case "Pink":
+				textCode = 'd';
+				break;
+			case "Yellow":
+				textCode = 'e';
+				break;
+			case "White":
+				textCode = 'f';
+				break;
+			default:
+				textCode = '0';
+				break;
+		}
+
+		return textCode;
+	}
 	/*
 	//Called both by ops and the gametype
 	public void addBase(ITeamBase base)
@@ -195,27 +217,23 @@ public class Team extends InfoType
 	}
 	*/
 	
-	public void removePlayer(EntityPlayer player)
-	{
+	public void removePlayer(EntityPlayer player) {
 		removePlayer(player.getCommandSenderName());
 	}
 	
-	public String removePlayer(String username)
-	{
+	public String removePlayer(String username) {
 		members.remove(username);
 		if(PlayerHandler.getPlayerData(username) != null)
 			PlayerHandler.getPlayerData(username).team = null;
 		return username;
 	}
 	
-	public EntityPlayer addPlayer(EntityPlayer player)
-	{
+	public EntityPlayer addPlayer(EntityPlayer player) {
 		addPlayer(player.getCommandSenderName());
 		return player;
 	}
 	
-	public String addPlayer(String username)
-	{
+	public String addPlayer(String username) {
 		ArrayList<String> list = new ArrayList<String>();
 		list.add(username);
 		for(Team team : teams)
@@ -227,24 +245,20 @@ public class Team extends InfoType
 		return username;
 	}
 	
-	public String removeWorstPlayer()
-	{
+	public String removeWorstPlayer() {
 		sortPlayers();
 		if(members.size() == 0)
 			return null;
 		else return removePlayer(members.get(members.size() - 1));
 	}
 	
-	public void sortPlayers()
-	{
+	public void sortPlayers() {
 		Collections.sort(members, new ComparatorScore());
 	}
 	
-	public static class ComparatorScore implements Comparator<String>
-	{
+	public static class ComparatorScore implements Comparator<String> {
 		@Override
-		public int compare(String a, String b) 
-		{
+		public int compare(String a, String b) {
 			PlayerData dataA = PlayerHandler.getPlayerData(a);
 			PlayerData dataB = PlayerHandler.getPlayerData(b);
 			if(dataA == null || dataB == null)
@@ -255,15 +269,13 @@ public class Team extends InfoType
 	}
 
 	@Override
-	public float GetRecommendedScale() 
-	{
+	public float GetRecommendedScale() {
 		return 50.0f;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ModelBase GetModel() 
-	{
+	public ModelBase GetModel() {
 		return null;
 	}
 }

@@ -1,12 +1,15 @@
 package com.flansmod.common.teams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.flansmod.client.model.ModelCustomArmour;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -99,71 +102,50 @@ public class ArmourType extends InfoType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
         try {
-            if (FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model")) {
-                model = FlansMod.proxy.loadModel(split[1], shortName, ModelCustomArmour.class);
+            if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model")) {
+                model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelCustomArmour.class);
                 model.type = this;
             }
-            if (split[0].equals("Type")) {
-                if (split[1].equals("Hat") || split[1].equals("Helmet"))
+            if (config.containsKey("Type")) {
+                if (config.get("Type").equals("Hat") || config.get("Type").equals("Helmet"))
                     type = 0;
-                if (split[1].equals("Chest") || split[1].equals("Body"))
+                if (config.get("Type").equals("Chest") || config.get("Type").equals("Body"))
                     type = 1;
-                if (split[1].equals("Legs") || split[1].equals("Pants"))
+                if (config.get("Type").equals("Legs") || config.get("Type").equals("Pants"))
                     type = 2;
-                if (split[1].equals("Shoes") || split[1].equals("Boots"))
+                if (config.get("Type").equals("Shoes") || config.get("Type").equals("Boots"))
                     type = 3;
             }
 
-            if (split[0].equals("DamageReduction") || split[0].equals("Defence"))
-            {
-                defence = Double.parseDouble(split[1]);
+            if (config.containsKey("DamageReduction") || config.containsKey("Defence")) {
+                String key = "DamageReduction";
+                if (config.containsKey("Defence"))
+                    key = "Defence";
+                defence = Double.parseDouble(config.get(key));
                 bulletDefence = defence;
             }
-            if (split[0].equals("BulletDefence")) {
-                bulletDefence = Double.parseDouble(split[1]);
-            }
-            if (split[0].equals("OtherDefence")) {
-                defence = Double.parseDouble(split[1]);
-            }
-            if (split[0].equals("MoveSpeedModifier") || split[0].equals("Slowness"))
-                moveSpeedModifier = Float.parseFloat(split[1]);
-            if (split[0].equals("JumpModifier"))
-                jumpModifier = Float.parseFloat(split[1]);
-            if (split[0].equals("KnockbackReduction") || split[0].equals("KnockbackModifier"))
-                knockbackModifier = Float.parseFloat(split[1]);
-            if (split[0].equals("PenetrationResistance"))
-                penetrationResistance = Float.parseFloat(split[1]);
-
-            if (split[0].equals("NightVision"))
-                nightVision = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("Invisible"))
-                invisible = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("NegateFallDamage"))
-                negateFallDamage = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("FireResistance"))
-                fireResistance = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("WaterBreathing"))
-                waterBreathing = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("Overlay"))
-                overlay = split[1];
-
-            if (split[0].equals("SmokeProtection"))
-                smokeProtection = Boolean.parseBoolean(split[1]);
-
-            if (split[0].equals("OnWaterWalking"))
-                onWaterWalking = Boolean.parseBoolean(split[1]);
-
-            if (split[0].equals("Durability")) {
-                durability = Integer.parseInt(split[1]);
+            bulletDefence = ConfigUtils.configDouble(config, "BulletDefence", bulletDefence);
+            defence = ConfigUtils.configDouble(config, "OtherDefence", defence);
+            moveSpeedModifier = ConfigUtils.configFloat(config, "MoveSpeedModifier", "Slowness", moveSpeedModifier);
+            jumpModifier = ConfigUtils.configFloat(config, "JumpModifier", jumpModifier);
+            knockbackModifier = ConfigUtils.configFloat(config, "KnockbackReduction", "KnockbackModifier", knockbackModifier);
+            penetrationResistance = ConfigUtils.configFloat(config, "PenetrationResistance", penetrationResistance);
+            nightVision = ConfigUtils.configBool(config, "NightVision", nightVision);
+            invisible = ConfigUtils.configBool(config, "Invisible", invisible);
+            negateFallDamage = ConfigUtils.configBool(config, "NegateFallDamage", negateFallDamage);
+            fireResistance = ConfigUtils.configBool(config, "FireResistance", fireResistance);
+            waterBreathing = ConfigUtils.configBool(config, "WaterBreathing", waterBreathing);
+            overlay = ConfigUtils.configString(config, "Overlay", overlay);
+            smokeProtection = ConfigUtils.configBool(config, "SmokeProtection", smokeProtection);
+            onWaterWalking = ConfigUtils.configBool(config, "OnWaterWalking", onWaterWalking);
+            if (config.containsKey("Durability")) {
+                durability = Integer.parseInt(config.get("Durability"));
                 hasDurability = durability > 0;
             }
-
-            if (split[0].equals("ArmourTexture") || split[0].equals("ArmorTexture")) {
-                armourTextureName = split[1];
-            }
+            armourTextureName = ConfigUtils.configString(config, "ArmourTexture", "ArmorTexture", armourTextureName);
         } catch (Exception e) {
             FlansMod.log("Reading armour file failed.");
             if (FlansMod.printStackTrace) {

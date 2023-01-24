@@ -1,7 +1,10 @@
 package com.flansmod.common.driveables.mechas;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -64,109 +67,69 @@ public class MechaItemType extends InfoType
 	}
 	
 	@Override
-	protected void preRead(TypeFile file) 
-	{		
-	}
+	protected void preRead(TypeFile file) { }
 
 	@Override
-	protected void postRead(TypeFile file) 
-	{		
-	}
+	protected void postRead(TypeFile file) { }
 	
     @Override
-	protected void read(String[] split, TypeFile file)
-    {
-		super.read(split, file);
-		try
-		{
-			if(FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
-				model = FlansMod.proxy.loadModel(split[1], shortName, ModelMechaTool.class);
-			if(split[0].equals("Texture"))
-				texture = split[1];
-			if(split[0].equals("Type"))
-				type = EnumMechaItemType.getToolType(split[1]);
-			if(split[0].equals("ToolType"))
-				function = EnumMechaToolType.getToolType(split[1]);
-			if(split[0].equals("Speed"))
-				speed = Float.parseFloat(split[1]);
-			if(split[0].equals("ToolHardness"))
-				toolHardness = Float.parseFloat(split[1]);
-			if(split[0].equals("Reach"))
-				reach = Float.parseFloat(split[1]);
-			
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
+			if(FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
+				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelMechaTool.class);
+			texture = ConfigUtils.configString(config, "Texture", texture);
+			if(config.containsKey("Type"))
+				type = EnumMechaItemType.getToolType(config.get("Type"));
+			if(config.containsKey("ToolType"))
+				function = EnumMechaToolType.getToolType(config.get("ToolType"));
+			speed = ConfigUtils.configFloat(config, "Speed", speed);
+			toolHardness = ConfigUtils.configFloat(config, "ToolHardness", toolHardness);
+			reach = ConfigUtils.configFloat(config, "Reach", reach);
+
 			/** The following are the upgrade booleans and multipliers, which
 			 *  are alphabetised. Mess with the order at your peril*/
-			
-			if(split[0].equals("AutoFuel"))
-				autoCoal = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("Armour"))
-				damageResistance = Float.parseFloat(split[1]);
-			if(split[0].equals("CoalMultiplier"))
-				fortuneCoal = Float.parseFloat(split[1]);
-			if(split[0].equals("DetectSound"))
-				detectSound = split[1];
-			if(split[0].equals("DiamondDetect"))
-				diamondDetect = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("DiamondMultiplier"))
-				fortuneDiamond = Float.parseFloat(split[1]);
-			if(split[0].equals("EmeraldMultiplier"))
-				fortuneEmerald = Float.parseFloat(split[1]);
-			if(split[0].equals("FlameBurst"))
-				flameBurst = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("Floatation"))
-				floater = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("ForceBlockFallDamage"))
-				forceBlockFallDamage = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("ForceDark"))
-				forceDark = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("InfiniteAmmo"))
-				infiniteAmmo = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("IronMultiplier"))
-				fortuneIron = Float.parseFloat(split[1]);
-			if(split[0].equals("IronRefine"))
-				refineIron = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("ItemVacuum"))
-				vacuumItems = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("LightLevel"))
-				lightLevel = Integer.parseInt(split[1]);
-			if(split[0].equals("Nanorepair"))
-				autoRepair = Boolean.parseBoolean(split[1].toLowerCase());
-			if (split[0].equals("NanorepairAmount"))
-				autoRepairAmount = Float.parseFloat(split[1]);
-			if(split[0].equals("RedstoneMultiplier"))
-				fortuneRedstone = Float.parseFloat(split[1]);
-			if(split[0].equals("RocketPack"))
-				rocketPack = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("RocketPower"))
-				rocketPower = Float.parseFloat(split[1]);
-			if(split[0].equals("SoundEffect"))
-				soundEffect = split[1];
-			if(split[0].equals("SoundTime"))
-				soundTime = Float.parseFloat(split[1]);
-			if(split[0].equals("SpeedMultiplier"))
-				speedMultiplier = Float.parseFloat(split[1]);
-			if(split[0].equals("StopMechaFallDamage"))
-				stopMechaFallDamage = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("WasteCompact"))
-				wasteCompact = Boolean.parseBoolean(split[1].toLowerCase());
-		}
-		catch (Exception ignored)
-		{
+
+			autoCoal = ConfigUtils.configBool(config, "AutoFuel", autoCoal);
+			damageResistance = ConfigUtils.configFloat(config, "Armour", damageResistance);
+			fortuneCoal = ConfigUtils.configFloat(config, "CoalMultiplier", fortuneCoal);
+			diamondDetect = ConfigUtils.configBool(config, "DiamondDetect", diamondDetect);
+			fortuneDiamond = ConfigUtils.configFloat(config, "DiamondMultiplier", fortuneDiamond);
+			fortuneEmerald = ConfigUtils.configFloat(config, "EmeraldMultiplier", fortuneEmerald);
+			flameBurst = ConfigUtils.configBool(config, "FlameBurst", flameBurst);
+			floater = ConfigUtils.configBool(config, "Floatation", floater);
+			forceBlockFallDamage = ConfigUtils.configBool(config, "ForceBlockFallDamage", forceBlockFallDamage);
+			forceDark = ConfigUtils.configBool(config, "ForceDark", forceDark);
+			infiniteAmmo = ConfigUtils.configBool(config, "InfiniteAmmo", infiniteAmmo);
+			fortuneIron = ConfigUtils.configFloat(config, "IronMultiplier", fortuneIron);
+			refineIron = ConfigUtils.configBool(config, "IronRefine", refineIron);
+			vacuumItems = ConfigUtils.configBool(config, "ItemVacuum", vacuumItems);
+			lightLevel = ConfigUtils.configInt(config, "LightLevel", lightLevel);
+			autoRepair = ConfigUtils.configBool(config, "Nanorepair", autoRepair);
+			autoRepairAmount = ConfigUtils.configFloat(config, "NanorepairAmount", autoRepairAmount);
+			fortuneRedstone = ConfigUtils.configFloat(config, "RedstoneMultiplier", fortuneRedstone);
+			rocketPack = ConfigUtils.configBool(config, "RocketPack", rocketPack);
+			rocketPower = ConfigUtils.configFloat(config, "RocketPower", rocketPower);
+			soundEffect = ConfigUtils.configString(config, "SoundEffect", soundEffect);
+			soundTime = ConfigUtils.configFloat(config, "SoundTime", soundTime);
+			speedMultiplier = ConfigUtils.configFloat(config, "SpeedMultiplier", speedMultiplier);
+			stopMechaFallDamage = ConfigUtils.configBool(config, "StopMechaFallDamage", stopMechaFallDamage);
+			wasteCompact = ConfigUtils.configBool(config, "WasteCompact", wasteCompact);
+
+		} catch (Exception ignored) {
+
 		}
     }
 	
-	public static MechaItemType getTool(String find)
-	{
-		for(MechaItemType type : types)
-		{
+	public static MechaItemType getTool(String find) {
+		for(MechaItemType type : types) {
 			if(type.shortName.equals(find))
 				return type;
 		}
 		return null;
 	}
 	
-	public void reloadModel()
-	{
+	public void reloadModel() {
 		if(modelString != null)
 			model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
 	}

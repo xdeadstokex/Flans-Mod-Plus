@@ -3,6 +3,8 @@ package com.flansmod.common.teams;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -37,9 +39,7 @@ public class ArmourBoxType extends InfoType
 	}
 	
 	@Override
-	public void preRead(TypeFile file)
-	{
-	}
+	public void preRead(TypeFile file) { }
 	
 	@Override
 	public void postRead(TypeFile file)
@@ -48,20 +48,19 @@ public class ArmourBoxType extends InfoType
 	}
 	
 	@Override
-	protected void read(String[] split, TypeFile file)
+	protected void read(ConfigMap config, TypeFile file)
 	{
-		super.read(split, file);
-		try
-		{	
-			if (split[0].equals("TopTexture"))
-				topTexturePath = split[1];
-			if (split[0].equals("BottomTexture"))
-				bottomTexturePath = split[1];
-			if (split[0].equals("SideTexture"))
-				sideTexturePath = split[1];
-			
-			if(split[0].toLowerCase().equals("addarmour") || split[0].toLowerCase().equals("addarmor"))
-			{
+		super.read(config, file);
+		try {
+			topTexturePath = ConfigUtils.configString(config, "TopTexture", topTexturePath);
+			bottomTexturePath = ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
+			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
+
+			if (config.containsKey("addarmour") || config.containsKey("addarmor")) {
+				String key = "addarmour";
+				if (config.containsKey("addarmor"))
+					key = "addarmor";
+				String[] split = config.get(key).split(" ");
 				String name = split[2];
 				for(int i = 3; i < split.length; i++)
 					name = name + " " + split[i];
@@ -87,7 +86,7 @@ public class ArmourBoxType extends InfoType
 							stack = getRecipeElement(lineSplit[j * 2 + 1].split("\\.")[0], Integer.valueOf(lineSplit[j * 2 + 2]), Integer.valueOf(lineSplit[j * 2 + 1].split("\\.")[1]), shortName);
 						else
 							stack = getRecipeElement(lineSplit[j * 2 + 1], Integer.valueOf(lineSplit[j * 2 + 2]), 0, shortName);
-						
+
 						if(stack != null) {
 							entry.requiredStacks[i].add(stack);
 						} else {
@@ -95,12 +94,11 @@ public class ArmourBoxType extends InfoType
 						}
 					}
 				}
-				
+
 				pages.add(entry);
 			}
-			
-		} catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			FlansMod.log("Reading armour box file failed : " + shortName);
 			if (FlansMod.printStackTrace)
 				e.printStackTrace();

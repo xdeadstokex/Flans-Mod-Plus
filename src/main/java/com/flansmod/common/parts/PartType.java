@@ -4,6 +4,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -92,23 +94,25 @@ public class PartType extends InfoType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
         try {
-            if (split[0].equals("Category"))
-                category = getCategory(split[1]);
-            else if (split[0].equals("StackSize"))
-                stackSize = Integer.parseInt(split[1]);
-            else if (split[0].equals("EngineSpeed"))
-                engineSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("FuelConsumption"))
-                fuelConsumption = Float.parseFloat(split[1]);
-            else if (split[0].equals("EnginePower"))
-                enginePower = Float.parseFloat(split[1]);
-            else if (split[0].equals("Fuel"))
-                fuel = Integer.parseInt(split[1]);
-                //Recipe
-            else if (split[0].equals("PartBoxRecipe")) {
+            if (config.containsKey("Category"))
+                category = getCategory(config.get("Category"));
+            if (config.containsKey("StackSize"))
+                stackSize = Integer.parseInt(config.get("StackSize"));
+            if (config.containsKey("EngineSpeed"))
+                engineSpeed = Float.parseFloat(config.get("EngineSpeed"));
+            if (config.containsKey("FuelConsumption"))
+                fuelConsumption = Float.parseFloat(config.get("FuelConsumption"));
+            if (config.containsKey("EnginePower"))
+                enginePower = Float.parseFloat(config.get("EnginePowewr"));
+            if (config.containsKey("Fuel"))
+                fuel = Integer.parseInt(config.get("Fuel"));
+
+            //Recipe
+            if (config.containsKey("PartBoxRecipe")) {
+                String[] split = config.get("PartBoxRecipe").split(" ");
                 ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
                 for (int i = 0; i < (split.length - 2) / 2; i++) {
                     int amount = Integer.parseInt(split[2 * i + 2]);
@@ -118,19 +122,17 @@ public class PartType extends InfoType {
                     stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
                 }
                 partBoxRecipe.addAll(Arrays.asList(stacks));
-            } else if (split[0].equals("WorksWith")) {
+            } else if (config.containsKey("WorksWith")) {
+                String[] split = config.get("WorksWith").split(" ");
                 worksWith = new ArrayList<EnumType>();
                 for (int i = 0; i < split.length - 1; i++) {
                     worksWith.add(EnumType.get(split[i + 1]));
                 }
             }
 
-            //------- RedstoneFlux -------
-            else if (split[0].equals("UseRF") || split[0].equals("UseRFPower"))
-                useRFPower = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("RFDrawRate"))
-                RFDrawRate = Integer.parseInt(split[1]);
-            //-----------------------------
+            //RedstoneFlux
+            useRFPower = ConfigUtils.configBool(config, "UseRF", "UseRFPower", useRFPower);
+            RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
         } catch (Exception e) {
             FlansMod.log("Reading part file failed.");
             e.printStackTrace();

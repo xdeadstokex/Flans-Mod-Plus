@@ -7,6 +7,8 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PlayerClass extends InfoType {
@@ -36,49 +39,66 @@ public class PlayerClass extends InfoType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
-        if (split[0].equals("AddItem")) {
-            startingItemStrings.add(split);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
+        //todo setup for multiple AddItem
+        if (config.containsKey("AddItem")) {
+            startingItemStrings.add(ConfigUtils.getSplitFromKey(config, "AddItem"));
         }
-        if (split[0].equals("UnlockLevel")) {
-            lvl = Integer.parseInt(split[1]);
+        for (String item : config.items) {
+            startingItemStrings.add(item.split(" "));
         }
-        if (split[0].equals("SkinOverride"))
-            texture = split[1];
-        if (split[0].equals("Hat") || split[0].equals("Helmet")) {
-            if (split[1].equals("None"))
+        lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
+        texture = ConfigUtils.configString(config, "SkinOverride", texture);
+
+        if(config.containsKey("Hat") || config.containsKey("Helmet")) {
+            String key = "Hat";
+            if (config.containsKey("Helmet"))
+                key = "Helmet";
+            if(config.get(key).equalsIgnoreCase("None"))
                 return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
+            for(Item item : FlansMod.armourItems)
+            {
+                ArmourType armour = ((ItemTeamArmour)item).type;
+                if(armour != null && armour.shortName.equals(config.get(key)))
                     hat = new ItemStack(item);
             }
         }
-        if (split[0].equals("Chest") || split[0].equals("Top")) {
-            if (split[1].equals("None"))
+        if (config.containsKey("Chest")  || config.containsKey("Top")) {
+            String key = "Chest";
+            if (config.containsKey("Top"))
+                key = "Top";
+            if(config.get(key).equalsIgnoreCase("None"))
                 return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
+            for(Item item : FlansMod.armourItems)
+            {
+                ArmourType armour = ((ItemTeamArmour)item).type;
+                if(armour != null && armour.shortName.equals(config.get(key)))
                     chest = new ItemStack(item);
             }
         }
-        if (split[0].equals("Legs") || split[0].equals("Bottom")) {
-            if (split[1].equals("None"))
+        if (config.containsKey("Legs")  || config.containsKey("Bottom")) {
+            String key = "Legs";
+            if (config.containsKey("Bottom"))
+                key = "Bottom";
+            if(config.get(key).equalsIgnoreCase("None"))
                 return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
+            for(Item item : FlansMod.armourItems)
+            {
+                ArmourType armour = ((ItemTeamArmour)item).type;
+                if(armour != null && armour.shortName.equals(config.get(key)))
                     legs = new ItemStack(item);
             }
         }
-        if (split[0].equals("Shoes") || split[0].equals("Boots")) {
-            if (split[1].equals("None"))
+        if (config.containsKey("Shoes")  || config.containsKey("Boots")) {
+            String key = "Shoes";
+            if (config.containsKey("Boots"))
+                key = "Boots";
+            if(config.get(key).equalsIgnoreCase("None"))
                 return;
             for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
+                ArmourType armour = ((ItemTeamArmour)item).type;
+                if(armour != null && armour.shortName.equals(config.get(key)))
                     shoes = new ItemStack(item);
             }
         }
@@ -86,8 +106,7 @@ public class PlayerClass extends InfoType {
 
 
     @Override
-    protected void preRead(TypeFile file) {
-    }
+    protected void preRead(TypeFile file) { }
 
     /**
      * This loads the items once for clients connecting to remote servers, since the clients can't tell what attachments a gun has in the GUI and they need to load it at least once
@@ -135,8 +154,9 @@ public class PlayerClass extends InfoType {
                     }
                 }
                 for (InfoType type : InfoType.infoTypes) {
-                    if (type.shortName.equals(itemNames[0]) && type.item != null)
+                    if (type.shortName.equals(itemNames[0]) && type.item != null) {
                         matchingItem = type.item;
+                    }
                 }
                 if (matchingItem == null) {
                     FlansMod.log("Tried to add " + split[1] + " to player class " + shortName + " but the item did not exist");

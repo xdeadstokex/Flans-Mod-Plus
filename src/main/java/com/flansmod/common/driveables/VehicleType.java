@@ -1,6 +1,7 @@
 package com.flansmod.common.driveables;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.flansmod.client.model.ModelVehicle;
 import com.flansmod.common.FlansMod;
@@ -8,6 +9,8 @@ import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.common.vector.Vector3i;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 
 public class VehicleType extends DriveableType {
     /**
@@ -98,94 +101,59 @@ public class VehicleType extends DriveableType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
         try {
             //Movement modifiers
-            if (split[0].equals("TurnLeftSpeed"))
-                turnLeftModifier = Float.parseFloat(split[1]);
-            if (split[0].equals("TurnRightSpeed"))
-                turnRightModifier = Float.parseFloat(split[1]);
-            if (split[0].equals("SquashMobs"))
-                squashMobs = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("FourWheelDrive"))
-                fourWheelDrive = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("Tank") || split[0].equals("TankMode"))
-                tank = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("ThrottleDecay"))
-                throttleDecay = Float.parseFloat(split[1]);
-            if (split[0].equals("Mass"))
-                mass = Float.parseFloat(split[1]);
-            if (split[0].equals("UseRealisticAcceleration"))
-                useRealisticAcceleration = Boolean.parseBoolean(split[1]);
-            if (split[0].equals("Gravity"))
-                gravity = Float.parseFloat(split[1]);
-            if (split[0].equals("MaxFallSpeed"))
-                maxFallSpeed = Float.parseFloat(split[1]);
-            if (split[0].equals(("BrakingModifier")))
-                brakingModifier = Float.parseFloat(split[1]);
+            turnLeftModifier = ConfigUtils.configFloat(config,"TurnLeftSpeed", turnLeftModifier);
+            turnRightModifier = ConfigUtils.configFloat(config,"TurnRightSpeed", turnRightModifier);
+            squashMobs = ConfigUtils.configBool(config,"SquashMobs", squashMobs);
+            fourWheelDrive = ConfigUtils.configBool(config,"FourWheelDrive", fourWheelDrive);
+            tank = ConfigUtils.configBool(config,"Tank", "TankMode", tank);
+            throttleDecay = ConfigUtils.configFloat(config,"ThrottleDecay", throttleDecay);
+            mass = ConfigUtils.configFloat(config,"Mass", mass);
+            useRealisticAcceleration = ConfigUtils.configBool(config,"UseRealisticAcceleration", useRealisticAcceleration);
+            gravity = ConfigUtils.configFloat(config,"Gravity", gravity);
+            maxFallSpeed = ConfigUtils.configFloat(config,"MaxFallSpeed", maxFallSpeed);
+            brakingModifier = ConfigUtils.configFloat(config,"BrakingModifier", brakingModifier);
 
             //Visuals
-            if (split[0].equals("HasDoor"))
-                hasDoor = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("ShootWithOpenDoor"))
-                shootWithOpenDoor = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("RotateWheels"))
-                rotateWheels = Boolean.parseBoolean(split[1].toLowerCase());
-            if (split[0].equals("FixTrackLink"))
-                trackLinkFix = Integer.parseInt(split[1].toLowerCase());
-            if (split[0].equals("FlipLinkFix"))
-                flipLinkFix = Boolean.parseBoolean(split[1].toLowerCase());
+            hasDoor = ConfigUtils.configBool(config,"HasDoor", hasDoor);
+            shootWithOpenDoor = ConfigUtils.configBool(config,"ShootWithOpenDoor", shootWithOpenDoor);
+            rotateWheels = ConfigUtils.configBool(config,"RotateWheels", rotateWheels);
+            trackLinkFix = ConfigUtils.configInt(config,"FixTrackLink", trackLinkFix);
+            flipLinkFix = ConfigUtils.configBool(config,"FlipLinkFix", flipLinkFix);
 
             //Animations
-            if (split[0].equals("DoorPosition1"))
-                doorPos1 = new Vector3f(split[1], shortName);
-            if (split[0].equals("DoorPosition2"))
-                doorPos2 = new Vector3f(split[1], shortName);
-            if (split[0].equals("DoorRotation1"))
-                doorRot1 = new Vector3f(split[1], shortName);
-            if (split[0].equals("DoorRotation2"))
-                doorRot2 = new Vector3f(split[1], shortName);
-            if (split[0].equals("DoorRate"))
-                doorRate = new Vector3f(split[1], shortName);
-            if (split[0].equals("DoorRotRate"))
-                doorRotRate = new Vector3f(split[1], shortName);
+            ConfigUtils.configVector(config, "DoorPosition1", doorPos1, shortName);
+            ConfigUtils.configVector(config, "DoorPosition2", doorPos2, shortName);
+            ConfigUtils.configVector(config, "DoorRotation1", doorRot1, shortName);
+            ConfigUtils.configVector(config, "DoorRotation2", doorRot2, shortName);
+            ConfigUtils.configVector(config, "DoorRate", doorRate, shortName);
+            ConfigUtils.configVector(config, "DoorRotRate", doorRotRate, shortName);
 
-            if (split[0].equals("Door2Position1"))
-                door2Pos1 = new Vector3f(split[1], shortName);
-            if (split[0].equals("Door2Position2"))
-                door2Pos2 = new Vector3f(split[1], shortName);
-            if (split[0].equals("Door2Rotation1"))
-                door2Rot1 = new Vector3f(split[1], shortName);
-            if (split[0].equals("Door2Rotation2"))
-                door2Rot2 = new Vector3f(split[1], shortName);
-            if (split[0].equals("Door2Rate"))
-                door2Rate = new Vector3f(split[1], shortName);
-            if (split[0].equals("Door2RotRate"))
-                door2RotRate = new Vector3f(split[1], shortName);
+            ConfigUtils.configVector(config, "Door2Position1", door2Pos1, shortName);
+            ConfigUtils.configVector(config, "Door2Position2", door2Pos2, shortName);
+            ConfigUtils.configVector(config, "Door2Rotation1", door2Rot1, shortName);
+            ConfigUtils.configVector(config, "Door2Rotation2", door2Rot2, shortName);
+            ConfigUtils.configVector(config, "Door2Rate", door2Rate, shortName);
+            ConfigUtils.configVector(config, "Door2RotRate", door2RotRate, shortName);
 
 
             //Armaments
-            if (split[0].equals("ShootDelay"))
-                vehicleShootDelay = Integer.parseInt(split[1]);
-            if (split[0].equals("ShellDelay"))
-                vehicleShellDelay = Integer.parseInt(split[1]);
+            vehicleShootDelay = ConfigUtils.configInt(config,"ShootDelay", vehicleShootDelay);
+            vehicleShellDelay = ConfigUtils.configInt(config,"ShellDelay", vehicleShellDelay);
 
             //Sound
-            if (split[0].equals("ShootSound")) {
-                shootSoundPrimary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
-            if (split[0].equals("ShellSound")) {
-                shootSoundSecondary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            } else if (split[0].equals("DriftSoundLength"))
-                driftSoundLength = Integer.parseInt(split[1]);
-            else if (split[0].equals("DriftSound")) {
-                driftSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
-            if (split[0].equalsIgnoreCase("AddSmokePoint") || split[0].equalsIgnoreCase("AddSmokeDispenser")) {
+            shootSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ShootSound", shootSoundPrimary);
+            shootSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "ShellSound", shootSoundSecondary);
+            driftSoundLength = ConfigUtils.configInt(config,"DriftSoundLength", driftSoundLength);
+            driftSound = ConfigUtils.configDriveableSound(contentPack, config, "DriftSound", driftSound);
+            if (config.containsKey("AddSmokePoint") || config.containsKey("AddSmokeDispenser")) {
+                String key = "AddSmokePoint";
+                if (config.containsKey("AddSmokeDispenser"))
+                    key = "AddSmokeDispenser";
+                String[] split = ConfigUtils.getSplitFromKey(config, key);
                 SmokePoint smoke = new SmokePoint();
                 smoke.position = new Vector3f(split[1], shortName);
                 smoke.direction = new Vector3f(split[2], shortName);

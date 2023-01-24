@@ -3,6 +3,8 @@ package com.flansmod.common.guns;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -169,131 +171,82 @@ public abstract class ShootableType extends InfoType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
-        try {
-            //Model and Texture
-            if (FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
-                model = FlansMod.proxy.loadModel(split[1], shortName, ModelBase.class);
-            else if (split[0].equals("Texture"))
-                texture = split[1];
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
 
-                //Item Stuff
-            else if (split[0].equals("StackSize") || split[0].equals("MaxStackSize"))
-                maxStackSize = Integer.parseInt(split[1]);
-            else if (split[0].equals("DropItemOnShoot"))
-                dropItemOnShoot = split[1];
-            else if (split[0].equals("DropItemOnReload"))
-                dropItemOnReload = split[1];
-            else if (split[0].equals("DropItemOnHit"))
-                dropItemOnHit = split[1];
-            else if (split[0].equals("RoundsPerItem"))
-                roundsPerItem = Integer.parseInt(split[1]);
-
-                //Physics
-            else if (split[0].equals("FallSpeed"))
-                fallSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("ThrowSpeed") || split[0].equals("ShootSpeed"))
-                throwSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("HitBoxSize"))
-                hitBoxSize = Float.parseFloat(split[1]);
-
-            else if (split[0].equals("Damage"))
-                damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = Float.parseFloat(split[1]);
-                //Hit stuff
-            else if (split[0].equals("DamageVsLiving"))
-                damageVsLiving = Float.parseFloat(split[1]);
-            else if (split[0].equals("DamageVsPlayer")) {
-                damageVsPlayer = Float.parseFloat(split[1]);
-                readDamageVsPlayer = true;
-            } else if (split[0].equals("DamageVsEntity")) {
-                damageVsEntity = Float.parseFloat(split[1]);
-                readDamageVsEntity = true;
-            } else if (split[0].equals("DamageVsVehicles")) {
-                damageVsVehicles = Float.parseFloat(split[1]);
-            } else if (split[0].equals("DamageVsPlanes")) {
-                damageVsPlanes = Float.parseFloat(split[1]);
-                readDamageVsPlanes = true;
-            } else if (split[0].equals("IgnoreArmorProbability"))
-                ignoreArmorProbability = Float.parseFloat(split[1]);
-            else if (split[0].equals("IgnoreArmorDamageFactor"))
-                ignoreArmorDamageFactor = Float.parseFloat(split[1]);
-
-            else if (split[0].equals("BreaksGlass"))
-                breaksGlass = Boolean.parseBoolean(split[1].toLowerCase());
-            else if(split[0].equals("Bounciness"))
-                bounciness = Float.parseFloat(split[1]);
-
-            else if (split[0].equals("HasLight"))
-                hasLight = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("HasDynamicLight"))
-                hasDynamicLight = Boolean.parseBoolean(split[1].toLowerCase());
-
-                //Detonation conditions etc
-            else if (split[0].equals("Fuse"))
-                fuse = Integer.parseInt(split[1]);
-            else if (split[0].equals("DespawnTime"))
-                despawnTime = Integer.parseInt(split[1]);
-            else if (split[0].equals("ExplodeOnImpact") || split[0].equals("DetonateOnImpact"))
-                explodeOnImpact = Boolean.parseBoolean(split[1].toLowerCase());
-
-                //Detonation
-            else if (split[0].equals("FireRadius") || split[0].equals("Fire"))
-                fireRadius = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionRadius") || split[0].equals("Explosion"))
-                explosionRadius = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionPower"))
-                explosionPower = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionBreaksBlocks"))
-                explosionBreaksBlocks = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("ExplosionDamageVsLiving"))
-                explosionDamageVsLiving = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionDamageVsPlayer"))
-                explosionDamageVsPlayer = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionDamageVsPlane"))
-                explosionDamageVsPlane = Float.parseFloat(split[1]);
-            else if (split[0].equals("ExplosionDamageVsVehicle"))
-                explosionDamageVsVehicle = Float.parseFloat(split[1]);
-
-            else if (split[0].equals("DropItemOnDetonate"))
-                dropItemOnDetonate = split[1];
-            else if (split[0].equals("DetonateSound"))
-                detonateSound = split[1];
-
-                //Submunitions
-            else if (split[0].equals("HasSubmunitions"))
-                hasSubmunitions = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("Submunition"))
-                submunition = split[1];
-            else if (split[0].equals("NumSubmunitions"))
-                numSubmunitions = Integer.parseInt(split[1]);
-            else if (split[0].equals("SubmunitionDelay"))
-                subMunitionTimer = Integer.parseInt(split[1]);
-            else if (split[0].equals("SubmunitionSpread"))
-                submunitionSpread = Float.parseFloat(split[1]);
-
-            else if (split[0].equals("FlareParticleCount"))
-                smokeParticleCount = Integer.parseInt(split[1]);
-            else if (split[0].equals("DebrisParticleCount"))
-                debrisParticleCount = Integer.parseInt(split[1]);
-
-                //Particles
-            else if (split[0].equals("TrailParticles") || split[0].equals("SmokeTrail"))
-                trailParticles = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("TrailParticleType"))
-                trailParticleType = split[1];
-        } catch (Exception e) {
-            if (split != null) {
-                String msg = " : ";
-                for (String s : split) msg = msg + " " + s;
-                FlansMod.log("Reading grenade file failed. " + file.name + msg);
-            } else {
-                FlansMod.log("Reading grenade file failed. " + file.name);
-            }
-            if (FlansMod.printStackTrace) {
-                e.printStackTrace();
-            }
+        //Model and Texture
+        if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model")) {
+            model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelBase.class);
         }
+        if (configMap.containsKey("Texture"))
+            texture = config.get("Texture");
+
+        //Item Stuff
+        maxStackSize = ConfigUtils.configInt(config, "StackSize", "MaxStackSize", maxStackSize);
+        dropItemOnShoot = config.get("DropItemOnShoot");
+        dropItemOnReload = config.get("DropItemOnReload");
+        dropItemOnHit = config.get("DropItemOnHit");
+        roundsPerItem = ConfigUtils.configInt(config, "RoundsPerItem",  roundsPerItem);
+
+        //Physics
+        fallSpeed = ConfigUtils.configFloat(config, "FallSpeed",  fallSpeed);
+        throwSpeed = ConfigUtils.configFloat(config, "ThrowSpeed", "ShootSpeed", throwSpeed);
+        hitBoxSize = ConfigUtils.configFloat(config, "HitBoxSize",  hitBoxSize);
+
+        //Hit stuff
+        if (config.containsKey("Damage")) {
+            damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = Float.parseFloat(config.get("Damage"));
+        }
+        damageVsLiving = ConfigUtils.configFloat(config, "DamageVsLiving",  damageVsLiving);
+        if (config.containsKey("DamageVsPlayer")) {
+            damageVsPlayer = ConfigUtils.configFloat(config, "DamageVsPlayer",  damageVsPlayer);
+            readDamageVsPlayer = true;
+        }
+        if (config.containsKey("DamageVsEntity")) {
+            damageVsEntity = ConfigUtils.configFloat(config, "DamageVsEntity",  damageVsEntity);
+            readDamageVsEntity = true;
+        }
+        damageVsVehicles = ConfigUtils.configFloat(config, "DamageVsVehicles",  damageVsVehicles);
+        if (config.containsKey("DamageVsPlanes")) {
+            damageVsPlanes = ConfigUtils.configFloat(config, "DamageVsPlanes",  damageVsPlanes);
+            readDamageVsPlanes = true;
+        }
+        ignoreArmorProbability = ConfigUtils.configFloat(config, "IgnoreArmorProbability",  ignoreArmorProbability);
+        ignoreArmorDamageFactor = ConfigUtils.configFloat(config, "IgnoreArmorDamageFactor",  ignoreArmorDamageFactor);
+        breaksGlass = ConfigUtils.configBool(config, "BreaksGlass",  breaksGlass);
+        bounciness = ConfigUtils.configFloat(config, "Bounciness",  bounciness);
+        hasLight = ConfigUtils.configBool(config, "HasLight",  hasLight);
+        hasDynamicLight = ConfigUtils.configBool(config, "HasDynamicLight",  hasDynamicLight);
+
+        //Detonation conditions etc
+        fuse = ConfigUtils.configInt(config, "Fuse",  fuse);
+        despawnTime = ConfigUtils.configInt(config, "DespawnTime",  despawnTime);
+        explodeOnImpact = ConfigUtils.configBool(config, "ExplodeOnImpact", "DetonateOnImpact",  explodeOnImpact);
+
+        //Detonation
+        fireRadius = ConfigUtils.configFloat(config, "FireRadius", "Fire",  fireRadius);
+        explosionRadius = ConfigUtils.configFloat(config, "ExplosionRadius", "Explosion", explosionRadius);
+        explosionPower = ConfigUtils.configFloat(config, "ExplosionPower",  explosionPower);
+        explosionBreaksBlocks = ConfigUtils.configBool(config, "ExplosionBreaksBlocks",  explosionBreaksBlocks);
+        explosionDamageVsLiving = ConfigUtils.configFloat(config, "ExplosionDamageVsLiving",  explosionDamageVsLiving);
+        explosionDamageVsPlayer = ConfigUtils.configFloat(config, "ExplosionDamageVsPlayer",  explosionDamageVsPlayer);
+        explosionDamageVsPlane = ConfigUtils.configFloat(config, "ExplosionDamageVsPlane",  explosionDamageVsPlane);
+        explosionDamageVsVehicle = ConfigUtils.configFloat(config, "ExplosionDamageVsVehicle",  explosionDamageVsVehicle);
+        dropItemOnDetonate = config.get("DropItemOnDetonate");
+        detonateSound = config.get("DetonateSound");
+
+        //Submunitions
+        hasSubmunitions = ConfigUtils.configBool(config, "HasSubmunitions",  hasSubmunitions);
+        submunition = config.get("Submunition");
+        numSubmunitions = ConfigUtils.configInt(config, "NumSubmunitions",  numSubmunitions);
+        subMunitionTimer = ConfigUtils.configInt(config, "SubmunitionDelay",  subMunitionTimer);
+        submunitionSpread = ConfigUtils.configFloat(config, "SubmunitionSpread",  submunitionSpread);
+        smokeParticleCount = ConfigUtils.configInt(config, "FlareParticleCount",  smokeParticleCount);
+        debrisParticleCount = ConfigUtils.configInt(config, "DebrisParticleCount",  debrisParticleCount);
+
+        //Particles
+        trailParticles = ConfigUtils.configBool(config, "TrailParticles", "SmokeTrail",  trailParticles);
+        trailParticleType = config.get("TrailParticleType");
     }
 
     public static ShootableType getShootableType(String string) {

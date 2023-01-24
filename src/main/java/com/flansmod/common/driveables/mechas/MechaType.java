@@ -1,6 +1,7 @@
 package com.flansmod.common.driveables.mechas;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.flansmod.client.model.ModelMecha;
 import com.flansmod.common.FlansMod;
@@ -13,6 +14,8 @@ import com.flansmod.common.guns.BulletType;
 import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 
 public class MechaType extends DriveableType 
 {
@@ -95,95 +98,73 @@ public class MechaType extends DriveableType
 	}
 	
     @Override
-	protected void read(String[] split, TypeFile file)
-    {
-		super.read(split, file);
-		try
-		{
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
 			//Movement modifiers
-			if(split[0].equals("TurnLeftSpeed"))
-				turnLeftModifier = Float.parseFloat(split[1]);
-			if(split[0].equals("TurnRightSpeed"))
-				turnRightModifier = Float.parseFloat(split[1]);
-			if(split[0].equals("MoveSpeed"))
-				moveSpeed = Float.parseFloat(split[1]);
-			if(split[0].equals("SquashMobs"))
-				squashMobs = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("StepHeight"))
-				stepHeight = Integer.parseInt(split[1]);
-			if(split[0].equals("JumpHeight"))
-			{
-				jumpHeight = Float.parseFloat(split[1]);
+			turnLeftModifier = ConfigUtils.configFloat(config, "TurnLeftSpeed", turnLeftModifier);
+			turnRightModifier = ConfigUtils.configFloat(config, "TurnRightSpeed", turnRightModifier);
+			moveSpeed = ConfigUtils.configFloat(config, "MoveSpeed", moveSpeed);
+			squashMobs = ConfigUtils.configBool(config, "SquashMobs", squashMobs);
+			stepHeight = ConfigUtils.configInt(config, "StepHeight", stepHeight);
+			if(config.containsKey("JumpHeight")) {
+				jumpHeight = Float.parseFloat(config.get("JumpHeight"));
 				jumpVelocity = (float) Math.sqrt(Math.abs(9.81F * (jumpHeight + 0.2F) / 200F));
 			}
-			if(split[0].equals("RotateSpeed"))
-				rotateSpeed = Float.parseFloat(split[1]);
-			
-			else if(split[0].equals("StompSound"))
-			{
-				stompSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-			}
-			else if(split[0].equals("StompSoundLength"))
-				stompSoundLength = Integer.parseInt(split[1]);
-			else if(split[0].equals("StompRangeLower"))
-				stompRangeLower = Float.parseFloat(split[1]);
-			else if(split[0].equals("StompRangeUpper"))
-				stompRangeUpper = Float.parseFloat(split[1]);
-			
-			if(split[0].equals("LeftArmOrigin"))
+			rotateSpeed = ConfigUtils.configFloat(config, "RotateSpeed", rotateSpeed);
+			stompSound = ConfigUtils.configDriveableSound(contentPack, config, "StompSound", stompSound);
+			stompSoundLength = ConfigUtils.configInt(config, "StompSoundLength", stompSoundLength);
+			stompRangeLower = ConfigUtils.configFloat(config, "StompRangeLower", stompRangeLower);
+			stompRangeUpper = ConfigUtils.configFloat(config, "StompRangeUpper", stompRangeUpper);
+
+			if(config.containsKey("LeftArmOrigin")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "LeftArmOrigin");
 				leftArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-			if(split[0].equals("RightArmOrigin"))
+			}
+
+			if(config.containsKey("RightArmOrigin")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "RightArmOrigin");
 				rightArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-			if(split[0].equals("ArmLength"))
-				armLength = Float.parseFloat(split[1]) / 16F;
-			if(split[0].equals("LegLength"))
-				legLength = Float.parseFloat(split[1]) / 16F;
-			if(split[0].equals("HeldItemScale"))
-				heldItemScale = Float.parseFloat(split[1]);
-			if(split[0].equals("Height"))
-				height = (Float.parseFloat(split[1])/16F);
-			if(split[0].equals("Width"))
-				width = (Float.parseFloat(split[1])/16F);
-			if(split[0].equals("ChassisHeight"))
-				chassisHeight = (Integer.parseInt(split[1]))/16F;
-			if(split[0].equals("FallDamageMultiplier"))
-				fallDamageMultiplier = Float.parseFloat(split[1]);
-			if(split[0].equals("BlockDamageFromFalling"))
-				blockDamageFromFalling = Float.parseFloat(split[1]);
-			if(split[0].equals("Reach"))
-				reach = Float.parseFloat(split[1]);
-			if(split[0].equals("TakeFallDamage"))
-				takeFallDamage = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("DamageBlocksFromFalling"))
-				damageBlocksFromFalling = Boolean.parseBoolean(split[1].toLowerCase());
-			if(split[0].equals("LegSwingLimit"))
-				legSwingLimit = Float.parseFloat(split[1]);
-			if(split[0].equals("LimitHeadTurn"))
-			{
+			}
+
+			armLength = ConfigUtils.configFloat(config, "ArmLength", armLength) / 16F;
+			legLength = ConfigUtils.configFloat(config, "LegLength", legLength) / 16F;
+			heldItemScale = ConfigUtils.configFloat(config, "HeldItemScale", heldItemScale);
+			height = ConfigUtils.configFloat(config, "Height", height);
+			width = ConfigUtils.configFloat(config, "Width", width);
+			if(config.containsKey("ChassisHeight"))
+				chassisHeight = (Integer.parseInt(config.get("ChassisHeight")))/16F;
+
+			fallDamageMultiplier = ConfigUtils.configFloat(config, "FallDamageMultiplier", fallDamageMultiplier);
+			blockDamageFromFalling = ConfigUtils.configFloat(config, "BlockDamageFromFalling", blockDamageFromFalling);
+			reach = ConfigUtils.configFloat(config, "Reach", reach);
+			takeFallDamage = ConfigUtils.configBool(config, "TakeFallDamage", takeFallDamage);
+			damageBlocksFromFalling = ConfigUtils.configBool(config, "DamageBlocksFromFalling", damageBlocksFromFalling);
+			legSwingLimit = ConfigUtils.configFloat(config, "LegSwingLimit", legSwingLimit);
+
+			if(config.containsKey("LimitHeadTurn")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
 				limitHeadTurn = Boolean.parseBoolean(split[1].toLowerCase());
 				limitHeadTurnValue = Float.parseFloat(split[2]);
 			}
-			if(split[0].equals("LegSwingTime"))
-				legSwingTime = Float.parseFloat(split[1]);
-			if(split[0].equals("UpperArmLimit"))
-				upperArmLimit = Float.parseFloat(split[1]);
-			if(split[0].equals("LowerArmLimit"))
-				lowerArmLimit = Float.parseFloat(split[1]);
-			if(split[0].equals("LeftHandModifier"))
-			{
+			legSwingTime = ConfigUtils.configFloat(config, "LegSwingTime", legSwingTime);
+			upperArmLimit = ConfigUtils.configFloat(config, "UpperArmLimit", upperArmLimit);
+			lowerArmLimit = ConfigUtils.configFloat(config, "LowerArmLimit", lowerArmLimit);
+			if(config.containsKey("LeftHandModifier")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
 				leftHandModifierX = Float.parseFloat(split[1])/16F;
 				leftHandModifierY = Float.parseFloat(split[2])/16F;
 				leftHandModifierZ = Float.parseFloat(split[3])/16F;
 			}
-			if(split[0].equals("RightHandModifier"))
-			{
+			if(config.containsKey("RightHandModifier")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "RightHandModifier");
 				rightHandModifierX = Float.parseFloat(split[1])/16F;
 				rightHandModifierY = Float.parseFloat(split[2])/16F;
 				rightHandModifierZ = Float.parseFloat(split[3])/16F;
 			}
-			
-			else if(split[0].equals("LegNode")){
+
+			if(config.containsKey("LegNode")){
+				String[] split = ConfigUtils.getSplitFromKey(config, "LegNode");
 				LegNode node = new LegNode();
 				node.rotation = Integer.parseInt(split[1]);
 				node.lowerBound = Float.parseFloat(split[2]);
@@ -192,15 +173,12 @@ public class MechaType extends DriveableType
 				node.legPart = Integer.parseInt(split[5]);
 				legNodes.add(node);
 			}
-			else if(split[0].equals("LegAnimSpeed"))
-				legAnimSpeed = Float.parseFloat(split[1]);
-			else if(split[0].equals("RestrictInventoryInput"))
-				restrictInventoryInput = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("AllowMechaToolsInRestrictedInv"))
-				allowMechaToolsInRestrictedInv = Boolean.parseBoolean(split[1]);
-		}
-		catch (Exception ignored)
-		{
+			legAnimSpeed = ConfigUtils.configFloat(config, "LegAnimSpeed", legAnimSpeed);
+			restrictInventoryInput = ConfigUtils.configBool(config, "RestrictInventoryInput", restrictInventoryInput);
+			allowMechaToolsInRestrictedInv = ConfigUtils.configBool(config, "AllowMechaToolsInRestrictedInv", allowMechaToolsInRestrictedInv);
+
+		} catch (Exception ignored) {
+
 		}
     }
     
@@ -210,20 +188,16 @@ public class MechaType extends DriveableType
 		model = FlansMod.proxy.loadModel(modelString, shortName, ModelMecha.class);
 	}
     
-    private DriveablePosition getShootPoint(String[] split)
-    {
+    private DriveablePosition getShootPoint(String[] split) {
     	//No need to look for a specific gun.
-    	if(split.length == 5)
-    	{
+    	if(split.length == 5) {
     		return new DriveablePosition(split);
     	}
 		return new DriveablePosition(new Vector3f(), EnumDriveablePart.core);
 	}
 	
-	public static MechaType getMecha(String find)
-	{
-		for(MechaType type : types)
-		{
+	public static MechaType getMecha(String find) {
+		for(MechaType type : types) {
 			if(type.shortName.equals(find))
 				return type;
 		}
@@ -231,8 +205,7 @@ public class MechaType extends DriveableType
 	}
 	
 	
-	public class LegNode
-	{
+	public class LegNode {
 		public int rotation;
 		public float lowerBound;
 		public float upperBound;

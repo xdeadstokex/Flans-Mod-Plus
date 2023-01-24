@@ -1,8 +1,11 @@
 package com.flansmod.common.guns;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -124,133 +127,82 @@ public class AttachmentType extends PaintableType implements IScope
 	}
 	
 	@Override
-	protected void read(String[] split, TypeFile file)
-	{
-		super.read(split, file);
-		try
-		{
-			if(split[0].equals("AttachmentType"))
-				type = EnumAttachmentType.get(split[1]);
-			else if(FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("Model")))
-				model = FlansMod.proxy.loadModel(split[1], shortName, ModelAttachment.class);
-			else if(split[0].equals("ModelScale"))
-				modelScale = Float.parseFloat(split[1]);
-			else if(split[0].equals("Texture"))
-				texture = split[1];
-			
-			else if(split[0].equals("Silencer"))
-				silencer = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("DisableMuzzleFlash") || split[0].equals("DisableFlash"))
-				disableMuzzleFlash = Boolean.parseBoolean(split[1].toLowerCase());
-			
+	protected void read(ConfigMap config, TypeFile file) {
+		try {
+
+			super.read(config, file);
+			if (config.containsKey("AttachmentType"))
+				type = EnumAttachmentType.get(config.get("AttachmentType"));
+
+			if(FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("Model")))
+				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelAttachment.class);
+
+			modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
+			texture = ConfigUtils.configString(config, "Texture", texture);
+			silencer = ConfigUtils.configBool(config, "Silencer", silencer);
+			disableMuzzleFlash = ConfigUtils.configBool(config, "DisableMuzzleFlash", "DisableFlash", disableMuzzleFlash);
+
 			//Flashlight settings
-			else if(split[0].equals("Flashlight"))
-				flashlight = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("FlashlightRange"))
-				flashlightRange = Float.parseFloat(split[1]);
-			else if(split[0].equals("FlashlightStrength"))
-				flashlightStrength = Integer.parseInt(split[1]);
+			flashlight = ConfigUtils.configBool(config, "Flashlight", flashlight);
+			flashlightRange = ConfigUtils.configFloat(config, "FlashlightRange", flashlightRange);
+			flashlightStrength = ConfigUtils.configInt(config, "FlashlightStrength", flashlightStrength);
+
 			//Mode override
-			else if(split[0].equals("ModeOverride"))
-				modeOverride = EnumFireMode.getFireMode(split[1]);
-
+			if(config.containsKey("ModeOverride"))
+				modeOverride = EnumFireMode.getFireMode(config.get("ModeOverride"));
+//
 			//Secondary Stuff
-			else if(split[0].equals("SecondaryMode"))
-				secondaryFire = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("SecondaryAmmo"))
-				secondaryAmmo.add(split[1]);
-			else if(split[0].equals("SecondaryDamage"))
-				secondaryDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondarySpread") || split[0].equals("SecondaryAccuracy"))
-				secondarySpread = secondaryDefaultSpread = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondaryBulletSpeed"))
-				secondarySpeed = Float.parseFloat(split[1]);
-			else if(split[0].equals("SecondaryShootDelay"))
-				secondaryShootDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryReloadTime"))
-				secondaryReloadTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryShootDelay"))
-				secondaryShootDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryNumBullets"))
-				secondaryNumBullets = Integer.parseInt(split[1]);
-			else if(split[0].equals("LoadSecondaryIntoGun"))
-				numSecAmmoItems = Integer.parseInt(split[1]);
-			else if(split[0].equals("SecondaryFireMode"))
-				secondaryFireMode = EnumFireMode.getFireMode(split[1]);
-			else if(split[0].equals("SecondaryShootSound"))
-			{
-				secondaryShootSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-			}
-			else if(split[0].equals("SecondaryReloadSound"))
-			{
-				secondaryReloadSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-			}
-			else if(split[0].equals("ModeSwitchSound"))
-			{
-				toggleSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-			}
-			
+			secondaryFire = ConfigUtils.configBool(config, "SecondaryMode", secondaryFire);
+			//todo fix multiples
+//			else if(split[0].equals("SecondaryAmmo"))
+//				secondaryAmmo.add(split[1]);
+			secondaryAmmo.add(ConfigUtils.configString(config, "SecondaryAmmo", ""));
+			secondaryDamage = ConfigUtils.configFloat(config, "SecondaryDamage", secondaryDamage);
+			secondarySpread = ConfigUtils.configFloat(config, "SecondarySpread", "SecondaryAccuracy", secondarySpread);
+			secondarySpeed = ConfigUtils.configFloat(config, "SecondaryBulletSpeed", secondarySpeed);
+			secondaryShootDelay = ConfigUtils.configInt(config, "SecondaryShootDelay", secondaryShootDelay);
+			secondaryReloadTime = ConfigUtils.configInt(config, "SecondaryReloadTime", secondaryReloadTime);
+			secondaryShootDelay = ConfigUtils.configInt(config, "SecondaryShootDelay", secondaryShootDelay);
+			secondaryNumBullets = ConfigUtils.configInt(config, "SecondaryNumBullets", secondaryNumBullets);
+			numSecAmmoItems = ConfigUtils.configInt(config, "LoadSecondaryIntoGun", numSecAmmoItems);
+			if (config.containsKey("SecondaryFireMode"))
+				secondaryFireMode = EnumFireMode.getFireMode(config.get("SecondaryFireMode"));
+			secondaryShootSound = ConfigUtils.configGunSound(contentPack, config, "SecondaryShootSound", secondaryShootSound);
+			secondaryReloadSound = ConfigUtils.configGunSound(contentPack, config, "SecondaryReloadSound", secondaryReloadSound);
+			toggleSound = ConfigUtils.configGunSound(contentPack, config, "ModeSwitchSound", toggleSound);
+
 			//Multipliers
-			else if(split[0].equals("MeleeDamageMultiplier"))
-				meleeDamageMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("DamageMultiplier"))
-				damageMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("SpreadMultiplier"))
-				spreadMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("RecoilMultiplier"))
-				recoilMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("RecoilControlMultiplier"))
-				recoilControlMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("RecoilControlMultiplierSneaking"))
-				recoilControlMultiplierSneaking = Float.parseFloat(split[1]);
-			else if(split[0].equals("RecoilControlMultiplierSprinting"))
-				recoilControlMultiplierSprinting = Float.parseFloat(split[1]);
-			else if(split[0].equals("BulletSpeedMultiplier"))
-				bulletSpeedMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("ReloadTimeMultiplier"))
-				reloadTimeMultiplier = Float.parseFloat(split[1]);
-			else if(split[0].equals("MovementSpeedMultiplier") || split[0].equals("MoveSpeedModifier"))
-				moveSpeedMultiplier = Float.parseFloat(split[1]);
+			meleeDamageMultiplier = ConfigUtils.configFloat(config, "MeleeDamageMultiplier", meleeDamageMultiplier);
+			damageMultiplier = ConfigUtils.configFloat(config, "DamageMultiplier", damageMultiplier);
+			spreadMultiplier = ConfigUtils.configFloat(config, "SpreadMultiplier", spreadMultiplier);
+			recoilMultiplier = ConfigUtils.configFloat(config, "RecoilMultiplier", recoilMultiplier);
+			recoilControlMultiplier = ConfigUtils.configFloat(config, "RecoilControlMultiplier", recoilControlMultiplier);
+			recoilControlMultiplierSneaking = ConfigUtils.configFloat(config, "RecoilControlMultiplierSneaking", recoilControlMultiplierSneaking);
+			recoilControlMultiplierSprinting = ConfigUtils.configFloat(config, "RecoilControlMultiplierSprinting", recoilControlMultiplierSprinting);
+			bulletSpeedMultiplier = ConfigUtils.configFloat(config, "BulletSpeedMultiplier", bulletSpeedMultiplier);
+			recoilControlMultiplierSprinting = ConfigUtils.configFloat(config, "RecoilControlMultiplierSprinting", recoilControlMultiplierSprinting);
+			moveSpeedMultiplier = ConfigUtils.configFloat(config, "MovementSpeedMultiplier", "MoveSpeedModifier", moveSpeedMultiplier);
+
 			//Scope Variables
-
-			else if (split[0].equals("HasVariableZoom")){
-				hasVariableZoom = Boolean.parseBoolean(split[1]);
-			}
-			else if (split[0].equals("MinZoom")) {
-				minZoom = Float.parseFloat(split[1]);
-			}
-			else if (split[0].equals("MaxZoom")) {
-				maxZoom = Float.parseFloat(split[1]);
-			}
-			else if (split[0].equals("ZoomAugment")) {
-				zoomAugment = Float.parseFloat(split[1]);
-			}
-
-			else if(split[0].equals("ZoomLevel"))
-				zoomLevel = Float.parseFloat(split[1]);
-			else if(split[0].equals("FOVZoomLevel"))
-				FOVZoomLevel = Float.parseFloat(split[1]);
-			else if (split[0].equals("ZoomOverlay"))
-			{
+			minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
+			maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
+			zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
+			zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
+			FOVZoomLevel = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVZoomLevel);
+			if (config.containsKey("ZoomOverlay")) {
 				hasScopeOverlay = true;
-				if (split[1].equals("None"))
+				if (config.get("ZoomOverlay").equals("None"))
 					hasScopeOverlay = false;
-				else zoomOverlay = split[1];
+				else zoomOverlay = config.get("ZoomOverlay");
 			}
-			else if(split[0].equals("HasNightVision"))
-				hasNightVision = Boolean.parseBoolean(split[1].toLowerCase());
-				
-		}
-		catch (Exception e)
-		{
-			FlansMod.log("Reading attachment file failed.");
-			if(FlansMod.printStackTrace)
-			{
-				e.printStackTrace();
-			}
+			hasNightVision = ConfigUtils.configBool(config, "HasNightVision", hasNightVision);
+
+		} catch (Exception e) {
+				FlansMod.log("Reading attachment file failed.");
+				if(FlansMod.printStackTrace)
+				{
+					e.printStackTrace();
+				}
 		}
 	}
 	
