@@ -70,10 +70,10 @@ public class ToolType extends InfoType
 		parachute = ConfigUtils.configBool(config, "Parachute", parachute);
 		remote = ConfigUtils.configBool(config, "ExplosiveRemote", remote);
 		key = ConfigUtils.configBool(config, "Key", key);
-		healPlayers = ConfigUtils.configBool(config, "Heal", "HealPlayers", healPlayers);
-		healDriveables = ConfigUtils.configBool(config, "Repair", "RepairVehicles", healDriveables);
-		healAmount = ConfigUtils.configInt(config, "HealAmount", "RepairAmount", toolLife);
-		toolLife = ConfigUtils.configInt(config, "ToolLife", "ToolUes", toolLife);
+		healPlayers = ConfigUtils.configBool(config, new String[]{"Heal", "HealPlayers"}, healPlayers);
+		healDriveables = ConfigUtils.configBool(config, new String[]{"Repair", "RepairVehicles"}, healDriveables);
+		healAmount = ConfigUtils.configInt(config, new String[]{"HealAmount", "RepairAmount"}, toolLife);
+		toolLife = ConfigUtils.configInt(config, new String[]{"ToolLife", "ToolUes"}, toolLife);
 		EUPerCharge = ConfigUtils.configInt(config, "EUPerCharge", EUPerCharge);
 		if(config.containsKey("RechargeRecipe")) {
 			String[] split = ConfigUtils.getSplitFromKey(config, "RechargeRecipe");
@@ -87,7 +87,7 @@ public class ToolType extends InfoType
 			}
 		}
 		destroyOnEmpty = ConfigUtils.configBool(config, "DestroyOnEmpty", destroyOnEmpty);
-		foodness = ConfigUtils.configInt(config, "Food", "Foodness", foodness);
+		foodness = ConfigUtils.configInt(config, new String[]{"Food", "Foodness"}, foodness);
 	}
 	
 	@Override

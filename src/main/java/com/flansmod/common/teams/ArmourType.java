@@ -129,9 +129,9 @@ public class ArmourType extends InfoType {
             }
             bulletDefence = ConfigUtils.configDouble(config, "BulletDefence", bulletDefence);
             defence = ConfigUtils.configDouble(config, "OtherDefence", defence);
-            moveSpeedModifier = ConfigUtils.configFloat(config, "MoveSpeedModifier", "Slowness", moveSpeedModifier);
+            moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
             jumpModifier = ConfigUtils.configFloat(config, "JumpModifier", jumpModifier);
-            knockbackModifier = ConfigUtils.configFloat(config, "KnockbackReduction", "KnockbackModifier", knockbackModifier);
+            knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
             penetrationResistance = ConfigUtils.configFloat(config, "PenetrationResistance", penetrationResistance);
             nightVision = ConfigUtils.configBool(config, "NightVision", nightVision);
             invisible = ConfigUtils.configBool(config, "Invisible", invisible);
@@ -145,7 +145,7 @@ public class ArmourType extends InfoType {
                 durability = Integer.parseInt(config.get("Durability"));
                 hasDurability = durability > 0;
             }
-            armourTextureName = ConfigUtils.configString(config, "ArmourTexture", "ArmorTexture", armourTextureName);
+            armourTextureName = ConfigUtils.configString(config, new String[]{"ArmourTexture", "ArmorTexture"}, armourTextureName);
         } catch (Exception e) {
             FlansMod.log("Reading armour file failed.");
             if (FlansMod.printStackTrace) {

@@ -140,7 +140,7 @@ public class AttachmentType extends PaintableType implements IScope
 			modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
 			texture = ConfigUtils.configString(config, "Texture", texture);
 			silencer = ConfigUtils.configBool(config, "Silencer", silencer);
-			disableMuzzleFlash = ConfigUtils.configBool(config, "DisableMuzzleFlash", "DisableFlash", disableMuzzleFlash);
+			disableMuzzleFlash = ConfigUtils.configBool(config, new String[]{"DisableMuzzleFlash", "DisableFlash"}, disableMuzzleFlash);
 
 			//Flashlight settings
 			flashlight = ConfigUtils.configBool(config, "Flashlight", flashlight);
@@ -158,7 +158,7 @@ public class AttachmentType extends PaintableType implements IScope
 //				secondaryAmmo.add(split[1]);
 			secondaryAmmo.add(ConfigUtils.configString(config, "SecondaryAmmo", ""));
 			secondaryDamage = ConfigUtils.configFloat(config, "SecondaryDamage", secondaryDamage);
-			secondarySpread = ConfigUtils.configFloat(config, "SecondarySpread", "SecondaryAccuracy", secondarySpread);
+			secondarySpread = ConfigUtils.configFloat(config, new String[]{"SecondarySpread", "SecondaryAccuracy"}, secondarySpread);
 			secondarySpeed = ConfigUtils.configFloat(config, "SecondaryBulletSpeed", secondarySpeed);
 			secondaryShootDelay = ConfigUtils.configInt(config, "SecondaryShootDelay", secondaryShootDelay);
 			secondaryReloadTime = ConfigUtils.configInt(config, "SecondaryReloadTime", secondaryReloadTime);
@@ -181,7 +181,7 @@ public class AttachmentType extends PaintableType implements IScope
 			recoilControlMultiplierSprinting = ConfigUtils.configFloat(config, "RecoilControlMultiplierSprinting", recoilControlMultiplierSprinting);
 			bulletSpeedMultiplier = ConfigUtils.configFloat(config, "BulletSpeedMultiplier", bulletSpeedMultiplier);
 			recoilControlMultiplierSprinting = ConfigUtils.configFloat(config, "RecoilControlMultiplierSprinting", recoilControlMultiplierSprinting);
-			moveSpeedMultiplier = ConfigUtils.configFloat(config, "MovementSpeedMultiplier", "MoveSpeedModifier", moveSpeedMultiplier);
+			moveSpeedMultiplier = ConfigUtils.configFloat(config, new String[]{"MovementSpeedMultiplier", "MoveSpeedModifier"}, moveSpeedMultiplier);
 
 			//Scope Variables
 			minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);

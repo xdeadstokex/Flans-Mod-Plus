@@ -182,7 +182,7 @@ public abstract class ShootableType extends InfoType {
             texture = config.get("Texture");
 
         //Item Stuff
-        maxStackSize = ConfigUtils.configInt(config, "StackSize", "MaxStackSize", maxStackSize);
+        maxStackSize = ConfigUtils.configInt(config, new String[]{"StackSize", "MaxStackSize"}, maxStackSize);
         dropItemOnShoot = config.get("DropItemOnShoot");
         dropItemOnReload = config.get("DropItemOnReload");
         dropItemOnHit = config.get("DropItemOnHit");
@@ -190,7 +190,7 @@ public abstract class ShootableType extends InfoType {
 
         //Physics
         fallSpeed = ConfigUtils.configFloat(config, "FallSpeed",  fallSpeed);
-        throwSpeed = ConfigUtils.configFloat(config, "ThrowSpeed", "ShootSpeed", throwSpeed);
+        throwSpeed = ConfigUtils.configFloat(config, new String[]{"ThrowSpeed", "ShootSpeed"}, throwSpeed);
         hitBoxSize = ConfigUtils.configFloat(config, "HitBoxSize",  hitBoxSize);
 
         //Hit stuff
@@ -221,11 +221,11 @@ public abstract class ShootableType extends InfoType {
         //Detonation conditions etc
         fuse = ConfigUtils.configInt(config, "Fuse",  fuse);
         despawnTime = ConfigUtils.configInt(config, "DespawnTime",  despawnTime);
-        explodeOnImpact = ConfigUtils.configBool(config, "ExplodeOnImpact", "DetonateOnImpact",  explodeOnImpact);
+        explodeOnImpact = ConfigUtils.configBool(config, new String[]{"ExplodeOnImpact", "DetonateOnImpact"},  explodeOnImpact);
 
         //Detonation
-        fireRadius = ConfigUtils.configFloat(config, "FireRadius", "Fire",  fireRadius);
-        explosionRadius = ConfigUtils.configFloat(config, "ExplosionRadius", "Explosion", explosionRadius);
+        fireRadius = ConfigUtils.configFloat(config, new String[]{"FireRadius", "Fire"},  fireRadius);
+        explosionRadius = ConfigUtils.configFloat(config, new String[]{"ExplosionRadius", "Explosion"}, explosionRadius);
         explosionPower = ConfigUtils.configFloat(config, "ExplosionPower",  explosionPower);
         explosionBreaksBlocks = ConfigUtils.configBool(config, "ExplosionBreaksBlocks",  explosionBreaksBlocks);
         explosionDamageVsLiving = ConfigUtils.configFloat(config, "ExplosionDamageVsLiving",  explosionDamageVsLiving);
@@ -245,7 +245,7 @@ public abstract class ShootableType extends InfoType {
         debrisParticleCount = ConfigUtils.configInt(config, "DebrisParticleCount",  debrisParticleCount);
 
         //Particles
-        trailParticles = ConfigUtils.configBool(config, "TrailParticles", "SmokeTrail",  trailParticles);
+        trailParticles = ConfigUtils.configBool(config, new String[]{"TrailParticles", "SmokeTrail"},  trailParticles);
         trailParticleType = config.get("TrailParticleType");
     }
 

@@ -131,7 +131,7 @@ public class PartType extends InfoType {
             }
 
             //RedstoneFlux
-            useRFPower = ConfigUtils.configBool(config, "UseRF", "UseRFPower", useRFPower);
+            useRFPower = ConfigUtils.configBool(config, new String[]{"UseRF", "UseRFPower"}, useRFPower);
             RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
         } catch (Exception e) {
             FlansMod.log("Reading part file failed.");

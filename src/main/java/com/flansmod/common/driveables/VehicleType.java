@@ -109,7 +109,7 @@ public class VehicleType extends DriveableType {
             turnRightModifier = ConfigUtils.configFloat(config,"TurnRightSpeed", turnRightModifier);
             squashMobs = ConfigUtils.configBool(config,"SquashMobs", squashMobs);
             fourWheelDrive = ConfigUtils.configBool(config,"FourWheelDrive", fourWheelDrive);
-            tank = ConfigUtils.configBool(config,"Tank", "TankMode", tank);
+            tank = ConfigUtils.configBool(config,new String[]{"Tank", "TankMode"}, tank);
             throttleDecay = ConfigUtils.configFloat(config,"ThrottleDecay", throttleDecay);
             mass = ConfigUtils.configFloat(config,"Mass", mass);
             useRealisticAcceleration = ConfigUtils.configBool(config,"UseRealisticAcceleration", useRealisticAcceleration);

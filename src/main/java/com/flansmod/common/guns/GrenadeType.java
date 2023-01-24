@@ -150,7 +150,7 @@ public class GrenadeType extends ShootableType
 			livingProximityTrigger = ConfigUtils.configFloat(config, "LivingProximityTrigger", livingProximityTrigger);
 			driveableProximityTrigger = ConfigUtils.configFloat(config, "VehicleProximityTrigger", driveableProximityTrigger);
 			damageToTriggerer = ConfigUtils.configFloat(config, "DamageToTriggerer", damageToTriggerer);
-			primeDelay = ConfigUtils.configInt(config, "PrimeDelay", "TriggerDelay", primeDelay);
+			primeDelay = ConfigUtils.configInt(config, new String[]{"PrimeDelay", "TriggerDelay"}, primeDelay);
 
 			//Sticky settings
 			sticky = ConfigUtils.configBool(config, "Sticky", sticky);

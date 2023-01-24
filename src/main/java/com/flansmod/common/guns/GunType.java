@@ -549,7 +549,7 @@ public class GunType extends PaintableType implements IScope {
         recoilSprintingMultiplier = ConfigUtils.configFloat(config, "RecoilSprintingMultiplier", recoilSprintingMultiplier);
         recoilSneakingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSneakingMultiplierYaw", recoilSneakingMultiplierYaw);
         recoilSprintingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSprintingMultiplierYaw", recoilSprintingMultiplierYaw);
-        defaultSpread = ConfigUtils.configFloat(config, "Accuracy", "Spread", defaultSpread);
+        defaultSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
         adsSpreadModifier = ConfigUtils.configFloat(config, "ADSSpreadModifier", adsSpreadModifier);
         adsSpreadModifierShotgun = ConfigUtils.configFloat(config, "ADSSpreadModifierShotgun", adsSpreadModifierShotgun);
         numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
@@ -612,10 +612,10 @@ public class GunType extends PaintableType implements IScope {
             useLoopingSounds = true;
             FlansMod.proxy.loadSound(contentPack, "guns", config.get(key));
         }
-        loopedSound = ConfigUtils.configSound(contentPack, config, "LoopedSound", "SpinSound", loopedSound);
+        loopedSound = ConfigUtils.configSound(contentPack, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
         if (loopedSound != null && !loopedSound.isEmpty())
             useLoopingSounds = true;
-        loopedSoundLength = ConfigUtils.configInt(config, "LoopedSoundLength", "SpinSoundLength", loopedSoundLength);
+        loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
         cooldownSound = ConfigUtils.configGunSound(contentPack, config, "CooldownSound", cooldownSound);
         lockOnSound = ConfigUtils.configGunSound(contentPack, config, "LockOnSound", lockOnSound);
         distantShootSound = ConfigUtils.configGunSound(contentPack, config, "DistantSound", distantShootSound);
@@ -707,7 +707,7 @@ public class GunType extends PaintableType implements IScope {
             ShootableType type = ShootableType.getShootableType(ammoType);
             ammo.add(type);
         }
-        numPrimaryAmmoItems = ConfigUtils.configInt(config, "NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun",  numPrimaryAmmoItems);
+        numPrimaryAmmoItems = ConfigUtils.configInt(config, new String[]{"NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun"},  numPrimaryAmmoItems);
         bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
         canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
         canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
@@ -739,8 +739,8 @@ public class GunType extends PaintableType implements IScope {
         }
 
         //Player modifiers
-        moveSpeedModifier = ConfigUtils.configFloat(config, "MoveSpeedModifier", "Slowness", moveSpeedModifier);
-        knockbackModifier = ConfigUtils.configFloat(config, "KnockbackReduction", "KnockbackModifier", knockbackModifier);
+        moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
+        knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
         switchDelay = ConfigUtils.configFloat(config, "SwitchDelay", switchDelay);
 
         //Attachment settings

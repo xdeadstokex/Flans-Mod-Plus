@@ -148,18 +148,18 @@ public class BulletType extends ShootableType
 				boolean pens = Boolean.parseBoolean(config.get("Penetrates"));
 				penetratingPower = pens ? 1F : 0.7F;
 			}
-			penetratingPower = ConfigUtils.configFloat(config, "Penetration", "PenetratingPower", penetratingPower);
+			penetratingPower = ConfigUtils.configFloat(config, new String[]{"Penetration", "PenetratingPower"}, penetratingPower);
 			penetrationDecay = ConfigUtils.configFloat(config, "PenetrationDecay", penetrationDecay);
 			dragInAir = ConfigUtils.configFloat(config, "DragInAir", dragInAir);
 			dragInAir = dragInAir<0? 0: dragInAir>1? 1: dragInAir;
 			dragInWater = ConfigUtils.configFloat(config, "DragInWater", dragInWater);
 			dragInWater = dragInWater<0? 0: dragInWater>1? 1: dragInWater;
 			numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
-			bulletSpread = ConfigUtils.configFloat(config, "Accuracy", "Spread", bulletSpread);
+			bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, bulletSpread);
 			livingProximityTrigger = ConfigUtils.configFloat(config, "LivingProximityTrigger", livingProximityTrigger);
 			driveableProximityTrigger = ConfigUtils.configFloat(config, "VehicleProximityTrigger", driveableProximityTrigger);
 			damageToTriggerer = ConfigUtils.configFloat(config, "DamageToTriggerer", damageToTriggerer);
-			primeDelay = ConfigUtils.configInt(config, "PrimeDelay", "TriggerDelay", primeDelay);
+			primeDelay = ConfigUtils.configInt(config, new String[]{"PrimeDelay", "TriggerDelay"}, primeDelay);
 			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
 			explodeParticleType = ConfigUtils.configString(config, "ExplodeParticles", explodeParticleType);
 			smokeTime = ConfigUtils.configInt(config, "SmokeTime", smokeTime);
@@ -171,7 +171,7 @@ public class BulletType extends ShootableType
 //				smokeEffects.add(getPotionEffect(split));
 
 			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
-			VLS = ConfigUtils.configBool(config, "VLS", "HasDeadZone", VLS);
+			VLS = ConfigUtils.configBool(config, new String[]{"VLS", "HasDeadZone"}, VLS);
 			VLSTime = ConfigUtils.configInt(config, "DeadZoneTime", VLSTime);
 			fixedDirection = ConfigUtils.configBool(config, "FixedTrackDirection", fixedDirection);
 			turnRadius = ConfigUtils.configFloat(config, "GuidedTurnRadius", turnRadius);
@@ -195,7 +195,7 @@ public class BulletType extends ShootableType
 			lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
 			lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
 			maxLockOnAngle = ConfigUtils.configFloat(config, "MaxLockOnAngle", maxLockOnAngle);
-			lockOnForce = ConfigUtils.configFloat(config, "LockOnForce", "TurningForce", lockOnForce);
+			lockOnForce = ConfigUtils.configFloat(config, new String[]{"LockOnForce", "TurningForce"}, lockOnForce);
 			maxDegreeOfMissile = ConfigUtils.configInt(config, "MaxDegreeOfLockOnMissile", maxDegreeOfMissile);
 			tickStartHoming = ConfigUtils.configInt(config, "TickStartHoming", tickStartHoming);
 			enableSACLOS = ConfigUtils.configBool(config, "EnableSACLOS", enableSACLOS);

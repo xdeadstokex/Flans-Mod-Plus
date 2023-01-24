@@ -11,11 +11,13 @@ public class ConfigUtils
 		return defaultValue;
 	}
 
-	public static String configString(ConfigMap config, String settingName, String optionalName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return config.get(settingName.toLowerCase());
-		if(config.containsKey(optionalName.toLowerCase()))
-			return config.get(optionalName.toLowerCase());
+	public static String configString(ConfigMap config, String[] settingNames, String defaultValue) {
+		for (String name : settingNames) {
+			if(config.containsKey(name.toLowerCase())) {
+				return config.get(name.toLowerCase());
+			}
+		}
+
 		return defaultValue;
 	}
 
@@ -25,21 +27,13 @@ public class ConfigUtils
 		return defaultValue;
 	}
 
-	public static int configInt(ConfigMap config, String settingName, String optionalName, int defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Integer.parseInt(config.get(settingName.toLowerCase()));
-		if(config.containsKey(optionalName.toLowerCase()))
-			return Integer.parseInt(config.get(optionalName.toLowerCase()));
-		return defaultValue;
-	}
+	public static int configInt(ConfigMap config, String[] settingNames, int defaultValue) {
+		for (String name : settingNames) {
+			if(config.containsKey(name.toLowerCase())) {
+				return Integer.parseInt(config.get(name.toLowerCase()));
+			}
+		}
 
-	public static int configInt(ConfigMap config, String settingName, String optionalName, String secondOptional, int defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Integer.parseInt(config.get(settingName.toLowerCase()));
-		if(config.containsKey(optionalName.toLowerCase()))
-			return Integer.parseInt(config.get(optionalName.toLowerCase()));
-		if(config.containsKey(secondOptional.toLowerCase()))
-			return Integer.parseInt(config.get(secondOptional.toLowerCase()));
 		return defaultValue;
 	}
 
@@ -55,11 +49,13 @@ public class ConfigUtils
 		return defaultValue;
 	}
 
-	public static float configFloat(ConfigMap config, String settingName, String optionalName, float defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Float.parseFloat(config.get(settingName.toLowerCase()));
-		if(config.containsKey(optionalName.toLowerCase()))
-			return Float.parseFloat(config.get(optionalName.toLowerCase()));
+	public static float configFloat(ConfigMap config, String[] settingNames, float defaultValue) {
+		for (String name : settingNames) {
+			if(config.containsKey(name.toLowerCase())) {
+				return Float.parseFloat(config.get(name.toLowerCase()));
+			}
+		}
+
 		return defaultValue;
 	}
 
@@ -69,11 +65,13 @@ public class ConfigUtils
 		return defaultValue;
 	}
 
-	public static boolean configBool(ConfigMap config, String settingName, String optionalName, boolean defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Boolean.parseBoolean(config.get(settingName.toLowerCase()));
-		else if (config.containsKey(optionalName.toLowerCase()))
-			return Boolean.parseBoolean(config.get(optionalName.toLowerCase()));
+	public static boolean configBool(ConfigMap config, String[] settingNames, boolean defaultValue) {
+		for (String name : settingNames) {
+			if(config.containsKey(name.toLowerCase())) {
+				return Boolean.parseBoolean(config.get(name.toLowerCase()));
+			}
+		}
+
 		return defaultValue;
 	}
 
@@ -113,14 +111,12 @@ public class ConfigUtils
 		return defaultValue;
 	}
 
-	public static String configSound(String contentPack, ConfigMap config, String settingName, String optionalName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "guns", config.get(settingName.toLowerCase()));
-			return config.get(settingName.toLowerCase());
-		}
-		if(config.containsKey(optionalName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "guns", config.get(optionalName.toLowerCase()));
-			return config.get(optionalName.toLowerCase());
+	public static String configSound(String contentPack, ConfigMap config, String[] settingNames, String defaultValue) {
+		for (String name : settingNames) {
+			if(config.containsKey(name.toLowerCase())) {
+				FlansMod.proxy.loadSound(contentPack, "guns", config.get(name.toLowerCase()));
+				return config.get(name.toLowerCase());
+			}
 		}
 
 		return defaultValue;
