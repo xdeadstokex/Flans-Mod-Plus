@@ -1,10 +1,14 @@
 package com.flansmod.client.model;
 
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.tmt.ModelRendererTurbo;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.vector.Vector3f;
+import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
@@ -235,11 +239,14 @@ public class ModelVehicle extends ModelDriveable {
         animFrameRight = vehicle.animFrameRight;
 
         float bias = 0.1F;
-        vehicle.lastRelSpeedRight = (vehicle.lastRelSpeedRight * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 - (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
-        vehicle.lastRelSpeedLeft = (vehicle.lastRelSpeedLeft * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 + (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+        float scaleRight = (vehicle.lastRelSpeedRight * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 - (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+        float scaleLeft = (vehicle.lastRelSpeedLeft * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 + (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
 
-        float scaleRight = vehicle.lastRelSpeedRight;
-        float scaleLeft = vehicle.lastRelSpeedLeft;
+
+
+        vehicle.lastRelSpeedRight = scaleRight;
+        vehicle.lastRelSpeedLeft = scaleLeft;
+
         float adjScaleRight = legSpeedChange ?
                 (Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight) :
                 (scaleRight);
@@ -247,14 +254,17 @@ public class ModelVehicle extends ModelDriveable {
                 (Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft) :
                 (scaleLeft);
 
-        scaleRight = (float)Math.sqrt(Math.abs(scaleRight)) * (legSpeedChange ? 1 : Math.abs(vehicle.throttle));
-        scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft)) * (legSpeedChange ? 1 : Math.abs(vehicle.throttle));
+        scaleRight = (float)Math.sqrt(Math.abs(scaleRight)) * (legSpeedChange ? 1 : Math.min(1, Math.abs(vehicle.throttle)*10));
+        scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft)) * (legSpeedChange ? 1 : Math.min(1, Math.abs(vehicle.throttle)*10));
 
         scaleRight = scaleRight > 0.01 ? scaleRight : 0;
         scaleLeft = scaleLeft > 0.01 ? scaleLeft : 0;
 
-        vehicle.legAnimPosRight += adjScaleRight * f;
-        vehicle.legAnimPosLeft += adjScaleLeft * f;
+        if (!Minecraft.getMinecraft().isGamePaused()) {
+            vehicle.legAnimPosRight += adjScaleRight * f;
+            vehicle.legAnimPosLeft += adjScaleLeft * f;
+        }
+
 
         float frLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 0  ) * scaleRight * legMaxMove;
         float brLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 1.5) * scaleRight * legMaxMove;
@@ -262,6 +272,31 @@ public class ModelVehicle extends ModelDriveable {
         float flLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 1  ) * scaleLeft * legMaxMove;
         float blLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 2.5) * scaleLeft * legMaxMove;
 
+        boolean frStomp = frLegYaw * vehicle.frLegYawLast < 0;
+        boolean flStomp = flLegYaw * vehicle.flLegYawLast < 0;
+        boolean brStomp = brLegYaw * vehicle.brLegYawLast < 0;
+        boolean blStomp = blLegYaw * vehicle.blLegYawLast < 0;
+
+        if (frStomp && vehicle.getVehicleType().stompSoundFrontRight != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundFrontRight), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (flStomp && vehicle.getVehicleType().stompSoundFrontLeft != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundFrontLeft), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (brStomp && vehicle.getVehicleType().stompSoundBackRight != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundBackRight), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (blStomp && vehicle.getVehicleType().stompSoundBackLeft != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundBackLeft), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        vehicle.frLegYawLast = frLegYaw;
+        vehicle.flLegYawLast = flLegYaw;
+        vehicle.brLegYawLast = brLegYaw;
+        vehicle.blLegYawLast = blLegYaw;
         //Rendering the body
         if (vehicle.isPartIntact(EnumDriveablePart.core)) {
             for (ModelRendererTurbo aBodyModel : bodyModel) {
