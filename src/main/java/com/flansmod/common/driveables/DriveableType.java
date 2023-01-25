@@ -33,6 +33,7 @@ public class DriveableType extends PaintableType {
      * Health of each driveable part
      */
     public HashMap<EnumDriveablePart, CollisionBox> health = new HashMap<>();
+    public HashMap<EnumDriveablePart, BoxExplosion> partDeathExplosions = new HashMap<>();
     /**
      * Recipe parts associated to each driveable part
      */
@@ -885,6 +886,17 @@ public class DriveableType extends PaintableType {
                     box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
                 }
                 health.put(part, box);
+            } else if (split[0].equals("PartDeathExplosion")) {
+                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+
+                BoxExplosion exp;
+                if (split.length > 5) {
+                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                } else {
+                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]));
+                }
+
+                partDeathExplosions.put(part, exp);
             //Driver Position
             } else if (split[0].equals("DriverPart")) {
                 seats[0].part = EnumDriveablePart.getPart(split[1]);

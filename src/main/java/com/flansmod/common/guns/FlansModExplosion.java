@@ -51,10 +51,11 @@ public class FlansModExplosion extends Explosion
     private final float damageVsVehicle;
     public boolean breakBlocks;
     public boolean canceled = false;
+    public boolean canDamageSelf;
 
 	public FlansModExplosion(World w, Entity e, EntityPlayer p, InfoType t,
 			double x, double y, double z, float explosionRadius, float explosionPower, boolean breakBlocks,
-			 float damageLiving, float damagePlayer, float damagePlane, float damageVehicle, int smokeCount, int debrisCount)
+			 float damageLiving, float damagePlayer, float damagePlane, float damageVehicle, int smokeCount, int debrisCount, boolean damageSelf)
 	{
 		super(w, e, x, y, z, explosionRadius);
 		this.radius = explosionRadius;
@@ -69,6 +70,9 @@ public class FlansModExplosion extends Explosion
         damageVsLiving  = damageLiving;
         damageVsPlane   = damagePlane;
         damageVsVehicle = damageVehicle;
+
+        canDamageSelf = damageSelf;
+
         doExplosionA();
         doExplosionB(true);
         spawnParticle(smokeCount, debrisCount);
@@ -162,7 +166,13 @@ public class FlansModExplosion extends Explosion
         int l1 = MathHelper.floor_double(explosionY + explosionSize + 1.0D);
         int i2 = MathHelper.floor_double(explosionZ - explosionSize - 1.0D);
         int j2 = MathHelper.floor_double(explosionZ + explosionSize + 1.0D);
-		List list = worldObj.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+
+        List list;
+        if (canDamageSelf) {
+        	list = worldObj.getEntitiesWithinAABB(Entity.class, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+		} else {
+			list = worldObj.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+		}
 		net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, this.explosionSize);
         Vec3 vec3 = Vec3.createVectorHelper(explosionX, explosionY, explosionZ);
 

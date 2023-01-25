@@ -1225,7 +1225,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 if (owner instanceof EntityPlayer) {
                     new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
                             type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-                            type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+                            type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
                 } else {
                     worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions);
                 }
@@ -1317,7 +1317,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             if ((owner instanceof EntityPlayer)) {
                 new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
                         type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-                        type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+                        type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
                 isDead = true;
             } else {
                 worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks);
