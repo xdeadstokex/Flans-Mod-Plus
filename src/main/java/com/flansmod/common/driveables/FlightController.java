@@ -325,7 +325,7 @@ public class FlightController {
 
 		// Wheels are actually broken, only two of them will be 'on the ground'.
 		// If we don't do this, the gravity will keep being applied, giving a speed of 0.3 with no motion.
-		if (plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
+		if (plane.wheels.length > 1 && plane.wheels[0] != null && plane.wheels[1] != null && plane.wheels[0].onGround && plane.wheels[1].onGround) {
 			plane.motionY = -0.01;
 		} else {
 			plane.motionY -= gravity;

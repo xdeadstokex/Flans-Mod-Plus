@@ -113,6 +113,10 @@ BAB
 | AllowNightVision | Bool | false | Gives night vision effect when scoped |
 | ZoomLevel | Float | 1 | Zoom level of the default scope. It is NOT possible to zoom in *and* have the gun visible, due to a limitation of forge. |
 | FOVZoomLevel | Float | 1.5 | The FOV zoom level of the default scope. Keeps the gun visible (if animated properly). |
+| HasVariableZoom | Boolean | false | Is it possible to adjust the zoom. P.s. The ZoomLevel and FOVZoomLevel values will not affect the zoom. |
+| MinZoom | Float | 1.00 | Minimum zoom level. |
+| MaxZoom | Float | 4.00 | Maximum zoom level. |
+| ZoomAugment | Float | 1.00 | Zoom in/out augment. ATTENTION! The result of division (÷) MaxZoom by ZoomAugment must be an integer. (Correct example: 8/2=4. NOT correct example: 8/3=2.66...). |
 | Deployable | Bool | false | Whether the gun is placeable |
 | DeployedModel | String | ~ | The model name of the deployed model |
 | CasingModel | String | ~ | The model name of the casings to eject |
@@ -244,6 +248,10 @@ This will override the value set in the gun's model!
 | ZoomLevel | Float | 1 | The zoom of the scope |
 | FOVZoomLevel | Float | 1 | The FOV zoom of the scope |
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
+| HasVariableZoom | Boolean | false | Is it possible to adjust the zoom. P.s. The ZoomLevel and FOVZoomLevel values will not affect the zoom. |
+| MinZoom | Float | 1.00 | Minimum zoom level. |
+| MaxZoom | Float | 4.00 | Maximum zoom level. |
+| ZoomAugment | Float | 1.00 | Zoom in/out augment. ATTENTION! The result of division (÷) MaxZoom by ZoomAugment must be an integer. (Correct example: 8/2=4. NOT correct example: 8/3=2.66...). |
 | HasNightVision | Bool | false | Whether to apply night vision |
 
 ### [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
@@ -559,7 +567,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ShellDelay / BombDelay | Integer | 1 | Duplicate way of setting shoot delay for primary... would not reccomend. | 
 | AddRecipeParts | partName quantity itemName| ~ | Add a part to the recipe. Damaged parts can be added, but I don't know how to do that. | 
 | AddDye | quantity dyeName | ~ | Add a dye to the recipe. I am unsure if it is a name or an ID. | 
-| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required| 
+| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required|
+| PartDeathExplosion | partName radius power breaksBlocks (damageVsLiving) (damageVsPlayer) (damageVsPlane) (damageVsVehicles) | ~ | When this part dies, set off an explosion with these parameters |
 | Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) | ~ | Set driver position. Part will default to core. | 
 | DriverPart | String | Core | Set part that the driver is on/in | 
 | DriverGun / PilotGun | String | ~ | Set gun name that the pilot controls | 

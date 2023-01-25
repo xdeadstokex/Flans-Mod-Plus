@@ -13,7 +13,9 @@ buildscript {
 	    url = "https://repo1.maven.org/maven2/"
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath ('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
+            changing = true
+        }
     }
   }
 }
@@ -97,6 +99,7 @@ task outputJar(type: Jar) {
     from(zipTree("build/libs/${archiveName}")) {
         exclude '**/mechaparts/'
         exclude '**/modernweapons/'
+        exclude '**/mw/'
         exclude '**/nerf/'
         exclude '**/simpleparts/'
         exclude '**/titan/'
@@ -201,8 +204,19 @@ build {
     dependsOn clearOutput
     dependsOn outputJar
 
+    dependsOn deobfJar
+
     dependsOn outputPacks
 }
+
+runClient {
+    jvmArgs "-Xmx2G", "-Xms2G"
+}
+
+runServer {
+    jvmArgs "-Xmx2G", "-Xms2G"
+}
+
 
 def customGradle = rootProject.file('custom.gradle');
 if (customGradle.exists()) {

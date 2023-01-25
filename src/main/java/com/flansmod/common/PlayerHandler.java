@@ -108,9 +108,12 @@ public class PlayerHandler {
         }
         if(TeamsManager.getInstance().currentRound!=null) {
             if (!statsSynced) {
-                if (PlayerStats.getAllPlayersStats() == null) statsSynced = true;
-                for (PlayerStats stats : PlayerStats.getAllPlayersStats()) {
-                    serverSidePlayerStats.put(stats.nickname, stats);
+                if (PlayerStats.getAllPlayersStats() != null) {
+                    for (PlayerStats stats : PlayerStats.getAllPlayersStats()) {
+                        serverSidePlayerStats.put(stats.nickname, stats);
+                        statsSynced = true;
+                    }
+                } else {
                     statsSynced = true;
                 }
             }

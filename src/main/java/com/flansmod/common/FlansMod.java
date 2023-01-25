@@ -102,6 +102,7 @@ public class FlansMod {
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
     public static boolean bulletGuiEnable = true;
+    public static boolean fancyBulletGui = true;
     public static float[] hitCrossHairColor = new float[]{1.0F, 1.0F, 1.0F, 1.0F};
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = false;
@@ -131,6 +132,11 @@ public class FlansMod {
     public static boolean showMuzzleFlashParticlesDefault = true;
     public static boolean showFlashesWhenWounded = true;
     public static float vehicleWheelSeatExplosionModifier = 1F;
+    public static boolean showPackNameInItemDescriptions = true;
+    public static float masterDamageModifier = 1.0F;
+    public static float masterRecoilModifier = 1.0F;
+    public static boolean masterDualWieldDisable = false;
+    public static boolean gunDevMode = false;
 
     public static int armourSpawnRate = 20;
 
@@ -673,6 +679,7 @@ public class FlansMod {
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        fancyBulletGui = configFile.getBoolean("Enable fancy bullet HUD", "Gameplay Settings (synced)", fancyBulletGui, "Enable fancy bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
@@ -696,6 +703,11 @@ public class FlansMod {
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default (Synced)", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
+        showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
+        masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
+        masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
+        gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
@@ -727,6 +739,7 @@ public class FlansMod {
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        fancyBulletGui = configFile.getBoolean("Enable fancy bullet HUD", "Gameplay Settings (synced)", fancyBulletGui, "Enable fancy bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
@@ -750,6 +763,11 @@ public class FlansMod {
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
+        showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
+        masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
+        masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
+        gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
 
         //Client Side Settings
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");

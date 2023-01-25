@@ -73,7 +73,7 @@ public class TickHandlerClient {
     public void eventHandler(MouseEvent event) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun) {
-            if (((ItemGun) player.getCurrentEquippedItem().getItem()).type.oneHanded && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) && Math.abs(event.dwheel) > 0)
+            if (((ItemGun) player.getCurrentEquippedItem().getItem()).type.getOneHanded() && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode()) && Math.abs(event.dwheel) > 0)
                 event.setCanceled(true);
         }
     }
@@ -98,8 +98,8 @@ public class TickHandlerClient {
         }
 
         ScaledResolution scaledresolution = new ScaledResolution(FlansModClient.minecraft, FlansModClient.minecraft.displayWidth, FlansModClient.minecraft.displayHeight);
-        int i = scaledresolution.getScaledWidth();
-        int j = scaledresolution.getScaledHeight();
+        int scaledResWidth = scaledresolution.getScaledWidth();
+        int scaledResHeight = scaledresolution.getScaledHeight();
 
         Tessellator tessellator = Tessellator.instance;
 
@@ -127,10 +127,10 @@ public class TickHandlerClient {
                 mc.renderEngine.bindTexture(FlansModResourceHandler.getScope(overlayTexture));
 
                 tessellator.startDrawingQuads();
-                tessellator.addVertexWithUV(i / 2D - 2 * j, j, -90D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, j, -90D, 1.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, 0.0D, -90D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(i / 2D - 2 * j, 0.0D, -90D, 0.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, scaledResHeight, -90D, 0.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, scaledResHeight, -90D, 1.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, 0.0D, -90D, 1.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, 0.0D, -90D, 0.0D, 0.0D);
                 tessellator.draw();
                 GL11.glDepthMask(true);
                 GL11.glEnable(2929 /* GL_DEPTH_TEST */);
@@ -140,68 +140,16 @@ public class TickHandlerClient {
         }
 
         if (!event.isCancelable() && event.type == ElementType.HOTBAR && FlansMod.bulletGuiEnable) {
-            //Player ammo overlay
+
             if (mc.thePlayer != null) {
-                ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
-                if (stack != null && stack.getItem() instanceof ItemGun) {
-                    ItemGun gunItem = (ItemGun) stack.getItem();
-                    GunType gunType = gunItem.type;
-                    int x = 0;
-                    for (int n = 0; n < gunType.getNumAmmoItemsInGun(stack); n++) {
-                        ItemStack bulletStack = ((ItemGun) stack.getItem()).getBulletItemStack(stack, n);
-                        if (bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
-                            RenderHelper.enableGUIStandardItemLighting();
-                            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-                            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-                            drawSlotInventory(mc.fontRenderer, bulletStack, i / 2 + 16 + x, j - 65);
-                            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-                            RenderHelper.disableStandardItemLighting();
-                            String s = (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
-                            if (gunType.submode.length >= 2) {
-                                s = s + "[" + gunType.getFireMode(stack) + "]";
-                            }
-                            if (bulletStack.getMaxDamage() == 1)
-                                s = "";
-                            mc.fontRenderer.drawString(s, i / 2 + 32 + x, j - 59, 0x000000);
-                            mc.fontRenderer.drawString(s, i / 2 + 33 + x, j - 60, 0xffffff);
-                            x += 16 + mc.fontRenderer.getStringWidth(s);
-                        }
-                    }
-                    //Render secondary gun
-                    PlayerData data = PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT);
-                    if (gunType.oneHanded && data.offHandGunSlot != 0) {
-                        ItemStack offHandStack = mc.thePlayer.inventory.getStackInSlot(data.offHandGunSlot - 1);
-                        if (offHandStack != null && offHandStack.getItem() instanceof ItemGun) {
-                            GunType offHandGunType = ((ItemGun) offHandStack.getItem()).type;
-                            x = 0;
-                            for (int n = 0; n < offHandGunType.getNumAmmoItemsInGun(offHandStack); n++) {
-                                ItemStack bulletStack = ((ItemGun) offHandStack.getItem()).getBulletItemStack(offHandStack, n);
-                                if (bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
-                                    //Find the string we are displaying next to the ammo item
-                                    String s = (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
-                                    if (gunType.submode.length >= 2) {
-                                        s = s + "[" + gunType.getFireMode(offHandStack) + "]";
-                                    }
-                                    if (bulletStack.getMaxDamage() == 1)
-                                        s = "";
-
-                                    //Draw the slot and then move leftwards
-                                    RenderHelper.enableGUIStandardItemLighting();
-                                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                                    GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-                                    OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-                                    drawSlotInventory(mc.fontRenderer, bulletStack, i / 2 - 32 - x, j - 65);
-                                    x += 16 + mc.fontRenderer.getStringWidth(s);
-
-                                    //Draw the string
-                                    GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-                                    RenderHelper.disableStandardItemLighting();
-                                    mc.fontRenderer.drawString(s, i / 2 - 16 - x, j - 59, 0x000000);
-                                    mc.fontRenderer.drawString(s, i / 2 - 17 - x, j - 60, 0xffffff);
-                                }
-                            }
-                        }
-                    }
+                if (FlansMod.fancyBulletGui) {
+                    //Render fancy ammo HUD
+                    renderAmmoHudPrimary(FlansMod.fancyBulletGui, mc, scaledResWidth, scaledResHeight, 92, 8, 90, 25);
+                    renderAmmoHudSecondary(FlansMod.fancyBulletGui, mc, scaledResWidth, scaledResHeight, 75, 8, 107, 25);
+                } else {
+                    //Render default ammo HUD
+                    renderAmmoHudPrimary(FlansMod.fancyBulletGui, mc, scaledResWidth, scaledResHeight, 32, 59, 16, 65);
+                    renderAmmoHudSecondary(FlansMod.fancyBulletGui, mc, scaledResWidth, scaledResHeight, 16, 59, 32, 65);
                 }
             }
 
@@ -218,10 +166,10 @@ public class TickHandlerClient {
                 mc.renderEngine.bindTexture(GuiTeamScores.texture);
 
                 tessellator.startDrawingQuads();
-                tessellator.addVertexWithUV(i / 2D - 43, 27, -90D, 85D / 256D, 27D / 256D);
-                tessellator.addVertexWithUV(i / 2D + 43, 27, -90D, 171D / 256D, 27D / 256D);
-                tessellator.addVertexWithUV(i / 2D + 43, 0D, -90D, 171D / 256D, 0D / 256D);
-                tessellator.addVertexWithUV(i / 2D - 43, 0D, -90D, 85D / 256D, 0D / 256D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 43, 27, -90D, 85D / 256D, 27D / 256D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 43, 27, -90D, 171D / 256D, 27D / 256D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 43, 0D, -90D, 171D / 256D, 0D / 256D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 43, 0D, -90D, 85D / 256D, 0D / 256D);
                 tessellator.draw();
 
 
@@ -234,19 +182,19 @@ public class TickHandlerClient {
                     int colour = PacketTeamInfo.teamData[0].team.teamColour;
                     GL11.glColor4f(((colour >> 16) & 0xff) / 256F, ((colour >> 8) & 0xff) / 256F, (colour & 0xff) / 256F, 1.0F);
                     tessellator.startDrawingQuads();
-                    tessellator.addVertexWithUV(i / 2D - 43, 27, -90D, 0D / 256D, 125D / 256D);
-                    tessellator.addVertexWithUV(i / 2D - 19, 27, -90D, 24D / 256D, 125D / 256D);
-                    tessellator.addVertexWithUV(i / 2D - 19, 0D, -90D, 24D / 256D, 98D / 256D);
-                    tessellator.addVertexWithUV(i / 2D - 43, 0D, -90D, 0D / 256D, 98D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D - 43, 27, -90D, 0D / 256D, 125D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D - 19, 27, -90D, 24D / 256D, 125D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D - 19, 0D, -90D, 24D / 256D, 98D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D - 43, 0D, -90D, 0D / 256D, 98D / 256D);
                     tessellator.draw();
                     //Draw team 2 colour bit
                     colour = PacketTeamInfo.teamData[1].team.teamColour;
                     GL11.glColor4f(((colour >> 16) & 0xff) / 256F, ((colour >> 8) & 0xff) / 256F, (colour & 0xff) / 256F, 1.0F);
                     tessellator.startDrawingQuads();
-                    tessellator.addVertexWithUV(i / 2D + 19, 27, -90D, 62D / 256D, 125D / 256D);
-                    tessellator.addVertexWithUV(i / 2D + 43, 27, -90D, 86D / 256D, 125D / 256D);
-                    tessellator.addVertexWithUV(i / 2D + 43, 0D, -90D, 86D / 256D, 98D / 256D);
-                    tessellator.addVertexWithUV(i / 2D + 19, 0D, -90D, 62D / 256D, 98D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D + 19, 27, -90D, 62D / 256D, 125D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D + 43, 27, -90D, 86D / 256D, 125D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D + 43, 0D, -90D, 86D / 256D, 98D / 256D);
+                    tessellator.addVertexWithUV(scaledResWidth / 2D + 19, 0D, -90D, 62D / 256D, 98D / 256D);
                     tessellator.draw();
 
                     GL11.glDepthMask(true);
@@ -255,23 +203,23 @@ public class TickHandlerClient {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
                     //Draw the team scores
-                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", i / 2 - 35, 9, 0x000000);
-                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", i / 2 - 36, 8, 0xffffff);
-                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", i / 2 + 35 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 9, 0x000000);
-                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", i / 2 + 34 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 8, 0xffffff);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", scaledResWidth / 2 - 35, 9, 0x000000);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[0].score + "", scaledResWidth / 2 - 36, 8, 0xffffff);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", scaledResWidth / 2 + 35 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 9, 0x000000);
+                    mc.fontRenderer.drawString(PacketTeamInfo.teamData[1].score + "", scaledResWidth / 2 + 34 - mc.fontRenderer.getStringWidth(PacketTeamInfo.teamData[1].score + ""), 8, 0xffffff);
                 }
 
-                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", i / 2 + 48, 9, 0x000000);
-                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", i / 2 + 47, 8, 0xffffff);
-                mc.fontRenderer.drawString(PacketTeamInfo.map + "", i / 2 - 47 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 9, 0x000000);
-                mc.fontRenderer.drawString(PacketTeamInfo.map + "", i / 2 - 48 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 8, 0xffffff);
+                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", scaledResWidth / 2 + 48, 9, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.gametype + "", scaledResWidth / 2 + 47, 8, 0xffffff);
+                mc.fontRenderer.drawString(PacketTeamInfo.map + "", scaledResWidth / 2 - 47 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 9, 0x000000);
+                mc.fontRenderer.drawString(PacketTeamInfo.map + "", scaledResWidth / 2 - 48 - mc.fontRenderer.getStringWidth(PacketTeamInfo.map + ""), 8, 0xffffff);
 
                 int secondsLeft = PacketTeamInfo.timeLeft / 20;
                 int minutesLeft = secondsLeft / 60;
                 secondsLeft = secondsLeft % 60;
                 String timeLeft = minutesLeft + ":" + (secondsLeft < 10 ? "0" + secondsLeft : secondsLeft);
-                mc.fontRenderer.drawString(timeLeft, i / 2 - mc.fontRenderer.getStringWidth(timeLeft) / 2 - 1, 29, 0x000000);
-                mc.fontRenderer.drawString(timeLeft, i / 2 - mc.fontRenderer.getStringWidth(timeLeft) / 2, 30, 0xffffff);
+                mc.fontRenderer.drawString(timeLeft, scaledResWidth / 2 - mc.fontRenderer.getStringWidth(timeLeft) / 2 - 1, 29, 0x000000);
+                mc.fontRenderer.drawString(timeLeft, scaledResWidth / 2 - mc.fontRenderer.getStringWidth(timeLeft) / 2, 30, 0xffffff);
 
 
                 GL11.glDepthMask(true);
@@ -283,26 +231,26 @@ public class TickHandlerClient {
 
                 PacketTeamInfo.PlayerScoreData pScoreData = PacketTeamInfo.getPlayerScoreData(playerUsername);
                 if (pScoreData != null) {
-                    mc.fontRenderer.drawString(pScoreData.score + "", i / 2 - 7, 1, 0x000000);
-                    mc.fontRenderer.drawString(pScoreData.kills + "", i / 2 - 7, 9, 0x000000);
-                    mc.fontRenderer.drawString(pScoreData.deaths + "", i / 2 - 7, 17, 0x000000);
+                    mc.fontRenderer.drawString(pScoreData.score + "", scaledResWidth / 2 - 7, 1, 0x000000);
+                    mc.fontRenderer.drawString(pScoreData.kills + "", scaledResWidth / 2 - 7, 9, 0x000000);
+                    mc.fontRenderer.drawString(pScoreData.deaths + "", scaledResWidth / 2 - 7, 17, 0x000000);
                 }
             }
             for (KillMessage killMessage : killMessages) {
 
                 String message = "\u00a7"+ killMessage.killerName + (killMessage.headshot ? "          " : "     ") + "\u00a7" + killMessage.killedName;
-                FlansModClient.minecraft.fontRenderer.drawString(message, i - FlansModClient.minecraft.fontRenderer.getStringWidth(message) - 6, j - 32 - killMessage.line * 16, 16777215);
+                FlansModClient.minecraft.fontRenderer.drawString(message, scaledResWidth - FlansModClient.minecraft.fontRenderer.getStringWidth(message) - 6, scaledResHeight - 32 - killMessage.line * 16, 16777215);
 
 
                 RenderHelper.enableGUIStandardItemLighting();
        	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-                drawSlotInventory(FlansModClient.minecraft.fontRenderer, new ItemStack(killMessage.weapon.item, 1, killMessage.itemDamage), i - FlansModClient.minecraft.fontRenderer
-                        .getStringWidth((killMessage.headshot ? "         " : "     ") + killMessage.killedName), j - 36 - killMessage.line * 16);
+                drawInventoryItem(FlansModClient.minecraft.fontRenderer, new ItemStack(killMessage.weapon.item, 1, killMessage.itemDamage), scaledResWidth - FlansModClient.minecraft.fontRenderer
+                        .getStringWidth((killMessage.headshot ? "         " : "     ") + killMessage.killedName), scaledResHeight - 36 - killMessage.line * 16);
                 if (killMessage.headshot)
-                    drawSlotInventory(FlansModClient.minecraft.fontRenderer, new ItemStack(FlansMod.crosshairsymbol), i - FlansModClient.minecraft.fontRenderer
-                            .getStringWidth("     " + killMessage.killedName), j - 36 - killMessage.line * 16);
+                    drawInventoryItem(FlansModClient.minecraft.fontRenderer, new ItemStack(FlansMod.crosshairsymbol), scaledResWidth - FlansModClient.minecraft.fontRenderer
+                            .getStringWidth("     " + killMessage.killedName), scaledResHeight - 36 - killMessage.line * 16);
                 GL11.glDisable(3042 /*GL_BLEND*/);
                 RenderHelper.disableStandardItemLighting();
             }
@@ -313,21 +261,21 @@ public class TickHandlerClient {
             ItemStack currentStack = mc.thePlayer.inventory.getCurrentItem();
             PlayerData data = PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT);
 
-            if (currentStack != null && currentStack.getItem() instanceof ItemGun && ((ItemGun) currentStack.getItem()).type.oneHanded) {
+            if (currentStack != null && currentStack.getItem() instanceof ItemGun && ((ItemGun) currentStack.getItem()).type.getOneHanded()) {
                 for (int n = 0; n < 9; n++) {
                     if (data.offHandGunSlot == n + 1) {
                         tessellator.startDrawingQuads();
-                        tessellator.addVertexWithUV(i / 2D - 88 + 20 * n, j - 3, -90D, 16D / 64D, 16D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 72 + 20 * n, j - 3, -90D, 32D / 64D, 16D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 72 + 20 * n, j - 19, -90D, 32D / 64D, 0D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 88 + 20 * n, j - 19, -90D, 16D / 64D, 0D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 88 + 20 * n, scaledResHeight - 3, -90D, 16D / 64D, 16D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 72 + 20 * n, scaledResHeight - 3, -90D, 32D / 64D, 16D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 72 + 20 * n, scaledResHeight - 19, -90D, 32D / 64D, 0D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 88 + 20 * n, scaledResHeight - 19, -90D, 16D / 64D, 0D / 32D);
                         tessellator.draw();
                     } else if (data.isValidOffHandWeapon(mc.thePlayer, n + 1)) {
                         tessellator.startDrawingQuads();
-                        tessellator.addVertexWithUV(i / 2D - 88 + 20 * n, j - 3, -90D, 0D / 64D, 16D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 72 + 20 * n, j - 3, -90D, 16D / 64D, 16D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 72 + 20 * n, j - 19, -90D, 16D / 64D, 0D / 32D);
-                        tessellator.addVertexWithUV(i / 2D - 88 + 20 * n, j - 19, -90D, 0D / 64D, 0D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 88 + 20 * n, scaledResHeight - 3, -90D, 0D / 64D, 16D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 72 + 20 * n, scaledResHeight - 3, -90D, 16D / 64D, 16D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 72 + 20 * n, scaledResHeight - 19, -90D, 16D / 64D, 0D / 32D);
+                        tessellator.addVertexWithUV(scaledResWidth / 2D - 88 + 20 * n, scaledResHeight - 19, -90D, 0D / 64D, 0D / 32D);
                         tessellator.draw();
                     }
                 }
@@ -413,10 +361,10 @@ public class TickHandlerClient {
                 mc.renderEngine.bindTexture(crosshair);
 
                 tessellator.startDrawingQuads();
-                tessellator.addVertexWithUV(i / 2D - 2 * j, j, -90D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, j, -90D, 1.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, 0.0D, -90D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(i / 2D - 2 * j, 0.0D, -90D, 0.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, scaledResHeight, -90D, 0.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, scaledResHeight, -90D, 1.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, 0.0D, -90D, 1.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, 0.0D, -90D, 0.0D, 0.0D);
                 tessellator.draw();
                 GL11.glDepthMask(true);
                 GL11.glEnable(2929 /* GL_DEPTH_TEST */);
@@ -443,10 +391,10 @@ public class TickHandlerClient {
                 mc.renderEngine.bindTexture(new ResourceLocation("flansmod", "gui/Blood.png"));
 
                 tessellator.startDrawingQuads();
-                tessellator.addVertexWithUV(i / 2D - 2 * j, j, -90D, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, j, -90D, 1.0D, 1.0D);
-                tessellator.addVertexWithUV(i / 2D + 2 * j, 0.0D, -90D, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(i / 2D - 2 * j, 0.0D, -90D, 0.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, scaledResHeight, -90D, 0.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, scaledResHeight, -90D, 1.0D, 1.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D + 2 * scaledResHeight, 0.0D, -90D, 1.0D, 0.0D);
+                tessellator.addVertexWithUV(scaledResWidth / 2D - 2 * scaledResHeight, 0.0D, -90D, 0.0D, 0.0D);
                 tessellator.draw();
                 GL11.glDepthMask(true);
                 GL11.glEnable(2929 /* GL_DEPTH_TEST */);
@@ -834,10 +782,92 @@ public class TickHandlerClient {
 		*/
     }
 
-    private void drawSlotInventory(FontRenderer fontRenderer, ItemStack itemstack, int i, int j) {
+    private void renderAmmoHudPrimary(boolean fancyGui, Minecraft mc, int scaledResWidth, int scaledResHeight, int textX, int textY, int iconX, int iconY) {
+        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+        if (stack != null && stack.getItem() instanceof ItemGun) {
+            ItemGun gunItem = (ItemGun) stack.getItem();
+            GunType gunType = gunItem.type;
+            int x = 0;
+            for (int n = 0; n < gunType.getNumAmmoItemsInGun(stack); n++) {
+                ItemStack bulletStack = ((ItemGun) stack.getItem()).getBulletItemStack(stack, n);
+                if (bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
+                    RenderHelper.enableGUIStandardItemLighting();
+                    GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+                    OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+                    drawInventoryItem(mc.fontRenderer, bulletStack, scaledResWidth / 2 + iconX + x, scaledResHeight - iconY);
+                    GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+                    RenderHelper.disableStandardItemLighting();
+                    String s = (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
+                    if (gunType.submode.length >= 2) {
+                        if (fancyGui) {
+                            s += " [" + gunType.getFireMode(stack).toString().replace("AUTO", "") + "]";
+                        } else {
+                            s += "[" + gunType.getFireMode(stack) + "]";
+                        }
+                    }
+                    if (bulletStack.getMaxDamage() == 1)
+                        s = "";
+                    mc.fontRenderer.drawString(s, scaledResWidth / 2 + textX + x, scaledResHeight - textY, 0x000000);
+                    mc.fontRenderer.drawString(s, scaledResWidth / 2 + (textX + 1) + x, scaledResHeight - (textY + 1), 0xffffff);
+                    x += 16 + mc.fontRenderer.getStringWidth(s);
+                }
+            }
+        }
+    }
+
+    private void renderAmmoHudSecondary(boolean fancyGui, Minecraft mc, int scaledResWidth, int scaledResHeight, int textX, int textY, int iconX, int iconY) {
+        ItemStack stack = mc.thePlayer.inventory.getCurrentItem();
+        if (stack != null && stack.getItem() instanceof ItemGun) {
+            ItemGun gunItem = (ItemGun) stack.getItem();
+            GunType gunType = gunItem.type;
+            int x = 0;
+            PlayerData data = PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT);
+            if (gunType.getOneHanded() && data.offHandGunSlot != 0) {
+                ItemStack offHandStack = mc.thePlayer.inventory.getStackInSlot(data.offHandGunSlot - 1);
+                if (offHandStack != null && offHandStack.getItem() instanceof ItemGun) {
+                    GunType offHandGunType = ((ItemGun) offHandStack.getItem()).type;
+                    for (int n = 0; n < offHandGunType.getNumAmmoItemsInGun(offHandStack); n++) {
+                        ItemStack bulletStack = ((ItemGun) offHandStack.getItem()).getBulletItemStack(offHandStack, n);
+                        if (bulletStack != null && bulletStack.getItem() != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
+                            //Find the string we are displaying next to the ammo item
+                            String s = (bulletStack.getMaxDamage() - bulletStack.getItemDamage()) + "/" + bulletStack.getMaxDamage();
+                            if (gunType.submode.length >= 2) {
+                                if (fancyGui) {
+                                    s += " [" + gunType.getFireMode(stack).toString().replace("AUTO", "") + "]";
+                                } else {
+                                    s += "[" + gunType.getFireMode(stack) + "]";
+                                }
+                            }
+                            if (bulletStack.getMaxDamage() == 1)
+                                s = "";
+
+                            //Draw the slot and then move leftwards
+                            RenderHelper.enableGUIStandardItemLighting();
+                            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+                            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+                            drawInventoryItem(mc.fontRenderer, bulletStack, scaledResWidth / 2 - iconX - x, scaledResHeight - iconY);
+                            x += 16 + mc.fontRenderer.getStringWidth(s);
+
+                            //Draw the string
+                            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+                            RenderHelper.disableStandardItemLighting();
+                            mc.fontRenderer.drawString(s, scaledResWidth / 2 - textX - x, scaledResHeight - textY, 0x000000);
+                            mc.fontRenderer.drawString(s, scaledResWidth / 2 - (textX + 1) - x, scaledResHeight - (textY + 1), 0xffffff);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void drawInventoryItem(FontRenderer fontRenderer, ItemStack itemstack, int i, int j) {
         if (itemstack == null || itemstack.getItem() == null)
             return;
+        //Render the icon
         itemRenderer.renderItemIntoGUI(fontRenderer, FlansModClient.minecraft.renderEngine, itemstack, i, j);
+        //Render the durability
         itemRenderer.renderItemOverlayIntoGUI(fontRenderer, FlansModClient.minecraft.renderEngine, itemstack, i, j);
     }
 
