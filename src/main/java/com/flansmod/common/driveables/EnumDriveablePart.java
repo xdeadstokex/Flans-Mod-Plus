@@ -39,7 +39,7 @@ public enum EnumDriveablePart
 	//New parts
 	frontalArmor(new EnumDriveablePart[] { }, "frontalArmor", "Armor (Frontal)"),
 	leftsideArmor(new EnumDriveablePart[] { }, "leftsideArmor", "Armor (Left Side)"),
-	rightsideArmor(new EnumDriveablePart[] { }, "rightsideArmor", "Armor (Left Side)"),
+	rightsideArmor(new EnumDriveablePart[] { }, "rightsideArmor", "Armor (Right Side)"),
 	additionalArmor(new EnumDriveablePart[] { }, "additionalArmor", "Armor (Additional)"),
 	ERA(new EnumDriveablePart[] { }, "ERA", "Armour (ERA)"),
 	APS(new EnumDriveablePart[] { }, "APS", "Armour (APS)"),
