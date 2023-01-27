@@ -7,9 +7,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.*;
-import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
-import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
-import com.flansmod.common.eventhandlers.ServerTickEvent;
+import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxType;
@@ -23,6 +21,7 @@ import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
 import com.flansmod.common.sync.SyncEventHandler;
 import com.flansmod.common.teams.*;
+import com.flansmod.common.teams.CommandFlans;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
@@ -48,9 +47,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,10 +54,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import net.minecraftforge.event.AnvilUpdateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -231,7 +223,6 @@ public class FlansMod {
         proxy.registerRenderers();
 
         //Read content packs
-//        readContentPacks(event);
         contentManager.loadContent();
         proxy.loadFlanAssets();
         contentManager.createItems();
@@ -320,6 +311,9 @@ public class FlansMod {
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
+        MinecraftForge.EVENT_BUS.register(new PlayerDropsEventListener());
+        MinecraftForge.EVENT_BUS.register(new LivingSpawnEventListener());
+        MinecraftForge.EVENT_BUS.register(new AnvilUpdateEventListener());
         new ServerTickEvent();
 
         log("Loading complete.");
@@ -330,39 +324,50 @@ public class FlansMod {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) throws Exception {
+        //Initialize the packet handler
         packetHandler.postInitialise();
 
+        //Perform any necessary hooks
         hooks.hook();
 
+        //Register the event handler for syncing data between client and server
         FMLCommonHandler.instance().bus().register(new SyncEventHandler());
-		/* TODO : ICBM
-		isICBMSentryLoaded = Loader.instance().isModLoaded("ICBM|Sentry");
 
-		log("ICBM hooking complete.");
-		*/
-
+        //Log that the gunbox mapping process is starting
         FlansMod.log("Starting gunbox mapping.");
+
+        //Iterate through all gun box blocks
         for (BlockGunBox box : gunBoxBlocks) {
+            //Iterate through all pages of the current gun box
             for (GunPage page : box.type.gunPages) {
+                //Iterate through all entries in the current page
                 for (GunBoxEntry entry : page.gunList) {
                     try {
+                        //Check if the entry has a valid type
                         if (entry.type != null) {
+                            //Get the item associated with the entry
                             IGunboxDescriptionable item = getGunBoxItem(entry.type);
 
+                            //If the item exists, set its origin gun box to the current box's name
                             if (item != null) {
                                 item.setOriginGunBox(box.getLocalizedName());
                             }
                         }
+                        //Check if the entry has any valid ammo
                         if (!entry.isAmmoNullOrEmpty()) {
+                            //Iterate through all ammo entries
                             for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
+                                //Get the item associated with the ammo entry
                                 IGunboxDescriptionable item = getGunBoxItem(ammoEntry.type);
 
+                                //If the item exists, set its origin gun box to the current box's name
                                 if (item != null) {
                                     item.setOriginGunBox(box.getLocalizedName());
                                 }
                             }
                         }
                     } catch (Exception e) {
+                        //If an exception is caught and the debug log is enabled, print the exception and a message
                         if (FlansMod.printDebugLog) {
                             FlansMod.log("A gunbox entry appears to be null");
                             e.printStackTrace();
@@ -371,24 +376,8 @@ public class FlansMod {
                 }
             }
         }
+        //Log that the gunbox mapping process has finished
         FlansMod.log("Finished gunbox mapping.");
-    }
-
-    @SubscribeEvent
-    public void playerDrops(PlayerDropsEvent event) {
-        for (int i = event.drops.size() - 1; i >= 0; i--) {
-            EntityItem ent = event.drops.get(i);
-            InfoType type = InfoType.getType(ent.getEntityItem());
-            if (type != null && !type.canDrop)
-                event.drops.remove(i);
-        }
-    }
-
-    @SubscribeEvent
-    public void playerDrops(ItemTossEvent event) {
-        InfoType type = InfoType.getType(event.entityItem.getEntityItem());
-        if (type != null && !type.canDrop)
-            event.setCanceled(true);
     }
 
     /**
@@ -405,38 +394,6 @@ public class FlansMod {
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
         if (eventArgs.modID.equals(MODID))
             syncConfig();
-    }
-
-    @SubscribeEvent
-    public void onLivingSpecialSpawn(LivingSpawnEvent.CheckSpawn event) {
-        int chance = event.world.rand.nextInt(101);
-
-        if (chance < armourSpawnRate && (event.entityLiving instanceof EntityZombie || event.entityLiving instanceof EntitySkeleton)) {
-            if (event.world.rand.nextBoolean() && ArmourType.armours.size() > 0) {
-                //Give a completely random piece of armour
-                ArmourType armour = ArmourType.armours.get(event.world.rand.nextInt(ArmourType.armours.size()));
-                if (armour != null && armour.type != 2)
-                    event.entityLiving.setCurrentItemOrArmor(armour.type + 1, new ItemStack(armour.item));
-            } else if (Team.teams.size() > 0) {
-                //Give a random set of armour
-                Team team = Team.teams.get(event.world.rand.nextInt(Team.teams.size()));
-                if (team.hat != null)
-                    event.entityLiving.setCurrentItemOrArmor(1, team.hat.copy());
-                if (team.chest != null)
-                    event.entityLiving.setCurrentItemOrArmor(2, team.chest.copy());
-                //if(team.legs != null)
-                //	event.entityLiving.setCurrentItemOrArmor(3, team.legs.copy());
-                if (team.shoes != null)
-                    event.entityLiving.setCurrentItemOrArmor(4, team.shoes.copy());
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onAnvilUsedEvent(AnvilUpdateEvent e) {
-        if (e.left != null && e.left.getItem() instanceof ItemTeamArmour && armourEnchantability == 0 && e.right != null) {
-            e.setCanceled(true);
-        }
     }
 
     /**
