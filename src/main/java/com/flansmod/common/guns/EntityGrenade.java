@@ -520,7 +520,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 	        {
 	        new FlansModExplosion(worldObj, this, (EntityPlayer)thrower, type, posX, posY, posZ,
 		        	type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
 	
 	        }
 	        else

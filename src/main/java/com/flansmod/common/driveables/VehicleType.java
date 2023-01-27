@@ -83,6 +83,11 @@ public class VehicleType extends DriveableType {
 
     public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
     public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
+    public String stompSoundFrontRight = null;
+    public String stompSoundFrontLeft = null;
+    public String stompSoundBackRight = null;
+    public String stompSoundBackLeft = null;
+
 
     public VehicleType(TypeFile file) {
         super(file);

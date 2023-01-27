@@ -80,6 +80,9 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
     // Used for better falling
     private float fallVelocity = 0;
 
+    // Tick countdown from last pressing a throttle key, to then start applying throttle decay
+    public int throttleDecayDelayTicks = 0;
+
     //Handling stuff
     public int keyHeld = 0;
     public boolean leftTurnHeld = false;
@@ -107,6 +110,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
 
     public float legAnimPosRight = 0;
     public float legAnimPosLeft = 0;
+    
+    public float frLegYawLast = 0;
+    public float brLegYawLast = 0;
+    public float flLegYawLast = 0;
+    public float blLegYawLast = 0;
+
 
     //Dangerous sentry stuff
     /**
@@ -249,32 +258,26 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             {
                 if (isEngineActive()) {
                     if (type.useRealisticAcceleration) {
-                        throttle += (data.engine.enginePower * (throttle < 0 ? type.brakingModifier : 1))  / type.mass;
+                        throttle += (data.engine.enginePower * (throttle < 0 ? type.brakingModifier : 1) * (Math.sqrt(1 - getThrottleNerf()) * 0.9 + 0.1))/ type.mass;
                     } else {
-                        throttle += 0.01F * (throttle < 0 ? type.brakingModifier : 1);
+                        throttle += 0.01F * (throttle < 0 ? type.brakingModifier : 1) * (Math.sqrt(1 - getThrottleNerf()) * 0.9 + 0.1);
                     }
+
+                    throttleDecayDelayTicks = 10;
                 }
-
-                if (throttle > 1F)
-                    throttle = 1F;
-
                 return true;
             }
             case 1: //Decelerate : Decrease the throttle, down to -1, or 0 if the vehicle cannot reverse
             {
                 if (isEngineActive()) {
                     if (type.useRealisticAcceleration) {
-                        throttle -= (data.engine.enginePower * (throttle > 0 ? type.brakingModifier : 1)) / type.mass;
+                        throttle -= (data.engine.enginePower * (throttle > 0 ? type.brakingModifier : 1) * (Math.sqrt(1 - getThrottleNerf()) * 0.9 + 0.1)) / type.mass;
                     } else {
-                        throttle -= 0.01F * (throttle > 0 ? type.brakingModifier : 1);
+                        throttle -= 0.01F * (throttle > 0 ? type.brakingModifier : 1) * (Math.sqrt(1 - getThrottleNerf()) * 0.9 + 0.1);
                     }
+
+                    throttleDecayDelayTicks = 10;
                 }
-
-                if (throttle < -1F)
-                    throttle = -1F;
-                if (throttle < 0F && type.maxNegativeThrottle == 0F)
-                    throttle = 0F;
-
                 return true;
             }
             case 2: //Left : Yaw the wheels left
@@ -314,7 +317,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                     if (mc.gameSettings.fovSetting != 10) {
                         mc.gameSettings.fovSetting = 10;
                         mc.gameSettings.mouseSensitivity = 0.2F;
-                    } else if (mc.gameSettings.fovSetting == 10) {
+                    } else {
                         mc.gameSettings.fovSetting = 70;
                         mc.gameSettings.mouseSensitivity = 0.5F;
                     }
@@ -502,7 +505,13 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             idlePosition--;		
 
         if (type.tank && !hasBothTracks()) throttle = 0;
-        if (disabled || !hasBothTracks()) wheelsYaw = 0;
+        if (disabled || !hasBothTracks() || !isPartIntact(EnumDriveablePart.steering)) wheelsYaw = 0;
+
+        float maxThrottle = 1 - getThrottleNerf();
+
+        if (Math.abs(throttle) > maxThrottle) {
+            throttle = Math.max(-1, Math.min(1, (Math.signum(throttle) * maxThrottle + throttle*2) / 3));
+        }
 
         //Rotate the wheels
         if (hasEnoughFuel() && isEngineActive()) {
@@ -939,10 +948,12 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
         }
 
         // Decrease throttle each tick.
-        if (throttle > 0)
-            throttle -= type.throttleDecay;
-        else if (throttle < 0)
-            throttle += type.throttleDecay;
+
+        if (throttleDecayDelayTicks > 0) {
+            throttleDecayDelayTicks -= 1;
+        } else {
+            throttle -= Math.signum(throttle) * type.throttleDecay;
+        }
 
         //Catch to round the throttle down to zero.
         if (throttle < type.throttleDecay && throttle > -type.throttleDecay)

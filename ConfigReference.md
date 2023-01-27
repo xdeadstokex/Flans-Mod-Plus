@@ -567,7 +567,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ShellDelay / BombDelay | Integer | 1 | Duplicate way of setting shoot delay for primary... would not reccomend. | 
 | AddRecipeParts | partName quantity itemName| ~ | Add a part to the recipe. Damaged parts can be added, but I don't know how to do that. | 
 | AddDye | quantity dyeName | ~ | Add a dye to the recipe. I am unsure if it is a name or an ID. | 
-| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required| 
+| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required|
+| PartDeathExplosion | partName radius power breaksBlocks (damageVsLiving) (damageVsPlayer) (damageVsPlane) (damageVsVehicles) | ~ | When this part dies, set off an explosion with these parameters |
 | Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) | ~ | Set driver position. Part will default to core. | 
 | DriverPart | String | Core | Set part that the driver is on/in | 
 | DriverGun / PilotGun | String | ~ | Set gun name that the pilot controls | 
@@ -600,6 +601,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ExitSound | string | ~ | The sound to play when a player exits a vehicle | 
 | StartSound | String | ~ | The name of the sound to play | 
 | EngineSound | String | ~ | The name of the sound to play | 
+| StompSoundFrontRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundFrontLeft | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackLeft | String | ~ | Stomp sound to play when leg hits ground |
 | IdleSound | String | ~ | The name of the sound to play | 
 | BackSound | String | ~ | The name of the sound to play | 
 | YawSound | String | ~ | The name of the sound to play | 

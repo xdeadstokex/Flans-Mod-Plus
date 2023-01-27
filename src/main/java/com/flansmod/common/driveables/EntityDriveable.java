@@ -237,6 +237,8 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         if (owner != null) {
             this.owner = owner;
             ownerUUID = owner.getUniqueID().toString();
+        } else {
+            ownerUUID = null;
         }
     }
 
@@ -298,7 +300,9 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
         tag.setFloat("RotationYaw", axes.getYaw());
         tag.setFloat("RotationPitch", axes.getPitch());
         tag.setFloat("RotationRoll", axes.getRoll());
-        tag.setString("OwnerUUID", ownerUUID);
+        if (!StringUtils.isNullOrEmpty(ownerUUID)) {
+            tag.setString("OwnerUUID", ownerUUID);
+        }
     }
 
     @Override
@@ -2518,7 +2522,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 {
                     new FlansModExplosion(worldObj, this, null, type, posX, posY, posZ,
                             type.deathExplosionRadius, type.deathExplosionPower, TeamsManager.explosions && type.deathExplosionBreaksBlocks,
-                            type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum);
+                            type.deathExplosionDamageVsLiving, type.deathExplosionDamageVsPlayer, type.deathExplosionDamageVsPlane, type.deathExplosionDamageVsVehicle, seatNum, seatNum, false);
 
                 }
                 if (!worldObj.isRemote && type.deathFireRadius > 0.1F) {
@@ -2577,6 +2581,17 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
             if (part.box != null)
                 pos = axes.findLocalVectorGlobally(new Vector3f(part.box.x / 16F + part.box.w / 32F, part.box.y / 16F + part.box.h / 32F, part.box.z / 16F + part.box.d / 32F));
 
+            if (type.partDeathExplosions.containsKey(part.type)) {
+                BoxExplosion exp = type.partDeathExplosions.get(part.type);
+
+                new FlansModExplosion(worldObj, this, null, type, posX + pos.x, posY + pos.y, posZ + pos.z,
+                        exp.radius, exp.power, TeamsManager.explosions && exp.breaksBlocks,
+                        exp.damageVsLiving, exp.damageVsPlayer, exp.damageVsPlane, exp.damageVsVehicle, exp.particles, exp.particles, true);
+
+            }
+
+
+
             ArrayList<ItemStack> drops = type.getItemsRequired(part, getDriveableData().engine);
             if (drops != null) {
                 //Drop each ItemStack
@@ -2626,6 +2641,51 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     public boolean isPartIntact(EnumDriveablePart part) {
         DriveablePart thisPart = getDriveableData().parts.get(part);
         return thisPart.maxHealth == 0 || thisPart.health > 0;
+    }
+
+    public boolean isPartExisting(EnumDriveablePart part) {
+        return getDriveableData().parts.get(part).maxHealth != 0;
+    }
+
+    public float getThrottleNerf() {
+        int totalEngineRooms = 0;
+        int deadEngineRooms = 0;
+
+        int totalBoilerRooms = 0;
+        int deadBoilerRooms = 0;
+
+        for (EnumDriveablePart part : EnumDriveablePart.getEngineRooms()) {
+            if (isPartExisting(part)) {
+                totalEngineRooms += 1;
+                if(!isPartIntact(part)) {
+                    deadEngineRooms += 1;
+                }
+            }
+        }
+
+        for (EnumDriveablePart part : EnumDriveablePart.getBoilerRooms()) {
+            if (isPartExisting(part)) {
+                totalBoilerRooms += 1;
+                if(!isPartIntact(part)) {
+                    deadBoilerRooms += 1;
+                }
+            }
+        }
+
+        float engineNerf = totalEngineRooms > 0 ? ((float) deadEngineRooms / totalEngineRooms) : 0;
+        float boilerNerf = totalBoilerRooms > 0 ? ((float) deadBoilerRooms / totalBoilerRooms) : 0;
+
+        float overallNerf = Math.max(engineNerf, boilerNerf) * 0.8F;
+
+        if (!isPartIntact(EnumDriveablePart.stern)) {
+            overallNerf += 0.1F;
+        }
+
+        if (!isPartIntact(EnumDriveablePart.bow)) {
+            overallNerf += 0.1F;
+        }
+
+        return overallNerf;
     }
 
     public abstract boolean hasMouseControlMode();
