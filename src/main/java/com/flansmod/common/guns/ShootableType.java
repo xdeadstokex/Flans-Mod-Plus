@@ -161,11 +161,9 @@ public abstract class ShootableType extends InfoType {
 
         if (readDamageVsPlayer == false) {
             damageVsPlayer = damageVsLiving;
-        }
-        if (readDamageVsEntity == false) {
+        } if (readDamageVsEntity == false) {
             damageVsEntity = damageVsVehicles;
-        }
-        if (readDamageVsPlanes == false) {
+        } if (readDamageVsPlanes == false) {
             damageVsPlanes = damageVsVehicles;
         }
     }

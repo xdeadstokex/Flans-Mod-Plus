@@ -147,4 +147,20 @@ public class ConfigUtils
 		}
 		return split;
 	}
+
+	public static String[] getSplitFromKey (ConfigMap config, String[] keys) {
+		for (String key : keys) {
+			if (config.containsKey(key)) {
+				String[] dataPieces = config.get(key).split(" ");
+				String[] split = new String[dataPieces.length + 1];
+				split[0] = key;
+				for (int i = 0; i < dataPieces.length; i++) {
+					split[i+1] = dataPieces[i];
+				}
+				return split;
+			}
+		}
+
+		return null;
+	}
 }

@@ -72,18 +72,18 @@ public class GunBoxType extends InfoType
 		super.read(config, file);
 		try {
 			//Block Textures
-			ConfigUtils.configString(config, "TopTexture", topTexturePath);
-			ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
-			ConfigUtils.configString(config, "SideTexture", sideTexturePath);
+			topTexturePath = ConfigUtils.configString(config, "TopTexture", topTexturePath);
+			bottomTexturePath = ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
+			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
 
 			//GunBox gui customisation
-			ConfigUtils.configString(config, "GuiTexture", guiTexturePath);
-			ConfigUtils.configString(config, "GunBoxNameColor", gunBoxTextColor);
-			ConfigUtils.configString(config, "PageTextColor", pageTextColor);
-			ConfigUtils.configString(config, "ListTextColor", itemListTextColor);
-			ConfigUtils.configString(config, "ItemTextColor", itemTextColor);
-			ConfigUtils.configString(config, "ButtonTextColor", buttonTextColor);
-			ConfigUtils.configString(config, "ButtonTextHighlight", buttonTextHoverColor);
+			guiTexturePath = ConfigUtils.configString(config, "GuiTexture", guiTexturePath);
+			gunBoxTextColor = ConfigUtils.configString(config, "GunBoxNameColor", gunBoxTextColor);
+			pageTextColor = ConfigUtils.configString(config, "PageTextColor", pageTextColor);
+			itemListTextColor = ConfigUtils.configString(config, "ListTextColor", itemListTextColor);
+			itemTextColor = ConfigUtils.configString(config, "ItemTextColor", itemTextColor);
+			buttonTextColor = ConfigUtils.configString(config, "ButtonTextColor", buttonTextColor);
+			buttonTextHoverColor = ConfigUtils.configString(config, "ButtonTextHighlight", buttonTextHoverColor);
 
 
 			if (config.containsKey("Page") || config.containsKey("SetPage")) {

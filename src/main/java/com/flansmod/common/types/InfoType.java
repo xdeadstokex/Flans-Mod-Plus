@@ -276,11 +276,9 @@ public abstract class InfoType implements IInfoType {
     public static ItemStack getRecipeElement(String s, int amount, int damage, String requester) {
         if (s.equals("doorIron")) {
             return new ItemStack(Items.iron_door, amount);
-        }
-        if (s.equals("doorWood")) {
+        } if (s.equals("doorWood")) {
             return new ItemStack(Items.wooden_door, amount);
-        }
-        if (s.equals("clayItem")) {
+        } if (s.equals("clayItem")) {
             return new ItemStack(Items.clay_ball, amount);
         }
         for (Object object : Item.itemRegistry) {
@@ -292,13 +290,12 @@ public abstract class InfoType implements IInfoType {
         for (InfoType type : infoTypes) {
             if (type.shortName.equals(s))
                 return new ItemStack(type.item, amount, damage);
-        }
-        if (s.equals("gunpowder")) {
+        } if (s.equals("gunpowder")) {
             return new ItemStack(Items.gunpowder, amount);
-        }
-        if (s.equals("iron")) {
+        } if (s.equals("iron")) {
             return new ItemStack(Items.iron_ingot, amount);
         }
+
         FlansMod.log("Could not find " + s + " when adding recipe for " + requester);
         return null;
     }

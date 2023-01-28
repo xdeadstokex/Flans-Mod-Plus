@@ -196,43 +196,43 @@ public class PlaneType extends DriveableType
 
             //Animations
             //Wings
-			ConfigUtils.configVector(config, "WingPosition1", wingPos1, shortName);
-			ConfigUtils.configVector(config, "WingPosition2", wingPos2, shortName);
-			ConfigUtils.configVector(config, "WingRotation1", wingRot1, shortName);
-			ConfigUtils.configVector(config, "WingRotation2", wingRot2, shortName);
-			ConfigUtils.configVector(config, "WingRate", wingRate, shortName);
-			ConfigUtils.configVector(config, "WingRotRate", wingRotRate, shortName);
+			wingPos1 = ConfigUtils.configVector(config, "WingPosition1", wingPos1, shortName);
+			wingPos2 = ConfigUtils.configVector(config, "WingPosition2", wingPos2, shortName);
+			wingRot1 = ConfigUtils.configVector(config, "WingRotation1", wingRot1, shortName);
+			wingRot2 = ConfigUtils.configVector(config, "WingRotation2", wingRot2, shortName);
+			wingRate = ConfigUtils.configVector(config, "WingRate", wingRate, shortName);
+			wingRotRate = ConfigUtils.configVector(config, "WingRotRate", wingRotRate, shortName);
 
             //Wing Wheels
-			ConfigUtils.configVector(config, "WingWheelPosition1", wingWheelPos1, shortName);
-			ConfigUtils.configVector(config, "WingWheelPosition2", wingWheelPos2, shortName);
-			ConfigUtils.configVector(config, "WingWheelRotation1", wingWheelRot1, shortName);
-			ConfigUtils.configVector(config, "WingWheelRotation2", wingWheelRot2, shortName);
-			ConfigUtils.configVector(config, "WingWheelRate", wingWheelRate, shortName);
-			ConfigUtils.configVector(config, "WingWheelRotRate", wingWheelRotRate, shortName);
+			wingWheelPos1 = ConfigUtils.configVector(config, "WingWheelPosition1", wingWheelPos1, shortName);
+			wingWheelPos2= ConfigUtils.configVector(config, "WingWheelPosition2", wingWheelPos2, shortName);
+			wingWheelRot1 = ConfigUtils.configVector(config, "WingWheelRotation1", wingWheelRot1, shortName);
+			wingWheelRot2 = ConfigUtils.configVector(config, "WingWheelRotation2", wingWheelRot2, shortName);
+			wingWheelRate = ConfigUtils.configVector(config, "WingWheelRate", wingWheelRate, shortName);
+			wingWheelRotRate = ConfigUtils.configVector(config, "WingWheelRotRate", wingWheelRotRate, shortName);
 
             //Body Wheels
-			ConfigUtils.configVector(config, "BodyWheelPosition1", bodyWheelPos1, shortName);
-			ConfigUtils.configVector(config, "BodyWheelPosition2", bodyWheelPos2, shortName);
-			ConfigUtils.configVector(config, "BodyWheelRotation1", bodyWheelRot1, shortName);
-			ConfigUtils.configVector(config, "BodyWheelRotation2", bodyWheelRot2, shortName);
-			ConfigUtils.configVector(config, "BodyWheelRate", bodyWheelRate, shortName);
-			ConfigUtils.configVector(config, "BodyWheelRotRate", bodyWheelRotRate, shortName);
+			bodyWheelPos1 = ConfigUtils.configVector(config, "BodyWheelPosition1", bodyWheelPos1, shortName);
+			bodyWheelPos2 = ConfigUtils.configVector(config, "BodyWheelPosition2", bodyWheelPos2, shortName);
+			bodyWheelRot1 = ConfigUtils.configVector(config, "BodyWheelRotation1", bodyWheelRot1, shortName);
+			bodyWheelRot2 = ConfigUtils.configVector(config, "BodyWheelRotation2", bodyWheelRot2, shortName);
+			bodyWheelRate =  ConfigUtils.configVector(config, "BodyWheelRate", bodyWheelRate, shortName);
+			bodyWheelRotRate = ConfigUtils.configVector(config, "BodyWheelRotRate", bodyWheelRotRate, shortName);
 
             //Tail Wheels
-			ConfigUtils.configVector(config, "TailWheelPosition1", tailWheelPos1, shortName);
-			ConfigUtils.configVector(config, "TailWheelPosition2", tailWheelPos2, shortName);
-			ConfigUtils.configVector(config, "TailWheelRotation1", tailWheelRot1, shortName);
-			ConfigUtils.configVector(config, "TailWheelRotation2", tailWheelRot2, shortName);
-			ConfigUtils.configVector(config, "TailWheelRate", tailWheelRate, shortName);
-			ConfigUtils.configVector(config, "TailWheelRotRate", tailWheelRotRate, shortName);
+			tailWheelPos1 = ConfigUtils.configVector(config, "TailWheelPosition1", tailWheelPos1, shortName);
+			tailWheelPos2 = ConfigUtils.configVector(config, "TailWheelPosition2", tailWheelPos2, shortName);
+			tailWheelRot1 = ConfigUtils.configVector(config, "TailWheelRotation1", tailWheelRot1, shortName);
+			tailWheelRot2 = ConfigUtils.configVector(config, "TailWheelRotation2", tailWheelRot2, shortName);
+			tailWheelRate = ConfigUtils.configVector(config, "TailWheelRate", tailWheelRate, shortName);
+			tailWheelRotRate = ConfigUtils.configVector(config, "TailWheelRotRate", tailWheelRotRate, shortName);
 
-			ConfigUtils.configVector(config, "DoorPosition1", doorPos1, shortName);
-			ConfigUtils.configVector(config, "DoorPosition2", doorPos2, shortName);
-			ConfigUtils.configVector(config, "DoorRotation1", doorRot1, shortName);
-			ConfigUtils.configVector(config, "DoorRotation2", doorRot2, shortName);
-			ConfigUtils.configVector(config, "DoorRate", doorRate, shortName);
-			ConfigUtils.configVector(config, "DoorRotRate", doorRotRate, shortName);
+			doorPos1 = ConfigUtils.configVector(config, "DoorPosition1", doorPos1, shortName);
+			doorPos2 = ConfigUtils.configVector(config, "DoorPosition2", doorPos2, shortName);
+			doorRot1 = ConfigUtils.configVector(config, "DoorRotation1", doorRot1, shortName);
+			doorRot2 = ConfigUtils.configVector(config, "DoorRotation2", doorRot2, shortName);
+			doorRate = ConfigUtils.configVector(config, "DoorRate", doorRate, shortName);
+			doorRotRate = ConfigUtils.configVector(config, "DoorRotRate", doorRotRate, shortName);
 
             //In-flight inventory
 			invInflight = ConfigUtils.configBool(config, "InflightInventory", invInflight);

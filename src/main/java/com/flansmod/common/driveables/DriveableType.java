@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.init.Items;
@@ -350,119 +351,27 @@ public class DriveableType extends PaintableType {
     @Override
     public void preRead(TypeFile file) {
         super.preRead(file);
-        //Make sure the passenger arrays are set up first
-        for (String line : file.lines) {
-            if (line == null)
-                break;
-            String[] split = line.split(" ");
-            if (line.startsWith("//"))
-                continue;
 
-            if (split.length < 2)
-                continue;
+        //todo
+//        int counter = 0;
+//        for (String line : file.lines) {
 
-            try {
-                if (split[0].equals("Passengers")) {
-                    numPassengers = Integer.parseInt(split[1]);
-                    seats = new Seat[numPassengers + 1];
-                    break;
-                }
-            } catch (Exception e) {
-                StringBuilder msg = new StringBuilder(" : ");
-                for (String s : split)
-                    msg.append(" ").append(s);
-                FlansMod.log("Errored reading " + file.name + msg);
 
-                if (FlansMod.printStackTrace) {
-                    e.printStackTrace();
-                }
-            }
+//                // Passengers / Gunner Seats
+//                if (split[0].equals("Passenger")) {
+//                    Seat seat = new Seat(split);
+//                    seats[seat.id] = seat;
+//                    if (seat.gunType != null) {
+//                        seat.gunnerID = numPassengerGunners++;
+//                        driveableRecipe.add(new ItemStack(seat.gunType.item));
+//                    }
+//                    counter++;
+//                }
 
-        }
-        //Make sure NumWheels is read before anything else
-        for (String line : file.lines) {
-            if (line == null)
-                break;
-            if (line.startsWith("//"))
-                continue;
-            String[] split = line.split(" ");
-            if (split.length < 2)
-                continue;
-
-            try {
-                if (split[0].equals("NumWheels")) {
-                    wheelPositions = new DriveablePosition[Integer.parseInt(split[1])];
-                    break;
-                }
-            } catch (Exception e) {
-                StringBuilder msg = new StringBuilder(" : ");
-                for (String s : split)
-                    msg.append(" ").append(s);
-                FlansMod.log("Errored pre-reading " + file.name + msg);
-
-                if (FlansMod.printStackTrace) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-        int counter = 0;
-        for (String line : file.lines) {
-            if (line == null)
-                break;
-            if (line.startsWith("//"))
-                continue;
-            String[] split = line.split(" ");
-            if (split.length < 2)
-                continue;
-
-            try {
-                // Passengers / Gunner Seats
-                if (split[0].equals("Passenger")) {
-                    Seat seat = new Seat(split);
-                    seats[seat.id] = seat;
-                    if (seat.gunType != null) {
-                        seat.gunnerID = numPassengerGunners++;
-                        driveableRecipe.add(new ItemStack(seat.gunType.item));
-                    }
-                    counter++;
-                }
-            } catch (Exception ex) {
-                StringBuilder msg = new StringBuilder(" : ");
-                for (String s : split)
-                    msg.append(" ").append(s);
-                FlansMod.log("Errored pre-reading " + file.name + msg);
-
-                if (FlansMod.printStackTrace) {
-                    ex.printStackTrace();
-                }
-            }
-            try {
-                if (split[0].equals("Driver") || split[0].equals("Pilot")) {
-                    if (split.length > 4)
-                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                                Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
-                                Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-                    else
-                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                                Integer.parseInt(split[3]));
-                }
-            } catch (Exception ex) {
-                StringBuilder msg = new StringBuilder(" : ");
-                for (String s : split)
-                    msg.append(" ").append(s);
-                FlansMod.log("Errored pre-reading " + file.name + msg);
-
-                if (FlansMod.printStackTrace) {
-                    ex.printStackTrace();
-                }
-            }
-
-            if (counter == seats.length) {
-                break;
-            }
-        }
+//            if (counter == seats.length) {
+//                break;
+//            }
+//        }
 
 
         types.add(this);
@@ -483,649 +392,668 @@ public class DriveableType extends PaintableType {
 
     @Override
     protected void read(ConfigMap config, TypeFile file) {
+
         super.read(config, file);
-//        try {
-//            if (split[0].equals("VehicleGunModelScale"))
-//                vehicleGunModelScale = Float.parseFloat(split[1]);
-//
-//            if (FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
-//                model = FlansMod.proxy.loadModel(split[1], shortName, ModelDriveable.class);
-//            else if (split[0].equals("VehicleGunReloadTick"))
-//                reloadSoundTick = Integer.parseInt(split[1]);
-//            else if (split[0].equals("Texture"))
-//                texture = split[1];
-//
-//            else if (split[0].equals("IsExplosionWhenDestroyed"))
-//                isExplosionWhenDestroyed = Boolean.parseBoolean(split[1]);
-////Explosion alterations
-//	    else if(split[0].equals("DeathFireRadius") || split[0].equals("DeathFire"))
-//				deathFireRadius = Float.parseFloat(split[1]);
-//	    else if(split[0].equals("DeathExplosionRadius") || split[0].equals("DeathExplosion"))
-//				deathExplosionRadius = Float.parseFloat(split[1]);
-//    	    else if(split[0].equals("DeathExplosionPower"))
-//				deathExplosionPower = Float.parseFloat(split[1]);
-//	    else if(split[0].equals("DeathExplosionBreaksBlocks"))
-//				deathExplosionBreaksBlocks = Boolean.parseBoolean(split[1].toLowerCase());
-//	    else if(split[0].equals("DeathExplosionDamageVsLiving"))
-//				deathExplosionDamageVsLiving = Float.parseFloat(split[1]);
-//	    else if(split[0].equals("DeathExplosionDamageVsPlayer"))
-//				deathExplosionDamageVsPlayer = Float.parseFloat(split[1]);
-//	    else if(split[0].equals("DeathExplosionDamageVsPlane"))
-//	 			deathExplosionDamageVsPlane = Float.parseFloat(split[1]);
-//	    else if(split[0].equals("DeathExplosionDamageVsVehicle"))
-//				deathExplosionDamageVsVehicle = Float.parseFloat(split[1]);
-//
-//            else if (split[0].equals("FallDamageFactor"))
-//                fallDamageFactor = Float.parseFloat(split[1]);
-//
-//                //Movement Variables
-//            else if (split[0].equals("MaxThrottle"))
-//                maxThrottle = Float.parseFloat(split[1]);
-//            else if (split[0].equals("MaxNegativeThrottle"))
-//                maxNegativeThrottle = Float.parseFloat(split[1]);
-//            else if (split[0].equals("ClutchBrake"))
-//                clutchBrake = Float.parseFloat(split[1]);
-//            else if (split[0].equals("MaxThrottleInWater"))
-//                maxThrottleInWater = Float.parseFloat(split[1]);
-//            else if (split[0].equals("MaxDepth"))
-//                maxDepth = Integer.parseInt(split[1]);
-//            else if (split[0].equals("Drag"))
-//                drag = Float.parseFloat(split[1]);
-//            else if (split[0].equals("TurretOrigin"))
-//                turretOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-//            else if (split[0].equals("TurretOriginOffset"))
-//                turretOriginOffset = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-//            else if (split[0].equals("CollisionPoint") || split[0].equals("AddCollisionPoint"))
-//                collisionPoints.add(new DriveablePosition(split));
-//            else if (split[0].equals("CollisionDamageEnable"))
-//                collisionDamageEnable = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("CollisionDamageThrottle"))
-//                collisionDamageThrottle = Float.parseFloat(split[1]);
-//            else if (split[0].equals("CollisionDamageTimes"))
-//                collisionDamageTimes = Float.parseFloat(split[1]);
-//            else if (split[0].equals("CanLockAngle"))
-//                canLockOnAngle = Integer.parseInt(split[1]);
-//            else if (split[0].equals("LockOnSoundTime"))
-//                lockOnSoundTime = Integer.parseInt(split[1]);
-//            else if (split[0].equals("LockOnToDriveables"))
-//                lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockOnToVehicles"))
-//                lockOnToVehicles = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockOnToPlanes"))
-//                lockOnToPlanes = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockOnToMechas"))
-//                lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockOnToPlayers"))
-//                lockOnToPlayers = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockOnToLivings"))
-//                lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());
-//            else if (split[0].equals("LockedOnSoundRange"))
-//                lockedOnSoundRange = Integer.parseInt(split[1]);
-//            else if (split[0].equals("CanRoll"))
-//                canRoll = Boolean.parseBoolean(split[1]);
-//
-//            //Flares
-//            if (split[0].equals("HasFlare"))
-//                hasFlare = Boolean.parseBoolean(split[1]);
-//            if (split[0].equals("FlareDelay")) {
-//                flareDelay = Integer.parseInt(split[1]);
-//                if (flareDelay <= 0)
-//                    flareDelay = 1;
-//            }
-//            if (split[0].equals("TimeFlareUsing")) {
-//                timeFlareUsing = Integer.parseInt(split[1]);
-//                if (timeFlareUsing <= 0)
-//                    timeFlareUsing = 1;
-//            }
-//
-//
-//            //Boats
-//            else if (split[0].equals("PlaceableOnLand"))
-//                placeableOnLand = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("PlaceableOnWater"))
-//                placeableOnWater = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("WorksUnderwater"))
-//                worksUnderWater = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("PlaceableOnSponge"))
-//                placeableOnSponge = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("FloatOnWater"))
-//                floatOnWater = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("Boat")) {
-//                placeableOnLand = false;
-//                placeableOnWater = true;
-//                floatOnWater = true;
-//                wheelStepHeight = 0F;
-//            } else if (split[0].equals("Buoyancy"))
-//                buoyancy = Float.parseFloat(split[1]);
-//            else if (split[0].equals("FloatOffset"))
-//                floatOffset = Float.parseFloat(split[1]);
-//
-//            else if (split[0].equals("CanMountEntity"))
-//                canMountEntity = Boolean.parseBoolean(split[1]);
-//
-//                //Wheels
-//            else if (split[0].equals("Wheel") || split[0].equals("WheelPosition")) {
-//                wheelPositions[Integer.parseInt(split[1])] = new DriveablePosition(new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F), split.length > 5 ? EnumDriveablePart.getPart(split[5]) : EnumDriveablePart.coreWheel);
-//            } else if (split[0].equals("WheelRadius") || split[0].equals("WheelStepHeight"))
-//                wheelStepHeight = Float.parseFloat(split[1]);
-//            else if (split[0].equals("WheelSpringStrength") || split[0].equals("SpringStrength"))
-//                wheelSpringStrength = Float.parseFloat(split[1]);
-//            else if (split[0].equals("TrackFrames"))
-//                animFrames = Integer.parseInt(split[1]) - 1;
-//
-//                //Harvesting
-//            else if (split[0].equals("Harvester"))
-//                harvestBlocks = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("CollectHarvest"))
-//                collectHarvest = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("DropHarvest"))
-//                dropHarvest = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("HarvestBox")) {
-//                harvestBoxSize = new Vector3f(split[1], shortName);
-//                harvestBoxPos = new Vector3f(split[2], shortName);
-//            } else if (split[0].equals("HarvestMaterial")) {
-//                materialsHarvested.add(getMaterial(split[1]));
-//            } else if (split[0].equals("HarvestToolType")) {
-//                switch (split[1]) {
-//                    case "Axe":
-//                        materialsHarvested.add(Material.wood);
-//                        materialsHarvested.add(Material.plants);
-//                        materialsHarvested.add(Material.vine);
-//                        break;
-//                    case "Pickaxe":
-//                    case "Drill":
-//                        materialsHarvested.add(Material.iron);
-//                        materialsHarvested.add(Material.anvil);
-//                        materialsHarvested.add(Material.rock);
-//                        break;
-//                    case "Spade":
-//                    case "Shovel":
-//                    case "Excavator":
-//                        materialsHarvested.add(Material.ground);
-//                        materialsHarvested.add(Material.grass);
-//                        materialsHarvested.add(Material.sand);
-//                        materialsHarvested.add(Material.snow);
-//                        materialsHarvested.add(Material.clay);
-//                        break;
-//                    case "Hoe":
-//                    case "Combine":
-//                        materialsHarvested.add(Material.plants);
-//                        materialsHarvested.add(Material.leaves);
-//                        materialsHarvested.add(Material.vine);
-//                        materialsHarvested.add(Material.cactus);
-//                        materialsHarvested.add(Material.gourd);
-//                        break;
-//                    case "Tank":
-//                        materialsHarvested.add(Material.leaves);
-//                        materialsHarvested.add(Material.cactus);
-//                        materialsHarvested.add(Material.wood);
-//                        materialsHarvested.add(Material.plants);
-//                        break;
-//                }
-//            }
-//
-//            //Cargo / Payload
-//            else if (split[0].equals("CargoSlots"))
-//                numCargoSlots = Integer.parseInt(split[1]);
-//            else if (split[0].equals("BombSlots") || split[0].equals("MineSlots"))
-//                numBombSlots = Integer.parseInt(split[1]);
-//            else if (split[0].equals("MissileSlots") || split[0].equals("ShellSlots"))
-//                numMissileSlots = Integer.parseInt(split[1]);
-//            else if (split[0].equals("FuelTankSize"))
-//                fuelTankSize = Integer.parseInt(split[1]);
-//            else if (split[0].equals("EngineStartTime"))
-//                engineStartTime = Integer.parseInt(split[1]);
-//            else if (split[0].equals("FilterAmmunitionInput"))
-//                filterAmmunition = Boolean.parseBoolean(split[1]);
-//
-//            else if (split[0].equals("BulletDetection"))
-//                bulletDetectionRadius = Integer.parseInt(split[1]);
-//
-//                //Ammo limiters
-//            else if (split[0].equals("AddAmmo"))
-//                ammo.add(BulletType.getBullet(split[1]));
-//            else if (split[0].equals("AllowAllAmmo") || split[0].equals("AcceptAllAmmo"))
-//                acceptAllAmmo = Boolean.parseBoolean(split[1]);
-//
-//                //Weaponry
-//            else if (split[0].equals("Primary"))
-//                primary = EnumWeaponType.valueOf(split[1].toUpperCase());
-//            else if (split[0].equals("Secondary"))
-//                secondary = EnumWeaponType.valueOf(split[1].toUpperCase());
-//            else if (split[0].equals("ShootDelayPrimary"))
-//                shootDelayPrimary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("ShootDelaySecondary"))
-//                shootDelaySecondary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("DamageMultiplierPrimary"))
-//                damageMultiplierPrimary = Float.parseFloat(split[1]);
-//            else if (split[0].equals("DamageMultiplierSecondary"))
-//                damageMultiplierSecondary = Float.parseFloat(split[1]);
-//            else if (split[0].equals("RoundsPerMinPrimary"))
-//                shootDelayPrimary = Float.parseFloat(split[1]) < 1200 ? 1200F / Float.parseFloat(split[1]) : 1;
-//            else if (split[0].equals("RoundsPerMinSecondary"))
-//                shootDelaySecondary = Float.parseFloat(split[1]) < 1200 ? 1200F / Float.parseFloat(split[1]) : 1;
-//            else if (split[0].equals("PlaceTimePrimary"))
-//                placeTimePrimary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("PlaceTimeSecondary"))
-//                placeTimeSecondary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("ReloadTimePrimary"))
-//                reloadTimePrimary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("ReloadTimeSecondary"))
-//                reloadTimeSecondary = Integer.parseInt(split[1]);
-//            else if (split[0].equals("AlternatePrimary"))
-//                alternatePrimary = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("AlternateSecondary"))
-//                alternateSecondary = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("ModePrimary"))
-//                modePrimary = EnumFireMode.valueOf(split[1].toUpperCase());
-//            else if (split[0].equals("ModeSecondary"))
-//                modeSecondary = EnumFireMode.valueOf(split[1].toUpperCase());
-//            else if (split[0].equals("BulletSpeed"))
-//                bulletSpeed = Float.parseFloat(split[1]);
-//            else if (split[0].equals("BulletSpread"))
-//                bulletSpread = Float.parseFloat(split[1]);
-//            else if (split[0].equals("RangingGun"))
-//                rangingGun = Boolean.parseBoolean(split[1]);
-//            else if (split[0].equals("GunLength"))
-//                gunLength = Float.parseFloat(split[1]);
-//            else if (split[0].equals("RecoilDistance"))
-//                recoilDist = Float.parseFloat(split[1]);
-//            else if (split[0].equals("RecoilTime"))
-//                recoilTime = Float.parseFloat(split[1]);
-//            else if (split[0].equals("ShootPointPrimary")) {
-//                DriveablePosition rootPos;
-//                Vector3f offPos;
-//                String[] gun;
-//                if (split.length == 9) {
-//                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-//                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
-//                } else if (split.length == 8) {
-//                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
-//                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
-//                } else {
-//                    gun = split;
-//                    offPos = new Vector3f(0, 0, 0);
-//                }
-//                rootPos = getShootPoint(gun);
-//                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-//                shootPointsPrimary.add(sPoint);
-//                if (rootPos instanceof PilotGun)
-//                    pilotGuns.add((PilotGun) sPoint.rootPos);
-//            } else if (split[0].equals("ShootPointSecondary")) {
-//                DriveablePosition rootPos;
-//                Vector3f offPos;
-//                String[] gun;
-//                if (split.length == 9) {
-//                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-//                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
-//                } else if (split.length == 8) {
-//                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
-//                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
-//                } else {
-//                    gun = split;
-//                    offPos = new Vector3f(0, 0, 0);
-//                }
-//                rootPos = getShootPoint(gun);
-//                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-//                shootPointsSecondary.add(sPoint);
-//                if (rootPos instanceof PilotGun)
-//                    pilotGuns.add((PilotGun) sPoint.rootPos);
-//            } else if (split[0].equals("EnableReloadTime"))
-//                enableReloadTime = Boolean.parseBoolean(split[1]);
-//
-//            else if (split[0].equals("ShootParticlesPrimary"))
-//                shootParticlesPrimary.add(new ShootParticle(
-//                        split[1],
-//                        Float.parseFloat(split[2]),
-//                        Float.parseFloat(split[3]),
-//                        Float.parseFloat(split[4])));
-//            else if (split[0].equals("ShootParticlesSecondary"))
-//                shootParticlesSecondary.add(new ShootParticle(
-//                        split[1],
-//                        Float.parseFloat(split[2]),
-//                        Float.parseFloat(split[3]),
-//                        Float.parseFloat(split[4])));
-//
-//
-//            if (split[0].equals("SetPlayerInvisible"))
-//                setPlayerInvisible = Boolean.parseBoolean(split[1].toLowerCase());
-//            if (split[0].equals("IT1"))
-//                IT1 = Boolean.parseBoolean(split[1].toLowerCase());
-//            if (split[0].equals("FixedPrimary"))
-//                fixedPrimaryFire = Boolean.parseBoolean(split[1].toLowerCase());
-//            if (split[0].equals("FixedSecondary"))
-//                fixedSecondaryFire = Boolean.parseBoolean(split[1].toLowerCase());
-//            if (split[0].equals("PrimaryAngle"))
-//                primaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//            if (split[0].equals("SecondaryAngle"))
-//                secondaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//
-//                //Backwards compatibility stuff
-//            else if (split[0].equals("AddGun")) {
-//                DriveablePosition rootPos;
-//                Vector3f offPos;
-//                secondary = EnumWeaponType.GUN;
-//                PilotGun pilotGun;
-//                if (split.length == 6) {
-//                    rootPos = (PilotGun) getShootPoint(split);
-//                    offPos = new Vector3f(0, 0, 0);
-//                    pilotGun = (PilotGun) getShootPoint(split);
-//                } else {
-//                    String[] gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-//                    rootPos = (PilotGun) getShootPoint(gun);
-//                    pilotGun = (PilotGun) getShootPoint(gun);
-//                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
-//                }
-//                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-//                shootPointsSecondary.add(sPoint);
-//                pilotGuns.add(pilotGun);
-//                driveableRecipe.add(new ItemStack(pilotGun.type.item));
-//            } else if (split[0].equals("BombPosition")) {
-//                primary = EnumWeaponType.BOMB;
-//                if (split.length == 4)
-//                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(0, 0, 0)));
-//                else if (split.length == 7)
-//                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
-//
-//            } else if (split[0].equals("BarrelPosition")) {
-//                primary = EnumWeaponType.SHELL;
-//                if (split.length == 4)
-//                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(0, 0, 0)));
-//                else if (split.length == 7)
-//                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
-//            } else if (split[0].equals("ShootDelay"))
-//                shootDelaySecondary = Float.parseFloat(split[1]);
-//            else if (split[0].equals("ShellDelay") || split[0].equals("BombDelay"))
-//                shootDelayPrimary = Float.parseFloat(split[1]);
-//
-//                //Recipe
-//            else if (split[0].equals("AddRecipeParts")) {
-//                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-//                ArrayList<ItemStack> stacks = new ArrayList<>();
-//                for (int i = 0; i < (split.length - 2) / 2; i++) {
-//                    int amount = Integer.parseInt(split[2 * i + 2]);
-//                    boolean damaged = split[2 * i + 3].contains(".");
-//                    String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
-//                    int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
-//
-//                    // Only add part if it is NOT null. (Seems obvious?)
-//                    ItemStack potentialPart = getRecipeElement(itemName, amount, damage, shortName);
-//                    if (potentialPart != null) {
-//                        stacks.add(potentialPart);
-//                        driveableRecipe.add(potentialPart);
-//                    }
-//
-//                }
-//                ItemStack[] items = new ItemStack[stacks.size()];
-//                items = stacks.toArray(items);
-//                partwiseRecipe.put(part, items);
-//            }
-//
-//            //Dyes
-//            else if (split[0].equals("AddDye")) {
-//                int amount = Integer.parseInt(split[1]);
-//                int damage = -1;
-//                for (int i = 0; i < ItemDye.field_150923_a.length; i++) {
-//                    if (ItemDye.field_150923_a[i].equals(split[2]))
-//                        damage = i;
-//                }
-//                if (damage == -1) {
-//                    FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
-//                    return;
-//                }
-//                driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
-//            }
-//
-//
-//            //Health
-//            else if (split[0].equals("SetupPart")) {
-//                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-//                CollisionBox box;
-//                if (split.length > 9) {
-//                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Float.parseFloat(split[9]));
-//                } else {
-//                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
-//                }
-//                health.put(part, box);
-//            } else if (split[0].equals("PartDeathExplosion")) {
-//                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-//
-//                BoxExplosion exp;
-//                if (split.length > 5) {
-//                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-//                } else {
-//                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]));
-//                }
-//
-//                partDeathExplosions.put(part, exp);
-//            //Driver Position
-//            } else if (split[0].equals("DriverPart")) {
+
+        try {
+
+            //Old Pre-Read stuff
+            if (config.containsKey("Passengers")) {
+                numPassengers = Integer.parseInt(config.get("Passengers"));
+                seats = new Seat[numPassengers + 1];
+            }
+
+            //todo, multi
+            if (config.containsKey("Passenger")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "Passenger");
+                Seat seat = new Seat(split);
+                seats[seat.id] = seat;
+                if (seat.gunType != null) {
+                    seat.gunnerID = numPassengerGunners++;
+                    driveableRecipe.add(new ItemStack(seat.gunType.item));
+                }
+            }
+
+            if (config.containsKey("NumWheels")) {
+                wheelPositions = new DriveablePosition[Integer.parseInt(config.get("NumWheels"))];
+            }
+
+            if (config.containsKey("Driver")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "Driver");
+                if (split.length > 4)
+                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                            Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
+                            Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                else
+                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                            Integer.parseInt(split[3]));
+            }
+            if (config.containsKey("Pilot")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "Pilot");
+                if (split.length > 4)
+                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                            Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
+                            Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                else
+                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                            Integer.parseInt(split[3]));
+            }
+
+
+            if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
+                model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelDriveable.class);
+            vehicleGunModelScale = ConfigUtils.configFloat(config, "VehicleGunModelScale", vehicleGunModelScale);
+            reloadSoundTick = ConfigUtils.configInt(config, "VehicleGunReloadTick", reloadSoundTick);
+            texture = ConfigUtils.configString(config, "Texture", texture);
+            isExplosionWhenDestroyed = ConfigUtils.configBool(config, "IsExplosionWhenDestroyed", isExplosionWhenDestroyed);
+
+            //Explosion alterations
+            deathFireRadius = ConfigUtils.configFloat(config, new String[]{"DeathFireRadius", "DeathFire"}, deathFireRadius);
+            deathExplosionRadius = ConfigUtils.configFloat(config, new String[]{"DeathExplosionRadius", "DeathExplosion"}, deathExplosionRadius);
+            deathExplosionPower = ConfigUtils.configFloat(config, "DeathExplosionPower", deathExplosionPower);
+            deathExplosionBreaksBlocks = ConfigUtils.configBool(config, "DeathExplosionBreaksBlocks", deathExplosionBreaksBlocks);
+            deathExplosionDamageVsLiving = ConfigUtils.configFloat(config, "DeathExplosionDamageVsLiving", deathExplosionDamageVsLiving);
+            deathExplosionDamageVsPlayer = ConfigUtils.configFloat(config, "DeathExplosionDamageVsPlayer", deathExplosionDamageVsPlayer);
+            deathExplosionDamageVsPlane = ConfigUtils.configFloat(config, "DeathExplosionDamageVsPlane", deathExplosionDamageVsPlane);
+            deathExplosionDamageVsVehicle = ConfigUtils.configFloat(config, "DeathExplosionDamageVsVehicle", deathExplosionDamageVsVehicle);
+
+            fallDamageFactor = ConfigUtils.configFloat(config, "FallDamageFactor", fallDamageFactor);
+
+            //Movement Variables
+            maxThrottle = ConfigUtils.configFloat(config, "MaxThrottle", maxThrottle);
+            maxNegativeThrottle = ConfigUtils.configFloat(config, "MaxNegativeThrottle", maxNegativeThrottle);
+            clutchBrake = ConfigUtils.configFloat(config, "ClutchBrake", clutchBrake);
+            maxThrottleInWater = ConfigUtils.configFloat(config, "MaxThrottleInWater", maxThrottleInWater);
+            maxDepth = ConfigUtils.configInt(config, "MaxDepth", maxDepth);
+            drag = ConfigUtils.configFloat(config, "Drag", drag);
+
+            if (config.containsKey("TurretOrigin")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "TurretOrigin");
+                turretOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+            }
+            if (config.containsKey("TurretOriginOffset")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "TurretOriginOffset");
+                turretOriginOffset = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+            }
+            if (config.containsKey("CollisionPoint")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "CollisionPoint");
+                collisionPoints.add(new DriveablePosition(split));
+            }
+            if (config.containsKey("AddCollisionPoint")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionPoint");
+                collisionPoints.add(new DriveablePosition(split));
+            }
+
+            collisionDamageEnable = ConfigUtils.configBool(config, "CollisionDamageEnable", collisionDamageEnable);
+            collisionDamageThrottle = ConfigUtils.configFloat(config, "CollisionDamageThrottle", collisionDamageThrottle);
+            collisionDamageTimes = ConfigUtils.configFloat(config, "CollisionDamageTimes", collisionDamageTimes);
+            canLockOnAngle = ConfigUtils.configInt(config, "CanLockAngle", canLockOnAngle);
+            lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
+            if (config.containsKey("LockOnToDriveables"))
+                lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(config.get("LockOnToDriveables").toLowerCase());
+            lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
+            lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
+            lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
+            lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
+            lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+            lockedOnSoundRange = ConfigUtils.configInt(config, "LockedOnSoundRange", lockedOnSoundRange);
+            canRoll = ConfigUtils.configBool(config, "CanRoll", canRoll);
+
+            //Flares
+            hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
+            if (config.containsKey("FlareDelay")) {
+                flareDelay = Integer.parseInt(config.get("FlareDelay"));
+                if (flareDelay <= 0)
+                    flareDelay = 1;
+            }
+            if (config.containsKey("TimeFlareUsing")) {
+                timeFlareUsing = Integer.parseInt(config.get("TimeFlareUsing"));
+                if (timeFlareUsing <= 0)
+                    timeFlareUsing = 1;
+            }
+
+
+            //Boats
+            if (config.containsKey("Boat")) {
+                placeableOnLand = false;
+                placeableOnWater = true;
+                floatOnWater = true;
+                wheelStepHeight = 0F;
+            }
+            placeableOnLand = ConfigUtils.configBool(config, "PlaceableOnLand", placeableOnLand);
+            placeableOnWater = ConfigUtils.configBool(config, "PlaceableOnWater", placeableOnWater);
+            worksUnderWater = ConfigUtils.configBool(config, "WorksUnderwater", worksUnderWater);
+            placeableOnSponge = ConfigUtils.configBool(config, "PlaceableOnSponge", placeableOnSponge);
+            floatOnWater = ConfigUtils.configBool(config, "FloatOnWater", floatOnWater);
+            buoyancy = ConfigUtils.configFloat(config, "Buoyancy", buoyancy);
+            floatOffset = ConfigUtils.configFloat(config, "FloatOffset", floatOffset);
+            canMountEntity = ConfigUtils.configBool(config, "CanMountEntity", canMountEntity);
+
+                //Wheels
+            if (config.containsKey("Wheel")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "Wheel");
+                wheelPositions[Integer.parseInt(split[1])] = new DriveablePosition(new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F), split.length > 5 ? EnumDriveablePart.getPart(split[5]) : EnumDriveablePart.coreWheel);
+            }
+            if (config.containsKey("WheelPosition")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "WheelPosition");
+                wheelPositions[Integer.parseInt(split[1])] = new DriveablePosition(new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F), split.length > 5 ? EnumDriveablePart.getPart(split[5]) : EnumDriveablePart.coreWheel);
+            }
+
+            wheelStepHeight = ConfigUtils.configFloat(config, new String[]{"WheelRadius", "WheelStepHeight"}, wheelStepHeight);
+            wheelSpringStrength = ConfigUtils.configFloat(config, new String[]{"WheelSpringStrength", "SpringStrength"}, wheelSpringStrength);
+            animFrames = ConfigUtils.configInt(config, "TrackFrames", animFrames);
+
+                //Harvesting
+            harvestBlocks = ConfigUtils.configBool(config, "Harvester", harvestBlocks);
+            collectHarvest = ConfigUtils.configBool(config, "CollectHarvest", collectHarvest);
+            dropHarvest = ConfigUtils.configBool(config, "DropHarvest", dropHarvest);
+            if (config.containsKey("HarvestBox")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "HarvestBox");
+                harvestBoxSize = new Vector3f(split[1], shortName);
+                harvestBoxPos = new Vector3f(split[2], shortName);
+            }
+            if (config.containsKey("HarvestMaterial")) {
+                materialsHarvested.add(getMaterial(config.get("HarvestMaterial")));
+            }
+            if (config.containsKey("HarvestToolType")) {
+                switch (config.get("HarvestToolType")) {
+                    case "Axe":
+                        materialsHarvested.add(Material.wood);
+                        materialsHarvested.add(Material.plants);
+                        materialsHarvested.add(Material.vine);
+                        break;
+                    case "Pickaxe":
+                    case "Drill":
+                        materialsHarvested.add(Material.iron);
+                        materialsHarvested.add(Material.anvil);
+                        materialsHarvested.add(Material.rock);
+                        break;
+                    case "Spade":
+                    case "Shovel":
+                    case "Excavator":
+                        materialsHarvested.add(Material.ground);
+                        materialsHarvested.add(Material.grass);
+                        materialsHarvested.add(Material.sand);
+                        materialsHarvested.add(Material.snow);
+                        materialsHarvested.add(Material.clay);
+                        break;
+                    case "Hoe":
+                    case "Combine":
+                        materialsHarvested.add(Material.plants);
+                        materialsHarvested.add(Material.leaves);
+                        materialsHarvested.add(Material.vine);
+                        materialsHarvested.add(Material.cactus);
+                        materialsHarvested.add(Material.gourd);
+                        break;
+                    case "Tank":
+                        materialsHarvested.add(Material.leaves);
+                        materialsHarvested.add(Material.cactus);
+                        materialsHarvested.add(Material.wood);
+                        materialsHarvested.add(Material.plants);
+                        break;
+                }
+            }
+
+            //Cargo / Payload
+            numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
+            numCargoSlots = ConfigUtils.configInt(config, new String[]{"BombSlots", "MineSlots"}, numCargoSlots);
+            numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
+            numCargoSlots = ConfigUtils.configInt(config, new String[]{"MissileSlots", "ShellSlots"}, numCargoSlots);
+            numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
+            fuelTankSize = ConfigUtils.configInt(config, "FuelTankSize", fuelTankSize);
+            engineStartTime = ConfigUtils.configInt(config, "EngineStartTime", engineStartTime);
+            filterAmmunition = ConfigUtils.configBool(config, "FilterAmmunitionInput", filterAmmunition);
+
+            bulletDetectionRadius = ConfigUtils.configFloat(config, "BulletDetection", bulletDetectionRadius);
+
+            //Ammo limiters
+            if (config.containsKey("AddAmmo"))
+                ammo.add(BulletType.getBullet(config.get("AddAmmo")));
+            acceptAllAmmo = ConfigUtils.configBool(config, new String[]{"AllowAllAmmo", "AcceptAllAmmo"}, acceptAllAmmo);
+
+                //Weaponry
+            if (config.containsKey("Primary"))
+                primary = EnumWeaponType.valueOf(config.get("Primary").toUpperCase());
+            if (config.containsKey("Secondary"))
+                primary = EnumWeaponType.valueOf(config.get("Secondary").toUpperCase());
+            shootDelayPrimary = ConfigUtils.configFloat(config, "ShootDelayPrimary", shootDelayPrimary);
+            shootDelaySecondary = ConfigUtils.configFloat(config, "ShootDelaySecondary", shootDelaySecondary);
+            damageMultiplierPrimary = ConfigUtils.configFloat(config, "DamageMultiplierPrimary", damageMultiplierPrimary);
+            damageMultiplierSecondary = ConfigUtils.configFloat(config, "DamageMultiplierSecondary", damageMultiplierSecondary);
+            if (config.containsKey("RoundsPerMinPrimary"))
+                shootDelayPrimary = Float.parseFloat(config.get("RoundsPerMinPrimary")) < 1200 ? 1200F / Float.parseFloat(config.get("RoundsPerMinPrimary")) : 1;
+            if (config.containsKey("RoundsPerMinSecondary"))
+                shootDelaySecondary = Float.parseFloat(config.get("RoundsPerMinSecondary")) < 1200 ? 1200F / Float.parseFloat(config.get("RoundsPerMinSecondary")) : 1;
+            placeTimePrimary = ConfigUtils.configInt(config, "PlaceTimePrimary", placeTimePrimary);
+            placeTimeSecondary = ConfigUtils.configInt(config, "PlaceTimeSecondary", placeTimeSecondary);
+            reloadTimePrimary = ConfigUtils.configInt(config, "ReloadTimePrimary", reloadTimePrimary);
+            reloadTimeSecondary = ConfigUtils.configInt(config, "ReloadTimeSecondary", reloadTimeSecondary);
+            alternatePrimary = ConfigUtils.configBool(config, "AlternatePrimary", alternatePrimary);
+            alternateSecondary = ConfigUtils.configBool(config, "AlternateSecondary", alternateSecondary);
+            if (config.containsKey("ModePrimary"))
+                modePrimary = EnumFireMode.valueOf(config.get("ModePrimary").toUpperCase());
+            if (config.containsKey("ModeSecondary"))
+                modeSecondary = EnumFireMode.valueOf(config.get("ModeSecondary").toUpperCase());
+            bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
+            bulletSpread = ConfigUtils.configFloat(config, "BulletSpread", bulletSpread);
+            rangingGun = ConfigUtils.configBool(config, "RangingGun", rangingGun);
+            gunLength = ConfigUtils.configFloat(config, "GunLength", gunLength);
+            recoilDist = ConfigUtils.configFloat(config, "RecoilDistance", recoilDist);
+            recoilTime = ConfigUtils.configFloat(config, "RecoilTime", recoilTime);
+            if (config.containsKey("ShootPointPrimary")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootPointPrimary");
+                DriveablePosition rootPos;
+                Vector3f offPos;
+                String[] gun;
+                if (split.length == 9) {
+                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                } else if (split.length == 8) {
+                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
+                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+                } else {
+                    gun = split;
+                    offPos = new Vector3f(0, 0, 0);
+                }
+                rootPos = getShootPoint(gun);
+                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                shootPointsPrimary.add(sPoint);
+                if (rootPos instanceof PilotGun)
+                    pilotGuns.add((PilotGun) sPoint.rootPos);
+            }
+            if (config.containsKey("ShootPointSecondary")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootPointSecondary");
+                DriveablePosition rootPos;
+                Vector3f offPos;
+                String[] gun;
+                if (split.length == 9) {
+                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                } else if (split.length == 8) {
+                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
+                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+                } else {
+                    gun = split;
+                    offPos = new Vector3f(0, 0, 0);
+                }
+                rootPos = getShootPoint(gun);
+                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                shootPointsSecondary.add(sPoint);
+                if (rootPos instanceof PilotGun)
+                    pilotGuns.add((PilotGun) sPoint.rootPos);
+            }
+            enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
+            if (config.containsKey("ShootParticlesPrimary")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootParticlesPrimary");
+                shootParticlesPrimary.add(new ShootParticle(
+                        split[1],
+                        Float.parseFloat(split[2]),
+                        Float.parseFloat(split[3]),
+                        Float.parseFloat(split[4])));
+            }
+
+            if (config.containsKey("ShootParticlesSecondary")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootParticlesSecondary");
+                shootParticlesSecondary.add(new ShootParticle(
+                        split[1],
+                        Float.parseFloat(split[2]),
+                        Float.parseFloat(split[3]),
+                        Float.parseFloat(split[4])));
+            }
+
+            setPlayerInvisible = ConfigUtils.configBool(config, "SetPlayerInvisible", setPlayerInvisible);
+            IT1 = ConfigUtils.configBool(config, "IT1", IT1);
+            fixedPrimaryFire = ConfigUtils.configBool(config, "FixedPrimary", fixedPrimaryFire);
+            fixedSecondaryFire = ConfigUtils.configBool(config, "FixedSecondary", fixedSecondaryFire);
+            if (config.containsKey("PrimaryAngle")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "PrimaryAngle");
+                primaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+            }
+            if (config.containsKey("SecondaryAngle")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "SecondaryAngle");
+                secondaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+            }
+
+
+            //Backwards compatibility stuff
+            if (config.containsKey("AddGun")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddGun");
+                DriveablePosition rootPos;
+                Vector3f offPos;
+                secondary = EnumWeaponType.GUN;
+                PilotGun pilotGun;
+
+                if (split.length == 6) {
+                    rootPos = (PilotGun) getShootPoint(split);
+                    offPos = new Vector3f(0, 0, 0);
+                    pilotGun = (PilotGun) getShootPoint(split);
+                } else {
+                    String[] gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                    rootPos = (PilotGun) getShootPoint(gun);
+                    pilotGun = (PilotGun) getShootPoint(gun);
+                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                }
+                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                shootPointsSecondary.add(sPoint);
+                pilotGuns.add(pilotGun);
+                driveableRecipe.add(new ItemStack(pilotGun.type.item));
+            }
+
+            if (config.containsKey("BombPosition")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "BombPosition");
+                primary = EnumWeaponType.BOMB;
+                if (split.length == 4)
+                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(0, 0, 0)));
+                else if (split.length == 7)
+                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
+
+            }
+            if (config.containsKey("BarrelPosition")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "BarrelPosition");
+                primary = EnumWeaponType.SHELL;
+                if (split.length == 4)
+                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(0, 0, 0)));
+                else if (split.length == 7)
+                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
+            }
+
+            shootDelaySecondary = ConfigUtils.configFloat(config, "ShootDelay", shootDelaySecondary);
+            shootDelayPrimary = ConfigUtils.configFloat(config, "ShellDelay", shootDelayPrimary);
+
+                //Recipe
+            if (config.containsKey("AddRecipeParts")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddRecipeParts");
+                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+                ArrayList<ItemStack> stacks = new ArrayList<>();
+                for (int i = 0; i < (split.length - 2) / 2; i++) {
+                    int amount = Integer.parseInt(split[2 * i + 2]);
+                    boolean damaged = split[2 * i + 3].contains(".");
+                    String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
+                    int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
+
+                    // Only add part if it is NOT null. (Seems obvious?)
+                    ItemStack potentialPart = getRecipeElement(itemName, amount, damage, shortName);
+                    if (potentialPart != null) {
+                        stacks.add(potentialPart);
+                        driveableRecipe.add(potentialPart);
+                    }
+
+                }
+                ItemStack[] items = new ItemStack[stacks.size()];
+                items = stacks.toArray(items);
+                partwiseRecipe.put(part, items);
+            }
+
+            //Dyes
+            else if (config.containsKey("AddDye")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddDye");
+                int amount = Integer.parseInt(split[1]);
+                int damage = -1;
+                for (int i = 0; i < ItemDye.field_150923_a.length; i++) {
+                    if (ItemDye.field_150923_a[i].equals(split[2]))
+                        damage = i;
+                }
+                if (damage == -1) {
+                    FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
+                    return;
+                }
+                driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
+            }
+
+
+            //Health
+            else if (config.containsKey("SetupPart")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "SetupPart");
+                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+                CollisionBox box;
+                if (split.length > 9) {
+                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Float.parseFloat(split[9]));
+                } else {
+                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
+                }
+                health.put(part, box);
+            }
+            if (config.containsKey("PartDeathExplosion")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "PartDeathExplosion");
+                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+
+                BoxExplosion exp;
+                if (split.length > 5) {
+                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                } else {
+                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]));
+                }
+
+                partDeathExplosions.put(part, exp);
+            //Driver Position
+            }
+//            if (split[0].equals("DriverPart")) {
 //                seats[0].part = EnumDriveablePart.getPart(split[1]);
-//            } else if (split[0].equals("DriverGun") || split[0].equals("PilotGun")) {
+//            }
+//            else if (split[0].equals("DriverGun") || split[0].equals("PilotGun")) {
 //                seats[0].gunName = split[2];
-//            } else if (split[0].equals("DriverGunOrigin"))
+//            }
+//            else if (split[0].equals("DriverGunOrigin"))
 //                seats[0].gunOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
 //
 //            else if (split[0].equals("RotatedDriverOffset")) {
 //                seats[0].rotatedOffset = new Vector3f(Integer.parseInt(split[1]) / 16F, Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F);
-//            } else if (split[0].equals("RotatedPassengerOffset")) {
+//            }
+//            else if (split[0].equals("RotatedPassengerOffset")) {
 //                seats[Integer.parseInt(split[1])].rotatedOffset = new Vector3f(Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
-//            } else if (split[0].equals("DriverAimSpeed")) {
+//            }
+//            else if (split[0].equals("DriverAimSpeed")) {
 //                seats[0].aimingSpeed = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//            } else if (split[0].equals("PassengerAimSpeed")) {
+//            }
+//            else if (split[0].equals("PassengerAimSpeed")) {
 //                seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]));
-//            } else if (split[0].equals("DriverLegacyAiming")) {
+//            }
+//            else if (split[0].equals("DriverLegacyAiming")) {
 //                seats[0].legacyAiming = Boolean.parseBoolean(split[1]);
-//            } else if (split[0].equals("PassengerLegacyAiming")) {
+//            }
+//            else if (split[0].equals("PassengerLegacyAiming")) {
 //                seats[Integer.parseInt(split[1])].legacyAiming = Boolean.parseBoolean(split[2]);
-//            } else if (split[0].equals("DriverYawBeforePitch")) {
-//                seats[0].yawBeforePitch = Boolean.parseBoolean(split[1]);
-//            } else if (split[0].equals("PassengerYawBeforePitch")) {
+//            }
+//            seats[0].yawBeforePitch = ConfigUtils.configInt(config, "DriverYawBeforePitch", seats[0].yawBeforePitch);
+//            else if (split[0].equals("PassengerYawBeforePitch")) {
 //                seats[Integer.parseInt(split[1])].yawBeforePitch = Boolean.parseBoolean(split[2]);
-//            } else if (split[0].equals("DriverLatePitch")) {
-//                seats[0].latePitch = Boolean.parseBoolean(split[1]);
-//            } else if (split[0].equals("PassengerLatePitch")) {
+//            }
+//            seats[0].latePitch = ConfigUtils.configInt(config, "DriverLatePitch", seats[0].latePitch);
+//            if (split[0].equals("PassengerLatePitch")) {
 //                seats[Integer.parseInt(split[1])].latePitch = Boolean.parseBoolean(split[2]);
-//            } else if (split[0].equals("DriverTraverseSounds")) {
+//            }
+//            else if (split[0].equals("DriverTraverseSounds")) {
 //                seats[0].traverseSounds = Boolean.parseBoolean(split[1]);
-//            } else if (split[0].equals("PassengerTraverseSounds")) {
+//            }
+//            else if (split[0].equals("PassengerTraverseSounds")) {
 //                seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
 //            }
-//
-//            else if (split[0].equals("GunOrigin"))
-//                seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
-//
-//                //Y offset for badly built models :P
-//            else if (split[0].equals("YOffset"))
-//                yOffset = Float.parseFloat(split[1]);
-//                //Third person camera distance
-//            else if (split[0].equals("CameraDistance"))
-//                cameraDistance = Float.parseFloat(split[1]);
-//
-//                //Sound
-//            else if (split[0].equals("StartSoundRange"))
-//                startSoundRange = Integer.parseInt(split[1]);
-//            else if (split[0].equals("StartSoundLength"))
-//                startSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("EngineSoundRange"))
-//                engineSoundRange = Integer.parseInt(split[1]);
-//            else if (split[0].equals("EngineSoundLength"))
-//                engineSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("IdleSoundLength"))
-//                idleSoundLength = Integer.parseInt(split[1]);
-//           else if (split[0].equals("ExitSoundLength"))
-//                exitSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("BackSoundRange"))
-//                backSoundRange = Integer.parseInt(split[1]);
-//            else if (split[0].equals("BackSoundLength"))
-//                backSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("SoundTime"))
-//                soundTime = Integer.parseInt(split[1]);
-//            else if (split[0].equals("YawSoundLength"))
-//                seats[0].yawSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("PitchSoundLength"))
-//                seats[0].pitchSoundLength = Integer.parseInt(split[1]);
-//            else if (split[0].equals("PassengerYawSoundLength"))
-//                seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
-//            else if (split[0].equals("PassengerPitchSoundLength"))
-//                seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
-//            else if (split[0].equals("StartSound")) {
-//                startSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("EngineSound")) {
-//                engineSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("IdleSound")) {
-//                idleSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ExitSound")) {
-//                exitSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("BackSound")) {
-//                backSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("YawSound")) {
-//                seats[0].yawSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("PitchSound")) {
-//                seats[0].pitchSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("PassengerYawSound")) {
-//                seats[Integer.parseInt(split[1])].yawSound = split[2];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("PassengerPitchSound")) {
-//                seats[Integer.parseInt(split[1])].pitchSound = split[2];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ShootMainSound") || split[0].equals("ShootSoundPrimary") || split[0].equals("ShellSound") || split[0].equals("BombSound")) {
-//                shootSoundPrimary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ShootReloadSound")) {
-//                shootReloadSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ShootSecondarySound") || split[0].equals("ShootSoundSecondary")) {
-//                shootSoundSecondary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("PlaceSoundPrimary")) {
-//                placeSoundPrimary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("PlaceSoundSecondary")) {
-//                placeSoundSecondary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ReloadSoundPrimary")) {
-//                reloadSoundPrimary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("ReloadSoundSecondary")) {
-//                reloadSoundSecondary = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("LockedOnSound")) {
-//                lockedOnSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            } else if (split[0].equals("LockOnSound")) {
-//                lockOnSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-//            } else if (split[0].equals("LockingOnSound")) {
-//                lockingOnSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-//            }
-//            if (split[0].equals("FlareSound")) {
-//                flareSound = split[1];
-//                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-//            }
-//
-//            if (split[0].equals("FancyCollision"))
-//                fancyCollision = Boolean.parseBoolean(split[1]);
-//
-//            if (split[0].equals("AddCollisionMesh")) {
-//                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "core");
-//                collisionBox.add(box);
-//                //colbox = box;
-//            }
-//
-//            if (split[0].equals("AddCollisionMeshRaw")) {
-//                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
-//                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
-//                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
-//                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
-//                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
-//                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
-//                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
-//                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
-//                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
-//                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "core");
-//                collisionBox.add(box);
-//                //colbox = box;
-//            }
-//
-//            if (split[0].equals("AddTurretCollisionMesh")) {
-//                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "turret");
-//                collisionBox.add(box);
-//                //colbox = box;
-//            }
-//
-//            if (split[0].equals("AddTurretCollisionMeshRaw")) {
-//                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
-//                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
-//                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
-//                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
-//                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
-//                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
-//                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
-//                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
-//                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
-//                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "turret");
-//                collisionBox.add(box);
-//                //colbox = box;
-//            }
-//
-//
-//            if (split[0].equals("LeftLinkPoint")) {
-//                leftTrackPoints.add(new Vector3f(split[1], shortName));
-//            }
-//
-//            if (split[0].equals("RightLinkPoint")) {
-//                rightTrackPoints.add(new Vector3f(split[1], shortName));
-//            }
-//
-//            if (split[0].equals("TrackLinkLength")) {
-//                trackLinkLength = Float.parseFloat(split[1]);
-//            }
-//
-//            // ICBM Mod Radar
-//            else if (split[0].equals("OnRadar"))
-//                onRadar = split[1].equals("True");
-//
-//            else if (split[0].equalsIgnoreCase("AddParticle") || split[0].equalsIgnoreCase("AddEmitter")) {
-//                ParticleEmitter emitter = new ParticleEmitter();
-//                emitter.effectType = split[1];
-//                emitter.emitRate = Integer.parseInt(split[2]);
-//                emitter.origin = new Vector3f(split[3], shortName);
-//                emitter.extents = new Vector3f(split[4], shortName);
-//                emitter.velocity = new Vector3f(split[5], shortName);
-//                emitter.minThrottle = Float.parseFloat(split[6]);
-//                emitter.maxThrottle = Float.parseFloat(split[7]);
-//                emitter.minHealth = Float.parseFloat(split[8]);
-//                emitter.maxHealth = Float.parseFloat(split[9]);
-//                emitter.part = split[10];
-//                //Scale from model coords to world coords
-//                emitter.origin.scale(1.0f / 16.0f);
-//                emitter.extents.scale(1.0f / 16.0f);
-//                emitter.velocity.scale(1.0f / 16.0f);
-//                emitters.add(emitter);
-//            }
-//        } catch (Exception e) {
-//            if (split != null) {
-//                StringBuilder msg = new StringBuilder(" : ");
-//                for (String s : split) msg.append(" ").append(s);
-//                FlansMod.log("Errored reading " + file.name + msg);
-//            } else {
-//                FlansMod.log("Errored reading " + file.name);
-//            }
-//            if (FlansMod.printStackTrace) {
-//                e.printStackTrace();
-//            }
-//        }
+
+            if (config.containsKey("GunOrigin")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "GunOrigin");
+                seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
+            }
+
+            //Y offset for badly built models :P
+            yOffset = ConfigUtils.configFloat(config, "YOffset", yOffset);
+            //Third person camera distance
+            cameraDistance = ConfigUtils.configFloat(config, "CameraDistance", cameraDistance);
+
+            //Sound
+            startSoundRange = ConfigUtils.configInt(config, "StartSoundRange", startSoundRange);
+            startSoundLength = ConfigUtils.configInt(config, "StartSoundLength", startSoundLength);
+            engineSoundRange = ConfigUtils.configInt(config, "EngineSoundRange", engineSoundRange);
+            engineSoundLength = ConfigUtils.configInt(config, "EngineSoundLength", engineSoundLength);
+            idleSoundLength = ConfigUtils.configInt(config, "IdleSoundLength", idleSoundLength);
+            exitSoundLength = ConfigUtils.configInt(config, "ExitSoundLength", exitSoundLength);
+            backSoundRange = ConfigUtils.configInt(config, "BackSoundRange", backSoundRange);
+            backSoundLength = ConfigUtils.configInt(config, "BackSoundLength", backSoundLength);
+            soundTime = ConfigUtils.configInt(config, "SoundTime", soundTime);
+            seats[0].yawSoundLength = ConfigUtils.configInt(config, "YawSoundLength", seats[0].yawSoundLength);
+            seats[0].pitchSoundLength = ConfigUtils.configInt(config, "PitchSoundLength", seats[0].pitchSoundLength);
+
+            if (config.containsKey("PassengerYawSoundLength")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "PassengerYawSoundLength");
+                seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
+            }
+
+            if (config.containsKey("PassengerPitchSoundLength")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "PassengerPitchSoundLength");
+                seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
+            }
+
+           startSound = ConfigUtils.configDriveableSound(contentPack, config, "StartSound", startSound);
+           engineSound = ConfigUtils.configDriveableSound(contentPack, config, "EngineSound", engineSound);
+           idleSound = ConfigUtils.configDriveableSound(contentPack, config, "IdleSound", idleSound);
+           exitSound = ConfigUtils.configDriveableSound(contentPack, config, "ExitSound", exitSound);
+           backSound = ConfigUtils.configDriveableSound(contentPack, config, "BackSound", backSound);
+           seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
+           seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
+
+           if (config.containsKey("PassengerYawSound")) {
+               String[] split = ConfigUtils.getSplitFromKey(config, "PassengerYawSound");
+               seats[Integer.parseInt(split[1])].yawSound = split[2];
+               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+           }
+           if (config.containsKey("PassengerPitchSound")) {
+               String[] split = ConfigUtils.getSplitFromKey(config, "PassengerPitchSound");
+               seats[Integer.parseInt(split[1])].pitchSound = split[2];
+               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+           }
+           if (config.containsKey("ShootMainSound")) {
+               String[] split = ConfigUtils.getSplitFromKey(config, "ShootMainSound");
+               shootSoundPrimary = split[1];
+               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+           }
+            if (config.containsKey("ShootSoundPrimary")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootSoundPrimary");
+                shootSoundPrimary = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }
+            if (config.containsKey("ShellSound")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShellSound");
+                shootSoundPrimary = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }
+            if (config.containsKey("BombSound")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "BombSound");
+                shootSoundPrimary = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }
+           if (config.containsKey("ShootReloadSound")) {
+               String[] split = ConfigUtils.getSplitFromKey(config, "ShootReloadSound");
+               shootReloadSound = split[1];
+               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+           }
+           if (config.containsKey("ShootSecondarySound")) {
+               String[] split = ConfigUtils.getSplitFromKey(config, "ShootSecondarySound");
+               shootSoundSecondary = split[1];
+               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+           }
+            if (config.containsKey("ShootSecondarySound")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "ShootSecondarySound");
+                shootSoundSecondary = split[1];
+                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
+            }
+
+            placeSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundPrimary", placeSoundPrimary);
+            placeSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundSecondary", placeSoundSecondary);
+            reloadSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ReloadSoundPrimary", reloadSoundPrimary);
+            reloadSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "ReloadSoundSecondary", reloadSoundSecondary);
+            lockedOnSound = ConfigUtils.configDriveableSound(contentPack, config, "LockedOnSound", lockedOnSound);
+            lockOnSound = ConfigUtils.configGunSound(contentPack, config, "LockOnSound", lockOnSound);
+            lockingOnSound = ConfigUtils.configGunSound(contentPack, config, "LockingOnSound", lockingOnSound);
+            flareSound = ConfigUtils.configDriveableSound(contentPack, config, "FlareSound", flareSound);
+
+            fancyCollision = ConfigUtils.configBool(config, "FancyCollision", fancyCollision);
+
+            if (config.containsKey("AddCollisionMesh")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionMesh");
+                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "core");
+                collisionBox.add(box);
+                //colbox = box;
+            }
+
+            if (config.containsKey("AddCollisionMeshRaw")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionMeshRaw");
+                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
+                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
+                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
+                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
+                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
+                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
+                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
+                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
+                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
+                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "core");
+                collisionBox.add(box);
+                //colbox = box;
+            }
+
+            if (config.containsKey("AddTurretCollisionMesh")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddTurretCollisionMesh");
+                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "turret");
+                collisionBox.add(box);
+                //colbox = box;
+            }
+
+            if (config.containsKey("AddTurretCollisionMeshRaw")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "AddTurretCollisionMeshRaw");
+                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
+                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
+                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
+                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
+                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
+                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
+                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
+                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
+                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
+                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "turret");
+                collisionBox.add(box);
+                //colbox = box;
+            }
+
+
+            if (config.containsKey("LeftLinkPoint")) {
+                leftTrackPoints.add(new Vector3f(config.get("LeftLinkPoint"), shortName));
+            }
+            if (config.containsKey("RightLinkPoint")) {
+                rightTrackPoints.add(new Vector3f(config.get("RightLinkPoint"), shortName));
+            }
+
+            trackLinkLength = ConfigUtils.configFloat(config, "TrackLinkLength", trackLinkLength);
+
+            // ICBM Mod Radar
+            onRadar = ConfigUtils.configBool(config, "OnRadar", onRadar);
+
+
+            if (config.containsKey("AddParticle") || config.containsKey("AddEmitter")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, new String[]{"AddParticle", "AddEmitter"});
+                ParticleEmitter emitter = new ParticleEmitter();
+                emitter.effectType = split[1];
+                emitter.emitRate = Integer.parseInt(split[2]);
+                emitter.origin = new Vector3f(split[3], shortName);
+                emitter.extents = new Vector3f(split[4], shortName);
+                emitter.velocity = new Vector3f(split[5], shortName);
+                emitter.minThrottle = Float.parseFloat(split[6]);
+                emitter.maxThrottle = Float.parseFloat(split[7]);
+                emitter.minHealth = Float.parseFloat(split[8]);
+                emitter.maxHealth = Float.parseFloat(split[9]);
+                emitter.part = split[10];
+                //Scale from model coords to world coords
+                emitter.origin.scale(1.0f / 16.0f);
+                emitter.extents.scale(1.0f / 16.0f);
+                emitter.velocity.scale(1.0f / 16.0f);
+                emitters.add(emitter);
+            }
+        } catch (Exception e) {
+            FlansMod.log("Errored reading " + file.name);
+            if (FlansMod.printStackTrace) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private DriveablePosition getShootPoint(String[] split) {
