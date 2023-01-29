@@ -94,7 +94,6 @@ public class GuiTeamSelect extends GuiTooltipScreen
 	@Override
 	public void drawScreen(int i, int j, float f)
 	{
-		//TODO : Draw the inventory BG and slots for the class menu
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(texture);
 		drawTexturedModalRect(width / 2 - 128, height / 2 - guiHeight / 2, 0, 0, 256, 22);

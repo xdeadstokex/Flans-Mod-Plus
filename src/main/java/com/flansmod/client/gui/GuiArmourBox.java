@@ -62,7 +62,6 @@ public class GuiArmourBox extends GuiScreen
 
 		//No idea why this works, but it makes the text bind its texture correctly
 		//mc.renderEngine.bindTexture("/terrain.png");
-		//TODO : Investigate
 		
 		drawCenteredString(fontRendererObj, type.name, k / 2, n + 5, 0xffffff);
 		mc.renderEngine.bindTexture(texture);

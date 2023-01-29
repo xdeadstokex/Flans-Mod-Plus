@@ -116,7 +116,7 @@ public class GrenadeType extends ShootableType
 	 * When they right click with a gun, they will get this number of clips for that gun.
 	 * They get the first ammo type, as listed in the gun type file
 	 * The number of clips they get is multiplied by numBulletsInGun too
-	 * TODO : Give guns a "can get ammo from bag" variable. Stops miniguns and such getting ammo */
+	 */
 	public int numClips = 0;
 
 	public GrenadeType(TypeFile file) {

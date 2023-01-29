@@ -352,28 +352,6 @@ public class DriveableType extends PaintableType {
     public void preRead(TypeFile file) {
         super.preRead(file);
 
-        //todo
-//        int counter = 0;
-//        for (String line : file.lines) {
-
-
-//                // Passengers / Gunner Seats
-//                if (split[0].equals("Passenger")) {
-//                    Seat seat = new Seat(split);
-//                    seats[seat.id] = seat;
-//                    if (seat.gunType != null) {
-//                        seat.gunnerID = numPassengerGunners++;
-//                        driveableRecipe.add(new ItemStack(seat.gunType.item));
-//                    }
-//                    counter++;
-//                }
-
-//            if (counter == seats.length) {
-//                break;
-//            }
-//        }
-
-
         types.add(this);
     }
 
@@ -396,7 +374,7 @@ public class DriveableType extends PaintableType {
         super.read(config, file);
 
         try {
-            //Old Pre-Read stuff            //todo, multi
+            //Old Pre-Read stuff
             if (config.containsKey("Passengers")) {
                 numPassengers = Integer.parseInt(config.get("Passengers"));
                 seats = new Seat[numPassengers + 1];

@@ -88,7 +88,6 @@ public class BlockGunBox extends Block {
                     inventory.player.dropPlayerItemWithRandomChoice(gunStack, false);
             } else {
                 // Cant buy
-                // TODO : Add flashing red squares around the items you lack
             }
         }
     }

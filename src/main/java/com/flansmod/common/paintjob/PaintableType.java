@@ -8,6 +8,7 @@ import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 
 import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -77,52 +78,35 @@ public abstract class PaintableType extends InfoType
 			}
 		}
 
-		//todo adv paintjobs
-//		try
-//		{
-//			//Paintjobs
-//			if(split[0].toLowerCase().equals("advpaintjob"))
-//			{
-//				ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
-//				for(int i = 0; i < (split.length - 4) / 2; i++)
-//					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
-//				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
-//			}
-//		}
-//		catch (Exception e)
-//		{
-//			FlansMod.log("Reading file failed : " + shortName);
-//			e.printStackTrace();
-//		}
-//
-//		try
-//		{
-//			// Other configs..
-//			if (split[0].equalsIgnoreCase("AddPaintableToTables"))
-//			{
-//				if (split.length == 2)
-//				{
-//					addAnyPaintjobToTables = Boolean.parseBoolean(split[1]);
-//				}
-//				else if (split.length == 3)
-//				{
-//					String paintjobId = split[1];
-//
-//					for (Paintjob paintjob : paintjobs)
-//					{
-//						if (paintjob.textureName.equals(paintjobId))
-//						{
-//							paintjob.addToTables = Boolean.parseBoolean(split[2]);
-//						}
-//					}
-//				}
-//			}
-//		}
-//		catch (Exception e)
-//		{
-//			FlansMod.log("Reading file failed : " + shortName);
-//			e.printStackTrace();
-//		}
+		//TODO, MULTIPLES?
+		try {
+			//Paintjobs
+			if(config.containsKey("advpaintjob")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "advpaintjob");
+				ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
+				for(int i = 0; i < (split.length - 4) / 2; i++)
+					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
+				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
+			}
+			// Other configs..
+			if (config.containsKey("AddPaintableToTables")) {
+				String[] split = ConfigUtils.getSplitFromKey(config, "AddPaintableToTables");
+				if (split.length == 2) {
+					addAnyPaintjobToTables = Boolean.parseBoolean(split[1]);
+				} else if (split.length == 3) {
+					String paintjobId = split[1];
+
+					for (Paintjob paintjob : paintjobs) {
+						if (paintjob.textureName.equals(paintjobId)) {
+							paintjob.addToTables = Boolean.parseBoolean(split[2]);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			FlansMod.log("Reading file failed : " + shortName);
+			e.printStackTrace();
+		}
 	}
 	
 	public Paintjob getPaintjob(int i)

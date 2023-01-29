@@ -76,7 +76,6 @@ public class FlightController {
 			break;
 		}
 
-		// TODO: Look into other flight controllers
 		case SIXDOF:
 			break;
 		case VTOL:

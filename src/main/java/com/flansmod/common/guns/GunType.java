@@ -626,7 +626,6 @@ public class GunType extends PaintableType implements IScope {
         hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
         minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
         maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
-        //TODO IS THIS REQUIRED? SAME CODE ON zoomLevel
         if(maxZoom>1F)
             secondaryFunction=EnumSecondaryFunction.ZOOM;
         zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
@@ -647,8 +646,8 @@ public class GunType extends PaintableType implements IScope {
         }
         allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
         zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
-            if (zoomLevel > 1F)
-                secondaryFunction = EnumSecondaryFunction.ZOOM;
+        if (zoomLevel > 1F)
+            secondaryFunction = EnumSecondaryFunction.ZOOM;
 
         FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
         if (FOVFactor > 1F)
@@ -683,7 +682,6 @@ public class GunType extends PaintableType implements IScope {
         if (showMuzzleFlashParticles)
             useMuzzleFlashDefaults = false;
         showMuzzleFlashParticlesFirstPerson = ConfigUtils.configBool(config, "ShowMuzzleFlashParticleFirstPerson", showMuzzleFlashParticlesFirstPerson);
-        //todo double check
         muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
         muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
         modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
@@ -694,19 +692,14 @@ public class GunType extends PaintableType implements IScope {
         bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
         sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
         pivotHeight = ConfigUtils.configFloat(config, "PivotHeight", modelScale);
-        //todo, fix, will only work for 1
-//        if (config.containsKey("Ammo")) {
-//            String[] munitions = config.get("Ammo").split(" ");
-//            for (String munition : munitions) {
-//                ShootableType type = ShootableType.getShootableType(munition);
-//                if (type != null)
-//                    ammo.add(type);
-//            }
-//        }
-        for (String ammoType : config.ammos) {
-            ShootableType type = ShootableType.getShootableType(ammoType);
-            ammo.add(type);
+
+        if (config.containsKey("Ammo")) {
+            for (String ammoOption : config.getAll("Ammo")) {
+                ShootableType type = ShootableType.getShootableType(ammoOption);
+                ammo.add(type);
+            }
         }
+
         numPrimaryAmmoItems = ConfigUtils.configInt(config, new String[]{"NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun"},  numPrimaryAmmoItems);
         bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
         canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
@@ -775,7 +768,7 @@ public class GunType extends PaintableType implements IScope {
             shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
             shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
         }
-        //TODO fix this call
+
         if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
             processAnimationConfigs(config);
         }

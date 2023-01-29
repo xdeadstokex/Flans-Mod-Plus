@@ -41,13 +41,13 @@ public class PlayerClass extends InfoType {
     @Override
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
-        //todo setup for multiple AddItem
+
         if (config.containsKey("AddItem")) {
-            startingItemStrings.add(ConfigUtils.getSplitFromKey(config, "AddItem"));
+            for (String item : config.getAll("AddItem")) {
+                startingItemStrings.add(("AddItem " + item).split(" "));
+            }
         }
-        for (String item : config.items) {
-            startingItemStrings.add(item.split(" "));
-        }
+
         lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
         texture = ConfigUtils.configString(config, "SkinOverride", texture);
 
@@ -194,7 +194,6 @@ public class PlayerClass extends InfoType {
                                 case generic:
                                     tagName = "generic_" + genericID++;
                                     break;
-                                // TODO: Implement new attachments to classes
                                 case accessory:
                                     break;
                                 case gadget:

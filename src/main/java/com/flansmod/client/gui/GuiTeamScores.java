@@ -66,7 +66,6 @@ public class GuiTeamScores extends GuiScreen
 		
 		//No idea why this works, but it makes the text bind its texture correctly
 		//mc.renderEngine.bindTexture("/terrain.png");
-		//TODO : Investiagate this
 
 		drawString(fontRendererObj, teamInfo.map, m + 6, n + 6, 0xffffff);
 		drawString(fontRendererObj, teamInfo.gametype, m + 312 - 6 - fontRendererObj.getStringWidth(teamInfo.gametype), n + 6, 0xffffff);
@@ -169,7 +168,6 @@ public class GuiTeamScores extends GuiScreen
 		
 		//No idea why this works, but it makes the text bind its texture correctly
 		//mc.renderEngine.bindTexture("/terrain.png");
-		//TODO : Investiagate this
 
 		drawCenteredString(fontRendererObj, teamInfo.gametype, k / 2, n + 4, 0xffffff);
 		drawString(fontRendererObj, "Name", m + 8, n + 14, 0xffffff);

@@ -161,10 +161,7 @@ public class BlockSpawner extends BlockContainer
     {
     	if(world.isRemote)
     		return true;
-    	/* TODO : Check the generalised code in TeamsManager works
-    	if(TeamsManager.getInstance().currentGametype != null)
-    		TeamsManager.getInstance().currentGametype.objectClickedByPlayer((TileEntitySpawner)world.getTileEntity(x, y, z), (EntityPlayerMP)player);
-    	*/
+        
     	if(MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile()))
     	{
     		TileEntitySpawner spawner = (TileEntitySpawner)world.getTileEntity(x, y, z);

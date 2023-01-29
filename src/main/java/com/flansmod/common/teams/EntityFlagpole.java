@@ -260,7 +260,7 @@ public class EntityFlagpole extends Entity implements ITeamBase
 		if(!worldObj.isRemote && data.team == null && TeamsManager.getInstance().playerIsOp(player) && (player.getCurrentEquippedItem() == null || !(player.getCurrentEquippedItem().getItem() instanceof ItemOpStick)))
 			ItemOpStick.openBaseEditGUI(this, (EntityPlayerMP)player);
 		
-    	/* TODO : Check the generalised code in TeamsManager works
+    	/*
     	if(player instanceof EntityPlayerMP && TeamsManager.getInstance().currentGametype != null)
     		TeamsManager.getInstance().currentGametype.baseClickedByPlayer(this, (EntityPlayerMP)player);
     		*/

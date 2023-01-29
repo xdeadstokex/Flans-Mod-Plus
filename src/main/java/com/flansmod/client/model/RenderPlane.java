@@ -349,7 +349,6 @@ public class RenderPlane extends Render implements IItemRenderer
 	}
 	
 	//Broken method to try and rotate playermodel, will fix later.
-	//TODO: Make this work
 	/**
     @SubscribeEvent
     public void preRenderLiving(RenderPlayerEvent.Pre event)

@@ -396,7 +396,6 @@ public class EntityMecha extends EntityDriveable
 						shoot(heldStack, gunType, bulletStack, creative, left);
 						
 						//Apply animations to 3D modelled guns
-						//TODO : Move to client side and sync
 						if(worldObj.isRemote)
 						{
 							int pumpDelay = gunType.model == null ? 0 : gunType.model.pumpDelay;
@@ -754,8 +753,7 @@ public class EntityMecha extends EntityDriveable
 			}
 		}
 		if(diamondTimer > 0) --diamondTimer;
-		
-		//TODO better implement this
+
 		if(isPartIntact(EnumDriveablePart.hips)) {
 			setSize(type.width, type.height);
 			yOffset = type.yOffset;

@@ -938,7 +938,6 @@ public class RenderGun implements IItemRenderer {
 
 						break;
 					}
-					//TODO
 					case SHOTGUN: case STRIKER: case CUSTOMSHOTGUN: case CUSTOMSTRIKER:
 					{
 						float maxBullets = getNumBulletsInReload(animations, gripAttachment, type, item);
@@ -1226,8 +1225,8 @@ public class RenderGun implements IItemRenderer {
 //	{
 //
 //	}
-	
-	// TODO: Part of arms cleanup to rewrite into one method
+
+	// Part of arms cleanup to rewrite into one method
 	private void renderArms(EntityPlayer player, ModelGun model, GunType type, GunAnimations anim)
 	{
 		
@@ -1369,7 +1368,6 @@ public class RenderGun implements IItemRenderer {
 	 * Get the number of bullets to reload in animation, based on ammo type to
 	 * reload
 	 */
-	//TODO
 	private float getNumBulletsInReload(GunAnimations animations, AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
 		// If this is a singles reload, we want to know the number of bullets already in the gun
