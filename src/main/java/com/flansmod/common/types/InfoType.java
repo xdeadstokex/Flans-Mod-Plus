@@ -148,7 +148,12 @@ public abstract class InfoType implements IInfoType {
             colour = (Integer.parseInt(rgb[0]) << 16) + ((Integer.parseInt(rgb[1])) << 8) + ((Integer.parseInt(rgb[2])));
         }
 
-        iconPath = (config.get("Icon") == null || config.get("Icon").isEmpty()) ? "Missing-Icon-" + shortName : config.get("Icon");
+        if (config.get("Icon") == null || config.get("Icon").isEmpty()) {
+            iconPath = "Missing-Icon-" + shortName;
+        } else {
+            iconPath = ConfigUtils.configString(config, "Icon", iconPath);
+        }
+
         if (config.containsKey("RecipeOutput"))
             recipeOutput = ConfigUtils.configInt(config, "RecipeOutput", recipeOutput);
         if (config.containsKey("Recipe")) {

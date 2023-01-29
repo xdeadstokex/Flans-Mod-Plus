@@ -720,7 +720,6 @@ public class GunType extends PaintableType implements IScope {
         //Custom Melee Stuff
         if (config.containsKey("UseCustomMelee") && Boolean.parseBoolean(config.get("UseCustomMelee"))) {
             secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
-            secondaryFunction = EnumSecondaryFunction.get(config.get("SecondaryFunction"));
         }
         if (config.containsKey("UseCustomMeleeWhenShoot") && Boolean.parseBoolean(config.get("UseCustomMeleeWhenShoot")))
             secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
@@ -777,136 +776,81 @@ public class GunType extends PaintableType implements IScope {
             shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
         }
         //TODO fix this call
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            //processAnimationConfigs(split);
+        if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
+            processAnimationConfigs(config);
         }
     }
 
-    public void processAnimationConfigs(String[] split) {
-        if (split[0].equals("animMinigunBarrelOrigin"))
-            model.minigunBarrelOrigin = parseVector3f(split);
-        else if (split[0].equals("animBarrelAttachPoint"))
-            model.barrelAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animScopeAttachPoint"))
-            model.scopeAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animStockAttachPoint"))
-            model.stockAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animGripAttachPoint"))
-            model.gripAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animGadgetAttachPoint"))
-            model.gadgetAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animSlideAttachPoint"))
-            model.slideAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animPumpAttachPoint"))
-            model.pumpAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animAccessoryAttachPoint"))
-            model.accessoryAttachPoint = parseVector3f(split);
+    public void processAnimationConfigs(ConfigMap config) {
+        model.minigunBarrelOrigin = ConfigUtils.configVector3f(config, "animMinigunBarrelOrigin", model.minigunBarrelOrigin);
+        model.barrelAttachPoint = ConfigUtils.configVector3f(config, "animBarrelAttachPoint", model.barrelAttachPoint);
+        model.scopeAttachPoint = ConfigUtils.configVector3f(config, "animScopeAttachPoint", model.scopeAttachPoint);
+        model.stockAttachPoint = ConfigUtils.configVector3f(config, "animStockAttachPoint", model.stockAttachPoint);
+        model.gripAttachPoint = ConfigUtils.configVector3f(config, "animGripAttachPoint", model.gripAttachPoint);
+        model.gadgetAttachPoint = ConfigUtils.configVector3f(config, "animGadgetAttachPoint", model.gadgetAttachPoint);
+        model.slideAttachPoint = ConfigUtils.configVector3f(config, "animSlideAttachPoint", model.slideAttachPoint);
+        model.pumpAttachPoint = ConfigUtils.configVector3f(config, "animPumpAttachPoint", model.pumpAttachPoint);
+        model.accessoryAttachPoint = ConfigUtils.configVector3f(config, "animAccessoryAttachPoint", model.accessoryAttachPoint);
 
-        else if (split[0].equals("animDefaultBarrelFlashPoint"))
-            model.defaultBarrelFlashPoint = parseVector3f(split);
-        else if (split[0].equals("animMuzzleFlashPoint"))
-            model.muzzleFlashPoint = parseVector3f(split);
+        model.defaultBarrelFlashPoint = ConfigUtils.configVector3f(config, "animDefaultBarrelFlashPoint", model.defaultBarrelFlashPoint);
+        model.muzzleFlashPoint = ConfigUtils.configVector3f(config, "animMuzzleFlashPoint", model.muzzleFlashPoint);
 
-        else if (split[0].equals("animHasFlash"))
-            model.hasFlash = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animHasArms"))
-            model.hasArms = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("easyArms"))
-            model.easyArms = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("armScale"))
-            model.armScale = parseVector3f(split);
+        model.hasFlash = ConfigUtils.configBool(config, "animHasFlash", model.hasFlash);
+        model.hasArms = ConfigUtils.configBool(config, "animHasArms", model.hasArms);
+        model.easyArms = ConfigUtils.configBool(config, "easyArms", model.easyArms);
+        model.armScale = ConfigUtils.configVector3f(config, "armScale", model.armScale);
 
+        model.leftArmPos = ConfigUtils.configVector3f(config, "animLeftArmPos", model.leftArmPos);
+        model.leftArmRot = ConfigUtils.configVector3f(config, "animLeftArmRot", model.leftArmRot);
+        model.leftArmScale = ConfigUtils.configVector3f(config, "animLeftArmScale", model.leftArmScale);
+        model.rightArmPos = ConfigUtils.configVector3f(config, "animRightArmPos", model.rightArmPos);
+        model.rightArmRot = ConfigUtils.configVector3f(config, "animRightArmRot", model.rightArmRot);
+        model.rightArmScale = ConfigUtils.configVector3f(config, "animRightArmScale", model.rightArmScale);
 
-        else if (split[0].equals("animLeftArmPos"))
-            model.leftArmPos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmRot"))
-            model.leftArmRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmScale"))
-            model.leftArmScale = parseVector3f(split);
-        else if (split[0].equals("animRightArmPos"))
-            model.rightArmPos = parseVector3f(split);
-        else if (split[0].equals("animRightArmRot"))
-            model.rightArmRot = parseVector3f(split);
-        else if (split[0].equals("animRightArmScale"))
-            model.rightArmScale = parseVector3f(split);
+        model.rightArmReloadPos = ConfigUtils.configVector3f(config, "animRightArmReloadPos", model.rightArmReloadPos);
+        model.rightArmReloadRot = ConfigUtils.configVector3f(config, "animRightArmReloadRot", model.rightArmReloadRot);
+        model.leftArmReloadPos = ConfigUtils.configVector3f(config, "animLeftArmReloadPos", model.leftArmReloadPos);
+        model.leftArmReloadRot = ConfigUtils.configVector3f(config, "animLeftArmReloadRot", model.leftArmReloadRot);
 
-        else if (split[0].equals("animRightArmReloadPos"))
-            model.rightArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animRightArmReloadRot"))
-            model.rightArmReloadRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmReloadPos"))
-            model.leftArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmReloadRot"))
-            model.leftArmReloadRot = parseVector3f(split);
+        model.rightArmChargePos = ConfigUtils.configVector3f(config, "animRightArmChargePos", model.rightArmChargePos);
+        model.rightArmChargeRot = ConfigUtils.configVector3f(config, "animRightArmChargeRot", model.rightArmChargeRot);
+        model.leftArmChargePos = ConfigUtils.configVector3f(config, "animLeftArmChargePos", model.leftArmChargePos);
+        model.leftArmChargeRot = ConfigUtils.configVector3f(config, "animLeftArmChargeRot", model.leftArmChargeRot);
 
-        else if (split[0].equals("animRightArmChargePos"))
-            model.rightArmChargePos = parseVector3f(split);
-        else if (split[0].equals("animRightArmChargeRot"))
-            model.rightArmChargeRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmChargePos"))
-            model.leftArmChargePos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmChargeRot"))
-            model.leftArmChargeRot = parseVector3f(split);
+        model.stagedrightArmReloadPos = ConfigUtils.configVector3f(config, "animStagedRightArmReloadPos", model.stagedrightArmReloadPos);
+        model.stagedrightArmReloadRot = ConfigUtils.configVector3f(config, "animStagedRightArmReloadRot", model.stagedrightArmReloadRot);
+        model.stagedleftArmReloadPos = ConfigUtils.configVector3f(config, "animStagedLeftArmReloadPos", model.stagedleftArmReloadPos);
+        model.stagedleftArmReloadRot = ConfigUtils.configVector3f(config, "animStagedLeftArmReloadRot", model.stagedleftArmReloadRot);
 
-        else if (split[0].equals("animStagedRightArmReloadPos"))
-            model.stagedrightArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animStagedRightArmReloadRot"))
-            model.stagedrightArmReloadRot = parseVector3f(split);
-        else if (split[0].equals("animStagedLeftArmReloadPos"))
-            model.stagedleftArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animStagedLeftArmReloadRot"))
-            model.stagedleftArmReloadRot = parseVector3f(split);
+        model.rightHandAmmo = ConfigUtils.configBool(config, "animRightHandAmmo", model.rightHandAmmo);
+        model.leftHandAmmo = ConfigUtils.configBool(config, "animLeftHandAmmo", model.leftHandAmmo);
 
-        else if (split[0].equals("animRightHandAmmo"))
-            model.rightHandAmmo = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandAmmo"))
-            model.leftHandAmmo = Boolean.parseBoolean(split[1]);
+        model.gunSlideDistance = ConfigUtils.configFloat(config, "animGunSlideDistance", model.gunSlideDistance);
+        model.altgunSlideDistance = ConfigUtils.configFloat(config, "animAltGunSlideDistance", model.altgunSlideDistance);
+        model.RecoilSlideDistance = ConfigUtils.configFloat(config, "animRecoilSlideDistance", model.RecoilSlideDistance);
+        model.RotateSlideDistance = ConfigUtils.configFloat(config, "animRotatedSlideDistance", model.RotateSlideDistance);
+        model.ShakeDistance = ConfigUtils.configFloat(config, "animShakeDistance", model.ShakeDistance);
+        model.recoilAmount = ConfigUtils.configFloat(config, "animRecoilAmount", model.recoilAmount);
 
-        else if (split[0].equals("animGunSlideDistance"))
-            model.gunSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltGunSlideDistance"))
-            model.altgunSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRecoilSlideDistance"))
-            model.RecoilSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotatedSlideDistance"))
-            model.RotateSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animShakeDistance"))
-            model.ShakeDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRecoilAmount"))
-            model.recoilAmount = Float.parseFloat(split[1]);
+        model.casingAnimDistance = ConfigUtils.configVector3f(config, "animCasingAnimDistance", model.casingAnimDistance);
+        model.casingAnimSpread = ConfigUtils.configVector3f(config, "animCasingAnimSpread", model.casingAnimSpread);
+        model.casingAnimTime = ConfigUtils.configInt(config, "animCasingAnimTime", model.casingAnimTime);
+        model.casingRotateVector = ConfigUtils.configVector3f(config, "animCasingRotateVector", model.casingRotateVector);
+        model.casingAttachPoint = ConfigUtils.configVector3f(config, "animCasingAttachPoint", model.casingAttachPoint);
+        model.casingDelay = ConfigUtils.configInt(config, "animCasingDelay", model.casingDelay);
+        model.caseScale = ConfigUtils.configFloat(config, "animCasingScale", model.caseScale);
+        model.flashScale = ConfigUtils.configFloat(config, "animFlashScale", model.flashScale);
 
-        else if (split[0].equals("animCasingAnimDistance"))
-            model.casingAnimDistance = parseVector3f(split);
-        else if (split[0].equals("animCasingAnimSpread"))
-            model.casingAnimSpread = parseVector3f(split);
-        else if (split[0].equals("animCasingAnimTime"))
-            model.casingAnimTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCasingRotateVector"))
-            model.casingRotateVector = parseVector3f(split);
-        else if (split[0].equals("animCasingAttachPoint"))
-            model.casingAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animCasingDelay"))
-            model.casingDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCasingScale"))
-            model.caseScale = Float.parseFloat(split[1]);
-        else if (split[0].equals("animFlashScale"))
-            model.flashScale = Float.parseFloat(split[1]);
+        model.chargeHandleDistance = ConfigUtils.configFloat(config, "animChargeHandleDistance", model.chargeHandleDistance);
+        model.chargeDelay = ConfigUtils.configInt(config, "animChargeDelay", model.chargeDelay);
+        model.chargeDelayAfterReload = ConfigUtils.configInt(config, "animChargeDelayAfterReload", model.chargeDelayAfterReload);
+        model.chargeTime = ConfigUtils.configInt(config, "animChargeTime", model.chargeTime);
+        model.countOnRightHandSide = ConfigUtils.configBool(config, "animCountOnRightHandSide", model.countOnRightHandSide);
+        model.isBulletCounterActive = ConfigUtils.configBool(config, "animIsBulletCounterActive", model.isBulletCounterActive);
+        model.isAdvBulletCounterActive = ConfigUtils.configBool(config, "animIsAdvBulletCounterActive", model.isAdvBulletCounterActive);
 
-        else if (split[0].equals("animChargeHandleDistance"))
-            model.chargeHandleDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animChargeDelay"))
-            model.chargeDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animChargeDelayAfterReload"))
-            model.chargeDelayAfterReload = Integer.parseInt(split[1]);
-        else if (split[0].equals("animChargeTime"))
-            model.chargeTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCountOnRightHandSide"))
-            model.countOnRightHandSide = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animIsBulletCounterActive"))
-            model.isBulletCounterActive = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animIsAdvBulletCounterActive"))
-            model.isAdvBulletCounterActive = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animAnimationType")) {
+        if (configMap.containsKey("animAnimationType")) {
+            String[] split = ConfigUtils.getSplitFromKey(config, "animAnimationType");
             if (split[1].equals("NONE"))
                 model.animationType = EnumAnimationType.NONE;
             else if (split[1].equals("BOTTOM_CLIP"))
@@ -979,7 +923,9 @@ public class GunType extends PaintableType implements IScope {
                 model.animationType = EnumAnimationType.CUSTOMBREAK_ACTION;
             else if (split[1].equals("CUSTOM"))
                 model.animationType = EnumAnimationType.CUSTOM;
-        } else if (split[0].equals("animMeleeAnimation")) {
+        }
+        if (configMap.containsKey("animMeleeAnimation")) {
+            String[] split = ConfigUtils.getSplitFromKey(config, "animMeleeAnimation");
             if (split[1].equals("DEFAULT"))
                 model.meleeAnimation = EnumMeleeAnimation.DEFAULT;
             else if (split[1].equals("NONE"))
@@ -992,145 +938,83 @@ public class GunType extends PaintableType implements IScope {
                 model.meleeAnimation = EnumMeleeAnimation.STAB_UNDERARM;
             else if (split[1].equals("STAB_OVERARM"))
                 model.meleeAnimation = EnumMeleeAnimation.STAB_OVERARM;
-        } else if (split[0].equals("animTiltGunTime"))
-            model.tiltGunTime = Float.parseFloat(split[1]);
-        else if (split[0].equals("animUnloadClipTime"))
-            model.unloadClipTime = Float.parseFloat(split[1]);
-        else if (split[0].equals("animLoadClipTime"))
-            model.loadClipTime = Float.parseFloat(split[1]);
+        }
+        model.tiltGunTime = ConfigUtils.configFloat(config, "animTiltGunTime", model.tiltGunTime);
+        model.unloadClipTime = ConfigUtils.configFloat(config, "animUnloadClipTime", model.unloadClipTime);
+        model.loadClipTime = ConfigUtils.configFloat(config, "animLoadClipTime", model.loadClipTime);
 
-        else if (split[0].equals("animScopeIsOnSlide"))
-            model.scopeIsOnSlide = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animScopeIsOnBreakAction"))
-            model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+        model.scopeIsOnSlide = ConfigUtils.configBool(config, "animScopeIsOnSlide", model.scopeIsOnSlide);
+        model.scopeIsOnBreakAction = ConfigUtils.configBool(config, "animScopeIsOnBreakAction", model.scopeIsOnBreakAction);
 
-        else if (split[0].equals("animNumBulletsInReloadAnimation"))
-            model.numBulletsInReloadAnimation = Float.parseFloat(split[1]);
+        model.numBulletsInReloadAnimation = ConfigUtils.configFloat(config, "animNumBulletsInReloadAnimation", model.numBulletsInReloadAnimation);
+        model.pumpDelay = ConfigUtils.configInt(config, "animPumpDelay", model.pumpDelay);
+        model.pumpDelayAfterReload = ConfigUtils.configInt(config, "animPumpDelayAfterReload", model.pumpDelayAfterReload);
+        model.pumpTime = ConfigUtils.configInt(config, "animPumpTime", model.pumpTime);
+        model.hammerDelay = ConfigUtils.configInt(config, "animHammerDelay", model.hammerDelay);
 
-        else if (split[0].equals("animPumpDelay"))
-            model.pumpDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animPumpDelayAfterReload"))
-            model.pumpDelayAfterReload = Integer.parseInt(split[1]);
-        else if (split[0].equals("animPumpTime"))
-            model.pumpTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animHammerDelay"))
-            model.hammerDelay = Integer.parseInt(split[1]);
+        model.pumpHandleDistance = ConfigUtils.configFloat(config, "animPumpHandleDistance", model.pumpHandleDistance);
+        model.endLoadedAmmoDistance = ConfigUtils.configFloat(config, "animEndLoadedAmmoDistance", model.endLoadedAmmoDistance);
+        model.breakActionAmmoDistance = ConfigUtils.configFloat(config, "animBreakActionAmmoDistance", model.breakActionAmmoDistance);
+        model.scopeIsOnBreakAction = ConfigUtils.configBool(config, "animScopeIsOnBreakAction", model.scopeIsOnBreakAction);
 
-        else if (split[0].equals("animPumpHandleDistance"))
-            model.pumpHandleDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animEndLoadedAmmoDistance"))
-            model.endLoadedAmmoDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animBreakActionAmmoDistance"))
-            model.breakActionAmmoDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animScopeIsOnBreakAction"))
-            model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+        model.gripIsOnPump = ConfigUtils.configBool(config, "animGripIsOnPump", model.gripIsOnPump);
+        model.gripIsOnPump = ConfigUtils.configBool(config, "animGadgetsOnPump", model.gripIsOnPump);
 
-        else if (split[0].equals("animGripIsOnPump"))
-            model.gripIsOnPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animGadgetsOnPump"))
-            model.gripIsOnPump = Boolean.parseBoolean(split[1]);
+        model.barrelBreakPoint = ConfigUtils.configVector3f(config, "animBarrelBreakPoint", model.barrelBreakPoint);
+        model.altbarrelBreakPoint = ConfigUtils.configVector3f(config, "animAltBarrelBreakPoint", model.altbarrelBreakPoint);
 
-        else if (split[0].equals("animBarrelBreakPoint"))
-            model.barrelBreakPoint = parseVector3f(split);
-        else if (split[0].equals("animAltBarrelBreakPoint"))
-            model.altbarrelBreakPoint = parseVector3f(split);
+        model.revolverFlipAngle = ConfigUtils.configFloat(config, "animRevolverFlipAngle", model.revolverFlipAngle);
+        model.revolver2FlipAngle = ConfigUtils.configFloat(config, "animRevolver2FlipAngle", model.revolver2FlipAngle);
 
-        else if (split[0].equals("animRevolverFlipAngle"))
-            model.revolverFlipAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRevolver2FlipAngle"))
-            model.revolver2FlipAngle = Float.parseFloat(split[1]);
+        model.revolverFlipPoint = ConfigUtils.configVector3f(config, "animRevolverFlipPoint", model.revolverFlipPoint);
+        model.revolver2FlipPoint = ConfigUtils.configVector3f(config, "animRevolver2FlipPoint", model.revolver2FlipPoint);
 
-        else if (split[0].equals("animRevolverFlipPoint"))
-            model.revolverFlipPoint = parseVector3f(split);
-        else if (split[0].equals("animRevolver2FlipPoint"))
-            model.revolver2FlipPoint = parseVector3f(split);
+        model.breakAngle = ConfigUtils.configFloat(config, "animBreakAngle", model.breakAngle);
+        model.altbreakAngle = ConfigUtils.configFloat(config, "animAltBreakAngle", model.altbreakAngle);
 
-        else if (split[0].equals("animBreakAngle"))
-            model.breakAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltBreakAngle"))
-            model.altbreakAngle = Float.parseFloat(split[1]);
+        model.spinningCocking = ConfigUtils.configBool(config, "animSpinningCocking", model.spinningCocking);
 
-        else if (split[0].equals("animSpinningCocking"))
-            model.spinningCocking = Boolean.parseBoolean(split[1]);
+        model.spinPoint = ConfigUtils.configVector3f(config, "animSpinPoint", model.spinPoint);
+        model.hammerSpinPoint = ConfigUtils.configVector3f(config, "animHammerSpinPoint", model.hammerSpinPoint);
+        model.althammerSpinPoint = ConfigUtils.configVector3f(config, "animAltHammerSpinPoint", model.althammerSpinPoint);
+        model.hammerAngle = ConfigUtils.configFloat(config, "animHammerAngle", model.hammerAngle);
+        model.althammerAngle = ConfigUtils.configFloat(config, "animAltHammerAngle", model.althammerAngle);
 
-        else if (split[0].equals("animSpinPoint"))
-            model.spinPoint = parseVector3f(split);
-        else if (split[0].equals("animHammerSpinPoint"))
-            model.hammerSpinPoint = parseVector3f(split);
-        else if (split[0].equals("animAltHammerSpinPoint"))
-            model.althammerSpinPoint = parseVector3f(split);
-        else if (split[0].equals("animHammerAngle"))
-            model.hammerAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltHammerAngle"))
-            model.althammerAngle = Float.parseFloat(split[1]);
+        model.isSingleAction = ConfigUtils.configBool(config, "animIsSingleAction", model.isSingleAction);
+        model.slideLockOnEmpty = ConfigUtils.configBool(config, "animSlideLockOnEmpty", model.slideLockOnEmpty);
+        model.lefthandPump = ConfigUtils.configBool(config, "animLeftHandPump", model.lefthandPump);
+        model.righthandPump = ConfigUtils.configBool(config, "animRightHandPump", model.righthandPump);
+        model.leftHandCharge = ConfigUtils.configBool(config, "animLeftHandCharge", model.leftHandCharge);
+        model.rightHandCharge = ConfigUtils.configBool(config, "animRightHandCharge", model.rightHandCharge);
+        model.leftHandBolt = ConfigUtils.configBool(config, "animLeftHandBolt", model.leftHandBolt);
+        model.rightHandBolt = ConfigUtils.configBool(config, "animRightHandBolt", model.rightHandBolt);
 
-        else if (split[0].equals("animIsSingleAction"))
-            model.isSingleAction = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animSlideLockOnEmpty"))
-            model.slideLockOnEmpty = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandPump"))
-            model.lefthandPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandPump"))
-            model.righthandPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandCharge"))
-            model.leftHandCharge = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandCharge"))
-            model.rightHandCharge = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandBolt"))
-            model.leftHandBolt = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandBolt"))
-            model.rightHandBolt = Boolean.parseBoolean(split[1]);
+        model.pumpModifier = ConfigUtils.configFloat(config, "animPumpModifier", model.pumpModifier);
+        model.chargeModifier = ConfigUtils.configVector3f(config, "animChargeModifier", model.chargeModifier);
+        model.gunOffset = ConfigUtils.configFloat(config, "animGunOffset", model.gunOffset);
+        model.crouchZoom = ConfigUtils.configFloat(config, "animCrouchZoom", model.crouchZoom);
+        model.fancyStance = ConfigUtils.configBool(config, "animFancyStance", model.fancyStance);
+        model.stanceTranslate = ConfigUtils.configVector3f(config, "animTranslateClip", model.stanceTranslate);
+        model.stanceRotate = ConfigUtils.configVector3f(config, "animStanceRotate", model.stanceRotate);
 
-        else if (split[0].equals("animPumpModifier"))
-            model.pumpModifier = Float.parseFloat(split[1]);
-        else if (split[0].equals("animChargeModifier"))
-            model.chargeModifier = parseVector3f(split);
-        else if (split[0].equals("animGunOffset"))
-            model.gunOffset = Float.parseFloat(split[1]);
-        else if (split[0].equals("animCrouchZoom"))
-            model.crouchZoom = Float.parseFloat(split[1]);
-        else if (split[0].equals("animFancyStance"))
-            model.fancyStance = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animStanceTranslate"))
-            model.stanceTranslate = parseVector3f(split);
-        else if (split[0].equals("animStanceRotate"))
-            model.stanceRotate = parseVector3f(split);
+        model.rotateGunVertical = ConfigUtils.configFloat(config, "animRotateGunVertical", model.rotateGunVertical);
+        model.rotateGunHorizontal = ConfigUtils.configFloat(config, "animRotateGunHorizontal", model.rotateGunHorizontal);
+        model.tiltGun = ConfigUtils.configFloat(config, "animTiltGun", model.tiltGun);
+        model.translateGun = ConfigUtils.configVector3f(config, "animTranslateGun", model.translateGun);
+        model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipVertical", model.rotateClipVertical);
+        model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipVertical", model.stagedrotateClipVertical);
+        model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipHorizontal", model.rotateClipVertical);
+        model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipHorizontal", model.stagedrotateClipVertical);
+        model.tiltClip = ConfigUtils.configFloat(config, "animTiltClip", model.tiltClip);
+        model.stagedtiltClip = ConfigUtils.configFloat(config, "animStagedTiltClip", model.stagedtiltClip);
+        model.translateClip = ConfigUtils.configVector3f(config, "animTranslateClip", model.translateClip);
+        model.stagedtranslateClip = ConfigUtils.configVector3f(config, "animStagedTranslateClip", model.stagedtranslateClip);
+        model.stagedReload = ConfigUtils.configBool(config, "animStagedReload", model.stagedReload);
 
-        else if (split[0].equals("animRotateGunVertical"))
-            model.rotateGunVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotateGunHorizontal"))
-            model.rotateGunHorizontal = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTiltGun"))
-            model.tiltGun = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTranslateGun"))
-            model.translateGun = parseVector3f(split);
-        else if (split[0].equals("animRotateClipVertical"))
-            model.rotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedRotateClipVertical"))
-            model.stagedrotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotateClipHorizontal"))
-            model.rotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedRotateClipHorizontal"))
-            model.stagedrotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTiltClip"))
-            model.tiltClip = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedTiltClip"))
-            model.stagedtiltClip = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTranslateClip"))
-            model.translateClip = parseVector3f(split);
-        else if (split[0].equals("animStagedTranslateClip"))
-            model.stagedtranslateClip = parseVector3f(split);
-        else if (split[0].equals("animStagedReload"))
-            model.stagedReload = Boolean.parseBoolean(split[1]);
-
-        else if (split[0].equals("animThirdPersonOffset"))
-            model.thirdPersonOffset = parseVector3f(split);
-        else if (split[0].equals("animItemFrameOffset"))
-            model.itemFrameOffset = parseVector3f(split);
-        else if (split[0].equals("animStillRenderGunWhenScopedOverlay"))
-            model.stillRenderGunWhenScopedOverlay = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animAdsEffectMultiplier"))
-            model.adsEffectMultiplier = Float.parseFloat(split[1]);
+        model.thirdPersonOffset = ConfigUtils.configVector3f(config, "animThirdPersonOffset", model.thirdPersonOffset);
+        model.itemFrameOffset = ConfigUtils.configVector3f(config, "animItemFrameOffset", model.itemFrameOffset);
+        model.stillRenderGunWhenScopedOverlay = ConfigUtils.configBool(config, "animStillRenderGunWhenScopedOverlay", model.stillRenderGunWhenScopedOverlay);
+        model.adsEffectMultiplier = ConfigUtils.configFloat(config, "animAdsEffectMultiplier", model.adsEffectMultiplier);
     }
 
     /**
@@ -1165,10 +1049,6 @@ public class GunType extends PaintableType implements IScope {
 
     public boolean getOneHanded() {
         return !FlansMod.masterDualWieldDisable && oneHanded;
-    }
-
-    public Vector3f parseVector3f(String[] inp) {
-        return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
     }
 
     public boolean isAmmo(ItemStack stack) {

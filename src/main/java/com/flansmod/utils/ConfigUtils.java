@@ -163,4 +163,14 @@ public class ConfigUtils
 
 		return null;
 	}
+
+	public static Vector3f configVector3f(ConfigMap config, String key, Vector3f original) {
+
+		if (config.containsKey(key)) {
+			String[] inp = getSplitFromKey(config, key);
+			return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
+		}
+
+		return original;
+	}
 }

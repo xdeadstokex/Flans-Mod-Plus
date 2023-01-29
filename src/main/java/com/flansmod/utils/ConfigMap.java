@@ -2,8 +2,8 @@ package com.flansmod.utils;
 
 import java.util.*;
 
-public final class ConfigMap extends HashMap<String, String> {
-    private final HashMap<String, String> defaultMap = new HashMap<>();
+public final class ConfigMap extends HashMap<String, ArrayList<String>> {
+    private final HashMap<String, ArrayList<String>> defaultMap = new HashMap<>();
     public ArrayList<String> ammos = new ArrayList<>();
     public ArrayList<String> items = new ArrayList<>();
     public boolean containsKey(String key) {
@@ -11,22 +11,46 @@ public final class ConfigMap extends HashMap<String, String> {
     }
 
     public String get(String key) {
+        if (defaultMap.get(key.toLowerCase()) != null) {
+            return defaultMap.get(key.toLowerCase()).get(0);
+        }
+
+        return null;
+    }
+
+    public ArrayList<String> getAll(String key) {
         return defaultMap.get(key.toLowerCase());
     }
 
-    public String put(String key, String value) {
-        return defaultMap.put(key.toLowerCase(), value);
+    public ArrayList<String> put(String key, String value) {
+        return putValues(key, Collections.singletonList(value));
+    }
+
+    public ArrayList<String> put(String key, ArrayList<String> inValues) {
+        return putValues(key, inValues);
+    }
+
+    private ArrayList<String> putValues(String key, List<String> valuesToAdd) {
+        key = key.toLowerCase();
+        ArrayList<String> values;
+        if (defaultMap.containsKey(key)) {
+            values = defaultMap.get(key);
+        } else {
+            values = new ArrayList<>();
+        }
+        values.addAll(valuesToAdd);
+        return defaultMap.put(key, values);
     }
 
     public int size() {
         return defaultMap.size();
     }
 
-    public Set<Map.Entry<String,String>> entrySet() {
+    public Set<Map.Entry<String,ArrayList<String>>> entrySet() {
         return defaultMap.entrySet();
     }
 
-    public Collection<String> values() {
+    public Collection<ArrayList<String>> values() {
         return defaultMap.values();
     }
 

@@ -60,8 +60,10 @@ public class ArmourBoxType extends InfoType
 				String key = "addarmour";
 				if (config.containsKey("addarmor"))
 					key = "addarmor";
-				String[] split = config.get(key).split(" ");
+
+				String[] split = ConfigUtils.getSplitFromKey(config, key);
 				String name = split[2];
+
 				for(int i = 3; i < split.length; i++)
 					name = name + " " + split[i];
 				ArmourBoxEntry entry = new ArmourBoxEntry(split[1], name);

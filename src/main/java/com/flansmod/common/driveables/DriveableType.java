@@ -396,23 +396,28 @@ public class DriveableType extends PaintableType {
         super.read(config, file);
 
         try {
-
-            //Old Pre-Read stuff
+            //Old Pre-Read stuff            //todo, multi
             if (config.containsKey("Passengers")) {
                 numPassengers = Integer.parseInt(config.get("Passengers"));
                 seats = new Seat[numPassengers + 1];
-            }
 
-            //todo, multi
-            if (config.containsKey("Passenger")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "Passenger");
-                Seat seat = new Seat(split);
-                seats[seat.id] = seat;
-                if (seat.gunType != null) {
-                    seat.gunnerID = numPassengerGunners++;
-                    driveableRecipe.add(new ItemStack(seat.gunType.item));
+                if (config.containsKey("Passenger")) {
+                    for (String entry : config.getAll("Passenger")) {
+                        String[] split = ("Passenger " + entry).split(" ");
+                        Seat seat = new Seat(split);
+                        if (seat.id < seats.length) {
+                            seats[seat.id] = seat;
+                            if (seat.gunType != null) {
+                                seat.gunnerID = numPassengerGunners++;
+                                driveableRecipe.add(new ItemStack(seat.gunType.item));
+                            }
+                        }
+                    }
                 }
             }
+
+
+
 
             if (config.containsKey("NumWheels")) {
                 wheelPositions = new DriveablePosition[Integer.parseInt(config.get("NumWheels"))];
@@ -871,7 +876,11 @@ public class DriveableType extends PaintableType {
 
             if (config.containsKey("GunOrigin")) {
                 String[] split = ConfigUtils.getSplitFromKey(config, "GunOrigin");
-                seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
+                float x = Float.parseFloat(split[2]) / 16F;
+                float y = Float.parseFloat(split[3]) / 16F;
+                float z = Float.parseFloat(split[4]) / 16F;
+                if (seats[Integer.parseInt(split[1])] != null)
+                    seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
             }
 
             //Y offset for badly built models :P
