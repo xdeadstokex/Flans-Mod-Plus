@@ -88,7 +88,9 @@ public class PartType extends InfoType {
                     PartType possiblyInferiorEngine = defaultEngines.get(type);
                     if (isInferiorEngine(possiblyInferiorEngine))
                         defaultEngines.put(type, this);
-                } else defaultEngines.put(type, this);
+                } else {
+                    defaultEngines.put(type, this);
+                }
             }
         }
     }
@@ -123,7 +125,7 @@ public class PartType extends InfoType {
                 }
                 partBoxRecipe.addAll(Arrays.asList(stacks));
             } else if (config.containsKey("WorksWith")) {
-                String[] split = config.get("WorksWith").split(" ");
+                String[] split = ConfigUtils.getSplitFromKey(config, "WorksWith");
                 worksWith = new ArrayList<EnumType>();
                 for (int i = 0; i < split.length - 1; i++) {
                     worksWith.add(EnumType.get(split[i + 1]));

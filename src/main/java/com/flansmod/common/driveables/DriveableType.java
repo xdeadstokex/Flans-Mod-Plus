@@ -395,8 +395,6 @@ public class DriveableType extends PaintableType {
             }
 
 
-
-
             if (config.containsKey("NumWheels")) {
                 wheelPositions = new DriveablePosition[Integer.parseInt(config.get("NumWheels"))];
             }
@@ -512,14 +510,42 @@ public class DriveableType extends PaintableType {
             floatOffset = ConfigUtils.configFloat(config, "FloatOffset", floatOffset);
             canMountEntity = ConfigUtils.configBool(config, "CanMountEntity", canMountEntity);
 
-                //Wheels
+            //Wheels
             if (config.containsKey("Wheel")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "Wheel");
-                wheelPositions[Integer.parseInt(split[1])] = new DriveablePosition(new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F), split.length > 5 ? EnumDriveablePart.getPart(split[5]) : EnumDriveablePart.coreWheel);
+                for (String wheelPos : config.getAll("Wheel")) {
+                    String[] split = ("Wheel " + wheelPos).split(" ");
+                    int wheelIndex = Integer.parseInt(split[1]);
+                    float x = Float.parseFloat(split[2]) / 16F;
+                    float y = Float.parseFloat(split[3]) / 16F;
+                    float z = Float.parseFloat(split[4]) / 16F;
+
+                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
+                    if (split.length > 5) {
+                        part = EnumDriveablePart.getPart(split[5]);
+                    }
+
+                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
+                    wheelPositions[wheelIndex] = wheelPosition;
+                }
             }
+
+            //Wheels
             if (config.containsKey("WheelPosition")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "WheelPosition");
-                wheelPositions[Integer.parseInt(split[1])] = new DriveablePosition(new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F), split.length > 5 ? EnumDriveablePart.getPart(split[5]) : EnumDriveablePart.coreWheel);
+                for (String wheelPos : config.getAll("WheelPosition")) {
+                    String[] split = ("WheelPosition " + wheelPos).split(" ");
+                    int wheelIndex = Integer.parseInt(split[1]);
+                    float x = Float.parseFloat(split[2]) / 16F;
+                    float y = Float.parseFloat(split[3]) / 16F;
+                    float z = Float.parseFloat(split[4]) / 16F;
+
+                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
+                    if (split.length > 5) {
+                        part = EnumDriveablePart.getPart(split[5]);
+                    }
+
+                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
+                    wheelPositions[wheelIndex] = wheelPosition;
+                }
             }
 
             wheelStepHeight = ConfigUtils.configFloat(config, new String[]{"WheelRadius", "WheelStepHeight"}, wheelStepHeight);

@@ -4,8 +4,7 @@ import java.util.*;
 
 public final class ConfigMap extends HashMap<String, ArrayList<String>> {
     private final HashMap<String, ArrayList<String>> defaultMap = new HashMap<>();
-    public ArrayList<String> ammos = new ArrayList<>();
-    public ArrayList<String> items = new ArrayList<>();
+
     public boolean containsKey(String key) {
         return defaultMap.containsKey(key.toLowerCase());
     }

@@ -93,15 +93,6 @@ public abstract class InfoType implements IInfoType {
                     continue;
                 String[] split = line.split(" ");
 
-                //If its ammo, add it to the ammo list
-                if (split[0].equalsIgnoreCase("ammo")) {
-                    configMap.ammos.add(split[1]);
-                    continue;
-                } else if (split[0].equalsIgnoreCase("additem")) {
-                    configMap.items.add(line);
-                    continue;
-                }
-
                 if (split.length > 2) {
                     String data = "";
                     for (int i = 1; i < split.length; i++) {
