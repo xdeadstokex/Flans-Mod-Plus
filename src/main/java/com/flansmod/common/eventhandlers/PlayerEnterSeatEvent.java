@@ -10,9 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PlayerEnterSeatEvent extends Event {
 	
 	private EntitySeat seat;
-	
 	private EntityPlayer player;
-	
 	
 	public PlayerEnterSeatEvent(EntitySeat seat, EntityPlayer player) {
 		this.seat = seat;

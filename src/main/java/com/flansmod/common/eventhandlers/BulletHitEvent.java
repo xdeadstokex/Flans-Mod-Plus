@@ -21,11 +21,8 @@ import net.minecraft.util.MovingObjectPosition;
 public class BulletHitEvent extends Event {
 	
 	private EntityBullet bullet;
-	
 	private BulletHit hit;
-	
 	private Entity entity;
-	
 	private Block block;
 	
 	
@@ -64,7 +61,6 @@ public class BulletHitEvent extends Event {
 	
 	/**
 	 * Returns null if the the bullet didn't hit an entity
-	 * 
 	 */
 	public Entity getHitEntity() {
 		return entity;
@@ -72,7 +68,6 @@ public class BulletHitEvent extends Event {
 	
 	/**
 	 * Returns null if the the bullet didn't hit a block
-	 * 
 	 */
 	public Block getHitBlock() {
 		return block;
