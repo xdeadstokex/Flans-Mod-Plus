@@ -288,8 +288,12 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
     private void onUpdateClient(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
         if (!(entity instanceof EntityPlayer))
             return;
-        if (((EntityPlayer) entity).inventory.getCurrentItem() != itemstack)
+        if (((EntityPlayer) entity).inventory.getCurrentItem() != itemstack) {
+            if (soundDelay > 0) {
+                soundDelay--;
+            }
             return;
+        }
 
         //Get useful objects
         Minecraft mc = Minecraft.getMinecraft();
@@ -297,7 +301,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
 
         handleGunSwitchDelay(player, mc);
-
 
         //Play idle sounds
         if (soundDelay <= 0 && type.idleSound != null) {
