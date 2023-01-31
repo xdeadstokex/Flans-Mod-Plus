@@ -6,15 +6,17 @@ import com.flansmod.common.vector.Vector3f;
 public class ConfigUtils
 {
 	public static String configString(ConfigMap config, String settingName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return config.get(settingName.toLowerCase());
+		String val = config.get(settingName.toLowerCase());
+		if(val != null)
+			return val;
 		return defaultValue;
 	}
 
 	public static String configString(ConfigMap config, String[] settingNames, String defaultValue) {
 		for (String name : settingNames) {
-			if(config.containsKey(name.toLowerCase())) {
-				return config.get(name.toLowerCase());
+			String val = config.get(name.toLowerCase());
+			if(val != null) {
+				return val;
 			}
 		}
 
@@ -22,15 +24,19 @@ public class ConfigUtils
 	}
 
 	public static int configInt(ConfigMap config, String settingName, int defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Integer.parseInt(config.get(settingName.toLowerCase()));
+		String val = config.get(settingName.toLowerCase());
+		if (val != null) {
+			return Integer.parseInt(val);
+		}
+
 		return defaultValue;
 	}
 
 	public static int configInt(ConfigMap config, String[] settingNames, int defaultValue) {
 		for (String name : settingNames) {
-			if(config.containsKey(name.toLowerCase())) {
-				return Integer.parseInt(config.get(name.toLowerCase()));
+			String val = config.get(name.toLowerCase());
+			if(val != null) {
+				return Integer.parseInt(val);
 			}
 		}
 
@@ -38,21 +44,17 @@ public class ConfigUtils
 	}
 
 	public static float configFloat(ConfigMap config, String settingName, float defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Float.parseFloat(config.get(settingName.toLowerCase()));
-		return defaultValue;
-	}
-
-	public static double configDouble(ConfigMap config, String settingName, double defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Float.parseFloat(config.get(settingName.toLowerCase()));
+		String val = config.get(settingName.toLowerCase());
+		if(val != null)
+			return Float.parseFloat(val);
 		return defaultValue;
 	}
 
 	public static float configFloat(ConfigMap config, String[] settingNames, float defaultValue) {
 		for (String name : settingNames) {
-			if(config.containsKey(name.toLowerCase())) {
-				return Float.parseFloat(config.get(name.toLowerCase()));
+			String val = config.get(name.toLowerCase());
+			if(val != null) {
+				return Float.parseFloat(val);
 			}
 		}
 
@@ -60,15 +62,39 @@ public class ConfigUtils
 	}
 
 	public static boolean configBool(ConfigMap config, String settingName, boolean defaultValue) {
-		if(config.containsKey(settingName.toLowerCase()))
-			return Boolean.parseBoolean(config.get(settingName.toLowerCase()));
+		String val = config.get(settingName.toLowerCase());
+		if(val != null)
+			return Boolean.parseBoolean(val);
 		return defaultValue;
 	}
 
 	public static boolean configBool(ConfigMap config, String[] settingNames, boolean defaultValue) {
 		for (String name : settingNames) {
-			if(config.containsKey(name.toLowerCase())) {
-				return Boolean.parseBoolean(config.get(name.toLowerCase()));
+			String val = config.get(name.toLowerCase());
+			if(val != null) {
+				return Boolean.parseBoolean(val);
+			}
+		}
+
+		return defaultValue;
+	}
+
+	public static String configSound(String contentPack, ConfigMap config, String settingName, String defaultValue, String type) {
+		String val = config.get(settingName.toLowerCase());
+		if(val != null) {
+			FlansMod.proxy.loadSound(contentPack, type, val);
+			return val;
+		}
+
+		return defaultValue;
+	}
+
+	public static String configSound(String contentPack, ConfigMap config, String[] settingNames, String defaultValue, String type) {
+		for (String name : settingNames) {
+			String val = config.get(name.toLowerCase());
+			if(val != null) {
+				FlansMod.proxy.loadSound(contentPack, type, val);
+				return val;
 			}
 		}
 
@@ -76,63 +102,30 @@ public class ConfigUtils
 	}
 
 	public static String configSound(String contentPack, ConfigMap config, String settingName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "sound", config.get(settingName.toLowerCase()));
-			return config.get(settingName.toLowerCase());
-		}
-
-		return defaultValue;
+		return configSound(contentPack, config, settingName, defaultValue, "sound");
 	}
 
 	public static String configGunSound(String contentPack, ConfigMap config, String settingName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "guns", config.get(settingName.toLowerCase()));
-			return config.get(settingName.toLowerCase());
-		}
-
-		return defaultValue;
+		return configSound(contentPack, config, settingName, defaultValue, "guns");
 	}
 
-	public static String configAASound(String contentPack, ConfigMap config, String settingName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "aaguns", config.get(settingName.toLowerCase()));
-			return config.get(settingName.toLowerCase());
-		}
+	public static String configGunSound(String contentPack, ConfigMap config, String[] settingNames, String defaultValue) {
+		return configSound(contentPack, config, settingNames, defaultValue, "guns");
+	}
 
-		return defaultValue;
+
+	public static String configAASound(String contentPack, ConfigMap config, String settingName, String defaultValue) {
+		return configSound(contentPack, config, settingName, defaultValue,"aaguns");
 	}
 
 	public static String configDriveableSound(String contentPack, ConfigMap config, String settingName, String defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			FlansMod.proxy.loadSound(contentPack, "driveables", config.get(settingName.toLowerCase()));
-			return config.get(settingName.toLowerCase());
-		}
-
-		return defaultValue;
-	}
-
-	public static String configSound(String contentPack, ConfigMap config, String[] settingNames, String defaultValue) {
-		for (String name : settingNames) {
-			if(config.containsKey(name.toLowerCase())) {
-				FlansMod.proxy.loadSound(contentPack, "guns", config.get(name.toLowerCase()));
-				return config.get(name.toLowerCase());
-			}
-		}
-
-		return defaultValue;
+		return configSound(contentPack, config, settingName, defaultValue, "driveables");
 	}
 
 	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			return new Vector3f(config.get(settingName.toLowerCase()), null);
-		}
-
-		return defaultValue;
-	}
-
-	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue, String shortName) {
-		if(config.containsKey(settingName.toLowerCase())) {
-			return new Vector3f(config.get(settingName.toLowerCase()), shortName);
+		String val = config.get(settingName);
+		if(val != null) {
+			return new Vector3f(val);
 		}
 
 		return defaultValue;
@@ -142,9 +135,7 @@ public class ConfigUtils
 		String[] dataPieces = config.get(key).split(" ");
 		String[] split = new String[dataPieces.length + 1];
 		split[0] = key;
-		for (int i = 0; i < dataPieces.length; i++) {
-			split[i+1] = dataPieces[i];
-		}
+		System.arraycopy(dataPieces, 0, split, 1, dataPieces.length);
 		return split;
 	}
 
@@ -154,23 +145,11 @@ public class ConfigUtils
 				String[] dataPieces = config.get(key).split(" ");
 				String[] split = new String[dataPieces.length + 1];
 				split[0] = key;
-				for (int i = 0; i < dataPieces.length; i++) {
-					split[i+1] = dataPieces[i];
-				}
+				System.arraycopy(dataPieces, 0, split, 1, dataPieces.length);
 				return split;
 			}
 		}
 
 		return null;
-	}
-
-	public static Vector3f configVector3f(ConfigMap config, String key, Vector3f original) {
-
-		if (config.containsKey(key)) {
-			String[] inp = getSplitFromKey(config, key);
-			return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
-		}
-
-		return original;
 	}
 }

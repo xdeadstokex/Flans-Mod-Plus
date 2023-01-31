@@ -558,8 +558,8 @@ public class DriveableType extends PaintableType {
             dropHarvest = ConfigUtils.configBool(config, "DropHarvest", dropHarvest);
             if (config.containsKey("HarvestBox")) {
                 String[] split = ConfigUtils.getSplitFromKey(config, "HarvestBox");
-                harvestBoxSize = new Vector3f(split[1], shortName);
-                harvestBoxPos = new Vector3f(split[2], shortName);
+                harvestBoxSize = new Vector3f(split[1]);
+                harvestBoxPos = new Vector3f(split[2]);
             }
             if (config.containsKey("HarvestMaterial")) {
                 materialsHarvested.add(getMaterial(config.get("HarvestMaterial")));
@@ -982,7 +982,7 @@ public class DriveableType extends PaintableType {
 
             if (config.containsKey("AddCollisionMesh")) {
                 String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionMesh");
-                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "core");
+                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]), new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]), new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]), new Vector3f(split[9]), new Vector3f(split[10]), "core");
                 collisionBox.add(box);
                 //colbox = box;
             }
@@ -1006,7 +1006,7 @@ public class DriveableType extends PaintableType {
 
             if (config.containsKey("AddTurretCollisionMesh")) {
                 String[] split = ConfigUtils.getSplitFromKey(config, "AddTurretCollisionMesh");
-                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1], shortName), new Vector3f(split[2], shortName), new Vector3f(split[3], shortName), new Vector3f(split[4], shortName), new Vector3f(split[5], shortName), new Vector3f(split[6], shortName), new Vector3f(split[7], shortName), new Vector3f(split[8], shortName), new Vector3f(split[9], shortName), new Vector3f(split[10], shortName), "turret");
+                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]), new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]), new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]), new Vector3f(split[9]), new Vector3f(split[10]), "turret");
                 collisionBox.add(box);
                 //colbox = box;
             }
@@ -1030,10 +1030,10 @@ public class DriveableType extends PaintableType {
 
 
             if (config.containsKey("LeftLinkPoint")) {
-                leftTrackPoints.add(new Vector3f(config.get("LeftLinkPoint"), shortName));
+                leftTrackPoints.add(new Vector3f(config.get("LeftLinkPoint")));
             }
             if (config.containsKey("RightLinkPoint")) {
-                rightTrackPoints.add(new Vector3f(config.get("RightLinkPoint"), shortName));
+                rightTrackPoints.add(new Vector3f(config.get("RightLinkPoint")));
             }
 
             trackLinkLength = ConfigUtils.configFloat(config, "TrackLinkLength", trackLinkLength);
@@ -1047,9 +1047,9 @@ public class DriveableType extends PaintableType {
                 ParticleEmitter emitter = new ParticleEmitter();
                 emitter.effectType = split[1];
                 emitter.emitRate = Integer.parseInt(split[2]);
-                emitter.origin = new Vector3f(split[3], shortName);
-                emitter.extents = new Vector3f(split[4], shortName);
-                emitter.velocity = new Vector3f(split[5], shortName);
+                emitter.origin = new Vector3f(split[3]);
+                emitter.extents = new Vector3f(split[4]);
+                emitter.velocity = new Vector3f(split[5]);
                 emitter.minThrottle = Float.parseFloat(split[6]);
                 emitter.maxThrottle = Float.parseFloat(split[7]);
                 emitter.minHealth = Float.parseFloat(split[8]);

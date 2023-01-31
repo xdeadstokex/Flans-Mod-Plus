@@ -127,8 +127,8 @@ public class ArmourType extends InfoType {
                 defence = Double.parseDouble(config.get(key));
                 bulletDefence = defence;
             }
-            bulletDefence = ConfigUtils.configDouble(config, "BulletDefence", bulletDefence);
-            defence = ConfigUtils.configDouble(config, "OtherDefence", defence);
+            bulletDefence = ConfigUtils.configFloat(config, "BulletDefence", (float)bulletDefence);
+            defence = ConfigUtils.configFloat(config, "OtherDefence", (float)defence);
             moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
             jumpModifier = ConfigUtils.configFloat(config, "JumpModifier", jumpModifier);
             knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);

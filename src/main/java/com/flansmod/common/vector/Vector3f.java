@@ -58,7 +58,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 		super();
 	}
 	
-	public Vector3f(String input, String typeName)
+	public Vector3f(String input)
 	{
 		//Input should be of the form [float,float,float]
 		String noBrackets = input.substring(1, input.length() - 1);

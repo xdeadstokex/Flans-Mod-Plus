@@ -130,19 +130,19 @@ public class VehicleType extends DriveableType {
             flipLinkFix = ConfigUtils.configBool(config,"FlipLinkFix", flipLinkFix);
 
             //Animations
-            doorPos1 = ConfigUtils.configVector(config, "DoorPosition1", doorPos1, shortName);
-            doorPos2 = ConfigUtils.configVector(config, "DoorPosition2", doorPos2, shortName);
-            doorRot1 = ConfigUtils.configVector(config, "DoorRotation1", doorRot1, shortName);
-            doorRot2 = ConfigUtils.configVector(config, "DoorRotation2", doorRot2, shortName);
-            doorRate = ConfigUtils.configVector(config, "DoorRate", doorRate, shortName);
-            doorRotRate = ConfigUtils.configVector(config, "DoorRotRate", doorRotRate, shortName);
+            doorPos1 = ConfigUtils.configVector(config, "DoorPosition1", doorPos1);
+            doorPos2 = ConfigUtils.configVector(config, "DoorPosition2", doorPos2);
+            doorRot1 = ConfigUtils.configVector(config, "DoorRotation1", doorRot1);
+            doorRot2 = ConfigUtils.configVector(config, "DoorRotation2", doorRot2);
+            doorRate = ConfigUtils.configVector(config, "DoorRate", doorRate);
+            doorRotRate = ConfigUtils.configVector(config, "DoorRotRate", doorRotRate);
 
-            door2Pos1 = ConfigUtils.configVector(config, "Door2Position1", door2Pos1, shortName);
-            door2Pos2 = ConfigUtils.configVector(config, "Door2Position2", door2Pos2, shortName);
-            door2Rot1 = ConfigUtils.configVector(config, "Door2Rotation1", door2Rot1, shortName);
-            door2Rot2 = ConfigUtils.configVector(config, "Door2Rotation2", door2Rot2, shortName);
-            door2Rate = ConfigUtils.configVector(config, "Door2Rate", door2Rate, shortName);
-            door2RotRate = ConfigUtils.configVector(config, "Door2RotRate", door2RotRate, shortName);
+            door2Pos1 = ConfigUtils.configVector(config, "Door2Position1", door2Pos1);
+            door2Pos2 = ConfigUtils.configVector(config, "Door2Position2", door2Pos2);
+            door2Rot1 = ConfigUtils.configVector(config, "Door2Rotation1", door2Rot1);
+            door2Rot2 = ConfigUtils.configVector(config, "Door2Rotation2", door2Rot2);
+            door2Rate = ConfigUtils.configVector(config, "Door2Rate", door2Rate);
+            door2RotRate = ConfigUtils.configVector(config, "Door2RotRate", door2RotRate);
 
 
             //Armaments
@@ -160,8 +160,8 @@ public class VehicleType extends DriveableType {
                     key = "AddSmokeDispenser";
                 String[] split = ConfigUtils.getSplitFromKey(config, key);
                 SmokePoint smoke = new SmokePoint();
-                smoke.position = new Vector3f(split[1], shortName);
-                smoke.direction = new Vector3f(split[2], shortName);
+                smoke.position = new Vector3f(split[1]);
+                smoke.direction = new Vector3f(split[2]);
                 smoke.detTime = Integer.parseInt(split[3]);
                 smoke.part = split[4];
                 smokers.add(smoke);

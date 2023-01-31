@@ -612,7 +612,7 @@ public class GunType extends PaintableType implements IScope {
             useLoopingSounds = true;
             FlansMod.proxy.loadSound(contentPack, "guns", config.get(key));
         }
-        loopedSound = ConfigUtils.configSound(contentPack, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
+        loopedSound = ConfigUtils.configGunSound(contentPack, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
         if (loopedSound != null && !loopedSound.isEmpty())
             useLoopingSounds = true;
         loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
@@ -775,45 +775,45 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public void processAnimationConfigs(ConfigMap config) {
-        model.minigunBarrelOrigin = ConfigUtils.configVector3f(config, "animMinigunBarrelOrigin", model.minigunBarrelOrigin);
-        model.barrelAttachPoint = ConfigUtils.configVector3f(config, "animBarrelAttachPoint", model.barrelAttachPoint);
-        model.scopeAttachPoint = ConfigUtils.configVector3f(config, "animScopeAttachPoint", model.scopeAttachPoint);
-        model.stockAttachPoint = ConfigUtils.configVector3f(config, "animStockAttachPoint", model.stockAttachPoint);
-        model.gripAttachPoint = ConfigUtils.configVector3f(config, "animGripAttachPoint", model.gripAttachPoint);
-        model.gadgetAttachPoint = ConfigUtils.configVector3f(config, "animGadgetAttachPoint", model.gadgetAttachPoint);
-        model.slideAttachPoint = ConfigUtils.configVector3f(config, "animSlideAttachPoint", model.slideAttachPoint);
-        model.pumpAttachPoint = ConfigUtils.configVector3f(config, "animPumpAttachPoint", model.pumpAttachPoint);
-        model.accessoryAttachPoint = ConfigUtils.configVector3f(config, "animAccessoryAttachPoint", model.accessoryAttachPoint);
+        model.minigunBarrelOrigin = ConfigUtils.configVector(config, "animMinigunBarrelOrigin", model.minigunBarrelOrigin);
+        model.barrelAttachPoint = ConfigUtils.configVector(config, "animBarrelAttachPoint", model.barrelAttachPoint);
+        model.scopeAttachPoint = ConfigUtils.configVector(config, "animScopeAttachPoint", model.scopeAttachPoint);
+        model.stockAttachPoint = ConfigUtils.configVector(config, "animStockAttachPoint", model.stockAttachPoint);
+        model.gripAttachPoint = ConfigUtils.configVector(config, "animGripAttachPoint", model.gripAttachPoint);
+        model.gadgetAttachPoint = ConfigUtils.configVector(config, "animGadgetAttachPoint", model.gadgetAttachPoint);
+        model.slideAttachPoint = ConfigUtils.configVector(config, "animSlideAttachPoint", model.slideAttachPoint);
+        model.pumpAttachPoint = ConfigUtils.configVector(config, "animPumpAttachPoint", model.pumpAttachPoint);
+        model.accessoryAttachPoint = ConfigUtils.configVector(config, "animAccessoryAttachPoint", model.accessoryAttachPoint);
 
-        model.defaultBarrelFlashPoint = ConfigUtils.configVector3f(config, "animDefaultBarrelFlashPoint", model.defaultBarrelFlashPoint);
-        model.muzzleFlashPoint = ConfigUtils.configVector3f(config, "animMuzzleFlashPoint", model.muzzleFlashPoint);
+        model.defaultBarrelFlashPoint = ConfigUtils.configVector(config, "animDefaultBarrelFlashPoint", model.defaultBarrelFlashPoint);
+        model.muzzleFlashPoint = ConfigUtils.configVector(config, "animMuzzleFlashPoint", model.muzzleFlashPoint);
 
         model.hasFlash = ConfigUtils.configBool(config, "animHasFlash", model.hasFlash);
         model.hasArms = ConfigUtils.configBool(config, "animHasArms", model.hasArms);
         model.easyArms = ConfigUtils.configBool(config, "easyArms", model.easyArms);
-        model.armScale = ConfigUtils.configVector3f(config, "armScale", model.armScale);
+        model.armScale = ConfigUtils.configVector(config, "armScale", model.armScale);
 
-        model.leftArmPos = ConfigUtils.configVector3f(config, "animLeftArmPos", model.leftArmPos);
-        model.leftArmRot = ConfigUtils.configVector3f(config, "animLeftArmRot", model.leftArmRot);
-        model.leftArmScale = ConfigUtils.configVector3f(config, "animLeftArmScale", model.leftArmScale);
-        model.rightArmPos = ConfigUtils.configVector3f(config, "animRightArmPos", model.rightArmPos);
-        model.rightArmRot = ConfigUtils.configVector3f(config, "animRightArmRot", model.rightArmRot);
-        model.rightArmScale = ConfigUtils.configVector3f(config, "animRightArmScale", model.rightArmScale);
+        model.leftArmPos = ConfigUtils.configVector(config, "animLeftArmPos", model.leftArmPos);
+        model.leftArmRot = ConfigUtils.configVector(config, "animLeftArmRot", model.leftArmRot);
+        model.leftArmScale = ConfigUtils.configVector(config, "animLeftArmScale", model.leftArmScale);
+        model.rightArmPos = ConfigUtils.configVector(config, "animRightArmPos", model.rightArmPos);
+        model.rightArmRot = ConfigUtils.configVector(config, "animRightArmRot", model.rightArmRot);
+        model.rightArmScale = ConfigUtils.configVector(config, "animRightArmScale", model.rightArmScale);
 
-        model.rightArmReloadPos = ConfigUtils.configVector3f(config, "animRightArmReloadPos", model.rightArmReloadPos);
-        model.rightArmReloadRot = ConfigUtils.configVector3f(config, "animRightArmReloadRot", model.rightArmReloadRot);
-        model.leftArmReloadPos = ConfigUtils.configVector3f(config, "animLeftArmReloadPos", model.leftArmReloadPos);
-        model.leftArmReloadRot = ConfigUtils.configVector3f(config, "animLeftArmReloadRot", model.leftArmReloadRot);
+        model.rightArmReloadPos = ConfigUtils.configVector(config, "animRightArmReloadPos", model.rightArmReloadPos);
+        model.rightArmReloadRot = ConfigUtils.configVector(config, "animRightArmReloadRot", model.rightArmReloadRot);
+        model.leftArmReloadPos = ConfigUtils.configVector(config, "animLeftArmReloadPos", model.leftArmReloadPos);
+        model.leftArmReloadRot = ConfigUtils.configVector(config, "animLeftArmReloadRot", model.leftArmReloadRot);
 
-        model.rightArmChargePos = ConfigUtils.configVector3f(config, "animRightArmChargePos", model.rightArmChargePos);
-        model.rightArmChargeRot = ConfigUtils.configVector3f(config, "animRightArmChargeRot", model.rightArmChargeRot);
-        model.leftArmChargePos = ConfigUtils.configVector3f(config, "animLeftArmChargePos", model.leftArmChargePos);
-        model.leftArmChargeRot = ConfigUtils.configVector3f(config, "animLeftArmChargeRot", model.leftArmChargeRot);
+        model.rightArmChargePos = ConfigUtils.configVector(config, "animRightArmChargePos", model.rightArmChargePos);
+        model.rightArmChargeRot = ConfigUtils.configVector(config, "animRightArmChargeRot", model.rightArmChargeRot);
+        model.leftArmChargePos = ConfigUtils.configVector(config, "animLeftArmChargePos", model.leftArmChargePos);
+        model.leftArmChargeRot = ConfigUtils.configVector(config, "animLeftArmChargeRot", model.leftArmChargeRot);
 
-        model.stagedrightArmReloadPos = ConfigUtils.configVector3f(config, "animStagedRightArmReloadPos", model.stagedrightArmReloadPos);
-        model.stagedrightArmReloadRot = ConfigUtils.configVector3f(config, "animStagedRightArmReloadRot", model.stagedrightArmReloadRot);
-        model.stagedleftArmReloadPos = ConfigUtils.configVector3f(config, "animStagedLeftArmReloadPos", model.stagedleftArmReloadPos);
-        model.stagedleftArmReloadRot = ConfigUtils.configVector3f(config, "animStagedLeftArmReloadRot", model.stagedleftArmReloadRot);
+        model.stagedrightArmReloadPos = ConfigUtils.configVector(config, "animStagedRightArmReloadPos", model.stagedrightArmReloadPos);
+        model.stagedrightArmReloadRot = ConfigUtils.configVector(config, "animStagedRightArmReloadRot", model.stagedrightArmReloadRot);
+        model.stagedleftArmReloadPos = ConfigUtils.configVector(config, "animStagedLeftArmReloadPos", model.stagedleftArmReloadPos);
+        model.stagedleftArmReloadRot = ConfigUtils.configVector(config, "animStagedLeftArmReloadRot", model.stagedleftArmReloadRot);
 
         model.rightHandAmmo = ConfigUtils.configBool(config, "animRightHandAmmo", model.rightHandAmmo);
         model.leftHandAmmo = ConfigUtils.configBool(config, "animLeftHandAmmo", model.leftHandAmmo);
@@ -825,11 +825,11 @@ public class GunType extends PaintableType implements IScope {
         model.ShakeDistance = ConfigUtils.configFloat(config, "animShakeDistance", model.ShakeDistance);
         model.recoilAmount = ConfigUtils.configFloat(config, "animRecoilAmount", model.recoilAmount);
 
-        model.casingAnimDistance = ConfigUtils.configVector3f(config, "animCasingAnimDistance", model.casingAnimDistance);
-        model.casingAnimSpread = ConfigUtils.configVector3f(config, "animCasingAnimSpread", model.casingAnimSpread);
+        model.casingAnimDistance = ConfigUtils.configVector(config, "animCasingAnimDistance", model.casingAnimDistance);
+        model.casingAnimSpread = ConfigUtils.configVector(config, "animCasingAnimSpread", model.casingAnimSpread);
         model.casingAnimTime = ConfigUtils.configInt(config, "animCasingAnimTime", model.casingAnimTime);
-        model.casingRotateVector = ConfigUtils.configVector3f(config, "animCasingRotateVector", model.casingRotateVector);
-        model.casingAttachPoint = ConfigUtils.configVector3f(config, "animCasingAttachPoint", model.casingAttachPoint);
+        model.casingRotateVector = ConfigUtils.configVector(config, "animCasingRotateVector", model.casingRotateVector);
+        model.casingAttachPoint = ConfigUtils.configVector(config, "animCasingAttachPoint", model.casingAttachPoint);
         model.casingDelay = ConfigUtils.configInt(config, "animCasingDelay", model.casingDelay);
         model.caseScale = ConfigUtils.configFloat(config, "animCasingScale", model.caseScale);
         model.flashScale = ConfigUtils.configFloat(config, "animFlashScale", model.flashScale);
@@ -953,23 +953,23 @@ public class GunType extends PaintableType implements IScope {
         model.gripIsOnPump = ConfigUtils.configBool(config, "animGripIsOnPump", model.gripIsOnPump);
         model.gripIsOnPump = ConfigUtils.configBool(config, "animGadgetsOnPump", model.gripIsOnPump);
 
-        model.barrelBreakPoint = ConfigUtils.configVector3f(config, "animBarrelBreakPoint", model.barrelBreakPoint);
-        model.altbarrelBreakPoint = ConfigUtils.configVector3f(config, "animAltBarrelBreakPoint", model.altbarrelBreakPoint);
+        model.barrelBreakPoint = ConfigUtils.configVector(config, "animBarrelBreakPoint", model.barrelBreakPoint);
+        model.altbarrelBreakPoint = ConfigUtils.configVector(config, "animAltBarrelBreakPoint", model.altbarrelBreakPoint);
 
         model.revolverFlipAngle = ConfigUtils.configFloat(config, "animRevolverFlipAngle", model.revolverFlipAngle);
         model.revolver2FlipAngle = ConfigUtils.configFloat(config, "animRevolver2FlipAngle", model.revolver2FlipAngle);
 
-        model.revolverFlipPoint = ConfigUtils.configVector3f(config, "animRevolverFlipPoint", model.revolverFlipPoint);
-        model.revolver2FlipPoint = ConfigUtils.configVector3f(config, "animRevolver2FlipPoint", model.revolver2FlipPoint);
+        model.revolverFlipPoint = ConfigUtils.configVector(config, "animRevolverFlipPoint", model.revolverFlipPoint);
+        model.revolver2FlipPoint = ConfigUtils.configVector(config, "animRevolver2FlipPoint", model.revolver2FlipPoint);
 
         model.breakAngle = ConfigUtils.configFloat(config, "animBreakAngle", model.breakAngle);
         model.altbreakAngle = ConfigUtils.configFloat(config, "animAltBreakAngle", model.altbreakAngle);
 
         model.spinningCocking = ConfigUtils.configBool(config, "animSpinningCocking", model.spinningCocking);
 
-        model.spinPoint = ConfigUtils.configVector3f(config, "animSpinPoint", model.spinPoint);
-        model.hammerSpinPoint = ConfigUtils.configVector3f(config, "animHammerSpinPoint", model.hammerSpinPoint);
-        model.althammerSpinPoint = ConfigUtils.configVector3f(config, "animAltHammerSpinPoint", model.althammerSpinPoint);
+        model.spinPoint = ConfigUtils.configVector(config, "animSpinPoint", model.spinPoint);
+        model.hammerSpinPoint = ConfigUtils.configVector(config, "animHammerSpinPoint", model.hammerSpinPoint);
+        model.althammerSpinPoint = ConfigUtils.configVector(config, "animAltHammerSpinPoint", model.althammerSpinPoint);
         model.hammerAngle = ConfigUtils.configFloat(config, "animHammerAngle", model.hammerAngle);
         model.althammerAngle = ConfigUtils.configFloat(config, "animAltHammerAngle", model.althammerAngle);
 
@@ -983,29 +983,29 @@ public class GunType extends PaintableType implements IScope {
         model.rightHandBolt = ConfigUtils.configBool(config, "animRightHandBolt", model.rightHandBolt);
 
         model.pumpModifier = ConfigUtils.configFloat(config, "animPumpModifier", model.pumpModifier);
-        model.chargeModifier = ConfigUtils.configVector3f(config, "animChargeModifier", model.chargeModifier);
+        model.chargeModifier = ConfigUtils.configVector(config, "animChargeModifier", model.chargeModifier);
         model.gunOffset = ConfigUtils.configFloat(config, "animGunOffset", model.gunOffset);
         model.crouchZoom = ConfigUtils.configFloat(config, "animCrouchZoom", model.crouchZoom);
         model.fancyStance = ConfigUtils.configBool(config, "animFancyStance", model.fancyStance);
-        model.stanceTranslate = ConfigUtils.configVector3f(config, "animTranslateClip", model.stanceTranslate);
-        model.stanceRotate = ConfigUtils.configVector3f(config, "animStanceRotate", model.stanceRotate);
+        model.stanceTranslate = ConfigUtils.configVector(config, "animTranslateClip", model.stanceTranslate);
+        model.stanceRotate = ConfigUtils.configVector(config, "animStanceRotate", model.stanceRotate);
 
         model.rotateGunVertical = ConfigUtils.configFloat(config, "animRotateGunVertical", model.rotateGunVertical);
         model.rotateGunHorizontal = ConfigUtils.configFloat(config, "animRotateGunHorizontal", model.rotateGunHorizontal);
         model.tiltGun = ConfigUtils.configFloat(config, "animTiltGun", model.tiltGun);
-        model.translateGun = ConfigUtils.configVector3f(config, "animTranslateGun", model.translateGun);
+        model.translateGun = ConfigUtils.configVector(config, "animTranslateGun", model.translateGun);
         model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipVertical", model.rotateClipVertical);
         model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipVertical", model.stagedrotateClipVertical);
         model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipHorizontal", model.rotateClipVertical);
         model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipHorizontal", model.stagedrotateClipVertical);
         model.tiltClip = ConfigUtils.configFloat(config, "animTiltClip", model.tiltClip);
         model.stagedtiltClip = ConfigUtils.configFloat(config, "animStagedTiltClip", model.stagedtiltClip);
-        model.translateClip = ConfigUtils.configVector3f(config, "animTranslateClip", model.translateClip);
-        model.stagedtranslateClip = ConfigUtils.configVector3f(config, "animStagedTranslateClip", model.stagedtranslateClip);
+        model.translateClip = ConfigUtils.configVector(config, "animTranslateClip", model.translateClip);
+        model.stagedtranslateClip = ConfigUtils.configVector(config, "animStagedTranslateClip", model.stagedtranslateClip);
         model.stagedReload = ConfigUtils.configBool(config, "animStagedReload", model.stagedReload);
 
-        model.thirdPersonOffset = ConfigUtils.configVector3f(config, "animThirdPersonOffset", model.thirdPersonOffset);
-        model.itemFrameOffset = ConfigUtils.configVector3f(config, "animItemFrameOffset", model.itemFrameOffset);
+        model.thirdPersonOffset = ConfigUtils.configVector(config, "animThirdPersonOffset", model.thirdPersonOffset);
+        model.itemFrameOffset = ConfigUtils.configVector(config, "animItemFrameOffset", model.itemFrameOffset);
         model.stillRenderGunWhenScopedOverlay = ConfigUtils.configBool(config, "animStillRenderGunWhenScopedOverlay", model.stillRenderGunWhenScopedOverlay);
         model.adsEffectMultiplier = ConfigUtils.configFloat(config, "animAdsEffectMultiplier", model.adsEffectMultiplier);
     }
