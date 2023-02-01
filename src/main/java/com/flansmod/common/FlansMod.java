@@ -136,6 +136,7 @@ public class FlansMod {
 
     public static float nameTagRenderRange = 64F;
     public static float nameTagSneakRenderRange = 32F;
+    public static double maxHealth = 40;
 
     public static int armourSpawnRate = 20;
 
@@ -209,7 +210,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
-	crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
+	    crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -318,6 +319,7 @@ public class FlansMod {
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
+        new PlayerSpawnEventListener();
         MinecraftForge.EVENT_BUS.register(new PlayerDropsEventListener());
         MinecraftForge.EVENT_BUS.register(new LivingSpawnEventListener());
         MinecraftForge.EVENT_BUS.register(new AnvilUpdateEventListener());
