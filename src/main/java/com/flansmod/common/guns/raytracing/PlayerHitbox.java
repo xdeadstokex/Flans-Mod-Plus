@@ -196,7 +196,7 @@ public class PlayerHitbox {
             damageModifier *= FlansMod.masterHeadshotModifier;
             bullet.lastHitHeadshot = true;
         } else if(type == EnumHitboxType.LEGS) {
-            damageModifier *=0.5F;
+            damageModifier *= FlansMod.masterLegModifier;
         }
 
         switch (type) {
