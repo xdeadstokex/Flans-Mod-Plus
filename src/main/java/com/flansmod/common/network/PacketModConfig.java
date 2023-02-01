@@ -42,6 +42,8 @@ public class PacketModConfig extends PacketBase {
     public float masterRecoilModifier;
     public boolean masterDualWieldDisable;
     public boolean gunDevMode;
+    public float nameTagRenderRange;
+    public float nameTagSneakRenderRange;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
@@ -75,6 +77,8 @@ public class PacketModConfig extends PacketBase {
         masterRecoilModifier = FlansMod.masterRecoilModifier;
         masterDualWieldDisable = FlansMod.masterDualWieldDisable;
         gunDevMode = FlansMod.gunDevMode;
+        nameTagRenderRange = FlansMod.nameTagRenderRange;
+        nameTagSneakRenderRange = FlansMod.nameTagSneakRenderRange;
     }
 
     @Override
@@ -110,6 +114,8 @@ public class PacketModConfig extends PacketBase {
         data.writeFloat(masterRecoilModifier);
         data.writeBoolean(masterDualWieldDisable);
         data.writeBoolean(gunDevMode);
+        data.writeFloat(nameTagRenderRange);
+        data.writeFloat(nameTagSneakRenderRange);
     }
 
     @Override
@@ -145,7 +151,8 @@ public class PacketModConfig extends PacketBase {
         masterRecoilModifier = data.readFloat();
         masterDualWieldDisable = data.readBoolean();
         gunDevMode = data.readBoolean();
-
+        nameTagRenderRange = data.readFloat();
+        nameTagSneakRenderRange = data.readFloat();
     }
 
     @Override
@@ -187,6 +194,8 @@ public class PacketModConfig extends PacketBase {
         FlansMod.masterRecoilModifier = masterRecoilModifier;
         FlansMod.masterDualWieldDisable = masterDualWieldDisable;
         FlansMod.gunDevMode = gunDevMode;
+        FlansMod.nameTagRenderRange = nameTagRenderRange;
+        FlansMod.nameTagSneakRenderRange = nameTagSneakRenderRange;
         FlansMod.log("Config synced successfully");
     }
 }
