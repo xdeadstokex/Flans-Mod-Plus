@@ -37,6 +37,7 @@ public class PacketModConfig extends PacketBase {
     public float wheelSeatExpModifier;
     public boolean showPackItemDescription;
     public float masterDamageModifier;
+    public float masterHeadshotModifier;
     public float masterRecoilModifier;
     public boolean masterDualWieldDisable;
     public boolean gunDevMode;
@@ -68,6 +69,7 @@ public class PacketModConfig extends PacketBase {
         wheelSeatExpModifier = FlansMod.vehicleWheelSeatExplosionModifier;
         showPackItemDescription = FlansMod.showPackNameInItemDescriptions;
         masterDamageModifier = FlansMod.masterDamageModifier;
+        masterHeadshotModifier = FlansMod.masterHeadshotModifier;
         masterRecoilModifier = FlansMod.masterRecoilModifier;
         masterDualWieldDisable = FlansMod.masterDualWieldDisable;
         gunDevMode = FlansMod.gunDevMode;
@@ -101,6 +103,7 @@ public class PacketModConfig extends PacketBase {
         data.writeFloat(wheelSeatExpModifier);
         data.writeBoolean(showPackItemDescription);
         data.writeFloat(masterDamageModifier);
+        data.writeFloat(masterHeadshotModifier);
         data.writeFloat(masterRecoilModifier);
         data.writeBoolean(masterDualWieldDisable);
         data.writeBoolean(gunDevMode);
@@ -134,6 +137,7 @@ public class PacketModConfig extends PacketBase {
         wheelSeatExpModifier = data.readFloat();
         showPackItemDescription = data.readBoolean();
         masterDamageModifier = data.readFloat();
+        masterHeadshotModifier = data.readFloat();
         masterRecoilModifier = data.readFloat();
         masterDualWieldDisable = data.readBoolean();
         gunDevMode = data.readBoolean();
@@ -174,6 +178,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.vehicleWheelSeatExplosionModifier = wheelSeatExpModifier;
         FlansMod.showPackNameInItemDescriptions = showPackItemDescription;
         FlansMod.masterDamageModifier = masterDamageModifier;
+        FlansMod.masterHeadshotModifier = masterHeadshotModifier;
         FlansMod.masterRecoilModifier = masterRecoilModifier;
         FlansMod.masterDualWieldDisable = masterDualWieldDisable;
         FlansMod.gunDevMode = gunDevMode;

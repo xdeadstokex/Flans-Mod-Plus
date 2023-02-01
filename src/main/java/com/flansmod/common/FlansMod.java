@@ -129,6 +129,7 @@ public class FlansMod {
     public static boolean showPackNameInItemDescriptions = true;
     public static float masterDamageModifier = 1.0F;
     public static float masterRecoilModifier = 1.0F;
+    public static float masterHeadshotModifier = 2.0F;
     public static boolean masterDualWieldDisable = false;
     public static boolean gunDevMode = false;
 
@@ -664,6 +665,7 @@ public class FlansMod {
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
         showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
         masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterHeadshotModifier = configFile.getFloat("Headshot damage Modifier", "Gameplay Settings (synced)", masterHeadshotModifier, 0, 100, "All headshot damage will be modified by this amount");
         masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
         masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
         gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
@@ -726,6 +728,7 @@ public class FlansMod {
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
         showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
         masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterHeadshotModifier = configFile.getFloat("Headshot damage Modifier", "Gameplay Settings (synced)", masterHeadshotModifier, 0, 100, "All headshot damage will be modified by this amount");
         masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
         masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
         gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
