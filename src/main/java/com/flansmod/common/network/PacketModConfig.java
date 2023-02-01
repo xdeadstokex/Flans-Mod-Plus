@@ -44,6 +44,7 @@ public class PacketModConfig extends PacketBase {
     public boolean gunDevMode;
     public float nameTagRenderRange;
     public float nameTagSneakRenderRange;
+    public float maxHealth;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
@@ -79,6 +80,7 @@ public class PacketModConfig extends PacketBase {
         gunDevMode = FlansMod.gunDevMode;
         nameTagRenderRange = FlansMod.nameTagRenderRange;
         nameTagSneakRenderRange = FlansMod.nameTagSneakRenderRange;
+        maxHealth = FlansMod.maxHealth;
     }
 
     @Override
@@ -116,6 +118,7 @@ public class PacketModConfig extends PacketBase {
         data.writeBoolean(gunDevMode);
         data.writeFloat(nameTagRenderRange);
         data.writeFloat(nameTagSneakRenderRange);
+        data.writeFloat(maxHealth);
     }
 
     @Override
@@ -153,6 +156,7 @@ public class PacketModConfig extends PacketBase {
         gunDevMode = data.readBoolean();
         nameTagRenderRange = data.readFloat();
         nameTagSneakRenderRange = data.readFloat();
+        maxHealth = data.readFloat();
     }
 
     @Override
@@ -196,6 +200,7 @@ public class PacketModConfig extends PacketBase {
         FlansMod.gunDevMode = gunDevMode;
         FlansMod.nameTagRenderRange = nameTagRenderRange;
         FlansMod.nameTagSneakRenderRange = nameTagSneakRenderRange;
+        FlansMod.maxHealth = maxHealth;
         FlansMod.log("Config synced successfully");
     }
 }
