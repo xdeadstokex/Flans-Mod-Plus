@@ -1,7 +1,6 @@
 package com.flansmod.common.teams;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.flansmod.client.model.ModelCustomArmour;
 import com.flansmod.common.FlansMod;
@@ -10,7 +9,6 @@ import com.flansmod.common.types.TypeFile;
 
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -105,30 +103,37 @@ public class ArmourType extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
         try {
-            if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model")) {
-                model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelCustomArmour.class);
+            String modelName = ConfigUtils.configString(config, "Model", null);
+            if (modelName != null) {
+                model = FlansMod.proxy.loadModel(modelName, shortName, ModelCustomArmour.class);
                 model.type = this;
             }
-            if (config.containsKey("Type")) {
-                if (config.get("Type").equals("Hat") || config.get("Type").equals("Helmet"))
-                    type = 0;
-                if (config.get("Type").equals("Chest") || config.get("Type").equals("Body"))
-                    type = 1;
-                if (config.get("Type").equals("Legs") || config.get("Type").equals("Pants"))
-                    type = 2;
-                if (config.get("Type").equals("Shoes") || config.get("Type").equals("Boots"))
-                    type = 3;
+
+            String typeName = ConfigUtils.configString(config, "Type", null);
+            if (typeName == null) {
+                type = 0;
+                FlansMod.log("Armour %s in pack %s with unknown type detected. Assuming Helmet.", shortName, packName);
+            } else {
+                switch (typeName) {
+                    case "Hat": case "Helmet":
+                        type=0; break;
+
+                    case "Chest": case "Body":
+                        type=1; break;
+
+                    case "Legs": case "Pants":
+                        type=2; break;
+
+                    case "Shoes": case "Boots":
+                        type=3; break;
+                }
             }
 
-            if (config.containsKey("DamageReduction") || config.containsKey("Defence")) {
-                String key = "DamageReduction";
-                if (config.containsKey("Defence"))
-                    key = "Defence";
-                defence = Double.parseDouble(config.get(key));
-                bulletDefence = defence;
-            }
-            bulletDefence = ConfigUtils.configFloat(config, "BulletDefence", (float)bulletDefence);
-            defence = ConfigUtils.configFloat(config, "OtherDefence", (float)defence);
+            // If bulletDefence is set, we allow the normal defence to be overriden
+            defence = ConfigUtils.configFloat(config, new String[] {"OtherDefence", "Defence", "DamageReduction"}, (float)defence);
+            bulletDefence = ConfigUtils.configFloat(config, "BulletDefence", (float)defence);
+
+
             moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
             jumpModifier = ConfigUtils.configFloat(config, "JumpModifier", jumpModifier);
             knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
@@ -141,10 +146,10 @@ public class ArmourType extends InfoType {
             overlay = ConfigUtils.configString(config, "Overlay", overlay);
             smokeProtection = ConfigUtils.configBool(config, "SmokeProtection", smokeProtection);
             onWaterWalking = ConfigUtils.configBool(config, "OnWaterWalking", onWaterWalking);
-            if (config.containsKey("Durability")) {
-                durability = Integer.parseInt(config.get("Durability"));
-                hasDurability = durability > 0;
-            }
+
+            durability = ConfigUtils.configInt(config, "Durability", durability);
+            hasDurability = durability > 0;
+
             armourTextureName = ConfigUtils.configString(config, new String[]{"ArmourTexture", "ArmorTexture"}, armourTextureName);
         } catch (Exception e) {
             FlansMod.log("Reading armour file failed.");

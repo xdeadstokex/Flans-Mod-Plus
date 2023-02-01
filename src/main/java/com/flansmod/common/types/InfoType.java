@@ -86,33 +86,33 @@ public abstract class InfoType implements IInfoType {
                 continue;
             }
 
-                //Ignore the line in these cases
-                if (line == null)
-                    break;
-                if (line.startsWith("//"))
-                    continue;
-                String[] split = line.split(" ");
+            //Ignore the line in these cases
+            if (line == null)
+                break;
+            if (line.startsWith("//") || line.trim().isEmpty())
+                continue;
 
-                if (split.length > 2) {
-                    String data = "";
-                    for (int i = 1; i < split.length; i++) {
-                        data += split[i] + " ";
-                    }
-                    configMap.put(split[0].toLowerCase(), data.trim());
-                    if (split[0].equalsIgnoreCase("recipe")) {
-                        readRecipe = true;
-                    }
-                } else if (split.length == 2){
-                    configMap.put(split[0].toLowerCase(), split[1]);
-                } else {
-                    continue;
+            if (!line.contains(" ")) {
+                configMap.put(line.trim(), "");
+            } else {
+                int firstSpace = line.indexOf(" ");
+
+                String key = line.substring(0, firstSpace).trim();
+                String data = line.substring(firstSpace).trim();
+
+                configMap.put(key, data);
+
+                if (key.equalsIgnoreCase("Recipe")) {
+                    readRecipe = true;
                 }
+            }
         }
 
         shortName = ConfigUtils.configString(configMap, "ShortName", shortName);
 
         if (shortName == null ) {
             infoTypes.remove(this);
+            FlansMod.log("Config without shortname removed %s in pack %s", file.name, file.pack);
         } else {
             read(configMap, file);
             postRead(file);
@@ -123,44 +123,37 @@ public abstract class InfoType implements IInfoType {
      * Pack reader
      */
     protected void read(ConfigMap config, TypeFile file) {
-
+        // Model stuff
         modelString = ConfigUtils.configString(configMap, "Model", modelString);
-        if (config.containsKey("ModelScale"))
-            modelScale = Float.parseFloat(config.get("ModelScale"));
+        modelScale = ConfigUtils.configFloat(configMap, "ModelScale", modelScale);
+
+        // Text stuff
         name = ConfigUtils.configString(configMap, "Name", name);
         description = ConfigUtils.configString(configMap, "Description", description);
-        shortName = ConfigUtils.configString(configMap, "ShortName", shortName);
 
-        if (config.containsKey("Color")) {
-            String[] rgb = config.get("Color").split(" ");
-            colour = (Integer.parseInt(rgb[0]) << 16) + ((Integer.parseInt(rgb[1])) << 8) + ((Integer.parseInt(rgb[2])));
-        } else if (config.containsKey("Colour")) {
-            String[] rgb = config.get("Colour").split(" ");
-            colour = (Integer.parseInt(rgb[0]) << 16) + ((Integer.parseInt(rgb[1])) << 8) + ((Integer.parseInt(rgb[2])));
+
+        String[] val = ConfigUtils.getSplitFromKey(configMap, new String[]{ "Color", "Colour" });
+        if (val != null) {
+            colour = (Integer.parseInt(val[1]) << 16) + ((Integer.parseInt(val[2])) << 8) + ((Integer.parseInt(val[3])));
         }
 
-        if (config.get("Icon") == null || config.get("Icon").isEmpty()) {
-            iconPath = "Missing-Icon-" + shortName;
-        } else {
-            iconPath = ConfigUtils.configString(config, "Icon", iconPath);
-        }
+        iconPath = ConfigUtils.configString(configMap, "Icon", "Missing-Icon-"+shortName);
+        if (iconPath.isEmpty()) {  iconPath = "Missing-Icon-" + shortName; } // Extra validation
 
-        if (config.containsKey("RecipeOutput"))
-            recipeOutput = ConfigUtils.configInt(config, "RecipeOutput", recipeOutput);
+        recipeOutput = ConfigUtils.configInt(config, "RecipeOutput", recipeOutput);
+
         if (config.containsKey("Recipe")) {
-            recipeLine = ("Recipe " + config.get("Recipe")).split(" ");
             String[] split = ConfigUtils.getSplitFromKey(config, "Recipe");
             recipe = new Object[split.length + 2];
-            recipe[0] = config.get("recipe0");
-            recipe[1] = config.get("recipe1");
-            recipe[2] = config.get("recipe2");
+            recipe[0] = ConfigUtils.configString(config, "recipe0", "");
+            recipe[1] = ConfigUtils.configString(config, "recipe1", "");
+            recipe[2] = ConfigUtils.configString(config, "recipe2", "");
         } else if (config.containsKey("ShapelessRecipe")) {
-            recipeLine = ("Recipe " + config.get("Recipe")).split(" ");
+            recipeLine = ConfigUtils.getSplitFromKey(config, "Recipe");
             shapeless = true;
         }
         smeltableFrom = ConfigUtils.configString(configMap, "SmeltableFrom", smeltableFrom);
-        if (config.containsKey("CanDrop"))
-            canDrop = Boolean.parseBoolean(config.get("CanDrop"));
+        canDrop = ConfigUtils.configBool(config, "CanDrop", canDrop);
     }
 
     public void addRecipe() {

@@ -57,16 +57,13 @@ public class ArmourBoxType extends InfoType
 			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
 
 			if (config.containsKey("addarmour") || config.containsKey("addarmor")) {
-				String key = "addarmour";
-				if (config.containsKey("addarmor"))
-					key = "addarmor";
+				String[] split = ConfigUtils.getSplitFromKey(config, new String[] { "AddArmour", "AddArmor"});
 
-				String[] split = ConfigUtils.getSplitFromKey(config, key);
-				String name = split[2];
+				StringBuilder name = new StringBuilder(split[2]);
 
 				for(int i = 3; i < split.length; i++)
-					name = name + " " + split[i];
-				ArmourBoxEntry entry = new ArmourBoxEntry(split[1], name);
+					name.append(" ").append(split[i]);
+				ArmourBoxEntry entry = new ArmourBoxEntry(split[1], name.toString());
 				//Read the next 4 lines for each armour piece
 				for (int i = 0; i < 4; i++)
 				{
@@ -92,7 +89,7 @@ public class ArmourBoxType extends InfoType
 						if(stack != null) {
 							entry.requiredStacks[i].add(stack);
 						} else {
-							if (FlansMod.printDebugLog) { FlansMod.log("Could not add part %s to %s in armourbox %s", lineSplit[j * 2 + 1], name, shortName); }
+							if (FlansMod.printDebugLog) { FlansMod.log("Could not add part %s to %s in armourbox %s", lineSplit[j * 2 + 1], name.toString(), shortName); }
 						}
 					}
 				}

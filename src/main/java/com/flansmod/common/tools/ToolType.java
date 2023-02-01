@@ -16,6 +16,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.utils.ConfigUtils;
+import org.classpath.icedtea.Config;
 
 public class ToolType extends InfoType 
 {
@@ -64,9 +65,11 @@ public class ToolType extends InfoType
 	{
 		super.read(config, file);
 
-		if(FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
-			model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelBase.class);
-		texture = config.get("Texture");
+		// The model load can be done on server too, proxy will just skip it.
+		String modelName = ConfigUtils.configString(config, "Model", null);
+		model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
+		texture = ConfigUtils.configString(config, "Texture", texture);
+
 		parachute = ConfigUtils.configBool(config, "Parachute", parachute);
 		remote = ConfigUtils.configBool(config, "ExplosiveRemote", remote);
 		key = ConfigUtils.configBool(config, "Key", key);
@@ -75,6 +78,7 @@ public class ToolType extends InfoType
 		healAmount = ConfigUtils.configInt(config, new String[]{"HealAmount", "RepairAmount"}, toolLife);
 		toolLife = ConfigUtils.configInt(config, new String[]{"ToolLife", "ToolUes"}, toolLife);
 		EUPerCharge = ConfigUtils.configInt(config, "EUPerCharge", EUPerCharge);
+
 		if(config.containsKey("RechargeRecipe")) {
 			String[] split = ConfigUtils.getSplitFromKey(config, "RechargeRecipe");
 			for(int i = 0; i < (split.length - 1) / 2; i++)

@@ -57,7 +57,7 @@ public abstract class PaintableType extends InfoType
 		//iconName textureName [dyeName dyeAmount (dyeDamage)]
 		if (config.containsKey("PaintJob")) {
 			try {
-				String[] split = config.get("PaintJob").split(" ");
+				String[] split = ConfigUtils.getSplitFromKey(config, "PaintJob");
 				int numDyes = (split.length - 2) / 2;
 				ItemStack[] dyeStacks = new ItemStack[numDyes];
 				for(int i = 0; i < numDyes; i++)

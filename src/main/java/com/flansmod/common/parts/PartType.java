@@ -10,6 +10,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
+import org.classpath.icedtea.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,11 +21,11 @@ public class PartType extends InfoType {
     /**
      * Category (TODO : Replace with Enum)
      */
-    public int category;
+    public int category = 0;
     /**
      * Max stack size of item
      */
-    public int stackSize;
+    public int stackSize = 0;
     /**
      * (Engine) Multiplier applied to the thrust of the driveable
      */
@@ -99,22 +100,32 @@ public class PartType extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
         try {
-            if (config.containsKey("Category"))
-                category = getCategory(config.get("Category"));
-            if (config.containsKey("StackSize"))
-                stackSize = Integer.parseInt(config.get("StackSize"));
-            if (config.containsKey("EngineSpeed"))
-                engineSpeed = Float.parseFloat(config.get("EngineSpeed"));
-            if (config.containsKey("FuelConsumption"))
-                fuelConsumption = Float.parseFloat(config.get("FuelConsumption"));
-            if (config.containsKey("EnginePower"))
-                enginePower = Float.parseFloat(config.get("EnginePowewr"));
-            if (config.containsKey("Fuel"))
-                fuel = Integer.parseInt(config.get("Fuel"));
+            // Generic
+            category = getCategory(ConfigUtils.configString(config, "Category", "Cockpit"));
+            stackSize = ConfigUtils.configInt(config, "StackSize", stackSize);
+
+            // Engine
+            fuelConsumption = ConfigUtils.configFloat(config, "FuelConsumption", engineSpeed);
+            engineSpeed = ConfigUtils.configFloat(config, "EngineSpeed", engineSpeed);
+            enginePower = ConfigUtils.configFloat(config, "EnginePower", enginePower);
+            //RedstoneFlux, for engines
+            useRFPower = ConfigUtils.configBool(config, new String[]{"UseRF", "UseRFPower"}, useRFPower);
+            RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
+            // Engine compatibility
+            if (config.containsKey("WorksWith")) {
+                String[] split = ConfigUtils.getSplitFromKey(config, "WorksWith");
+                worksWith = new ArrayList<EnumType>();
+                for (int i = 0; i < split.length - 1; i++) {
+                    worksWith.add(EnumType.get(split[i + 1]));
+                }
+            }
+
+            // Fuel cans
+            fuel = ConfigUtils.configInt(config, "Fuel", fuel);
 
             //Recipe
             if (config.containsKey("PartBoxRecipe")) {
-                String[] split = config.get("PartBoxRecipe").split(" ");
+                String[] split = ConfigUtils.getSplitFromKey(config, "PartBoxRecipe");
                 ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
                 for (int i = 0; i < (split.length - 2) / 2; i++) {
                     int amount = Integer.parseInt(split[2 * i + 2]);
@@ -124,17 +135,7 @@ public class PartType extends InfoType {
                     stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
                 }
                 partBoxRecipe.addAll(Arrays.asList(stacks));
-            } else if (config.containsKey("WorksWith")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "WorksWith");
-                worksWith = new ArrayList<EnumType>();
-                for (int i = 0; i < split.length - 1; i++) {
-                    worksWith.add(EnumType.get(split[i + 1]));
-                }
             }
-
-            //RedstoneFlux
-            useRFPower = ConfigUtils.configBool(config, new String[]{"UseRF", "UseRFPower"}, useRFPower);
-            RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
         } catch (Exception e) {
             FlansMod.log("Reading part file failed.");
             e.printStackTrace();
@@ -154,29 +155,30 @@ public class PartType extends InfoType {
     }
 
     private int getCategory(String s) {
-        if (s.equals("Cockpit"))
-            return 0;
-        if (s.equals("Wing"))
-            return 1;
-        if (s.equals("Engine"))
-            return 2;
-        if (s.equals("Propeller"))
-            return 3;
-        if (s.equals("Bay"))
-            return 4;
-        if (s.equals("Tail"))
-            return 5;
-        if (s.equals("Wheel"))
-            return 6;
-        if (s.equals("Chassis"))
-            return 7;
-        if (s.equals("Turret"))
-            return 8;
-        if (s.equals("Fuel"))
-            return 9;
-        if (s.equals("Misc"))
-            return 10;
-        return 10;
+        switch (s) {
+            case "Cockpit":
+                return 0;
+            case "Wing":
+                return 1;
+            case "Engine":
+                return 2;
+            case "Propeller":
+                return 3;
+            case "Bay":
+                return 4;
+            case "Tail":
+                return 5;
+            case "Wheel":
+                return 6;
+            case "Chassis":
+                return 7;
+            case "Turret":
+                return 8;
+            case "Fuel":
+                return 9;
+            default: // "Misc"
+                return 10;
+        }
     }
 
     @Override
