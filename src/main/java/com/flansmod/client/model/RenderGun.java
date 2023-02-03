@@ -76,7 +76,7 @@ public class RenderGun implements IItemRenderer {
 			animations = FlansModClient.getGunAnimations((EntityLivingBase) data[1], false);
 		}
 
-		renderGun(type, item, gunType, animations, false, data);
+		renderGunMovement(type, item, gunType, animations, false, data);
 
 		// Render off-hand gun
 		if (gunType.getOneHanded() && type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
@@ -97,7 +97,7 @@ public class RenderGun implements IItemRenderer {
 					if (!offHandGunType.getOneHanded())
 						return;
 
-					renderGun(type, offHandItem, offHandGunType, animations, true, data);
+					renderGunMovement(type, offHandItem, offHandGunType, animations, true, data);
 				}
 
 			}
@@ -115,264 +115,272 @@ public class RenderGun implements IItemRenderer {
 		if (!offHandGunType.getOneHanded())
 			return;
 
-		renderGun(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);
+		renderGunMovement(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);
 	}
 
-	private void renderGun(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
+	private void renderGunMovement(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
 		// The model scale
 		float f = 1F / 16F;
 		ModelGun model = gunType.model;
-
-		int flip = offHand ? -1 : 1;
+		float reloadRotate = 0f;
 
 		GL11.glPushMatrix();
 		{
-			// Get the reload animation rotation
-			float reloadRotate = 0F;
+			// Do transforms and rotations depending on how the gun is being rendered/viewed
+			//Ground, item frame, etc
+			if (type.name().equals("ENTITY")) {
+				renderEntityMovement(model, data);
+			//Third person
+			} else if (type.name().equals("EQUIPPED")) {
+				renderEquippedMovement(model, offHand);
+			//First person
+			} else if (type.name().equals("EQUIPPED_FIRST_PERSON")) {
+				renderEquippedFirstPersonMovement(gunType, item, model, offHand, animations);
+			}
 
-			// Setup transforms based on gun position
-			switch (type) {
-			case ENTITY: {
-				EntityItem entity = (EntityItem) data[1];
-				GL11.glRotatef(entity.age + (entity.age == 0 ? 0 : smoothing), 0F, 1F, 0F);
-				GL11.glTranslatef(-0.2F + model.itemFrameOffset.x, 0.2F + model.itemFrameOffset.y,
-						0.1F + model.itemFrameOffset.z);
+			//Now that the matrix is set up, render the models
+			renderGunModel(item, gunType, f, model, animations, reloadRotate, type);
+		}
+		GL11.glPopMatrix();
+	}
+
+	private void renderEntityMovement(ModelGun model, Object... data) {
+		EntityItem entity = (EntityItem) data[1];
+		GL11.glRotatef(entity.age + (entity.age == 0 ? 0 : smoothing), 0F, 1F, 0F);
+		GL11.glTranslatef(-0.2F + model.itemFrameOffset.x, 0.2F + model.itemFrameOffset.y,
+				0.1F + model.itemFrameOffset.z);
+	}
+
+	private void renderEquippedMovement(ModelGun model, boolean offHand) {
+		if (offHand) {
+			GL11.glRotatef(-70F, 1F, 0F, 0F);
+			GL11.glRotatef(48F, 0F, 0F, 1F);
+			GL11.glRotatef(105F, 0F, 1F, 0F);
+			GL11.glTranslatef(-0.1F, -0.22F, -0.15F);
+		} else {
+			GL11.glRotatef(35F, 0F, 0F, 1F);
+			GL11.glRotatef(-5F, 0F, 1F, 0F);
+			GL11.glTranslatef(0.75F, -0.22F, -0.08F);
+			GL11.glScalef(1F, 1F, -1F);
+		}
+		GL11.glTranslatef(model.thirdPersonOffset.x, model.thirdPersonOffset.y, model.thirdPersonOffset.z);
+	}
+
+	private void renderEquippedFirstPersonMovement(GunType gunType, ItemStack item, ModelGun model, boolean offHand, GunAnimations animations) {
+		int flip = offHand ? -1 : 1;
+		IScope scope = gunType.getCurrentScope(item);
+		float adsSwitch = FlansModClient.lastZoomProgress
+				+ (FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) * smoothing;
+		adsSwitch *= model.adsEffectMultiplier;
+		boolean crouching = FlansModClient.zoomProgress + 0.1F > 0.9F && ItemGun.crouching && !animations.reloading;
+		boolean sprinting = FlansModClient.zoomProgress + 0.1F < 0.2F && ItemGun.sprinting && !animations.reloading
+				&& !ItemGun.shooting && model.fancyStance;
+
+		//If in scope, dont render the gun unless its forced in the gun settings
+		if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay() && !model.stillRenderGunWhenScopedOverlay) {
+			GL11.glPopMatrix();
+			return;
+		}
+
+		//Resting positions
+		if (offHand) {
+			GL11.glTranslatef(0F, 0.03F, -0.76F);
+			GL11.glRotatef(23F, 0F, 0F, 1F);
+			GL11.glRotatef(-4F, 0F, 1F, 0F);
+			GL11.glTranslatef(0.15F, 0.2F, -0.6F);
+		} else if (crouching) {
+			GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
+			GL11.glRotatef(-5F, 0F, 1F, 0F);
+			GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
+			if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
+				GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+			}
+			GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+			// forward, up, sideways
+			GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);
+		} else if (sprinting) {
+			GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);
+			// left/right on length == left/right on height == null == down/up
+			GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
+			GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
+			if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
+				GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+			}
+			GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+			// forward, up, sideways
+			GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y,
+					0F + model.stanceTranslate.z);
+		} else {
+			// Angle down slightly
+			GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F); // Angle nose down slightly -> angle nose up slightly
+			GL11.glRotatef(-5F, 0F, 1F, 0F); // Rotate Z nose inward
+			GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch); // Slightly forward, slightly up -> more up, to left -> more towards middle
+			if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
+				GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
+			}
+			// Rotate nose up
+			GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
+			// Move gun down as ADS progresses
+			GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
+		}
+
+		//Weapon switch animation
+		if (animations.switchAnimationProgress > 0 && animations.switchAnimationLength > 0)
+			renderWeaponSwitchMovement(animations);
+
+		//Melee animations
+		if (animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
+			renderMeleeMovement(gunType, animations);
+
+		if (model.spinningCocking) {
+			GL11.glTranslatef(model.spinPoint.x, model.spinPoint.y, model.spinPoint.z);
+			float pumped = (animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing);
+			GL11.glRotatef(pumped * 180F + 180F, 0F, 0F, 1F);
+			GL11.glTranslatef(-model.spinPoint.x, -model.spinPoint.y, -model.spinPoint.z);
+		}
+
+		//Handle reload animations
+		if (animations.reloading)
+			renderReloadMovement(animations, model, gunType, item, flip);
+	}
+
+	//TODO, Allow per weapon "resting" positions
+	private void renderWeaponSwitchMovement(GunAnimations animations) {
+		Vector3f pos1 = new Vector3f(0, -0.4f, 0);
+		Vector3f pos2 = new Vector3f(0, 0, 0);
+		Vector3f startAngles = new Vector3f(90, 30, -40);
+		Vector3f endAngles = new Vector3f(0, 0, 0);
+		float interp =
+				(animations.switchAnimationProgress + smoothing) / animations.switchAnimationLength;
+
+		GL11.glTranslatef(pos2.x + (pos2.x - pos1.x) * interp,
+				pos1.y + (pos2.y - pos1.y) * interp, pos1.z + (pos2.z - pos1.z) * interp);
+
+		GL11.glRotatef(startAngles.y + (endAngles.y - startAngles.y) * interp, 0f, 1f, 0f);
+		GL11.glRotatef(startAngles.z + (endAngles.z - startAngles.z) * interp, 0f, 0f, 1f);
+	}
+
+	private void renderMeleeMovement(GunType gunType, GunAnimations animations) {
+		Vector3f meleePos = gunType.meleePath.get(animations.meleeAnimationProgress);
+		Vector3f nextMeleePos = animations.meleeAnimationProgress + 1 < gunType.meleePath.size() ? gunType.meleePath.get(animations.meleeAnimationProgress + 1) : new Vector3f();
+		GL11.glTranslatef(meleePos.x + (nextMeleePos.x - meleePos.x) * smoothing, meleePos.y + (nextMeleePos.y - meleePos.y) * smoothing, meleePos.z + (nextMeleePos.z - meleePos.z) * smoothing);
+		Vector3f meleeAngles = gunType.meleePathAngles.get(animations.meleeAnimationProgress);
+		Vector3f nextMeleeAngles = animations.meleeAnimationProgress + 1 < gunType.meleePathAngles.size() ? gunType.meleePathAngles.get(animations.meleeAnimationProgress + 1) : new Vector3f();
+		GL11.glRotatef(meleeAngles.y + (nextMeleeAngles.y - meleeAngles.y) * smoothing, 0F, 1F, 0F);
+		GL11.glRotatef(meleeAngles.z + (nextMeleeAngles.z - meleeAngles.z) * smoothing, 0F, 0F, 1F);
+		GL11.glRotatef(meleeAngles.x + (nextMeleeAngles.x - meleeAngles.x) * smoothing, 1F, 0F, 0F);
+	}
+
+	private void renderReloadMovement(GunAnimations animations, ModelGun model, GunType gunType, ItemStack item, int flip) {
+		float reloadRotate;
+
+		EnumAnimationType anim = model.animationType;
+		if (gunType.getGrip(item) != null && gunType.getSecondaryFire(item))
+			anim = gunType.getGrip(item).model.secondaryAnimType;
+
+		// Calculate the amount of tilt required for the reloading animation
+		float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress
+				+ (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
+		reloadRotate = 1F;
+		if (effectiveReloadAnimationProgress < model.tiltGunTime)
+			reloadRotate = effectiveReloadAnimationProgress / model.tiltGunTime;
+		if (effectiveReloadAnimationProgress > model.tiltGunTime + model.unloadClipTime
+				+ model.loadClipTime)
+			reloadRotate = 1F - (effectiveReloadAnimationProgress
+					- (model.tiltGunTime + model.unloadClipTime + model.loadClipTime))
+					/ model.untiltGunTime;
+
+		// Rotate/translate the GUN dependent on the animation type
+		switch (anim) {
+			case BOTTOM_CLIP:
+			case PISTOL_CLIP:
+			case SHOTGUN:
+			case END_LOADED: {
+				GL11.glRotatef(60F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(30F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.25F * reloadRotate, 0F, 0F);
 				break;
 			}
-			case EQUIPPED: {
-				if (offHand) {
-					GL11.glRotatef(-70F, 1F, 0F, 0F);
-					GL11.glRotatef(48F, 0F, 0F, 1F);
-					GL11.glRotatef(105F, 0F, 1F, 0F);
-					GL11.glTranslatef(-0.1F, -0.22F, -0.15F);
-				} else {
-					GL11.glRotatef(35F, 0F, 0F, 1F);
-					GL11.glRotatef(-5F, 0F, 1F, 0F);
-					GL11.glTranslatef(0.75F, -0.22F, -0.08F);
-					GL11.glScalef(1F, 1F, -1F);
-				}
-				GL11.glTranslatef(model.thirdPersonOffset.x, model.thirdPersonOffset.y, model.thirdPersonOffset.z);
-				/*
-				 * if(animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress
-				 * < gunType.meleePath.size()) { Vector3f meleePos =
-				 * gunType.meleePath.get(animations.meleeAnimationProgress); Vector3f
-				 * nextMeleePos = animations.meleeAnimationProgress + 1 <
-				 * gunType.meleePath.size() ?
-				 * gunType.meleePath.get(animations.meleeAnimationProgress + 1) : new
-				 * Vector3f(); GL11.glTranslatef(meleePos.x + (nextMeleePos.x - meleePos.x) *
-				 * smoothing, meleePos.y + (nextMeleePos.y - meleePos.y) * smoothing, meleePos.z
-				 * + (nextMeleePos.z - meleePos.z) * smoothing); }
-				 */
+			//TODO Investigate if all this can be deleted
+			case CUSTOMBOTTOM_CLIP:
+			case CUSTOMPISTOL_CLIP:
+			case CUSTOMSHOTGUN:
+			case CUSTOMEND_LOADED:
+			case CUSTOMBACK_LOADED:
+			case CUSTOMBULLPUP:
+				//allows you to customize gun tilt & rotation while maintaining the specialized reload
+			case CUSTOMRIFLE:
+			case CUSTOMRIFLE_TOP:
+			case CUSTOMREVOLVER:
+			case CUSTOMREVOLVER2:
+			case CUSTOMALT_PISTOL_CLIP:
+			case CUSTOMSTRIKER:
+			case CUSTOMGENERIC:
+			case CUSTOM: {
+				GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
+				GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
+				GL11.glTranslatef(model.translateGun.x * reloadRotate, model.translateGun.y * reloadRotate,
+						model.translateGun.z * reloadRotate);
 				break;
 			}
-			case EQUIPPED_FIRST_PERSON:
-			{
-				IScope scope = gunType.getCurrentScope(item);
-				if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay() && !model.stillRenderGunWhenScopedOverlay) {
-					GL11.glPopMatrix();
-					return;
-				}
-				float adsSwitch = FlansModClient.lastZoomProgress
-						+ (FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) * smoothing;// 0F;//((float)Math.sin((FlansMod.ticker)
-				adsSwitch *= model.adsEffectMultiplier;																						// / 10F) + 1F)
-																										// / 2F;
-				if (offHand) {
-					GL11.glTranslatef(0F, 0.03F, -0.76F);
-					GL11.glRotatef(23F, 0F, 0F, 1F);
-					GL11.glRotatef(-4F, 0F, 1F, 0F);
-					GL11.glTranslatef(0.15F, 0.2F, -0.6F);
-				} else if (FlansModClient.zoomProgress + 0.1F > 0.9F && ItemGun.crouching && !animations.reloading) {
-					GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F);
-					GL11.glRotatef(-5F, 0F, 1F, 0F);
-					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-					if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
-						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
-					}
-					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
-					// forward, up, sideways
-					GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);
-				} else if (FlansModClient.zoomProgress + 0.1F < 0.2F && ItemGun.sprinting && !animations.reloading
-						&& !ItemGun.shooting && model.fancyStance) {
-					GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);
-					// left/right on length == left/right on height == null == down/up
-					GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
-					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-					if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
-						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
-					}
-					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
-					// forward, up, sideways
-					GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y,
-							0F + model.stanceTranslate.z);
-				} else {
-					// Angle down slightly
-					GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F); // Angle nose down slightly -> angle nose up slightly
-					GL11.glRotatef(-5F, 0F, 1F, 0F); // Rotate Z nose inward
-					GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch); // Slightly forward, slightly up -> more up, to left -> more towards middle
-					if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
-						GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
-					}
-					// Rotate nose up
-					GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
-					// Move gun down as ADS progresses
-					GL11.glTranslatef(-0.0F, -0.03F * adsSwitch, 0F);
-				}
-
-				if (animations.switchAnimationProgress > 0 && animations.switchAnimationLength > 0) {
-
-					Vector3f pos1 = new Vector3f(0, -0.4f, 0);
-					Vector3f pos2 = new Vector3f(0, 0, 0);
-					Vector3f startAngles = new Vector3f(90, 30, -40);
-					Vector3f endAngles = new Vector3f(0, 0, 0);
-					float interp =
-							(animations.switchAnimationProgress + smoothing) / animations.switchAnimationLength;
-
-					GL11.glTranslatef(pos2.x + (pos2.x - pos1.x) * interp,
-							pos1.y + (pos2.y - pos1.y) * interp, pos1.z + (pos2.z - pos1.z) * interp);
-
-					GL11.glRotatef(startAngles.y + (endAngles.y - startAngles.y) * interp, 0f, 1f, 0f);
-					GL11.glRotatef(startAngles.z + (endAngles.z - startAngles.z) * interp, 0f, 0f, 1f);
-				}
-
-				if (animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
-				{
-					Vector3f meleePos = gunType.meleePath.get(animations.meleeAnimationProgress);
-					Vector3f nextMeleePos = animations.meleeAnimationProgress + 1 < gunType.meleePath.size() ? gunType.meleePath.get(animations.meleeAnimationProgress + 1) : new Vector3f();
-					GL11.glTranslatef(meleePos.x + (nextMeleePos.x - meleePos.x) * smoothing, meleePos.y + (nextMeleePos.y - meleePos.y) * smoothing, meleePos.z + (nextMeleePos.z - meleePos.z) * smoothing);
-					Vector3f meleeAngles = gunType.meleePathAngles.get(animations.meleeAnimationProgress);
-					Vector3f nextMeleeAngles = animations.meleeAnimationProgress + 1 < gunType.meleePathAngles.size() ? gunType.meleePathAngles.get(animations.meleeAnimationProgress + 1) : new Vector3f();
-					GL11.glRotatef(meleeAngles.y + (nextMeleeAngles.y - meleeAngles.y) * smoothing, 0F, 1F, 0F);
-					GL11.glRotatef(meleeAngles.z + (nextMeleeAngles.z - meleeAngles.z) * smoothing, 0F, 0F, 1F);
-					GL11.glRotatef(meleeAngles.x + (nextMeleeAngles.x - meleeAngles.x) * smoothing, 1F, 0F, 0F);
-
-				}
-
-				if (model.spinningCocking) {
-					GL11.glTranslatef(model.spinPoint.x, model.spinPoint.y, model.spinPoint.z);
-					float pumped = (animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing);
-					GL11.glRotatef(pumped * 180F + 180F, 0F, 0F, 1F);
-					GL11.glTranslatef(-model.spinPoint.x, -model.spinPoint.y, -model.spinPoint.z);
-				}
-
-				if (animations.reloading) {
-					EnumAnimationType anim = model.animationType;
-					if (gunType.getGrip(item) != null && gunType.getSecondaryFire(item))
-						anim = gunType.getGrip(item).model.secondaryAnimType;
-
-					// Calculate the amount of tilt required for the reloading animation
-					float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress
-							+ (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
-					reloadRotate = 1F;
-					if (effectiveReloadAnimationProgress < model.tiltGunTime)
-						reloadRotate = effectiveReloadAnimationProgress / model.tiltGunTime;
-					if (effectiveReloadAnimationProgress > model.tiltGunTime + model.unloadClipTime
-							+ model.loadClipTime)
-						reloadRotate = 1F - (effectiveReloadAnimationProgress
-								- (model.tiltGunTime + model.unloadClipTime + model.loadClipTime))
-								/ model.untiltGunTime;
-
-					// Rotate/translate the GUN dependent on the animation type
-					switch (anim) {
-					case BOTTOM_CLIP:
-					case PISTOL_CLIP:
-					case SHOTGUN:
-					case END_LOADED: {
-						GL11.glRotatef(60F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(30F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.25F * reloadRotate, 0F, 0F);
-						break;
-					}
-					//TODO Investigate if all this can be deleted
-					case CUSTOMBOTTOM_CLIP:
-					case CUSTOMPISTOL_CLIP:
-					case CUSTOMSHOTGUN:
-					case CUSTOMEND_LOADED:
-					case CUSTOMBACK_LOADED:
-					case CUSTOMBULLPUP:
-					//allows you to customize gun tilt & rotation while maintaining the specialized reload
-					case CUSTOMRIFLE:
-					case CUSTOMRIFLE_TOP:
-					case CUSTOMREVOLVER:
-					case CUSTOMREVOLVER2:
-					case CUSTOMALT_PISTOL_CLIP:
-					case CUSTOMSTRIKER:
-					case CUSTOMGENERIC:
-					case CUSTOM: {
-						GL11.glRotatef(model.rotateGunVertical * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(model.rotateGunHorizontal * reloadRotate, 0F, 1F, 0F);
-						GL11.glRotatef(model.tiltGun * reloadRotate, 1F, 0F, 0F);
-						GL11.glTranslatef(model.translateGun.x * reloadRotate, model.translateGun.y * reloadRotate,
-								model.translateGun.z * reloadRotate);
-						break;
-					}
-					case BACK_LOADED: {
-						GL11.glRotatef(-75F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(-30F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.5F * reloadRotate, 0F, 0F);
-						break;
-					}
-						case BULLPUP: {
-						GL11.glRotatef(70F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(10F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.5F * reloadRotate, -0.2F * reloadRotate, 0F);
-						break;
-					}
-						case RIFLE: {
-						GL11.glRotatef(30F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(-30F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.5F * reloadRotate, 0F, -0.5F * reloadRotate);
-						break;
-					}
-						case RIFLE_TOP:
-					case REVOLVER: {
-						GL11.glRotatef(30F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(10F * reloadRotate, 0F, 1F, 0F);
-						GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.1F * reloadRotate, -0.2F * reloadRotate, -0.1F * reloadRotate);
-						break;
-					}
-						case REVOLVER2: {
-						GL11.glRotatef(20F * reloadRotate, 0F, 0F, 1F);
-						GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
-						break;
-					}
-						case ALT_PISTOL_CLIP: {
-						GL11.glRotatef(60F * reloadRotate * flip, 0F, 1F, 0F);
-						GL11.glTranslatef(0.15F * reloadRotate, 0.25F * reloadRotate, 0F);
-						break;
-					}
-						case STRIKER: {
-						GL11.glRotatef(-35F * reloadRotate * flip, 1F, 0F, 0F);
-						GL11.glTranslatef(0.2F * reloadRotate, 0F, -0.1F * reloadRotate);
-						break;
-					}
-						case GENERIC: {
-						// Gun reloads partly or completely off-screen.
-						GL11.glRotatef(45F * reloadRotate, 0F, 0F, 1F);
-						GL11.glTranslatef(-0.2F * reloadRotate, -0.5F * reloadRotate, 0F);
-						break;
-					}
-						default:
-						break;
-					}
-				}
+			case BACK_LOADED: {
+				GL11.glRotatef(-75F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(-30F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.5F * reloadRotate, 0F, 0F);
+				break;
+			}
+			case BULLPUP: {
+				GL11.glRotatef(70F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(10F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.5F * reloadRotate, -0.2F * reloadRotate, 0F);
+				break;
+			}
+			case RIFLE: {
+				GL11.glRotatef(30F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(-30F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.5F * reloadRotate, 0F, -0.5F * reloadRotate);
+				break;
+			}
+			case RIFLE_TOP:
+			case REVOLVER: {
+				GL11.glRotatef(30F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(10F * reloadRotate, 0F, 1F, 0F);
+				GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.1F * reloadRotate, -0.2F * reloadRotate, -0.1F * reloadRotate);
+				break;
+			}
+			case REVOLVER2: {
+				GL11.glRotatef(20F * reloadRotate, 0F, 0F, 1F);
+				GL11.glRotatef(-10F * reloadRotate * flip, 1F, 0F, 0F);
+				break;
+			}
+			case ALT_PISTOL_CLIP: {
+				GL11.glRotatef(60F * reloadRotate * flip, 0F, 1F, 0F);
+				GL11.glTranslatef(0.15F * reloadRotate, 0.25F * reloadRotate, 0F);
+				break;
+			}
+			case STRIKER: {
+				GL11.glRotatef(-35F * reloadRotate * flip, 1F, 0F, 0F);
+				GL11.glTranslatef(0.2F * reloadRotate, 0F, -0.1F * reloadRotate);
+				break;
+			}
+			case GENERIC: {
+				// Gun reloads partly or completely off-screen.
+				GL11.glRotatef(45F * reloadRotate, 0F, 0F, 1F);
+				GL11.glTranslatef(-0.2F * reloadRotate, -0.5F * reloadRotate, 0F);
 				break;
 			}
 			default:
 				break;
-			}
-
-			renderGun(item, gunType, f, model, animations, reloadRotate, type);
 		}
-		GL11.glPopMatrix();
 	}
 
 	/**
 	 * Gun render method, seperated from transforms so that mecha renderer may also
 	 * call this
 	 */
-	public void renderGun(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations, float reloadRotate, ItemRenderType rtype)
-	{
+	public void renderGunModel(ItemStack item, GunType type, float f, ModelGun model, GunAnimations animations, float reloadRotate, ItemRenderType rtype) {
 		// Make sure we actually have the renderEngine
 		if (renderEngine == null)
 			renderEngine = Minecraft.getMinecraft().renderEngine;
@@ -1311,4 +1319,5 @@ public class RenderGun implements IItemRenderer {
 		else
 			return gun.model.RotateSlideDistance;
 	}
+
 }
