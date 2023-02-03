@@ -128,13 +128,13 @@ public class RenderGun implements IItemRenderer {
 		{
 			// Do transforms and rotations depending on how the gun is being rendered/viewed
 			//Ground, item frame, etc
-			if (type.name().equals("ENTITY")) {
+			if (type == ItemRenderType.ENTITY) {
 				renderEntityMovement(model, data);
 			//Third person
-			} else if (type.name().equals("EQUIPPED")) {
+			} else if (type == ItemRenderType.EQUIPPED) {
 				renderEquippedMovement(model, offHand);
 			//First person
-			} else if (type.name().equals("EQUIPPED_FIRST_PERSON")) {
+			} else if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
 				renderEquippedFirstPersonMovement(gunType, item, model, offHand, animations);
 			}
 
@@ -580,10 +580,8 @@ public class RenderGun implements IItemRenderer {
 			renderRevolverBarrel(model, reloadRotate, f);
 			//Render gun ammo
 			renderAmmo(model, type, gripAttachment, item, empty, animations, reloadRotate, rtype, f, gripItemStack);
-			// Render a static model of the ammo NOT being reloaded
-			//this seems to not be required at all
-			//renderStaticAmmo(type, item, model, f, gripAttachment, gripItemStack);
-
+			// Render a static model of the ammo NOT being reloaded, for underbarrels??
+			renderStaticAmmo(type, item, model, f, gripAttachment, gripItemStack);
 
 			//Render casing ejection
 			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
