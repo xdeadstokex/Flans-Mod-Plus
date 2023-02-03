@@ -76,7 +76,8 @@ public class RenderGun implements IItemRenderer {
 			animations = FlansModClient.getGunAnimations((EntityLivingBase) data[1], false);
 		}
 
-		renderGunMovement(type, item, gunType, animations, false, data);
+		//Sets up translations and rotations then calls renderGunModel
+		setupGunRender(type, item, gunType, animations, false, data);
 
 		// Render off-hand gun
 		if (gunType.getOneHanded() && type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
@@ -97,7 +98,8 @@ public class RenderGun implements IItemRenderer {
 					if (!offHandGunType.getOneHanded())
 						return;
 
-					renderGunMovement(type, offHandItem, offHandGunType, animations, true, data);
+					//Sets up translations and rotations then calls renderGunModel
+					setupGunRender(type, offHandItem, offHandGunType, animations, true, data);
 				}
 
 			}
@@ -115,10 +117,11 @@ public class RenderGun implements IItemRenderer {
 		if (!offHandGunType.getOneHanded())
 			return;
 
-		renderGunMovement(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);
+		//Sets up translations and rotations then calls renderGunModel
+		setupGunRender(ItemRenderType.EQUIPPED, offHandItemStack, offHandGunType, animations, true, player);
 	}
 
-	private void renderGunMovement(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
+	private void setupGunRender(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
 		// The model scale
 		float f = 1F / 16F;
 		ModelGun model = gunType.model;
