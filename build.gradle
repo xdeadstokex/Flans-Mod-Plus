@@ -3,21 +3,22 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "https://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
-	maven {
-	    url = "https://repo1.maven.org/maven2/"
-    }
-    dependencies {
-        classpath ('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
-            changing = true
+        maven {
+            url = "https://repo1.maven.org/maven2/"
+        }
+        dependencies {
+            // Requires Gradle 4+
+            classpath('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
+                changing = true
+            }
         }
     }
-  }
 }
 
 apply plugin: 'forge'
