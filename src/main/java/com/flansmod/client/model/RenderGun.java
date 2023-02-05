@@ -281,13 +281,13 @@ public class RenderGun implements IItemRenderer {
 			defaultRotation = animations.sprintingStance;
 		}
 
-		if (Objects.equals(model.sprintStanceTranslate, new Vector3f(0F, 0F, 0F))) {
+		if (!Objects.equals(model.sprintStanceTranslate, new Vector3f(0F, 0F, 0F))) {
 			GL11.glTranslatef(configuredTranslate.x * progress, configuredTranslate.y * progress, configuredTranslate.z * progress);
 		} else {
 			GL11.glTranslatef(defaultTranslate.x * progress, defaultTranslate.y * progress, defaultTranslate.z * progress);
 		}
 
-		if (Objects.equals(model.sprintStanceRotate, new Vector3f(0F, 0F, 0F))) {
+		if (!Objects.equals(model.sprintStanceRotate, new Vector3f(0F, 0F, 0F))) {
 			GL11.glRotatef(configuredRotation.x * progress, 1f, 0f, 0f);
 			GL11.glRotatef(configuredRotation.y * progress, 0f, 1f, 0f);
 			GL11.glRotatef(configuredRotation.z * progress, 0f, 0f, 1f);
