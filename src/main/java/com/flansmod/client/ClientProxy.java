@@ -309,9 +309,6 @@ public class ClientProxy extends CommonProxy {
                 return location + ".Model" + split[1];
             }
 
-            if (FlansMod.printDebugLog)
-                FlansMod.logger.warn("No model location registered for {}", in);
-
             StringBuilder out = new StringBuilder("Model" + split[split.length - 1]);
             for (int i = split.length - 2; i >= 0; i--) {
                 out.insert(0, split[i] + ".");

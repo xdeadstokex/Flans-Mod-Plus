@@ -206,7 +206,7 @@ public class PlayerClass extends InfoType {
                 FlansMod.log("Loaded PlayerClass for " + name + " (" + packName + ") in " + end + " ms");
         } catch (Exception e) {
             FlansMod.log("Interpreting player class file failed.");
-            e.printStackTrace();
+            FlansMod.logger.error(e);
         }
     }
 

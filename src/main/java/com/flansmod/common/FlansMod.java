@@ -10,9 +10,9 @@ import com.flansmod.common.driveables.mechas.*;
 import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.guns.boxes.GunPage;
-import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.network.PacketHandler;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
@@ -21,7 +21,6 @@ import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
 import com.flansmod.common.sync.SyncEventHandler;
 import com.flansmod.common.teams.*;
-import com.flansmod.common.teams.CommandFlans;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
@@ -87,6 +86,8 @@ public class FlansMod {
     public static int breakableArmor = 0;
     public static int defaultArmorDurability = 500;
     public static boolean armsEnable = true;
+    public static boolean holdingGunsDisablesChests = true;
+    public static boolean holdingGunsDisablesAll = false;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
     public static boolean realisticRecoil = false;
@@ -127,8 +128,14 @@ public class FlansMod {
     public static boolean showPackNameInItemDescriptions = true;
     public static float masterDamageModifier = 1.0F;
     public static float masterRecoilModifier = 1.0F;
+    public static float masterHeadshotModifier = 2.0F;
+    public static float masterLegModifier = 0.5F;
     public static boolean masterDualWieldDisable = false;
     public static boolean gunDevMode = false;
+
+    public static float nameTagRenderRange = 64F;
+    public static float nameTagSneakRenderRange = 32F;
+    public static float maxHealth = 20;
 
     public static int armourSpawnRate = 20;
 
@@ -202,7 +209,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
-	crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
+	    crosshairsymbol = (new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -235,7 +242,7 @@ public class FlansMod {
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
         if (contentManager.reloadResources()) {
-            logger.warn("Content packs detected, reload resources");
+            logger.info("Content packs detected, reload resources");
             proxy.forceReload();
         }
 
@@ -311,6 +318,7 @@ public class FlansMod {
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
+        new PlayerSpawnEventListener();
         MinecraftForge.EVENT_BUS.register(new PlayerDropsEventListener());
         MinecraftForge.EVENT_BUS.register(new LivingSpawnEventListener());
         MinecraftForge.EVENT_BUS.register(new AnvilUpdateEventListener());
@@ -662,11 +670,18 @@ public class FlansMod {
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
         showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
         masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterHeadshotModifier = configFile.getFloat("Headshot damage Modifier", "Gameplay Settings (synced)", masterHeadshotModifier, 0, 100, "All headshot damage will be modified by this amount");
+        masterLegModifier = configFile.getFloat("Leg damage Modifier", "Gameplay Settings (synced)", masterLegModifier, 0, 100, "All leg damage will be modified by this amount");
         masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
         masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
         gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
+        nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
+        nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
+        maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
 
         //Client Side Settings
+        holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
+        holdingGunsDisablesAll = configFile.getBoolean("Block All Interactions While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesAll, "Disable all block interactions while holding a gun");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
@@ -722,11 +737,18 @@ public class FlansMod {
         vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
         showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
         masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterHeadshotModifier = configFile.getFloat("Headshot damage Modifier", "Gameplay Settings (synced)", masterHeadshotModifier, 0, 100, "All headshot damage will be modified by this amount");
+        masterLegModifier = configFile.getFloat("Leg damage Modifier", "Gameplay Settings (synced)", masterLegModifier, 0, 100, "All leg damage will be modified by this amount");
         masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
         masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
         gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
+        nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
+        nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
+        maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
 
         //Client Side Settings
+        holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
+        holdingGunsDisablesAll = configFile.getBoolean("Block All Interactions While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesAll, "Disabled all block interactions while holding a gun");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
