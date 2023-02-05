@@ -132,8 +132,6 @@ public class FlansMod {
     public static float masterLegModifier = 0.5F;
     public static boolean masterDualWieldDisable = false;
     public static boolean gunDevMode = false;
-    public static boolean enableWeaponSprintStance = true;
-    public static boolean enableRandomSprintStance = false;
 
     public static float nameTagRenderRange = 64F;
     public static float nameTagSneakRenderRange = 32F;
@@ -685,8 +683,6 @@ public class FlansMod {
         nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
         nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
         maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
-        enableWeaponSprintStance = configFile.getBoolean("Enable Sprint Stance", "Gameplay Settings (synced)", enableWeaponSprintStance, "This will move weapons to a lowered position when sprinting");
-        enableRandomSprintStance = configFile.getBoolean("Enable Randomized Sprint Stance", "Gameplay Settings (synced)", enableRandomSprintStance, "This will randomly generate unique positions for each weapon using the weapon name as a seed");
 
         //Client Side Settings
         holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
