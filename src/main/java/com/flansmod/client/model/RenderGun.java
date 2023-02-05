@@ -1,6 +1,7 @@
 package com.flansmod.client.model;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -268,8 +269,8 @@ public class RenderGun implements IItemRenderer {
 		Vector3f defaultTranslate = new Vector3f(0, 0F, -0.2);
 		Vector3f defaultRotation = new Vector3f(-15F, 45F, -10F);
 
-		Vector3f configuredTranslate = new Vector3f(model.sprintStanceTranslate.x, model.sprintStanceTranslate.y, model.sprintStanceTranslate.z);
-		Vector3f configuredRotation = new Vector3f(model.sprintStanceRotate.x, model.sprintStanceRotate.y, model.sprintStanceRotate.z);
+		Vector3f configuredTranslate = model.sprintStanceTranslate;
+		Vector3f configuredRotation = model.sprintStanceRotate;
 
 		float progress = (animations.runningStanceAnimationProgress + smoothing) / animations.runningStanceAnimationLength;
 		if (animations.runningStanceAnimationProgress == animations.runningStanceAnimationLength)
@@ -280,14 +281,21 @@ public class RenderGun implements IItemRenderer {
 			defaultRotation = animations.sprintingStance;
 		}
 
-		GL11.glTranslatef(defaultTranslate.x * progress, defaultTranslate.y * progress, defaultTranslate.z * progress);
-		GL11.glTranslatef(configuredTranslate.x * progress, configuredTranslate.y * progress, configuredTranslate.z * progress);
-		GL11.glRotatef(defaultRotation.x * progress, 1f, 0f, 0f);
-		GL11.glRotatef(defaultRotation.y * progress, 0f, 1f, 0f);
-		GL11.glRotatef(defaultRotation.z * progress, 0f, 0f, 1f);
-		GL11.glRotatef(configuredRotation.x * progress, 1f, 0f, 0f);
-		GL11.glRotatef(configuredRotation.y * progress, 0f, 1f, 0f);
-		GL11.glRotatef(configuredRotation.z * progress, 0f, 0f, 1f);
+		if (Objects.equals(model.sprintStanceTranslate, new Vector3f(0F, 0F, 0F))) {
+			GL11.glTranslatef(configuredTranslate.x * progress, configuredTranslate.y * progress, configuredTranslate.z * progress);
+		} else {
+			GL11.glTranslatef(defaultTranslate.x * progress, defaultTranslate.y * progress, defaultTranslate.z * progress);
+		}
+
+		if (Objects.equals(model.sprintStanceRotate, new Vector3f(0F, 0F, 0F))) {
+			GL11.glRotatef(configuredRotation.x * progress, 1f, 0f, 0f);
+			GL11.glRotatef(configuredRotation.y * progress, 0f, 1f, 0f);
+			GL11.glRotatef(configuredRotation.z * progress, 0f, 0f, 1f);
+		} else {
+			GL11.glRotatef(defaultRotation.x * progress, 1f, 0f, 0f);
+			GL11.glRotatef(defaultRotation.y * progress, 0f, 1f, 0f);
+			GL11.glRotatef(defaultRotation.z * progress, 0f, 0f, 1f);
+		}
 	}
 
 	private void renderMeleeMovement(GunType gunType, GunAnimations animations) {

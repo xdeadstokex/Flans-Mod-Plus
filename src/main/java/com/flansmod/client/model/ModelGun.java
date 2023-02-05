@@ -200,8 +200,10 @@ public class ModelGun extends ModelBase
 	public float crouchZoom = 0F;
 	public boolean fancyStance = true;
 	/** deprecated, do not use, use sprintStanceTranslate */
+	@Deprecated
 	public Vector3f stanceTranslate = new Vector3f();
 	/** deprecated, do not use, use sprintStanceRotate */
+	@Deprecated
 	public Vector3f stanceRotate = new Vector3f();
 	public Vector3f sprintStanceTranslate = new Vector3f();
 	public Vector3f sprintStanceRotate = new Vector3f();
