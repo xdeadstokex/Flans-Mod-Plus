@@ -10,9 +10,9 @@ import com.flansmod.common.driveables.mechas.*;
 import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.guns.boxes.GunPage;
-import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.network.PacketHandler;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
@@ -21,7 +21,6 @@ import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
 import com.flansmod.common.sync.SyncEventHandler;
 import com.flansmod.common.teams.*;
-import com.flansmod.common.teams.CommandFlans;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
@@ -210,7 +209,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
-	    crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
+	    crosshairsymbol = (new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -243,7 +242,7 @@ public class FlansMod {
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
         if (contentManager.reloadResources()) {
-            logger.warn("Content packs detected, reload resources");
+            logger.info("Content packs detected, reload resources");
             proxy.forceReload();
         }
 

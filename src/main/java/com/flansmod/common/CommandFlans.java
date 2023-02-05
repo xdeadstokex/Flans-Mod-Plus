@@ -1,24 +1,17 @@
-package com.flansmod.common.teams;
+package com.flansmod.common;
 
-import java.util.List;
-
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.ItemAttachment;
 import com.flansmod.common.guns.ItemGun;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentStyle;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
-import com.flansmod.common.FlansMod;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class CommandFlans extends CommandBase {
