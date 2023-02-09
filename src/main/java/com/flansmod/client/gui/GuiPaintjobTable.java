@@ -213,7 +213,7 @@ public class GuiPaintjobTable extends GuiContainer
 					case gun: 
 					{
 						GunType gunType = (GunType)paintableType;
-						ClientProxy.gunRenderer.renderGunModel(tempStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, 0F, ItemRenderType.ENTITY);
+						ClientProxy.gunRenderer.renderGunModel(tempStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, ItemRenderType.ENTITY);
 						break;
 					}
 					case attachment: 

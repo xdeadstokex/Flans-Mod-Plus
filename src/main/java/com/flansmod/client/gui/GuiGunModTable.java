@@ -70,7 +70,7 @@ public class GuiGunModTable extends GuiContainer {
                     }
                     RenderHelper.enableStandardItemLighting();
                     GL11.glScalef(-60F, 60F, 60F);
-                    ClientProxy.gunRenderer.renderGunModel(gunStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, 0F, IItemRenderer.ItemRenderType.ENTITY);
+                    ClientProxy.gunRenderer.renderGunModel(gunStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, IItemRenderer.ItemRenderType.ENTITY);
                 }
                 GL11.glPopMatrix();
             }

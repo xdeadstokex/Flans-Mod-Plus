@@ -415,7 +415,7 @@ public class RenderMecha extends Render implements IItemRenderer
 			GL11.glRotatef(-90F, 0F, 0F, 1F);
 			texturemanager.bindTexture(FlansModResourceHandler.getTexture(gunType));
 			ItemRenderType type = ItemRenderType.ENTITY;
-			ClientProxy.gunRenderer.renderGunModel(stack, gunType, 1F / 16F, model, leftHand ? mecha.leftAnimations : mecha.rightAnimations, 0F, type);
+			ClientProxy.gunRenderer.renderGunModel(stack, gunType, 1F / 16F, model, leftHand ? mecha.leftAnimations : mecha.rightAnimations, type);
 		}
 		else
 		{
