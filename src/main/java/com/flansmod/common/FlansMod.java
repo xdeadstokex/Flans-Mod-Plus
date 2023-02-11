@@ -190,7 +190,7 @@ public class FlansMod {
     public static boolean debugMode = true;
     public static int bonusRegenTickDelay = 80;
     public static int bonusRegenFoodLimit = 18;
-    public static float bonusRegenAmount = 2F;
+    public static float bonusRegenAmount = 0F;
 
 
     /**
