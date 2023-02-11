@@ -45,6 +45,9 @@ public class PacketModConfig extends PacketBase {
     public float nameTagRenderRange;
     public float nameTagSneakRenderRange;
     public float maxHealth;
+    public int bonusRegenTickDelay;
+    public int bonusRegenFoodLimit;
+    public float bonusRegenAmount;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
@@ -81,6 +84,9 @@ public class PacketModConfig extends PacketBase {
         nameTagRenderRange = FlansMod.nameTagRenderRange;
         nameTagSneakRenderRange = FlansMod.nameTagSneakRenderRange;
         maxHealth = FlansMod.maxHealth;
+        bonusRegenTickDelay = FlansMod.bonusRegenTickDelay;
+        bonusRegenFoodLimit = FlansMod.bonusRegenFoodLimit;
+        bonusRegenAmount = FlansMod.bonusRegenAmount;
     }
 
     @Override
@@ -119,6 +125,9 @@ public class PacketModConfig extends PacketBase {
         data.writeFloat(nameTagRenderRange);
         data.writeFloat(nameTagSneakRenderRange);
         data.writeFloat(maxHealth);
+        data.writeInt(bonusRegenTickDelay);
+        data.writeInt(bonusRegenFoodLimit);
+        data.writeFloat(bonusRegenAmount);
     }
 
     @Override
@@ -157,6 +166,9 @@ public class PacketModConfig extends PacketBase {
         nameTagRenderRange = data.readFloat();
         nameTagSneakRenderRange = data.readFloat();
         maxHealth = data.readFloat();
+        bonusRegenTickDelay = data.readInt();
+        bonusRegenFoodLimit = data.readInt();
+        bonusRegenAmount = data.readFloat();
     }
 
     @Override
@@ -201,6 +213,9 @@ public class PacketModConfig extends PacketBase {
         FlansMod.nameTagRenderRange = nameTagRenderRange;
         FlansMod.nameTagSneakRenderRange = nameTagSneakRenderRange;
         FlansMod.maxHealth = maxHealth;
+        FlansMod.bonusRegenTickDelay = bonusRegenTickDelay;
+        FlansMod.bonusRegenFoodLimit = bonusRegenFoodLimit;
+        FlansMod.bonusRegenAmount = bonusRegenAmount;
         FlansMod.log("Config synced successfully");
     }
 }

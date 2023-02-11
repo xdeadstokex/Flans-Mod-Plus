@@ -188,6 +188,9 @@ public class FlansMod {
     public static HashMap<EntityLivingBase, GunAnimations> gunAnimationsRight = new HashMap<>(), gunAnimationsLeft = new HashMap<>();
 
     public static boolean debugMode = true;
+    public static int bonusRegenTickDelay = 80;
+    public static int bonusRegenFoodLimit = 18;
+    public static float bonusRegenAmount = 2F;
 
 
     /**
@@ -683,6 +686,9 @@ public class FlansMod {
         nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
         nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
         maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
+        bonusRegenAmount = configFile.getFloat("Bonus regen amount", "Gameplay Settings (synced)", bonusRegenAmount, 0.0F, 1000F, "Allows you to increase health regen, best used alongside increased max health");
+        bonusRegenTickDelay = configFile.getInt("Bonus regen interval", "Gameplay Settings (synced)", bonusRegenTickDelay, 0, 1000, "Number of ticks between heals, vanilla is 80");
+        bonusRegenFoodLimit = configFile.getInt("Bonus regen food limit", "Gameplay Settings (synced)", bonusRegenFoodLimit, 0, 20, "Amount of food required to activate this regen, vanilla is 18");
 
         //Client Side Settings
         holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
