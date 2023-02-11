@@ -88,6 +88,7 @@ public class GunAnimations {
     //Fancy stance / running animation stuff
     public float runningStanceAnimationProgress = 0, runningStanceAnimationLength = 4F;
     public Vector3f sprintingStance;
+    public int stanceTimer = 0;
 
     public static float randomSeededFloat(float min, float max, long seed) {
         Random random = new Random(seed);
@@ -224,6 +225,10 @@ public class GunAnimations {
         if (runningStanceAnimationProgress > 0 && runningStanceAnimationProgress < runningStanceAnimationLength) {
             runningStanceAnimationProgress++;
         }
+
+        if (stanceTimer > 0) {
+            stanceTimer--;
+        }
     }
 
     //Not to be used for mechas
@@ -246,6 +251,7 @@ public class GunAnimations {
         hammerRotation = hammerAngle;
         althammerRotation = althammerAngle;
         muzzleFlashTime = 2;
+        stanceTimer = 20;
 
         int Low = -1;
         int High = 3;

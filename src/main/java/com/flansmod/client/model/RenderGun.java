@@ -123,9 +123,6 @@ public class RenderGun implements IItemRenderer {
 	}
 
 	private void setupGunRender(ItemRenderType type, ItemStack item, GunType gunType, GunAnimations animations, boolean offHand, Object... data) {
-		Minecraft mc = Minecraft.getMinecraft();
-		boolean isShooting = mc.gameSettings.keyBindAttack.getIsKeyPressed();
-
 		// The model scale
 		float f = 1F / 16F;
 		ModelGun model = gunType.model;
@@ -142,7 +139,7 @@ public class RenderGun implements IItemRenderer {
 				renderEquippedMovement(model, offHand);
 			//First person
 			} else if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-				renderEquippedFirstPersonMovement(gunType, item, model, offHand, animations, isShooting);
+				renderEquippedFirstPersonMovement(gunType, item, model, offHand, animations);
 			}
 
 			//Now that the matrix is set up, render the models
@@ -173,7 +170,7 @@ public class RenderGun implements IItemRenderer {
 		GL11.glTranslatef(model.thirdPersonOffset.x, model.thirdPersonOffset.y, model.thirdPersonOffset.z);
 	}
 
-	private void renderEquippedFirstPersonMovement(GunType gunType, ItemStack item, ModelGun model, boolean offHand, GunAnimations animations, boolean isShooting) {
+	private void renderEquippedFirstPersonMovement(GunType gunType, ItemStack item, ModelGun model, boolean offHand, GunAnimations animations) {
 		int flip = offHand ? -1 : 1;
 		IScope scope = gunType.getCurrentScope(item);
 		float adsSwitch = FlansModClient.lastZoomProgress
@@ -225,7 +222,7 @@ public class RenderGun implements IItemRenderer {
 		}
 
 		//Weapon sprinting animation
-		if (sprinting && !isShooting && FlansMod.enableWeaponSprintStance) {
+		if (sprinting && animations.stanceTimer == 0 && FlansMod.enableWeaponSprintStance) {
 			if (animations.runningStanceAnimationProgress == 0)
 				animations.runningStanceAnimationProgress = 1;
 			renderWeaponSprintMovement(animations, model, gunType);
