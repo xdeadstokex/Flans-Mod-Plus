@@ -124,6 +124,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
     public boolean initialTick = true;
 
+    private double getPrevDistanceToTarget;
 
     public EntityBullet(World world) {
         super(world);
@@ -533,7 +534,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 Entity entity = (Entity) obj;
                 if (entity != this && entity != owner && !entity.isDead && !(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb) && !(entity instanceof EntityArrow) &&
                         (!entity.getClass().toString().contains("flansmod.") || entity instanceof EntityAAGun || entity instanceof EntityGrenade)
-                        && !entity.getClass().toString().contains("holographicdisplays")) {
+                        && !entity.getClass().toString().contains("holographicdisplays") && !entity.getClass().toString().contains("EntityScent")) {
                     AxisAlignedBB bb = entity.boundingBox.addCoord(
                             -(entity.posX - entity.prevPosX) * 2,
                             -(entity.posY - entity.prevPosY) * 2,
@@ -940,6 +941,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             } else if (lockedOnTo != null && lockedOnTo.getEntityData().getBoolean("FlareUsing")) {
                 lockedOnTo = null;
             }
+        } else if (type.laserGuidance) {
+            MovingObjectPosition mop = getSpottedPoint((EntityLivingBase) owner, 1F, type.maxRangeOfMissile, false);
+            if (mop != null) {
+                applyLaserGuidance(new Vector3f(mop.blockX, mop.blockY, mop.blockZ), motion);
+            }
         }
 
         //FlansMod.log((int)posX+","+(int)posY+","+(int)posZ);
@@ -1098,6 +1104,52 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             extinguish();
     }
 
+    private static MovingObjectPosition getSpottedPoint(EntityLivingBase entity_base, float fasc, double dist, boolean interact) {
+        Vec3 vec3 = Vec3.createVectorHelper(entity_base.posX, entity_base.posY + entity_base.getEyeHeight(), entity_base.posZ);
+        Vec3 vec31 = entity_base.getLook(fasc);
+        Vec3 vec32 = vec3.addVector(vec31.xCoord * dist, vec31.yCoord * dist, vec31.zCoord * dist);
+        return entity_base.worldObj.rayTraceBlocks(vec3, vec32, interact);
+    }
+
+    private void applyLaserGuidance(Vector3f targetPos, Vector3f motion) {
+        if (this.ticksExisted > type.tickStartHoming) {
+            double dX = targetPos.x - posX;
+            double dY = targetPos.y - posY;
+            double dZ = targetPos.z - posZ;
+            double dXYZ;
+            float f = (float) (this.posX - targetPos.x);
+            float f1 = (float) (this.posY - targetPos.y);
+            float f2 = (float) (this.posZ - targetPos.z);
+            dXYZ = MathHelper.sqrt_float(f * f + f1 * f1 + f2 * f2);
+            if (this.toggleLock) {
+                if (dXYZ > type.maxRangeOfMissile)
+                    targetPos = null;
+                toggleLock = false;
+            }
+            double dmotion = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+            Vector3f motionVector = new Vector3f(dX * dmotion / dXYZ, dY * dmotion / dXYZ, dZ * dmotion / dXYZ);
+            double angle = Math.abs(Vector3f.angle(motion, motionVector));
+            if (angle > Math.toRadians(type.maxDegreeOfMissile)) {
+                targetPos = null;
+            } else {
+                motionX = motionVector.x;
+                motionY = motionVector.y;
+                motionZ = motionVector.z;
+            }
+
+            if (this.ticksExisted > 4 && dXYZ > getPrevDistanceToTarget) {
+                closeCount++;
+                if (closeCount > 15) {
+                    targetPos = null;
+                }
+            } else {
+                if (closeCount > 0)
+                    closeCount--;
+            }
+            getPrevDistanceToTarget = dXYZ;
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
         double dX = (posX - prevPosX) / 10;
@@ -1173,7 +1225,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 if (owner instanceof EntityPlayer) {
                     new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
                             type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-                            type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+                            type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
                 } else {
                     worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions);
                 }
@@ -1265,7 +1317,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             if ((owner instanceof EntityPlayer)) {
                 new FlansModExplosion(worldObj, this, (EntityPlayer) owner, type, posX, posY, posZ,
                         type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-                        type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+                        type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
                 isDead = true;
             } else {
                 worldObj.createExplosion(this, posX, posY, posZ, type.explosionRadius, TeamsManager.explosions && type.explosionBreaksBlocks);

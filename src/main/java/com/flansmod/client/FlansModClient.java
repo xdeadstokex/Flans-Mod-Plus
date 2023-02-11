@@ -147,8 +147,6 @@ public class FlansModClient extends FlansMod {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    //private static final ResourceLocation zombieSkin = new ResourceLocation("flansmod", "skins/zombie.png");
-
     @SubscribeEvent
     public void renderOffHandGun(RenderPlayerEvent.Specials.Post event) {
         RenderPlayer renderer = event.renderer;
@@ -162,7 +160,7 @@ public class FlansModClient extends FlansMod {
             gunStack = data.offHandGunStack;
         } else {
             ItemStack currentStack = player.getCurrentEquippedItem();
-            if (currentStack == null || !(currentStack.getItem() instanceof ItemGun) || !((ItemGun) currentStack.getItem()).type.oneHanded || data.offHandGunSlot == 0)
+            if (currentStack == null || !(currentStack.getItem() instanceof ItemGun) || !((ItemGun) currentStack.getItem()).type.getOneHanded() || data.offHandGunSlot == 0)
                 return;
             gunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
         }
@@ -192,7 +190,7 @@ public class FlansModClient extends FlansMod {
         GL11.glPopMatrix();
     }
 
-    //Handle player hiding / name tag removal for teams
+    //Handle player hiding / name tag removal
     @SubscribeEvent
     public void renderLiving(RenderPlayerEvent.Pre event) {
         PlayerData data = PlayerHandler.getPlayerData(event.entityPlayer, Side.CLIENT);
@@ -203,8 +201,8 @@ public class FlansModClient extends FlansMod {
                 data.snapshots[0].renderSnapshot();
         }
 
-        RendererLivingEntity.NAME_TAG_RANGE = 64F;
-        RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 32F;
+        RendererLivingEntity.NAME_TAG_RANGE = FlansMod.nameTagRenderRange;
+        RendererLivingEntity.NAME_TAG_RANGE_SNEAK = FlansMod.nameTagSneakRenderRange;
         if (event.entity instanceof EntityPlayer && teamInfo != null && teamInfo.gametype != null && !"No Gametype".equals(teamInfo.gametype)) {
             PlayerScoreData rendering = teamInfo.getPlayerScoreData(event.entity.getCommandSenderName());
             PlayerScoreData thePlayer = teamInfo.getPlayerScoreData(minecraft.thePlayer.getCommandSenderName());
@@ -242,8 +240,6 @@ public class FlansModClient extends FlansMod {
                 RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 0F;
             }
         }
-
-
     }
 
     public static float shootTime(boolean left) {

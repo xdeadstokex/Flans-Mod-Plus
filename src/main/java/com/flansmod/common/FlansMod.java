@@ -7,14 +7,12 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.*;
-import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
-import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
-import com.flansmod.common.eventhandlers.ServerTickEvent;
+import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
+import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.guns.boxes.GunPage;
-import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.network.PacketHandler;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
@@ -48,9 +46,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,10 +53,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import net.minecraftforge.event.AnvilUpdateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,6 +86,8 @@ public class FlansMod {
     public static int breakableArmor = 0;
     public static int defaultArmorDurability = 500;
     public static boolean armsEnable = true;
+    public static boolean holdingGunsDisablesChests = true;
+    public static boolean holdingGunsDisablesAll = false;
     public static boolean casingEnable = true;
     public static boolean crosshairEnable = false;
     public static boolean realisticRecoil = false;
@@ -102,6 +95,7 @@ public class FlansMod {
     public static boolean hitCrossHairEnable = true;
     public static boolean hdHitCrosshair = false;
     public static boolean bulletGuiEnable = true;
+    public static boolean fancyBulletGui = true;
     public static float[] hitCrossHairColor = new float[]{1.0F, 1.0F, 1.0F, 1.0F};
     public static boolean addGunpowderRecipe = true;
     public static boolean addAllPaintjobsToCreative = false;
@@ -130,6 +124,18 @@ public class FlansMod {
     public static boolean showItemDescriptions = true;
     public static boolean showMuzzleFlashParticlesDefault = true;
     public static boolean showFlashesWhenWounded = true;
+    public static float vehicleWheelSeatExplosionModifier = 1F;
+    public static boolean showPackNameInItemDescriptions = true;
+    public static float masterDamageModifier = 1.0F;
+    public static float masterRecoilModifier = 1.0F;
+    public static float masterHeadshotModifier = 2.0F;
+    public static float masterLegModifier = 0.5F;
+    public static boolean masterDualWieldDisable = false;
+    public static boolean gunDevMode = false;
+
+    public static float nameTagRenderRange = 64F;
+    public static float nameTagSneakRenderRange = 32F;
+    public static float maxHealth = 20;
 
     public static int armourSpawnRate = 20;
 
@@ -203,7 +209,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
-	crosshairsymbol = (Item)(new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
+	    crosshairsymbol = (new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -224,7 +230,6 @@ public class FlansMod {
         proxy.registerRenderers();
 
         //Read content packs
-//        readContentPacks(event);
         contentManager.loadContent();
         proxy.loadFlanAssets();
         contentManager.createItems();
@@ -237,7 +242,7 @@ public class FlansMod {
         proxy.load();
         //Force Minecraft to reload all resources in order to load content pack resources.
         if (contentManager.reloadResources()) {
-            logger.warn("Content packs detected, reload resources");
+            logger.info("Content packs detected, reload resources");
             proxy.forceReload();
         }
 
@@ -313,6 +318,10 @@ public class FlansMod {
         //Starting the EventListener
         new PlayerDeathEventListener();
         new PlayerLoginEventListener();
+        new PlayerSpawnEventListener();
+        MinecraftForge.EVENT_BUS.register(new PlayerDropsEventListener());
+        MinecraftForge.EVENT_BUS.register(new LivingSpawnEventListener());
+        MinecraftForge.EVENT_BUS.register(new AnvilUpdateEventListener());
         new ServerTickEvent();
 
         log("Loading complete.");
@@ -323,39 +332,50 @@ public class FlansMod {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) throws Exception {
+        //Initialize the packet handler
         packetHandler.postInitialise();
 
+        //Perform any necessary hooks
         hooks.hook();
 
+        //Register the event handler for syncing data between client and server
         FMLCommonHandler.instance().bus().register(new SyncEventHandler());
-		/* TODO : ICBM
-		isICBMSentryLoaded = Loader.instance().isModLoaded("ICBM|Sentry");
 
-		log("ICBM hooking complete.");
-		*/
-
+        //Log that the gunbox mapping process is starting
         FlansMod.log("Starting gunbox mapping.");
+
+        //Iterate through all gun box blocks
         for (BlockGunBox box : gunBoxBlocks) {
+            //Iterate through all pages of the current gun box
             for (GunPage page : box.type.gunPages) {
+                //Iterate through all entries in the current page
                 for (GunBoxEntry entry : page.gunList) {
                     try {
+                        //Check if the entry has a valid type
                         if (entry.type != null) {
+                            //Get the item associated with the entry
                             IGunboxDescriptionable item = getGunBoxItem(entry.type);
 
+                            //If the item exists, set its origin gun box to the current box's name
                             if (item != null) {
                                 item.setOriginGunBox(box.getLocalizedName());
                             }
                         }
+                        //Check if the entry has any valid ammo
                         if (!entry.isAmmoNullOrEmpty()) {
+                            //Iterate through all ammo entries
                             for (GunBoxEntry ammoEntry : entry.ammoEntryList) {
+                                //Get the item associated with the ammo entry
                                 IGunboxDescriptionable item = getGunBoxItem(ammoEntry.type);
 
+                                //If the item exists, set its origin gun box to the current box's name
                                 if (item != null) {
                                     item.setOriginGunBox(box.getLocalizedName());
                                 }
                             }
                         }
                     } catch (Exception e) {
+                        //If an exception is caught and the debug log is enabled, print the exception and a message
                         if (FlansMod.printDebugLog) {
                             FlansMod.log("A gunbox entry appears to be null");
                             e.printStackTrace();
@@ -364,24 +384,8 @@ public class FlansMod {
                 }
             }
         }
+        //Log that the gunbox mapping process has finished
         FlansMod.log("Finished gunbox mapping.");
-    }
-
-    @SubscribeEvent
-    public void playerDrops(PlayerDropsEvent event) {
-        for (int i = event.drops.size() - 1; i >= 0; i--) {
-            EntityItem ent = event.drops.get(i);
-            InfoType type = InfoType.getType(ent.getEntityItem());
-            if (type != null && !type.canDrop)
-                event.drops.remove(i);
-        }
-    }
-
-    @SubscribeEvent
-    public void playerDrops(ItemTossEvent event) {
-        InfoType type = InfoType.getType(event.entityItem.getEntityItem());
-        if (type != null && !type.canDrop)
-            event.setCanceled(true);
     }
 
     /**
@@ -397,39 +401,7 @@ public class FlansMod {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
         if (eventArgs.modID.equals(MODID))
-            syncConfig();
-    }
-
-    @SubscribeEvent
-    public void onLivingSpecialSpawn(LivingSpawnEvent.CheckSpawn event) {
-        int chance = event.world.rand.nextInt(101);
-
-        if (chance < armourSpawnRate && (event.entityLiving instanceof EntityZombie || event.entityLiving instanceof EntitySkeleton)) {
-            if (event.world.rand.nextBoolean() && ArmourType.armours.size() > 0) {
-                //Give a completely random piece of armour
-                ArmourType armour = ArmourType.armours.get(event.world.rand.nextInt(ArmourType.armours.size()));
-                if (armour != null && armour.type != 2)
-                    event.entityLiving.setCurrentItemOrArmor(armour.type + 1, new ItemStack(armour.item));
-            } else if (Team.teams.size() > 0) {
-                //Give a random set of armour
-                Team team = Team.teams.get(event.world.rand.nextInt(Team.teams.size()));
-                if (team.hat != null)
-                    event.entityLiving.setCurrentItemOrArmor(1, team.hat.copy());
-                if (team.chest != null)
-                    event.entityLiving.setCurrentItemOrArmor(2, team.chest.copy());
-                //if(team.legs != null)
-                //	event.entityLiving.setCurrentItemOrArmor(3, team.legs.copy());
-                if (team.shoes != null)
-                    event.entityLiving.setCurrentItemOrArmor(4, team.shoes.copy());
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onAnvilUsedEvent(AnvilUpdateEvent e) {
-        if (e.left != null && e.left.getItem() instanceof ItemTeamArmour && armourEnchantability == 0 && e.right != null) {
-            e.setCanceled(true);
-        }
+            syncCommonConfig();
     }
 
     /**
@@ -654,12 +626,17 @@ public class FlansMod {
         return packetHandler;
     }
 
-    /*FORMATS
-    ConfigInteger = configFile.getInt("Config Integer", Configuration.CATEGORY_GENERAL, ConfigInteger, 0, Integer.MAX_VALUE, "An Integer!");
-    ConfigString = configFile.getString("Config String", Configuration.CATEGORY_GENERAL, ConfigString, "A String!");
-    ConfigBoolean = configFile.getBoolean("Config Boolean", Configuration.CATEGORY_GENERAL, ConfigBoolean, "A Boolean!");
-    */
-    public static void syncConfig() {
+    /** Sync common and client config if required */
+    public static void syncConfig(Side side) {
+        syncCommonConfig();
+
+        if (side.isClient()) {
+            syncClientConfig();
+        }
+    }
+
+    /** Handles client/server common configuration */
+    public static void syncCommonConfig() {
         //Teams/Advanced Settings
         printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
         printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
@@ -672,6 +649,7 @@ public class FlansMod {
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
+        fancyBulletGui = configFile.getBoolean("Enable fancy bullet HUD", "Gameplay Settings (synced)", fancyBulletGui, "Enable fancy bullet gui");
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
@@ -694,8 +672,21 @@ public class FlansMod {
         seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
         showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default (Synced)", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
         showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
+        vehicleWheelSeatExplosionModifier = configFile.getFloat("Explosion Wheel,Seat modifier", "Gameplay Settings (synced)", vehicleWheelSeatExplosionModifier, 0, 1, "Proportion of damage from an explosion when it has hit a wheel or seat.");
+        showPackNameInItemDescriptions = configFile.getBoolean("Show pack names in item descriptions", "Gameplay Settings (synced)", showPackNameInItemDescriptions, "Whether to include name of pack in the description for all items from that pack");
+        masterDamageModifier = configFile.getFloat("Master Gun Damage Modifier", "Gameplay Settings (synced)", masterDamageModifier, 0, 100, "All gun damage will be modified by this amount");
+        masterHeadshotModifier = configFile.getFloat("Headshot damage Modifier", "Gameplay Settings (synced)", masterHeadshotModifier, 0, 100, "All headshot damage will be modified by this amount");
+        masterLegModifier = configFile.getFloat("Leg damage Modifier", "Gameplay Settings (synced)", masterLegModifier, 0, 100, "All leg damage will be modified by this amount");
+        masterRecoilModifier = configFile.getFloat("Master Gun Recoil Modifier", "Gameplay Settings (synced)", masterRecoilModifier, 0, 100, "All gun recoil will be modified by this amount");
+        masterDualWieldDisable = configFile.getBoolean("Master Dual-Wield Toggle", "Gameplay Settings (synced)", masterDualWieldDisable, "Force disable dual wielding for all weapons");
+        gunDevMode = configFile.getBoolean("Enable Gun Dev Mode", "Gameplay Settings (synced)", gunDevMode, "This will allow guns to be loaded/used without having ammo in your inventory");
+        nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
+        nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
+        maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
 
         //Client Side Settings
+        holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
+        holdingGunsDisablesAll = configFile.getBoolean("Block All Interactions While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesAll, "Disable all block interactions while holding a gun");
         armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
         casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
         hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
@@ -712,86 +703,36 @@ public class FlansMod {
             configFile.save();
     }
 
-    public static void syncConfig(Side side) {
-        //Teams/Advanced Settings
-        printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
-        printStackTrace = configFile.getBoolean("Print Stack Trace", "Teams/advanced settings", printStackTrace, "");
-        noticeSpawnKillTime = configFile.getInt("NoticeSpawnKillTime", "Teams/advanced settings", 10, 0, 600, "Min");
-        TeamsManager.bulletSnapshotMin = configFile.getInt("BltSS_Min", "Teams/advanced settings", 0, 0, 1000, "Min");
-        TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
+    /** Handles client specific configuration */
+    public static void syncClientConfig() {
+        String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "hold", "The type of aiming that you want to use 'toggle' or 'hold'");
+        AimType aimType = AimType.fromString(aimTypeInput);
 
-        //Server/Gameplay Settings (Server-client synced)
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
-        gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
-        gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
-        bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
-        hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
-        realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
-        enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
-	crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
-        breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
-        defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
-        addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
-        armourSpawnRate = configFile.getInt("ArmourSpawnRate", "Gameplay Settings (synced)", 20, 0, 100, "The rate of Zombie or Skeleton to spawn equipped with armor. [0=0%, 100=100%]");
-        armourEnchantability = configFile.getInt("ArmourEnchantability", "Gameplay Settings (synced)", 0, 0, 25, "The quality of enchantments recieved for the same level of XP 0=UnEnchantable 25=Gold armor");
-        kickNonMatchingHashes = configFile.getBoolean("KickNonMatchingHashes", "Gameplay Settings (synced)", kickNonMatchingHashes, "Wether to kick clients connected to a dedicated server with non-identical packs.");
-        disableSprintHipFireByDefault = configFile.getBoolean("DisableSprintHipFireByDefault", "Gameplay Settings (synced)", disableSprintHipFireByDefault, "Wether to disallow players to fire the gun when sprinting and not aiming by default (content packs override).");
-        useNewPenetrationSystem = configFile.getBoolean("UseNewPenetrationSystem", "Gameplay Settings (synced)", useNewPenetrationSystem, "Whether to use new penetration system (only content packs designed to work with this system will work as intended with this on).");
-        gunsInDeadPartsWork = configFile.getBoolean("GunsInDeadPartsStillWork", "Gameplay Settings (synced)", gunsInDeadPartsWork, "Wether passenger guns should still work after the part of the vehicle they are on dies.");
-        showDistanceInKillMessage = configFile.getBoolean("ShowDistanceInKillMessage", "Gameplay Settings (synced)", showDistanceInKillMessage, "List distance between killer and killed in kill message.");
-        driveableHitboxes = configFile.getBoolean("Driveable hitboxes", "Gameplay Settings (synced)", driveableHitboxes, "Make a hitbox for the main driveable entity.");
-        driveableUpdateRange = configFile.getFloat("Driveable update range", "Gameplay Settings (synced)", driveableUpdateRange, 0, 1000, "Range in blocks for vehicles and planes to be updated.");
-        reloadOnRightClick = configFile.getBoolean("Reload on right click", "Gameplay Settings (synced)", reloadOnRightClick, "Whether to reload a gun using right click, forces use of R.");
-        defaultADSSpreadMultiplier = configFile.getFloat("Default ADS Spread Modifier", "Gameplay Settings (synced)", defaultADSSpreadMultiplier, 0, 10, "Modifier for spread when the player is aiming.");
-        defaultADSSpreadMultiplierShotgun = configFile.getFloat("Default ADS Spread Modifier (Shotguns)", "Gameplay Settings (synced)", defaultADSSpreadMultiplierShotgun, 0, 10, "Modifier for spread when the player is aiming. (Multishot guns only).");
-        seatCollisions = configFile.getBoolean("Seat Collisions", "Gameplay Settings (synced)", seatCollisions, "Whether seats should collide with the world. Prevents plane glitching through walls.");
-        showMuzzleFlashParticlesDefault = configFile.getBoolean("Muzzle Flash Particles Default", "Gameplay Settings (synced)", showMuzzleFlashParticlesDefault, "Enable muzzle flash particles by default. Gun configs can override.");
-        showFlashesWhenWounded = configFile.getBoolean("Flashes when player wounded (Synced)", "Gameplay Settings (synced)", showFlashesWhenWounded, "Should show red overlay when player has been wounded?");
-
-        //Client Side Settings
-        armsEnable = configFile.getBoolean("Enable Arms", Configuration.CATEGORY_GENERAL, armsEnable, "Enable arms rendering");
-        casingEnable = configFile.getBoolean("Enable casings", Configuration.CATEGORY_GENERAL, casingEnable, "Enable bullet casing ejections");
-        hdHitCrosshair = configFile.getBoolean("Enable HD hit marker", Configuration.CATEGORY_GENERAL, hdHitCrosshair, "");
-        addAllPaintjobsToCreative = configFile.getBoolean("Add All Paintjobs To Creative", Configuration.CATEGORY_GENERAL, addAllPaintjobsToCreative, "Whether to list all available paintjobs in the Creative menu");
-        fancyCrosshair = configFile.getBoolean("Fancy Crosshair", Configuration.CATEGORY_GENERAL, fancyCrosshair, "Change colour of crosshair based on hit. (Red = no penetration, green = full damage, light blue = headshot. Overrides normal colour settings.");
-        for (int i = 0; i < hitCrossHairColor.length; i++) {
-            final String[] COLOR = new String[]{"Alpha", "Red", "Green", "Blue"};
-            hitCrossHairColor[i] = configFile.getFloat("HitCrossHairColor" + COLOR[i], Configuration.CATEGORY_GENERAL, hitCrossHairColor[i], 0.0F, 1.0F,
-                    "Hit cross hair color " + COLOR[i]);
+        if (aimType != null) {
+            FlansModClient.aimType = aimType;
+        } else {
+            log(String.format("The aim type '%s' does not exist.", aimTypeInput));
+            FlansModClient.aimType = AimType.TOGGLE;
         }
-        showItemDescriptions = configFile.getBoolean("Enable fancy descriptions", Configuration.CATEGORY_GENERAL, showItemDescriptions, "Whether to show fancy item descriptions. These can be shown by pressing shift on an item ingame.");
 
-        if (side.isClient()) {
-            String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "hold", "The type of aiming that you want to use 'toggle' or 'hold'");
-            AimType aimType = AimType.fromString(aimTypeInput);
+        String aimButtonInput = configFile.getString("Aim Button", "Input Settings", "right", "The mouse button used to aim a gun 'left' or 'right'");
+        FlanMouseButton aimButtonType = FlanMouseButton.fromString(aimButtonInput);
 
-            if (aimType != null) {
-                FlansModClient.aimType = aimType;
-            } else {
-                log(String.format("The aim type '%s' does not exist.", aimTypeInput));
-                FlansModClient.aimType = AimType.TOGGLE;
-            }
+        if (aimButtonType != null) {
+            FlansModClient.aimButton = aimButtonType;
+        } else {
+            log(String.format("The aim button type '%s' does not exist.", aimTypeInput));
+            FlansModClient.aimButton = FlanMouseButton.LEFT;
+        }
 
-            String aimButtonInput = configFile.getString("Aim Button", "Input Settings", "right", "The mouse button used to aim a gun 'left' or 'right'");
-            FlanMouseButton aimButtonType = FlanMouseButton.fromString(aimButtonInput);
+        String shootButtonInput = configFile.getString("Fire Button", "Input Settings", "left", "The mouse button used to fire a gun 'left' or 'right'");
+        FlanMouseButton shootButtonType = FlanMouseButton.fromString(shootButtonInput);
 
-            if (aimButtonType != null) {
-                FlansModClient.aimButton = aimButtonType;
-            } else {
-                log(String.format("The aim button type '%s' does not exist.", aimTypeInput));
-                FlansModClient.aimButton = FlanMouseButton.LEFT;
-            }
-
-            String shootButtonInput = configFile.getString("Fire Button", "Input Settings", "left", "The mouse button used to fire a gun 'left' or 'right'");
-            FlanMouseButton shootButtonType = FlanMouseButton.fromString(shootButtonInput);
-
-            if (shootButtonType != null) {
-                FlansModClient.fireButton = shootButtonType;
-            } else {
-                log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
-                FlansModClient.fireButton = FlanMouseButton.RIGHT;
-            }
-
+        if (shootButtonType != null) {
+            FlansModClient.fireButton = shootButtonType;
+        } else {
+            log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
+            FlansModClient.fireButton = FlanMouseButton.RIGHT;
         }
 
         if (configFile.hasChanged())

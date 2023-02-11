@@ -3,26 +3,29 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "https://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
-	maven {
-	    url = "https://repo1.maven.org/maven2/"
+        maven {
+            url = "https://repo1.maven.org/maven2/"
+        }
+        dependencies {
+            // Requires Gradle 4+
+            classpath('com.anatawa12.forge:ForgeGradle:1.2-1.0.+') {
+                changing = true
+            }
+        }
     }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-    }
-  }
 }
 
 apply plugin: 'forge'
 
-version = "1.54"
+version = "1.55"
 group = "com.flansmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Flan's Mod Ultimate"
+archivesBaseName = "Flan's Mod Ultimate Stability Edition"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -97,6 +100,7 @@ task outputJar(type: Jar) {
     from(zipTree("build/libs/${archiveName}")) {
         exclude '**/mechaparts/'
         exclude '**/modernweapons/'
+        exclude '**/mw/'
         exclude '**/nerf/'
         exclude '**/simpleparts/'
         exclude '**/titan/'
@@ -201,8 +205,19 @@ build {
     dependsOn clearOutput
     dependsOn outputJar
 
+    dependsOn deobfJar
+
     dependsOn outputPacks
 }
+
+runClient {
+    jvmArgs "-Xmx2G", "-Xms2G"
+}
+
+runServer {
+    jvmArgs "-Xmx2G", "-Xms2G"
+}
+
 
 def customGradle = rootProject.file('custom.gradle');
 if (customGradle.exists()) {

@@ -206,6 +206,11 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 							if(!TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP)obj, new EntityDamageSourceFlans(type.shortName, this, (EntityPlayer)thrower, type, false, false)))
 								continue;
 						}
+
+						GrenadeProximityEvent grenadeProximityEvent = new GrenadeProximityEvent(this, (EntityLivingBase)obj);
+		            			MinecraftForge.EVENT_BUS.post(grenadeProximityEvent);
+		            			if(grenadeProximityEvent.isCanceled()) continue;
+
 						if(type.damageToTriggerer > 0)
 							((EntityLivingBase)obj).attackEntityFrom(getGrenadeDamage(), type.damageToTriggerer);
 						detonate();
@@ -213,6 +218,10 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 					}
 					if(obj instanceof EntityDriveable && getDistanceToEntity((Entity)obj) < type.driveableProximityTrigger)
 					{
+						GrenadeProximityEvent grenadeProximityEvent = new GrenadeProximityEvent(this, (EntityDriveable)obj);
+		            			MinecraftForge.EVENT_BUS.post(grenadeProximityEvent);
+		            			if(grenadeProximityEvent.isCanceled()) continue;
+
 						if(type.damageToTriggerer > 0)
 							((EntityDriveable)obj).attackEntityFrom(getGrenadeDamage(), type.damageToTriggerer);
 						detonate();
@@ -520,7 +529,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 	        {
 	        new FlansModExplosion(worldObj, this, (EntityPlayer)thrower, type, posX, posY, posZ,
 		        	type.explosionRadius, type.explosionPower, TeamsManager.explosions && type.explosionBreaksBlocks,
-		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount);
+		        	type.explosionDamageVsLiving, type.explosionDamageVsPlayer, type.explosionDamageVsPlane, type.explosionDamageVsVehicle, type.smokeParticleCount, type.debrisParticleCount, false);
 	
 	        }
 	        else

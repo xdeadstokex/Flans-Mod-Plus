@@ -3,6 +3,7 @@ package com.flansmod.common.driveables;
 import com.flansmod.common.guns.ItemBullet;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
+import com.flansmod.common.types.EnumType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -41,7 +42,6 @@ public class DriveableData implements IInventory {
     public HashMap<EnumDriveablePart, DriveablePart> parts;
 
     public boolean inventoryChanged = false;
-    ;
 
     /**
      * Paintjob index
@@ -71,6 +71,11 @@ public class DriveableData implements IInventory {
         numMissiles = dType.numMissileSlots;
         numGuns = dType.ammoSlots();
         engine = PartType.getPart(tag.getString("Engine"));
+
+        // If the engine is invalid, use the default (later need to check if the default exists)
+        if (engine == null) {
+            engine = PartType.defaultEngines.get(EnumType.getFromObject(dType));
+        }
         paintjobID = tag.getInteger("Paint");
         ammo = new ItemStack[numGuns];
         bombs = new ItemStack[numBombs];
@@ -207,9 +212,6 @@ public class DriveableData implements IInventory {
     public void setInventorySlotContents(int i, ItemStack stack) {
         if (stack != null) {
             inventoryChanged = true;
-//			FlansMod.log("Slot:"+i + ":  "+stack.getDisplayName()+" ("+stack.stackSize+"");
-        } else {
-//			FlansMod.log("Slot:"+i + ":  null");
         }
 
         //Find the correct inventory
@@ -302,11 +304,7 @@ public class DriveableData implements IInventory {
         if (i >= getCargoInventoryStart() && i < getFuelSlot()) {
             return true;
         }
-        if (i == getFuelSlot() && itemstack != null && itemstack.getItem() instanceof ItemPart && ((ItemPart) itemstack.getItem()).type.category == 9) //Fuel
-        {
-            return true;
-        }
-
-        return false;
+        //Fuel
+        return i == getFuelSlot() && itemstack != null && itemstack.getItem() instanceof ItemPart && ((ItemPart) itemstack.getItem()).type.category == 9;
     }
 }

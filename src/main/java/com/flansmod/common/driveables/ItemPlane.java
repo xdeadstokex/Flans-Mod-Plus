@@ -96,7 +96,7 @@ public class ItemPlane extends Item implements IPaintableItem {
         if (!paintName.equals("default") && !paintName.isEmpty())
             lines.add("\u00a7b\u00a7o" + paintName);
 
-        if (!type.packName.isEmpty()) {
+        if (!type.packName.isEmpty() && FlansMod.showPackNameInItemDescriptions) {
             lines.add("\u00a7o" + type.packName);
         }
         if (type.description != null) {

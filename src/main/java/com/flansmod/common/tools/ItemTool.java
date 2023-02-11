@@ -56,7 +56,7 @@ public class ItemTool extends ItemFood {
 	@SuppressWarnings("unchecked")
 	public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean b)
 	{
-		if(!type.packName.isEmpty())
+		if(!type.packName.isEmpty() && FlansMod.showPackNameInItemDescriptions)
 		{
 			lines.add(type.packName);
 		}

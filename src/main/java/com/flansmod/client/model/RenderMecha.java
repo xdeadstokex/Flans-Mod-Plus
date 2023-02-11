@@ -16,14 +16,11 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 
 import com.flansmod.client.ClientProxy;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveablePart;
-import com.flansmod.common.driveables.DriveablePosition;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.ShootPoint;
@@ -418,7 +415,7 @@ public class RenderMecha extends Render implements IItemRenderer
 			GL11.glRotatef(-90F, 0F, 0F, 1F);
 			texturemanager.bindTexture(FlansModResourceHandler.getTexture(gunType));
 			ItemRenderType type = ItemRenderType.ENTITY;
-			ClientProxy.gunRenderer.renderGun(stack, gunType, 1F / 16F, model, leftHand ? mecha.leftAnimations : mecha.rightAnimations, 0F, type);
+			ClientProxy.gunRenderer.renderGunModel(stack, gunType, 1F / 16F, model, leftHand ? mecha.leftAnimations : mecha.rightAnimations, type);
 		}
 		else
 		{

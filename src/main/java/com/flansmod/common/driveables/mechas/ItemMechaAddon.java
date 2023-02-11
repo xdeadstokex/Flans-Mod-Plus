@@ -31,7 +31,7 @@ public class ItemMechaAddon extends Item implements IFlanItem
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean b)
 	{
-		if(!type.packName.isEmpty())
+		if(!type.packName.isEmpty() && FlansMod.showPackNameInItemDescriptions)
 		{
 			list.add(type.packName);
 		}

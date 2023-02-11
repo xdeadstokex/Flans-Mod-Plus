@@ -30,7 +30,8 @@ BAB
 |-------------|------------------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Paintjob | iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Sets up a new paintjob with the dyes required dyeDamage is optional and I'm not entirely sure how that works. The dye setup in [] can be repeated. (you don't need to add the []) |
 | AdvPaintjob | displayName iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Creates an advanced paintjob |
-
+| AddPaintableToTables | bool | true | Whether any (other than default) skins should be added to the gun mod table/paintable table. |
+| AddPaintableToTables | textureName true/false | true | Whether an individual texture should be added to the tables. |
 ### [GunType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GunType.java) extends [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java)
 | Keyword | Type | Default | Purpose |
 |-----------------------------|------------|----------------|-------------------------------------------------------------------------------------------|
@@ -112,6 +113,10 @@ BAB
 | AllowNightVision | Bool | false | Gives night vision effect when scoped |
 | ZoomLevel | Float | 1 | Zoom level of the default scope. It is NOT possible to zoom in *and* have the gun visible, due to a limitation of forge. |
 | FOVZoomLevel | Float | 1.5 | The FOV zoom level of the default scope. Keeps the gun visible (if animated properly). |
+| HasVariableZoom | Boolean | false | Is it possible to adjust the zoom. P.s. The ZoomLevel and FOVZoomLevel values will not affect the zoom. |
+| MinZoom | Float | 1.00 | Minimum zoom level. |
+| MaxZoom | Float | 4.00 | Maximum zoom level. |
+| ZoomAugment | Float | 1.00 | Zoom in/out augment. ATTENTION! The result of division (÷) MaxZoom by ZoomAugment must be an integer. (Correct example: 8/2=4. NOT correct example: 8/3=2.66...). |
 | Deployable | Bool | false | Whether the gun is placeable |
 | DeployedModel | String | ~ | The model name of the deployed model |
 | CasingModel | String | ~ | The model name of the casings to eject |
@@ -161,6 +166,7 @@ BAB
 | AllowAccessoryAttachments | Bool | false | Allow x attachments to be used with this gun |
 | NumGenericAttachments | Integer | 0 | The number of generic attachments that can be used |
 | Shield | damageAbsorption (origin) X Y Z (dimensions) X Y Z | false | Shield setup for riot shields |
+| SwitchDelay | Integer | 0 | The time (in ticks) required to draw a weapon |
 
 
 Special note for guns - all animation variables that you can change in the gun's model file can be changed from here as well. Simply:
@@ -242,6 +248,10 @@ This will override the value set in the gun's model!
 | ZoomLevel | Float | 1 | The zoom of the scope |
 | FOVZoomLevel | Float | 1 | The FOV zoom of the scope |
 | ZoomOverlay | String | false/none | None = No overlay. Anything else will become the overlay image |
+| HasVariableZoom | Boolean | false | Is it possible to adjust the zoom. P.s. The ZoomLevel and FOVZoomLevel values will not affect the zoom. |
+| MinZoom | Float | 1.00 | Minimum zoom level. |
+| MaxZoom | Float | 4.00 | Maximum zoom level. |
+| ZoomAugment | Float | 1.00 | Zoom in/out augment. ATTENTION! The result of division (÷) MaxZoom by ZoomAugment must be an integer. (Correct example: 8/2=4. NOT correct example: 8/3=2.66...). |
 | HasNightVision | Bool | false | Whether to apply night vision |
 
 ### [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
@@ -347,10 +357,11 @@ This will override the value set in the gun's model!
 | IsDoTopAttack | Boolean | false | Whether to hit from the top of the entitity it's locked on to |
 | PotionEffect | String | ~ | The effects done to the entity hit |
 | ManualGuidance | Boolean | false | Whether this is manually guided |
+| LaserGuidance | Boolean | false | Whether this is laser guided |
 | LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
 | MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
 | FancyDescription | Boolean | true | Whether to display information about the bullet/mag in the description, like a gun. |
-| KnockbackModifier | Float | 1 | Modifier for knockback. Smaller = less knockback, bigger = more knockback, 1 = default knockback. Applies to players only. |
+| KnockbackModifier | Float | 1 | Modifier for knockback. Smaller = less knockback, bigger = more knockback, 1 = default knockback. Applies players hit by the bullet only. |
 | BulletSpeedMultiplier | Float | 1 | Multiplier for bullet speed. Stacks with gun bullet speed. |
 
 ### [GrenadeType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GrenadeType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
@@ -556,7 +567,8 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ShellDelay / BombDelay | Integer | 1 | Duplicate way of setting shoot delay for primary... would not reccomend. | 
 | AddRecipeParts | partName quantity itemName| ~ | Add a part to the recipe. Damaged parts can be added, but I don't know how to do that. | 
 | AddDye | quantity dyeName | ~ | Add a dye to the recipe. I am unsure if it is a name or an ID. | 
-| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required| 
+| SetupPart | partName health (int) x y z height width depth (penetration) | ~ | Add a collision box with the respective part to the driveables collision boxes. Penetration is a float, and not required|
+| PartDeathExplosion | partName radius power breaksBlocks (damageVsLiving) (damageVsPlayer) (damageVsPlane) (damageVsVehicles) | ~ | When this part dies, set off an explosion with these parameters |
 | Driver / Pilot | (int) X Y Z (partname) (minYaw) (maxYaw) (minPitch) (maxPitch) | ~ | Set driver position. Part will default to core. | 
 | DriverPart | String | Core | Set part that the driver is on/in | 
 | DriverGun / PilotGun | String | ~ | Set gun name that the pilot controls | 
@@ -589,6 +601,10 @@ PSA: On some versions of FlansMod, you MUST define your seat and drivers before 
 | ExitSound | string | ~ | The sound to play when a player exits a vehicle | 
 | StartSound | String | ~ | The name of the sound to play | 
 | EngineSound | String | ~ | The name of the sound to play | 
+| StompSoundFrontRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundFrontLeft | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackRight | String | ~ | Stomp sound to play when leg hits ground |
+| StompSoundBackLeft | String | ~ | Stomp sound to play when leg hits ground |
 | IdleSound | String | ~ | The name of the sound to play | 
 | BackSound | String | ~ | The name of the sound to play | 
 | YawSound | String | ~ | The name of the sound to play | 

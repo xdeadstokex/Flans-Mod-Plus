@@ -1,10 +1,14 @@
 package com.flansmod.client.model;
 
+import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.tmt.ModelRendererTurbo;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.vector.Vector3f;
+import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
@@ -26,6 +30,11 @@ public class ModelVehicle extends ModelDriveable {
     public ModelRendererTurbo[] leftTrackModel = new ModelRendererTurbo[0];
     public ModelRendererTurbo[] rightTrackWheelModels = new ModelRendererTurbo[0];    //These go with the tracks but rotate
     public ModelRendererTurbo[] leftTrackWheelModels = new ModelRendererTurbo[0];
+
+    public ModelRendererTurbo[] leftFrontLegModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] rightFrontLegModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] leftBackLegModel = new ModelRendererTurbo[0];
+    public ModelRendererTurbo[] rightBackLegModel = new ModelRendererTurbo[0];
 
     public ModelRendererTurbo[][] leftAnimTrackModel = new ModelRendererTurbo[0][0];  //Unlimited frame track animations
     public ModelRendererTurbo[][] rightAnimTrackModel = new ModelRendererTurbo[0][0];
@@ -85,6 +94,16 @@ public class ModelVehicle extends ModelDriveable {
     public boolean fancyTurret = false;
     public String turretName;
 
+    // Leg stuff: Animation variables
+
+    // Multiplier for the speed of leg movement
+    public float legMoveSpeed = 1F;
+    // Multiplier for the maximum angle of leg movement
+    public float legMaxMove = 1F;
+    // Used for steering, decides how much the legs on l/r should speed up or slow down when turning.
+    public float legSteerAmount = 1F;
+    // Change speed of leg movement depending on throttle
+    public boolean legSpeedChange = true;
 
     @Override
     public void render(EntityDriveable driveable, float f1) {
@@ -104,6 +123,10 @@ public class ModelVehicle extends ModelDriveable {
         renderPart(rightFrontWheelModel);
         renderPart(rightTrackModel);
         renderPart(leftTrackModel);
+        renderPart(leftFrontLegModel);
+        renderPart(rightFrontLegModel);
+        renderPart(leftBackLegModel);
+        renderPart(rightBackLegModel);
         renderPart(rightTrackWheelModels);
         renderPart(leftTrackWheelModels);
         renderPart(bodyDoorCloseModel);
@@ -215,11 +238,71 @@ public class ModelVehicle extends ModelDriveable {
         animFrameLeft = vehicle.animFrameLeft;
         animFrameRight = vehicle.animFrameRight;
 
+        float bias = 0.1F;
+        float scaleRight = (vehicle.lastRelSpeedRight * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 - (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+        float scaleLeft = (vehicle.lastRelSpeedLeft * (1 - bias)) + (float)(((legSpeedChange ? vehicle.throttle : 1F) * (1 + (vehicle.wheelsYaw / 20F) * legSteerAmount)) * bias);
+
+
+
+        vehicle.lastRelSpeedRight = scaleRight;
+        vehicle.lastRelSpeedLeft = scaleLeft;
+
+        float adjScaleRight = legSpeedChange ?
+                (Math.signum(scaleRight) * 0.4F + 0.6F * scaleRight * scaleRight) :
+                (scaleRight);
+        float adjScaleLeft = legSpeedChange ?
+                (Math.signum(scaleLeft) * 0.4F + 0.6F * scaleLeft * scaleLeft) :
+                (scaleLeft);
+
+        scaleRight = (float)Math.sqrt(Math.abs(scaleRight)) * (legSpeedChange ? 1 : Math.min(1, Math.abs(vehicle.throttle)*10));
+        scaleLeft = (float)Math.sqrt(Math.abs(scaleLeft)) * (legSpeedChange ? 1 : Math.min(1, Math.abs(vehicle.throttle)*10));
+
+        scaleRight = scaleRight > 0.01 ? scaleRight : 0;
+        scaleLeft = scaleLeft > 0.01 ? scaleLeft : 0;
+
+        if (!Minecraft.getMinecraft().isGamePaused()) {
+            vehicle.legAnimPosRight += adjScaleRight * f;
+            vehicle.legAnimPosLeft += adjScaleLeft * f;
+        }
+
+
+        float frLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 0  ) * scaleRight * legMaxMove;
+        float brLegYaw = (float)Math.sin((vehicle.legAnimPosRight * legMoveSpeed) + 3.14 * 1.5) * scaleRight * legMaxMove;
+
+        float flLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 1  ) * scaleLeft * legMaxMove;
+        float blLegYaw = (float)Math.sin((vehicle.legAnimPosLeft * legMoveSpeed) + 3.14 * 2.5) * scaleLeft * legMaxMove;
+
+        boolean frStomp = frLegYaw * vehicle.frLegYawLast < 0;
+        boolean flStomp = flLegYaw * vehicle.flLegYawLast < 0;
+        boolean brStomp = brLegYaw * vehicle.brLegYawLast < 0;
+        boolean blStomp = blLegYaw * vehicle.blLegYawLast < 0;
+
+        if (frStomp && vehicle.getVehicleType().stompSoundFrontRight != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundFrontRight), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (flStomp && vehicle.getVehicleType().stompSoundFrontLeft != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundFrontLeft), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (brStomp && vehicle.getVehicleType().stompSoundBackRight != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundBackRight), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        if (blStomp && vehicle.getVehicleType().stompSoundBackLeft != null) {
+            FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(FlansModResourceHandler.getSound(vehicle.getVehicleType().stompSoundBackLeft), 10F, 1.0F / (float)(Math.random() * 0.4F + 0.8F), (float)vehicle.posX, (float)vehicle.posY, (float)vehicle.posZ));
+        }
+
+        vehicle.frLegYawLast = frLegYaw;
+        vehicle.flLegYawLast = flLegYaw;
+        vehicle.brLegYawLast = brLegYaw;
+        vehicle.blLegYawLast = blLegYaw;
         //Rendering the body
         if (vehicle.isPartIntact(EnumDriveablePart.core)) {
             for (ModelRendererTurbo aBodyModel : bodyModel) {
                 aBodyModel.render(f5, oldRotateOrder);
             }
+
             for (ModelRendererTurbo aBodyDoorOpenModel : bodyDoorOpenModel) {
                 if (vehicle.varDoor)
                     aBodyDoorOpenModel.render(f5, oldRotateOrder);
@@ -242,11 +325,21 @@ public class ModelVehicle extends ModelDriveable {
                 aLeftBackWheelModel.rotateAngleZ = rotateWheels ? -vehicle.wheelsAngle : 0;
                 aLeftBackWheelModel.render(f5, oldRotateOrder);
             }
+
+            for (ModelRendererTurbo aLeftBackLegModel : leftBackLegModel) {
+                aLeftBackLegModel.rotateAngleZ = blLegYaw * 3.14159265F / 2.5F;
+                aLeftBackLegModel.render(f5, oldRotateOrder);
+            }
         }
         if (vehicle.isPartIntact(EnumDriveablePart.backRightWheel)) {
             for (ModelRendererTurbo aRightBackWheelModel : rightBackWheelModel) {
                 aRightBackWheelModel.rotateAngleZ = rotateWheels ? -vehicle.wheelsAngle : 0;
                 aRightBackWheelModel.render(f5, oldRotateOrder);
+            }
+
+            for (ModelRendererTurbo aRightBackLegModel : rightBackLegModel) {
+                aRightBackLegModel.rotateAngleZ = brLegYaw * 3.14159265F / 2.5F;
+                aRightBackLegModel.render(f5, oldRotateOrder);
             }
         }
         if (vehicle.isPartIntact(EnumDriveablePart.frontLeftWheel)) {
@@ -255,12 +348,22 @@ public class ModelVehicle extends ModelDriveable {
                 aLeftFrontWheelModel.rotateAngleY = -vehicle.wheelsYaw * 3.14159265F / 180F * 3F;
                 aLeftFrontWheelModel.render(f5, oldRotateOrder);
             }
+
+            for (ModelRendererTurbo aLeftFrontLegModel : leftFrontLegModel) {
+                aLeftFrontLegModel.rotateAngleZ = flLegYaw * 3.14159265F / 2.5F;
+                aLeftFrontLegModel.render(f5, oldRotateOrder);
+            }
         }
         if (vehicle.isPartIntact(EnumDriveablePart.frontRightWheel)) {
             for (ModelRendererTurbo aRightFrontWheelModel : rightFrontWheelModel) {
                 aRightFrontWheelModel.rotateAngleZ = rotateWheels ? -vehicle.wheelsAngle : 0;
                 aRightFrontWheelModel.rotateAngleY = -vehicle.wheelsYaw * 3.14159265F / 180F * 3F;
                 aRightFrontWheelModel.render(f5, oldRotateOrder);
+            }
+
+            for (ModelRendererTurbo aRightFrontLegModel : rightFrontLegModel) {
+                aRightFrontLegModel.rotateAngleZ = frLegYaw * 3.14159265F / 2.5F;
+                aRightFrontLegModel.render(f5, oldRotateOrder);
             }
         }
         if (vehicle.isPartIntact(EnumDriveablePart.frontWheel)) {
@@ -599,6 +702,10 @@ public class ModelVehicle extends ModelDriveable {
         flip(rightFrontWheelModel);
         flip(leftBackWheelModel);
         flip(rightBackWheelModel);
+        flip(rightFrontLegModel);
+        flip(leftFrontLegModel);
+        flip(rightBackLegModel);
+        flip(leftBackLegModel);
         flip(rightTrackModel);
         flip(leftTrackModel);
         flip(rightTrackWheelModels);
@@ -641,6 +748,10 @@ public class ModelVehicle extends ModelDriveable {
         translate(rightFrontWheelModel, x, y, z);
         translate(leftBackWheelModel, x, y, z);
         translate(rightBackWheelModel, x, y, z);
+        translate(leftFrontLegModel, x, y, z);
+        translate(rightFrontLegModel, x, y, z);
+        translate(leftBackLegModel, x, y, z);
+        translate(rightBackLegModel, x, y, z);
         translate(rightTrackModel, x, y, z);
         translate(leftTrackModel, x, y, z);
         translate(rightTrackWheelModels, x, y, z);
