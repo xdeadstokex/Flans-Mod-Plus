@@ -3,6 +3,7 @@ package com.flansmod.client.model;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import com.flansmod.client.FlansModClient;
@@ -33,7 +34,6 @@ import net.minecraftforge.client.IItemRenderer;
 
 public class RenderGun implements IItemRenderer {
 	private static TextureManager renderEngine;
-
 	public static float smoothing;
 
 	@Override
@@ -541,6 +541,7 @@ public class RenderGun implements IItemRenderer {
 			GL11.glScalef(type.modelScale, type.modelScale, type.modelScale);
 
 			model.renderGun(f);
+
 			// Render the guns default parts if no attachment is installed
 			if (scopeAttachment == null && !model.scopeIsOnSlide && !model.scopeIsOnBreakAction)
 				model.renderDefaultScope(f);
@@ -576,6 +577,8 @@ public class RenderGun implements IItemRenderer {
 			renderHammer(model, animations, f);
 			//Render pump action(s)
 			renderPumpAction(model, animations, pumpAttachment, f, gripAttachment, type, gadgetAttachment);
+			//Render bolt action(s)
+			renderBoltAction(model, animations, f, type);
 			//Render charge handle(s)
 			renderChargeHandle(model, animations, f);
 			//Render minigun barrels
@@ -681,6 +684,27 @@ public class RenderGun implements IItemRenderer {
 					model.renderDefaultGadget(f);
 			}
 			GL11.glPopMatrix();
+		}
+	}
+
+	private void renderBoltAction(ModelGun model, GunAnimations animations, float f, GunType type) {
+		// Render the bolt action
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.boltCycleDistance, 0F, 0F);
+			//injectRotationTool(f, model);
+			GL11.glTranslatef(model.boltRotationOffset.x, model.boltRotationOffset.y, model.boltRotationOffset.z);
+			GL11.glRotatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.boltRotationAngle, 1F, 0F, 0F);
+			GL11.glTranslatef(-model.boltRotationOffset.x, -model.boltRotationOffset.y, -model.boltRotationOffset.z);
+			model.renderBoltAction(f);
+		}
+		GL11.glPopMatrix();
+
+		if(FlansModClient.shotState != -1 && -(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.boltCycleDistance != -0.0) {
+			FlansModClient.shotState = -1;
+			if(type.actionSound != null) {
+				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(FlansModResourceHandler.getSound(type.actionSound), 1.0F));
+			}
 		}
 	}
 
@@ -1139,8 +1163,7 @@ public class RenderGun implements IItemRenderer {
 		GL11.glScalef(attachment.modelScale, attachment.modelScale, attachment.modelScale);
 	}
 
-	private void postRenderAttachment(AttachmentType attachment, ItemStack stack, float f)
-	{
+	private void postRenderAttachment(AttachmentType attachment, ItemStack stack, float f) {
 		Paintjob paintjob = attachment.getPaintjob(stack.getItemDamage());
 		ModelAttachment model = attachment.model;
 		if (model != null)
@@ -1149,8 +1172,7 @@ public class RenderGun implements IItemRenderer {
 	}
 
 	/** Load the attachment ammo model plus its texture */
-	private void renderAttachmentAmmo(float f, AttachmentType grip, ModelGun model, Paintjob ammo, Paintjob otherAmmo)
-	{
+	private void renderAttachmentAmmo(float f, AttachmentType grip, ModelGun model, Paintjob ammo, Paintjob otherAmmo) {
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(ammo));
 		GL11.glTranslatef(model.gripAttachPoint.x, model.gripAttachPoint.y, model.gripAttachPoint.z);
 		grip.model.renderAttachmentAmmo(f);
@@ -1325,4 +1347,15 @@ public class RenderGun implements IItemRenderer {
 			return gun.model.RotateSlideDistance;
 	}
 
+	/** Renders a cross at the rotation point */
+	private void injectRotationTool(float f, ModelGun model) {
+		ModelRotateTool rotateToolModel = new ModelRotateTool();
+		GL11.glPushMatrix();
+		ModelRotateTool tool = rotateToolModel;
+		GL11.glTranslatef(model.rotationToolOffset.x, model.rotationToolOffset.y, model.rotationToolOffset.z);
+		renderEngine.bindTexture(new ResourceLocation(null, "err"));
+		tool.renderRotateTool(f);
+		GL11.glTranslatef(-model.rotationToolOffset.x, -model.rotationToolOffset.y, -model.rotationToolOffset.z);
+		GL11.glPopMatrix();
+	}
 }
