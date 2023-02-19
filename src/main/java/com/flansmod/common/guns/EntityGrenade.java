@@ -1,5 +1,6 @@
 package com.flansmod.common.guns;
 
+import com.flansmod.common.eventhandlers.GrenadeProximityEvent;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
@@ -40,6 +41,7 @@ import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.common.MinecraftForge;
 
 public class EntityGrenade extends EntityShootable implements IEntityAdditionalSpawnData
 {
