@@ -16,6 +16,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 @Cancelable
 public class BulletHitEvent extends Event {
@@ -41,7 +42,7 @@ public class BulletHitEvent extends Event {
 		
 		//Try to set the block field
 		if(hit instanceof BlockHit) {
-            MovingObjectPosition raytraceResult = ((BlockHit)hit).raytraceResult;           
+            MovingObjectPosition raytraceResult = ((BlockHit)hit).raytraceResult; 
            	block = bullet.worldObj.getBlock(raytraceResult.blockX, raytraceResult.blockY, raytraceResult.blockZ);
 		}
 		
