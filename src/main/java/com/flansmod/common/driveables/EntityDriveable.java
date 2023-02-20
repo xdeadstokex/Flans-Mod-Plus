@@ -1182,7 +1182,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                                 //Add the itemstack to mecha inventory
                                 ArrayList<ItemStack> stacks = block.getDrops(worldObj, blockX, blockY, blockZ, worldObj.getBlockMetadata(blockX, blockY, blockZ), 0);
                                 for (ItemStack stack : stacks) {
-                                    if (!InventoryHelper.addItemStackToInventory(driveableData, stack, driverIsCreative(), false) && !worldObj.isRemote && worldObj.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+                                    if (!InventoryHelper.addItemStackToInventory(driveableData, stack, driverIsCreative()) && !worldObj.isRemote && worldObj.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
                                         worldObj.spawnEntityInWorld(new EntityItem(worldObj, blockX + 0.5F, blockY + 0.5F, blockZ + 0.5F, stack));
                                     }
                                 }

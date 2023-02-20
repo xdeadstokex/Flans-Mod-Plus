@@ -26,6 +26,8 @@ public class BulletHitEvent extends Event {
 	private Entity entity;
 	private Block block;
 	
+	private boolean allowBlockDestruction = true;
+	
 	
 	public BulletHitEvent(EntityBullet bullet, BulletHit hit) {
 		this.bullet = bullet;
@@ -72,6 +74,14 @@ public class BulletHitEvent extends Event {
 	 */
 	public Block getHitBlock() {
 		return block;
+	}
+	
+	public boolean isAllowBlockDestruction() {
+		return allowBlockDestruction;
+	}
+	
+	public void setAllowBlockDestruction(boolean allowBlockDestruction) {
+		this.allowBlockDestruction = allowBlockDestruction;
 	}
 	
 }

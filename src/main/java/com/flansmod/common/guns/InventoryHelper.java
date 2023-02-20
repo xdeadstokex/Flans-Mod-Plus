@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 /** Adds access to the InventoryPlayer stack combination methods for arbitrary inventories */
 public class InventoryHelper 
 {
-	public static boolean addItemStackToInventory(IInventory inventory, ItemStack stack, boolean creative, boolean tryPutInUpperInventory) {
+	public static boolean addItemStackToInventory(IInventory inventory, ItemStack stack, boolean creative) {
 		if (stack == null) {
             return false;
         } else if (stack.stackSize == 0) {
@@ -21,8 +21,7 @@ public class InventoryHelper
                 //If the item still has durability, try to place it in the inventory
                 if (stack.isItemDamaged()) {
                     //Get the index for the first empty inventory slot
-                    invSlot = tryPutInUpperInventory ? getFirstEmptyStackTopInventory(inventory) : -1;
-                    if(invSlot == -1) invSlot = getFirstEmptyStack(inventory);
+                	invSlot = getFirstEmptyStack(inventory);
                     
                     
                     if (invSlot >= 0) {

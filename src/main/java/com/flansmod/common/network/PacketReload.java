@@ -1,5 +1,6 @@
 package com.flansmod.common.network;
 
+import com.flansmod.common.guns.*;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.FlansMod;

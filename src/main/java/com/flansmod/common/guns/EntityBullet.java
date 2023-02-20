@@ -7,6 +7,7 @@ import java.util.List;
 import com.flansmod.api.IEntityBullet;
 import com.flansmod.client.debug.EntityDebugDot;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.PenetrableBlock;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.RotatedAxes;
@@ -113,7 +114,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public float lastHitPenAmount = 1F;
 
     public float penetratingPower;
-    public float blockPenetratingPower;
 
     public int submunitionDelay = 20;
     public boolean hasSetSubDelay = false;
@@ -604,7 +604,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             lastHitPenAmount = 0F;
             lastHitHeadshot = false;
 
-            hitLoop: for (BulletHit bulletHit : hits) {
+            for (BulletHit bulletHit : hits) {
             	BulletHitEvent bulletHitEvent = new BulletHitEvent(this, bulletHit);
             	MinecraftForge.EVENT_BUS.post(bulletHitEvent);
             	if(bulletHitEvent.isCanceled()) continue;
@@ -712,25 +712,24 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     Material mat = block.getMaterial();             
                     
                     if(FlansMod.enableBlockPenetration) {
-                    	for(Block penetrableBlock : FlansMod.penetrableBlocks.keySet()) { 
-                        	if(block != penetrableBlock) continue;
+                    	boolean penetrableBlockFound = false;
+                    	
+                    	for(PenetrableBlock penetrableBlock : FlansMod.penetrableBlocks) { 
+                        	if(block != penetrableBlock.getBlock()) continue;
                         	
-                        	Float[] valuesArray = FlansMod.penetrableBlocks.get(penetrableBlock);
-                        	float metadata = valuesArray[0];
-                        	
+                        	int metadata = penetrableBlock.getMetadata();                        	
                         	if(metadata != -1 && metadata != worldObj.getBlockMetadata(xTile, yTile, zTile)) continue;
                         	
-                        	float hardness = valuesArray[1];
-                        	
-                        	penetratingPower-=hardness * (type.blockPenetrationModifier > 0 ? (1F/type.blockPenetrationModifier) : 1F);
+                        	penetratingPower-=penetrableBlock.getHardness() * (type.blockPenetrationModifier > 0 ? (1F/type.blockPenetrationModifier) : 1F);
                         	if(penetratingPower < 0) break;
                         	
                         	FlansMod.proxy.playBlockBreakSound(xTile, yTile, zTile, block, this.dimension);
-                        	if(valuesArray[2] == 1) worldObj.setBlockToAir(xTile, yTile, zTile);  
-                        	
-                        	//The block was penetrated, so the bullet can keep going
-                        	continue hitLoop;
+                        	if(penetrableBlock.breaks()) worldObj.setBlockToAir(xTile, yTile, zTile);  
+                        	                        	
+                        	penetrableBlockFound = true;
                         }
+                    	//The block was penetrated, so the bullet can keep going
+                    	if(penetrableBlockFound) continue;
                     }
                     
                     if (type.hitSoundEnable)
@@ -896,7 +895,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         // Damp penetration too
 
         penetratingPower *= (1 - type.penetrationDecay);
-        blockPenetratingPower *= (1 - type.penetrationDecay);
 
         // Apply homing action
         if (lockedOnTo != null) {

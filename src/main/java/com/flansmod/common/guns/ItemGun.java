@@ -1309,7 +1309,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
                     //The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
                     if (bulletStack != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
-                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative, true))
+                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative))
                             entity.entityDropItem(bulletStack, 0.5F);
                     }
 
