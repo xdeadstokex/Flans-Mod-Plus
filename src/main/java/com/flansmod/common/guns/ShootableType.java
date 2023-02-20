@@ -79,7 +79,7 @@ public abstract class ShootableType extends InfoType {
     public float ignoreArmorProbability = 0;
     public float ignoreArmorDamageFactor = 0;
     
-    public float blockPenetrationModifier = FlansMod.masterBlockPenetrationModifier;
+    private float blockPenetrationModifier = -1;
     
     //Detonation Conditions
     /**
@@ -309,6 +309,10 @@ public abstract class ShootableType extends InfoType {
         return 0.0f;
     }
 
+    public float getBlockPenetrationModifier() {
+    	return blockPenetrationModifier < 0 ? FlansMod.masterBlockPenetrationModifier : blockPenetrationModifier;
+    }
+    
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBase GetModel() {

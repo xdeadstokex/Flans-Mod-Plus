@@ -720,7 +720,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         	int metadata = penetrableBlock.getMetadata();                        	
                         	if(metadata != -1 && metadata != worldObj.getBlockMetadata(xTile, yTile, zTile)) continue;
                         	
-                        	penetratingPower-=penetrableBlock.getHardness() * (type.blockPenetrationModifier > 0 ? (1F/type.blockPenetrationModifier) : 1F);
+                        	penetratingPower-=penetrableBlock.getHardness() * (type.getBlockPenetrationModifier() > 0 ? (1F/type.getBlockPenetrationModifier()) : 1F);
                         	if(penetratingPower < 0) break;
                         	
                         	FlansMod.proxy.playBlockBreakSound(xTile, yTile, zTile, block, this.dimension);
