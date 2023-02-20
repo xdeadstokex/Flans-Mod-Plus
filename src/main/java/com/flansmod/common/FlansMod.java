@@ -194,11 +194,8 @@ public class FlansMod {
     public static boolean enableBlockPenetration = false;
     public static float masterBlockPenetrationModifier = 0F;
     public static String[] penetrableBlocksArray = {"ID=20,HARDNESS=1.0,BREAKS=false", "ID=98:2,HARDNESS=2.0,BREAKS=false"};
-    /*
-     * index 0 of Float[] is the blocks metadata, index 1 of Float[] is hardness 
-     * and index 2 is whether or not the block breaks (represented by 1(true) and 0(false)) 
-     */
-    public static HashMap<Block, Float[]> penetrableBlocks = new HashMap<>();
+    
+    public static ArrayList<PenetrableBlock> penetrableBlocks = new ArrayList<>();
     
 
     public static int armourSpawnRate = 20;
@@ -779,10 +776,10 @@ public class FlansMod {
     }
     
     /*
-     * Converts the String[] from the config to a HashMap which can be used in the code more easily
+     * Converts the String[] from the config to an ArrayList which can be used in the code more easily
      */
     public static void convertPenetrableBlocksArray(String[] penetrableBlocksArray) {
-    	HashMap<Block, Float[]> map = new HashMap<>();
+    	ArrayList<PenetrableBlock> list = new ArrayList<>();
     	//ID=20,HARDNESS=1,BREAKS=false
     	
     	for(String s : penetrableBlocksArray) {
@@ -791,19 +788,22 @@ public class FlansMod {
     			
     			String[] blockData = split[0].substring(3).split(":");
     			
-    			float metadata = -1;
-    			if(blockData.length > 1) metadata = Float.parseFloat(blockData[1]);
+    			int metadata = -1;
+    			if(blockData.length > 1) metadata = Integer.parseInt(blockData[1]);
     			Block block = Block.getBlockById(Integer.parseInt(blockData[0]));  
     			
     			float hardness = Float.parseFloat( split[1].substring(9) );  
-    			float breaks = Boolean.parseBoolean( split[2].substring(7) ) ? 1F : 0F;
+    			boolean breaks = Boolean.parseBoolean( split[2].substring(7) );
     			
-    			map.put(block, new Float[] {metadata, hardness, breaks});
+    			PenetrableBlock pB = new PenetrableBlock(block, metadata, hardness, breaks);
+    			
+    			list.add(pB);
     		} catch(Exception e) {
+    			System.out.println("ERROR! - '" + s + "' couldn't be recognized as a penetrable block!");
     			e.printStackTrace();
     		}    		
     	}   	
-    	FlansMod.penetrableBlocks = map;
+    	FlansMod.penetrableBlocks = list;
     }
 
     /** Handles client specific configuration */
