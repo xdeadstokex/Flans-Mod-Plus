@@ -23,9 +23,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.54"
+version = "1.56"
 group = "com.flansmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Flan's Mod Ultimate"
+archivesBaseName = "Flan's Mod Ultimate Stability Edition"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

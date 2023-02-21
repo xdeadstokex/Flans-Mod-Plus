@@ -1,20 +1,25 @@
 package com.flansmod.common.network;
 
 import com.flansmod.common.guns.*;
-import com.flansmod.common.teams.TeamsManager;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.guns.AttachmentType;
+import com.flansmod.common.guns.GunType;
+import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.ItemShootable;
+import com.flansmod.common.guns.ShootableType;
+import com.flansmod.common.teams.TeamsManager;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 
 //When the client receives one, it "reloads". Basically to stop client side recoil effects when the gun should be in a reload animation
 //When the server receives one, it is interpreted as a forced reload
@@ -58,9 +63,11 @@ public class PacketReload extends PacketBase {
     public void handleServerSide(EntityPlayerMP playerEntity) {
         PlayerData data = PlayerHandler.getPlayerData(playerEntity);
         ItemStack gunStack = playerEntity.getCurrentEquippedItem();
+
         if (left && data.offHandGunSlot != 0) {
             gunStack = playerEntity.inventory.getStackInSlot(data.offHandGunSlot - 1);
         }
+        
         if (data != null && gunStack != null && gunStack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) gunStack.getItem()).type;
             //Check if the gun is empty
@@ -90,7 +97,7 @@ public class PacketReload extends PacketBase {
             } else {
                 reloadCount = 1;
             }
-
+            
             if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left)) {
                 float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
                 if(!data.reloadedAfterRespawn && TeamsManager.getInstance().currentMap != null){
@@ -134,7 +141,8 @@ public class PacketReload extends PacketBase {
             data.burstRoundsRemainingLeft = 0;
         } else {
             data.burstRoundsRemainingRight = 0;
-        }
+        } 
+        
         if (stack != null && stack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) stack.getItem()).type;
             if (left)

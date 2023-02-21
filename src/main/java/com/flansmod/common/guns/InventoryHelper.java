@@ -21,8 +21,9 @@ public class InventoryHelper
                 //If the item still has durability, try to place it in the inventory
                 if (stack.isItemDamaged()) {
                     //Get the index for the first empty inventory slot
-                    invSlot = getFirstEmptyStack(inventory);
-
+                	invSlot = getFirstEmptyStack(inventory);
+                    
+                    
                     if (invSlot >= 0) {
                     	ItemStack stackToAdd = ItemStack.copyItemStack(stack);
                     	stackToAdd.animationsToGo = 5;
@@ -139,6 +140,15 @@ public class InventoryHelper
         * I did it this way to potentially play better with anything that expands inventory?
         * */
         for(int i = 0; i < (inventory.getSizeInventory() - 4); ++i)
+            if (inventory.getStackInSlot(i) == null) {
+                return i;
+            }
+        
+        return -1;
+    }
+    
+    public static int getFirstEmptyStackTopInventory(IInventory inventory) {
+        for(int i = 9; i < (inventory.getSizeInventory() - 4); ++i)
             if (inventory.getStackInSlot(i) == null) {
                 return i;
             }

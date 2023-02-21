@@ -26,6 +26,7 @@ import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.eventhandlers.GunFiredEvent;
+import com.flansmod.common.eventhandlers.GunReloadEvent;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.EntityHit;
 import com.flansmod.common.guns.raytracing.EnumHitboxType;
@@ -1245,10 +1246,14 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
      * Reload method. Called automatically when firing with an empty clip
      */
     public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload) {
-        boolean reloadedSomething = false;
+    	GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
+    	MinecraftForge.EVENT_BUS.post(gunReloadEvent);
+    	if(gunReloadEvent.isCanceled()) return false;   
+    	
+    	boolean reloadedSomething = false;
 
-        //Load the gun without having the ammo if gunDevMode is enabled
-        if (FlansMod.gunDevMode) {
+        //Load the gun without having the ammo if gunDevMode is enabled or it's set in the event
+        if (FlansMod.gunDevMode || !gunReloadEvent.isNeedsAmmo()) {
             ShootableType ammo = type.getDefaultAmmo();
             if (ammo != null) {
                 ItemStack stackToLoad = new ItemStack(ammo.item);
