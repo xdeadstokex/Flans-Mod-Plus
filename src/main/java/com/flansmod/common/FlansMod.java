@@ -186,7 +186,9 @@ public class FlansMod {
     public static float masterLegModifier = 0.5F;
     public static boolean masterDualWieldDisable = false;
     public static boolean gunDevMode = false;
-    
+    public static boolean enableWeaponSprintStance = true;
+    public static boolean enableRandomSprintStance = false;
+
     public static float nameTagRenderRange = 64F;
     public static float nameTagSneakRenderRange = 32F;
     public static float maxHealth = 20;
@@ -747,6 +749,10 @@ public class FlansMod {
         nameTagRenderRange = configFile.getFloat("Name tag render range", "Gameplay Settings (synced)", nameTagRenderRange, 0, 1000, "Max distance from which name tags can be seen");
         nameTagSneakRenderRange = configFile.getFloat("Name tag sneaking render range", "Gameplay Settings (synced)", nameTagSneakRenderRange, 0, 1000, "Max distance from which name tags can be seen on sneaking players");
         maxHealth = configFile.getFloat("Max Health", "Gameplay Settings (synced)", maxHealth, 0.5F, 100F, "Maximum player health (20 = 10 hearts)");
+
+        enableWeaponSprintStance = configFile.getBoolean("Enable Sprint Stance", "Gameplay Settings (synced)", enableWeaponSprintStance, "This will move weapons to a lowered position when sprinting");
+        enableRandomSprintStance = configFile.getBoolean("Enable Randomized Sprint Stance", "Gameplay Settings (synced)", enableRandomSprintStance, "This will randomly generate unique positions for each weapon using the weapon name as a seed");
+
         bonusRegenAmount = configFile.getFloat("Bonus regen amount", "Gameplay Settings (synced)", bonusRegenAmount, 0.0F, 1000F, "Allows you to increase health regen, best used alongside increased max health");
         bonusRegenTickDelay = configFile.getInt("Bonus regen interval", "Gameplay Settings (synced)", bonusRegenTickDelay, 0, 1000, "Number of ticks between heals, vanilla is 80");
         bonusRegenFoodLimit = configFile.getInt("Bonus regen food limit", "Gameplay Settings (synced)", bonusRegenFoodLimit, 0, 20, "Amount of food required to activate this regen, vanilla is 18");
@@ -755,6 +761,7 @@ public class FlansMod {
         masterBlockPenetrationModifier = configFile.getFloat("Master Block Penetration Modifier", "Gameplay Settings (synced)", masterBlockPenetrationModifier, 0, 100, "Default block penetration modifier power. Individual bullets will override");
         penetrableBlocksArray = configFile.getStringList("Penetrable Blocks", "Gameplay Settings (synced)", penetrableBlocksArray, "Blocks that can be penetrated with bullets that have the required block penetrating power. (BREAKS = whether the block should break when hit)");
         FlansMod.convertPenetrableBlocksArray(penetrableBlocksArray);
+
 
         //Client Side Settings
         holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");
