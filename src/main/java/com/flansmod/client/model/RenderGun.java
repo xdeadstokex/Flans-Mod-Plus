@@ -1,6 +1,7 @@
 package com.flansmod.client.model;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import net.minecraft.util.ResourceLocation;
@@ -200,18 +201,6 @@ public class RenderGun implements IItemRenderer {
 			GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
 			// forward, up, sideways
 			GL11.glTranslatef(model.crouchZoom, -0.03F * adsSwitch, 0F);
-		} else if (sprinting) {
-			GL11.glRotatef(25F - 5F * adsSwitch + model.stanceRotate.z, 0F, 0F, 1F);
-			// left/right on length == left/right on height == null == down/up
-			GL11.glRotatef(-5F + model.stanceRotate.x, 0F + model.stanceRotate.y, 1F, -0.0F);
-			GL11.glTranslatef(0.15F, 0.2F + 0.175F * adsSwitch, -0.6F - 0.405F * adsSwitch);
-			if (gunType.hasScopeOverlay && !model.stillRenderGunWhenScopedOverlay) {
-				GL11.glTranslatef(-0.3F * adsSwitch, 0F, 0F);
-			}
-			GL11.glRotatef(4.5F * adsSwitch, 0F, 0F, 1F);
-			// forward, up, sideways
-			GL11.glTranslatef(0.0F + model.stanceTranslate.x, -0.03F * adsSwitch + model.stanceTranslate.y,
-					0F + model.stanceTranslate.z);
 		} else {
 			// Angle down slightly
 			GL11.glRotatef(25F - 5F * adsSwitch, 0F, 0F, 1F); // Angle nose down slightly -> angle nose up slightly
@@ -227,8 +216,18 @@ public class RenderGun implements IItemRenderer {
 		}
 
 		//Weapon switch animation
-		if (animations.switchAnimationProgress > 0 && animations.switchAnimationLength > 0)
+		if (animations.switchAnimationProgress > 0 && animations.switchAnimationLength > 0) {
 			renderWeaponSwitchMovement(animations);
+		}
+
+		//Weapon sprinting animation
+		if (sprinting && animations.stanceTimer == 0 && FlansMod.enableWeaponSprintStance) {
+			if (animations.runningStanceAnimationProgress == 0)
+				animations.runningStanceAnimationProgress = 1;
+			renderWeaponSprintMovement(animations, model, gunType);
+		} else {
+			animations.runningStanceAnimationProgress = 0;
+		}
 
 		//Melee animations
 		if (animations.meleeAnimationProgress > 0 && animations.meleeAnimationProgress < gunType.meleePath.size())
@@ -260,6 +259,39 @@ public class RenderGun implements IItemRenderer {
 
 		GL11.glRotatef(startAngles.y + (endAngles.y - startAngles.y) * interp, 0f, 1f, 0f);
 		GL11.glRotatef(startAngles.z + (endAngles.z - startAngles.z) * interp, 0f, 0f, 1f);
+	}
+
+	private void renderWeaponSprintMovement(GunAnimations animations, ModelGun model, GunType gunType) {
+		Vector3f defaultTranslate = new Vector3f(0, 0F, -0.2);
+		Vector3f defaultRotation = new Vector3f(-15F, 45F, -10F);
+
+		Vector3f configuredTranslate = model.sprintStanceTranslate;
+		Vector3f configuredRotation = model.sprintStanceRotate;
+
+		float progress = (animations.runningStanceAnimationProgress + smoothing) / animations.runningStanceAnimationLength;
+		if (animations.runningStanceAnimationProgress == animations.runningStanceAnimationLength)
+			progress = 1;
+
+		if (FlansMod.enableRandomSprintStance) {
+			animations.updateSprintStance(gunType.getShortName());
+			defaultRotation = animations.sprintingStance;
+		}
+
+		if (!Objects.equals(model.sprintStanceTranslate, new Vector3f(0F, 0F, 0F))) {
+			GL11.glTranslatef(configuredTranslate.x * progress, configuredTranslate.y * progress, configuredTranslate.z * progress);
+		} else {
+			GL11.glTranslatef(defaultTranslate.x * progress, defaultTranslate.y * progress, defaultTranslate.z * progress);
+		}
+
+		if (!Objects.equals(model.sprintStanceRotate, new Vector3f(0F, 0F, 0F))) {
+			GL11.glRotatef(configuredRotation.x * progress, 1f, 0f, 0f);
+			GL11.glRotatef(configuredRotation.y * progress, 0f, 1f, 0f);
+			GL11.glRotatef(configuredRotation.z * progress, 0f, 0f, 1f);
+		} else {
+			GL11.glRotatef(defaultRotation.x * progress, 1f, 0f, 0f);
+			GL11.glRotatef(defaultRotation.y * progress, 0f, 1f, 0f);
+			GL11.glRotatef(defaultRotation.z * progress, 0f, 0f, 1f);
+		}
 	}
 
 	private void renderMeleeMovement(GunType gunType, GunAnimations animations) {

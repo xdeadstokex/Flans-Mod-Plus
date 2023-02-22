@@ -206,9 +206,16 @@ public class ModelGun extends ModelBase
 	/**If true, gun will translate when equipped with a sight attachment */
 	public float gunOffset = 0F;
 	public float crouchZoom = 0F;
-	public boolean fancyStance = false;
+	public boolean fancyStance = true;
+	/** deprecated, do not use, use sprintStanceTranslate */
+	@Deprecated
 	public Vector3f stanceTranslate = new Vector3f();
+	/** deprecated, do not use, use sprintStanceRotate */
+	@Deprecated
 	public Vector3f stanceRotate = new Vector3f();
+
+	public Vector3f sprintStanceTranslate = new Vector3f();
+	public Vector3f sprintStanceRotate = new Vector3f();
 
 	/** Custom reload Parameters. If Enum.CUSTOM is set, these parameters can build an animation within the gun model classes */
 	public float rotateGunVertical = 0F;
