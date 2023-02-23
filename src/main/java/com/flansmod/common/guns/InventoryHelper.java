@@ -42,7 +42,7 @@ public class InventoryHelper
 	            			return true;
 	            		} else {
 	            			is.setItemDamage(0);
-	            			numberBulletsLeft = Math.abs(itemDamageDiff);
+	            			numberBulletsLeft = -itemDamageDiff;
 	            			stack.setItemDamage(stack.getMaxDamage()-numberBulletsLeft);
 	            		}               		
 	            	}
@@ -51,8 +51,7 @@ public class InventoryHelper
                 //If the item still has durability, try to place it in the inventory
                 if (stack.isItemDamaged()) {
                 	//Get the index for the first empty inventory slot
-                	invSlot = getFirstEmptyStack(inventory, putInUpperInventory);
-                    
+                	invSlot = getFirstEmptyStack(inventory, putInUpperInventory);                	
                     
                     if (invSlot >= 0) {
                     	ItemStack stackToAdd = ItemStack.copyItemStack(stack);
@@ -169,16 +168,20 @@ public class InventoryHelper
         /* Subtract 4 from inventory slots to stop mags going into armor slots
         * I did it this way to potentially play better with anything that expands inventory?
         * */
-    	int startingPoint = putInUpperInventory ? 9 : 0;
+    	int firstEmpty = -1;
     	
-        for(int i = startingPoint; i < (inventory.getSizeInventory() - 4); ++i)
-            if (inventory.getStackInSlot(i) == null) {
-                return i;
+        for(int i = 0; i < (inventory.getSizeInventory() - 4); i++) {
+            if(inventory.getStackInSlot(i) == null) {
+            	if(putInUpperInventory && i < 9) {
+            		if(firstEmpty == -1) firstEmpty = i;
+            	} else 
+            		return i;
             }
+        }
         
-        return putInUpperInventory ? getFirstEmptyStack(inventory, false) : -1;
-    }   
-
+        return firstEmpty;
+    }
+    
 	public static void dropInventoryItems(World worldIn, int x, int y, int z, IInventory tileentity) 
 	{
 		
