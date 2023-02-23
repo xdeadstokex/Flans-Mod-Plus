@@ -193,6 +193,8 @@ public class FlansMod {
     public static float nameTagSneakRenderRange = 32F;
     public static float maxHealth = 20;
     
+    public static boolean allowCombiningAmmoOnReload = true;
+    
     public static boolean enableBlockPenetration = false;
     public static float masterBlockPenetrationModifier = 0F;
     public static String[] penetrableBlocksArray = {"ID=20,HARDNESS=1.0,BREAKS=false", "ID=98:2,HARDNESS=2.0,BREAKS=false"};
@@ -757,6 +759,8 @@ public class FlansMod {
         bonusRegenTickDelay = configFile.getInt("Bonus regen interval", "Gameplay Settings (synced)", bonusRegenTickDelay, 0, 1000, "Number of ticks between heals, vanilla is 80");
         bonusRegenFoodLimit = configFile.getInt("Bonus regen food limit", "Gameplay Settings (synced)", bonusRegenFoodLimit, 0, 20, "Amount of food required to activate this regen, vanilla is 18");
 
+        allowCombiningAmmoOnReload = configFile.getBoolean("Allow Combining Ammo on Reload", "Gameplay Settings (synced)", allowCombiningAmmoOnReload, "If this is set to 'false', players will not be able to combine their ammo on reload");
+        
         enableBlockPenetration = configFile.getBoolean("Enable Block Penetration", "Gameplay Settings (synced)", enableBlockPenetration, "This will enable the block penetration system to be used");
         masterBlockPenetrationModifier = configFile.getFloat("Master Block Penetration Modifier", "Gameplay Settings (synced)", masterBlockPenetrationModifier, 0, 100, "Default block penetration modifier power. Individual bullets will override");
         penetrableBlocksArray = configFile.getStringList("Penetrable Blocks", "Gameplay Settings (synced)", penetrableBlocksArray, "Blocks that can be penetrated with bullets that have the required block penetrating power. (BREAKS = whether the block should break when hit)");
@@ -844,7 +848,11 @@ public class FlansMod {
             log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
             FlansModClient.fireButton = FlanMouseButton.RIGHT;
         }
+        
+        FlansModClient.combineAmmoOnReload = configFile.getBoolean("Combine Ammo On Reload", "Input Settings", true, "Whether or not to combine unloaded ammo with damaged ammo in the inventory");
 
+        FlansModClient.ammoToUpperInventoryOnReload = configFile.getBoolean("Ammo To Upper Inventory On Reload", "Input Settings", false, "Whether or not to first try to put unloaded ammo in the upper inventory instead of the hotbar");
+        
         if (configFile.hasChanged())
             configFile.save();
     }

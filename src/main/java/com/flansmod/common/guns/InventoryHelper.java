@@ -1,5 +1,9 @@
 package com.flansmod.common.guns;
 
+import java.util.ArrayList;
+
+import com.flansmod.client.FlansModClient;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,7 +13,14 @@ import net.minecraft.world.World;
 /** Adds access to the InventoryPlayer stack combination methods for arbitrary inventories */
 public class InventoryHelper 
 {
+	/*
+	 * For driveables that don't combine ammo or need to force items in upper inventory
+	 */
 	public static boolean addItemStackToInventory(IInventory inventory, ItemStack stack, boolean creative) {
+		return addItemStackToInventory(inventory, stack, creative, false, false);
+	}
+	
+	public static boolean addItemStackToInventory(IInventory inventory, ItemStack stack, boolean creative, boolean combineAmmo, boolean putInUpperInventory) {
 		if (stack == null) {
             return false;
         } else if (stack.stackSize == 0) {
@@ -18,11 +29,29 @@ public class InventoryHelper
             try {
                 int invSlot;
 
+                if(combineAmmo) {
+	                int numberBulletsLeft = stack.getMaxDamage()-stack.getItemDamage();
+	                
+	            	for(int i = 0; i < inventory.getSizeInventory()-4; i++) {
+	            		ItemStack is = inventory.getStackInSlot(i);
+	            		if(is == null || !is.isItemDamaged() || is.getItem() != stack.getItem()) continue;
+	            		
+	            		int itemDamageDiff = is.getItemDamage()-numberBulletsLeft;
+	            		if(itemDamageDiff >= 0) {
+	            			is.setItemDamage(itemDamageDiff);
+	            			return true;
+	            		} else {
+	            			is.setItemDamage(0);
+	            			numberBulletsLeft = -itemDamageDiff;
+	            			stack.setItemDamage(stack.getMaxDamage()-numberBulletsLeft);
+	            		}               		
+	            	}
+                }
+                
                 //If the item still has durability, try to place it in the inventory
                 if (stack.isItemDamaged()) {
-                    //Get the index for the first empty inventory slot
-                	invSlot = getFirstEmptyStack(inventory);
-                    
+                	//Get the index for the first empty inventory slot
+                	invSlot = getFirstEmptyStack(inventory, putInUpperInventory);                	
                     
                     if (invSlot >= 0) {
                     	ItemStack stackToAdd = ItemStack.copyItemStack(stack);
@@ -41,11 +70,11 @@ public class InventoryHelper
                 } else {
                     do {
                         invSlot = stack.stackSize;
-                        stack.stackSize = storePartialItemStack(inventory, stack);
+                        stack.stackSize = storePartialItemStack(inventory, stack, putInUpperInventory);
                     } while (stack.stackSize > 0 && stack.stackSize < invSlot);
 
                     if (stack.stackSize == invSlot && creative) {
-                    	stack.stackSize = 0;
+                    	stack.stackSize = 0;                   	
                         return true;
                     } else {
                         return stack.stackSize < invSlot;
@@ -77,7 +106,7 @@ public class InventoryHelper
         return -1;
     }
 	
-    public static int storePartialItemStack(IInventory inventory, ItemStack stack) {
+    public static int storePartialItemStack(IInventory inventory, ItemStack stack, boolean putInUpperInventory) {
 
         Item item = stack.getItem();
         int j = stack.stackSize;
@@ -86,7 +115,7 @@ public class InventoryHelper
         //If the item doesn't stack, just find an empty slot for it
         if (stack.getMaxStackSize() == 1)
         {
-            k = getFirstEmptyStack(inventory);
+            k = getFirstEmptyStack(inventory, putInUpperInventory);
             //If it is impossible, return
             if (k < 0) {
                 return j;
@@ -100,7 +129,7 @@ public class InventoryHelper
         } else {
             k = storeItemStack(inventory, stack);
             if (k < 0) {
-                k = getFirstEmptyStack(inventory);
+                k = getFirstEmptyStack(inventory, putInUpperInventory);
             }
 
             if (k >= 0) {
@@ -135,27 +164,24 @@ public class InventoryHelper
     }
 	
 	/** Method from InventoryPlayer */
-    public static int getFirstEmptyStack(IInventory inventory) {
+    public static int getFirstEmptyStack(IInventory inventory, boolean putInUpperInventory) {
         /* Subtract 4 from inventory slots to stop mags going into armor slots
         * I did it this way to potentially play better with anything that expands inventory?
         * */
-        for(int i = 0; i < (inventory.getSizeInventory() - 4); ++i)
-            if (inventory.getStackInSlot(i) == null) {
-                return i;
+    	int firstEmpty = -1;
+    	
+        for(int i = 0; i < (inventory.getSizeInventory() - 4); i++) {
+            if(inventory.getStackInSlot(i) == null) {
+            	if(putInUpperInventory && i < 9) {
+            		if(firstEmpty == -1) firstEmpty = i;
+            	} else 
+            		return i;
             }
+        }
         
-        return -1;
+        return firstEmpty;
     }
     
-    public static int getFirstEmptyStackTopInventory(IInventory inventory) {
-        for(int i = 9; i < (inventory.getSizeInventory() - 4); ++i)
-            if (inventory.getStackInSlot(i) == null) {
-                return i;
-            }
-        
-        return -1;
-    }
-
 	public static void dropInventoryItems(World worldIn, int x, int y, int z, IInventory tileentity) 
 	{
 		

@@ -56,6 +56,7 @@ public class PacketModConfig extends PacketBase {
     public int bonusRegenFoodLimit;
     public float bonusRegenAmount;
 
+    public boolean allowCombiningAmmoOnReload;
     
     public boolean enableBlockPenetration;
     public float masterBlockPenetrationModifier;
@@ -102,6 +103,7 @@ public class PacketModConfig extends PacketBase {
         bonusRegenFoodLimit = FlansMod.bonusRegenFoodLimit;
         bonusRegenAmount = FlansMod.bonusRegenAmount;
 
+        allowCombiningAmmoOnReload = FlansMod.allowCombiningAmmoOnReload;
         
         enableBlockPenetration = FlansMod.enableBlockPenetration;
         masterBlockPenetrationModifier = FlansMod.masterBlockPenetrationModifier;
@@ -149,6 +151,7 @@ public class PacketModConfig extends PacketBase {
         data.writeInt(bonusRegenFoodLimit);
         data.writeFloat(bonusRegenAmount);
 
+        data.writeBoolean(allowCombiningAmmoOnReload);
               
         data.writeBoolean(enableBlockPenetration);
         data.writeFloat(masterBlockPenetrationModifier);
@@ -199,6 +202,8 @@ public class PacketModConfig extends PacketBase {
         bonusRegenTickDelay = data.readInt();
         bonusRegenFoodLimit = data.readInt();
         bonusRegenAmount = data.readFloat();
+        
+        allowCombiningAmmoOnReload = data.readBoolean();
         
         enableBlockPenetration = data.readBoolean();
         masterBlockPenetrationModifier = data.readFloat();
@@ -256,6 +261,8 @@ public class PacketModConfig extends PacketBase {
         FlansMod.bonusRegenTickDelay = bonusRegenTickDelay;
         FlansMod.bonusRegenFoodLimit = bonusRegenFoodLimit;
         FlansMod.bonusRegenAmount = bonusRegenAmount;
+        
+        FlansMod.allowCombiningAmmoOnReload = allowCombiningAmmoOnReload;
         
         FlansMod.enableBlockPenetration = enableBlockPenetration;
         FlansMod.masterBlockPenetrationModifier = masterBlockPenetrationModifier;
