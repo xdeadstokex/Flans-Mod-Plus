@@ -3,6 +3,8 @@ package com.flansmod.utils;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.vector.Vector3f;
 
+import java.util.ArrayList;
+
 public class ConfigUtils
 {
 	public static String configString(ConfigMap config, String settingName, String defaultValue) {
@@ -132,24 +134,36 @@ public class ConfigUtils
 	}
 
 	public static String[] getSplitFromKey (ConfigMap config, String key) {
-		String[] dataPieces = config.get(key).split(" ");
-		String[] split = new String[dataPieces.length + 1];
-		split[0] = key;
-		System.arraycopy(dataPieces, 0, split, 1, dataPieces.length);
-		return split;
+		return getSplitFromKey(config, new String[] {key});
 	}
 
 	public static String[] getSplitFromKey (ConfigMap config, String[] keys) {
 		for (String key : keys) {
 			if (config.containsKey(key)) {
-				String[] dataPieces = config.get(key).split(" ");
-				String[] split = new String[dataPieces.length + 1];
-				split[0] = key;
-				System.arraycopy(dataPieces, 0, split, 1, dataPieces.length);
-				return split;
+				return createSplit(key, config.get(key));
 			}
 		}
 
 		return null;
+	}
+
+	public static ArrayList<String[]> getSplitsFromKey (ConfigMap config, String[] keys) {
+		ArrayList<String[]> splits = new ArrayList<>();
+
+		for (String key : keys) {
+			for (String line : config.getAll(key)) {
+				splits.add(createSplit(key, line));
+			}
+		}
+
+		return splits;
+	}
+
+	private static String[] createSplit(String key, String line) {
+		String[] dataPieces = line.split(" ");
+		String[] split = new String[dataPieces.length + 1];
+		split[0] = key;
+		System.arraycopy(dataPieces, 0, split, 1, dataPieces.length);
+		return split;
 	}
 }

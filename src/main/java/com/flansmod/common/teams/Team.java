@@ -21,10 +21,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class Team extends InfoType
 {
-	public static List<Team> teams = new ArrayList<Team>();
-	public List<String> members = new ArrayList<String>();
+	public static List<Team> teams = new ArrayList<>();
+	public List<String> members = new ArrayList<>();
 	//public List<ITeamBase> bases = new ArrayList<ITeamBase>();
-	public List<PlayerClass> classes = new ArrayList<PlayerClass>();
+	public List<PlayerClass> classes = new ArrayList<>();
 	
 	public static Team spectators;
 
@@ -67,70 +67,55 @@ public class Team extends InfoType
 				String[] split = ConfigUtils.getSplitFromKey(config, "TeamColour");
 				teamColour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
 			}
-			if (config.containsKey("TextColour")) {
-				getColourCode(config, config.get("TextColour"));
-			}
-			if(config.containsKey("Hat") || config.containsKey("Helmet")) {
-				String key = "Hat";
-				if (config.containsKey("Helmet"))
-					key = "Helmet";
-				if(config.get(key).equalsIgnoreCase("None"))
-					return;
-				for(Item item : FlansMod.armourItems)
+
+			textColour = getColourCode(ConfigUtils.configString(config, "TextColour", "Black"));
+
+			String hatShortName = ConfigUtils.configString(config, new String[] { "Hat", "Helmet" }, null);
+			if(hatShortName != null && !hatShortName.equalsIgnoreCase("None")) {
+				for(ItemTeamArmour item : FlansMod.armourItems)
 				{
-					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(config.get(key)))
+					ArmourType armour = item.type;
+					if(armour != null && armour.shortName.equals(hatShortName))
 						hat = new ItemStack(item);
 				}
 			}
-			if(config.containsKey("Chest")  || config.containsKey("Top")) {
-				String key = "Chest";
-				if (config.containsKey("Top"))
-					key = "Top";
-				if(config.get(key).equalsIgnoreCase("None"))
-					return;
-				for(Item item : FlansMod.armourItems)
+
+			String chestShortName = ConfigUtils.configString(config, new String[] { "Chest", "Top" }, null);
+			if(chestShortName != null && !chestShortName.equalsIgnoreCase("None")) {
+				for(ItemTeamArmour item : FlansMod.armourItems)
 				{
-					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(config.get(key)))
+					ArmourType armour = item.type;
+					if(armour != null && armour.shortName.equals(chestShortName))
 						chest = new ItemStack(item);
 				}
 			}
-			if(config.containsKey("Legs")  || config.containsKey("Bottom")) {
-				String key = "Legs";
-				if (config.containsKey("Bottom"))
-					key = "Bottom";
-				if(config.get(key).equalsIgnoreCase("None"))
-					return;
-				for(Item item : FlansMod.armourItems)
+
+			String legsShortName = ConfigUtils.configString(config, new String[] { "Legs", "Bottom" }, null);
+			if(legsShortName != null && !legsShortName.equalsIgnoreCase("None")) {
+				for(ItemTeamArmour item : FlansMod.armourItems)
 				{
-					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(config.get(key)))
+					ArmourType armour = item.type;
+					if(armour != null && armour.shortName.equals(legsShortName))
 						legs = new ItemStack(item);
 				}
 			}
-			if(config.containsKey("Shoes")  || config.containsKey("Boots")) {
-				String key = "Shoes";
-				if (config.containsKey("Boots"))
-					key = "Boots";
-				if(config.get(key).equalsIgnoreCase("None"))
-					return;
-				for(Item item : FlansMod.armourItems)
+
+			String shoesShortName = ConfigUtils.configString(config, new String[] { "Shoes", "Boots" }, null);
+			if(shoesShortName != null && !shoesShortName.equalsIgnoreCase("None")) {
+				for(ItemTeamArmour item : FlansMod.armourItems)
 				{
-					ArmourType armour = ((ItemTeamArmour)item).type;
-					if(armour != null && armour.shortName.equals(config.get(key)))
+					ArmourType armour = item.type;
+					if(armour != null && armour.shortName.equals(shoesShortName))
 						shoes = new ItemStack(item);
 				}
 			}
-			if(config.containsKey("AddDefaultClass")  || config.containsKey("AddClass")) {
-				String key = "AddDefaultClass";
-				if (config.containsKey("AddClass"))
-					key = "AddClass";
-				classes.add(PlayerClass.getClass(config.get(key)));
+
+			String defaultClass = ConfigUtils.configString(config, new String [] { "AddDefaultClass", "AddClass"}, null);
+			if(defaultClass != null) {
+				classes.add(PlayerClass.getClass(defaultClass));
 			}
-			if(config.containsKey("allowedForRoundsGenerator")){
-				this.allowedForRoundsGenerator = Boolean.parseBoolean(config.get("allowedForRoundsGenerator"));
-			}
+
+			allowedForRoundsGenerator = ConfigUtils.configBool(config, "AllowedForRoundsGenerator", allowedForRoundsGenerator);
 		} catch (Exception e)
 		{
 			FlansMod.log("Reading team file failed.");
@@ -148,12 +133,9 @@ public class Team extends InfoType
 		return null;
 	}
 
-	private static char getColourCode(ConfigMap config, String colour) {
+	private static char getColourCode(String colour) {
 		char textCode;
-		switch(config.get("TextColour")) {
-			case "Black":
-				textCode = '0';
-				break;
+		switch(colour) {
 			case "Blue":
 				textCode = '1';
 				break;
@@ -196,7 +178,7 @@ public class Team extends InfoType
 			case "White":
 				textCode = 'f';
 				break;
-			default:
+			default: // Black
 				textCode = '0';
 				break;
 		}
@@ -234,7 +216,7 @@ public class Team extends InfoType
 	}
 	
 	public String addPlayer(String username) {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		list.add(username);
 		for(Team team : teams)
 		{
