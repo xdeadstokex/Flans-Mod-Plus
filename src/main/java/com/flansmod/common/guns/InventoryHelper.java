@@ -41,7 +41,21 @@ public class InventoryHelper
 	            			is.setItemDamage(itemDamageDiff);
 	            			return true;
 	            		} else {
-	            			is.setItemDamage(0);
+	            			is.setItemDamage(0);      
+	            			
+	            			//try to combine the newly filled up ammo with existing ammo
+	            			for(int j = 0; j < inventory.getSizeInventory()-4; j++) {
+	            				ItemStack possibleStackToCombineWith = inventory.getStackInSlot(j);
+	            				if(possibleStackToCombineWith == null || j == i || possibleStackToCombineWith.isItemDamaged() 
+	            						|| possibleStackToCombineWith.getItem() != is.getItem()) continue;
+	            				
+	            				if(possibleStackToCombineWith.getMaxStackSize()-possibleStackToCombineWith.stackSize >= is.stackSize) {
+	            					possibleStackToCombineWith.stackSize += is.stackSize;
+	            					inventory.setInventorySlotContents(i, null);
+	            					break;
+	            				}
+	            			}
+	            			
 	            			numberBulletsLeft = -itemDamageDiff;
 	            			stack.setItemDamage(stack.getMaxDamage()-numberBulletsLeft);
 	            		}               		
@@ -68,13 +82,13 @@ public class InventoryHelper
                     return false;
 
                 } else {
-                    do {
+                    do {                    	
                         invSlot = stack.stackSize;
                         stack.stackSize = storePartialItemStack(inventory, stack, putInUpperInventory);
                     } while (stack.stackSize > 0 && stack.stackSize < invSlot);
-
+                	
                     if (stack.stackSize == invSlot && creative) {
-                    	stack.stackSize = 0;                   	
+                    	stack.stackSize = 0;    
                         return true;
                     } else {
                         return stack.stackSize < invSlot;
@@ -141,10 +155,10 @@ public class InventoryHelper
                         oldStack.setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
                     }
                     inventory.setInventorySlotContents(k, oldStack);
-                }
+                } 
 
                 int l = j;
-
+                
                 if (j > oldStack.getMaxStackSize() - oldStack.stackSize) {
                     l = oldStack.getMaxStackSize() - oldStack.stackSize;
                 }
@@ -181,7 +195,7 @@ public class InventoryHelper
         
         return firstEmpty;
     }
-    
+
 	public static void dropInventoryItems(World worldIn, int x, int y, int z, IInventory tileentity) 
 	{
 		
