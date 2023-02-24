@@ -196,17 +196,7 @@ public class PacketReload extends PacketBase {
                     }
                 }
             }
-            //If there was a valid non-empty magazine / bullet item somewhere in the inventory, take one to put in the gun
-            if (bestSlot != -1) {
-                ItemStack newBulletStack = clientPlayer.inventory.getStackInSlot(bestSlot);
-                ShootableType newBulletType = ((ItemShootable) newBulletStack.getItem()).type;
-                //Remove the magazine from the inventory
-                if (!clientPlayer.capabilities.isCreativeMode)
-                    newBulletStack.stackSize--;
-                if (newBulletStack.stackSize <= 0)
-                    newBulletStack = null;
-                clientPlayer.inventory.setInventorySlotContents(bestSlot, newBulletStack);
-            }
+
         }
     }
 }
