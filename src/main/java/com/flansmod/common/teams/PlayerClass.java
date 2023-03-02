@@ -51,54 +51,42 @@ public class PlayerClass extends InfoType {
         lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
         texture = ConfigUtils.configString(config, "SkinOverride", texture);
 
-        if(config.containsKey("Hat") || config.containsKey("Helmet")) {
-            String key = "Hat";
-            if (config.containsKey("Helmet"))
-                key = "Helmet";
-            if(config.get(key).equalsIgnoreCase("None"))
-                return;
-            for(Item item : FlansMod.armourItems)
+        String hatShortName = ConfigUtils.configString(config, new String[] { "Hat", "Helmet" }, null);
+        if(hatShortName != null && !hatShortName.equalsIgnoreCase("None")) {
+            for(ItemTeamArmour item : FlansMod.armourItems)
             {
-                ArmourType armour = ((ItemTeamArmour)item).type;
-                if(armour != null && armour.shortName.equals(config.get(key)))
+                ArmourType armour = item.type;
+                if(armour != null && armour.shortName.equals(hatShortName))
                     hat = new ItemStack(item);
             }
         }
-        if (config.containsKey("Chest")  || config.containsKey("Top")) {
-            String key = "Chest";
-            if (config.containsKey("Top"))
-                key = "Top";
-            if(config.get(key).equalsIgnoreCase("None"))
-                return;
-            for(Item item : FlansMod.armourItems)
+
+        String chestShortName = ConfigUtils.configString(config, new String[] { "Chest", "Top" }, null);
+        if(chestShortName != null && !chestShortName.equalsIgnoreCase("None")) {
+            for(ItemTeamArmour item : FlansMod.armourItems)
             {
-                ArmourType armour = ((ItemTeamArmour)item).type;
-                if(armour != null && armour.shortName.equals(config.get(key)))
+                ArmourType armour = item.type;
+                if(armour != null && armour.shortName.equals(chestShortName))
                     chest = new ItemStack(item);
             }
         }
-        if (config.containsKey("Legs")  || config.containsKey("Bottom")) {
-            String key = "Legs";
-            if (config.containsKey("Bottom"))
-                key = "Bottom";
-            if(config.get(key).equalsIgnoreCase("None"))
-                return;
-            for(Item item : FlansMod.armourItems)
+
+        String legsShortName = ConfigUtils.configString(config, new String[] { "Legs", "Bottom" }, null);
+        if(legsShortName != null && !legsShortName.equalsIgnoreCase("None")) {
+            for(ItemTeamArmour item : FlansMod.armourItems)
             {
-                ArmourType armour = ((ItemTeamArmour)item).type;
-                if(armour != null && armour.shortName.equals(config.get(key)))
+                ArmourType armour = item.type;
+                if(armour != null && armour.shortName.equals(legsShortName))
                     legs = new ItemStack(item);
             }
         }
-        if (config.containsKey("Shoes")  || config.containsKey("Boots")) {
-            String key = "Shoes";
-            if (config.containsKey("Boots"))
-                key = "Boots";
-            if(config.get(key).equalsIgnoreCase("None"))
-                return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour)item).type;
-                if(armour != null && armour.shortName.equals(config.get(key)))
+
+        String shoesShortName = ConfigUtils.configString(config, new String[] { "Shoes", "Boots" }, null);
+        if(shoesShortName != null && !shoesShortName.equalsIgnoreCase("None")) {
+            for(ItemTeamArmour item : FlansMod.armourItems)
+            {
+                ArmourType armour = item.type;
+                if(armour != null && armour.shortName.equals(shoesShortName))
                     shoes = new ItemStack(item);
             }
         }

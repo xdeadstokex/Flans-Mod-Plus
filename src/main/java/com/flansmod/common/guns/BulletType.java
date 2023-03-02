@@ -150,25 +150,28 @@ public class BulletType extends ShootableType
 			}
 			penetratingPower = ConfigUtils.configFloat(config, new String[]{"Penetration", "PenetratingPower"}, penetratingPower);
 			penetrationDecay = ConfigUtils.configFloat(config, "PenetrationDecay", penetrationDecay);
+
 			dragInAir = ConfigUtils.configFloat(config, "DragInAir", dragInAir);
-			dragInAir = dragInAir<0? 0: dragInAir>1? 1: dragInAir;
+			dragInAir = Math.max(0, Math.min(1, dragInAir)); // Clamp to [0, 1]
+
 			dragInWater = ConfigUtils.configFloat(config, "DragInWater", dragInWater);
-			dragInWater = dragInWater<0? 0: dragInWater>1? 1: dragInWater;
+			dragInWater = Math.max(0, Math.min(1, dragInWater)); // Clamp to [0, 1]
+
 			numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
 			bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, bulletSpread);
 			livingProximityTrigger = ConfigUtils.configFloat(config, "LivingProximityTrigger", livingProximityTrigger);
 			driveableProximityTrigger = ConfigUtils.configFloat(config, "VehicleProximityTrigger", driveableProximityTrigger);
 			damageToTriggerer = ConfigUtils.configFloat(config, "DamageToTriggerer", damageToTriggerer);
-			primeDelay = ConfigUtils.configInt(config, new String[]{"PrimeDelay", "TriggerDelay"}, primeDelay);
+			primeDelay = ConfigUtils.configInt(config, new String[]{ "PrimeDelay", "TriggerDelay" }, primeDelay);
 			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
 			explodeParticleType = ConfigUtils.configString(config, "ExplodeParticles", explodeParticleType);
 			smokeTime = ConfigUtils.configInt(config, "SmokeTime", smokeTime);
 			smokeParticleType = ConfigUtils.configString(config, "SmokeParticles", smokeParticleType);
-			//todo this is prob broken
-			if (config.containsKey("SmokeEffect"))
-				smokeEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, "SmokeEffect")));
-//			else if(split[0].equals("SmokeEffect"))
-//				smokeEffects.add(getPotionEffect(split));
+
+			ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "SmokeEffect" });
+			for (String[] split : lines) {
+				smokeEffects.add(getPotionEffect(split));
+			}
 
 			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
 			VLS = ConfigUtils.configBool(config, new String[]{"VLS", "HasDeadZone"}, VLS);
@@ -179,21 +182,29 @@ public class BulletType extends ShootableType
 			trackPhaseTurn = ConfigUtils.configFloat(config, "GuidedPhaseTurnSpeed", trackPhaseTurn);
 			boostPhaseParticle = ConfigUtils.configString(config, "BoostParticle", boostPhaseParticle);
 			torpedo = ConfigUtils.configBool(config, "Torpedo", torpedo);
+
 			if (config.containsKey("Bomb"))
 				weaponType = EnumWeaponType.BOMB;
-			if (config.containsKey("Shell"))
+			else if (config.containsKey("Shell"))
 				weaponType = EnumWeaponType.SHELL;
-			if (config.containsKey("Missile"))
+			else if (config.containsKey("Missile"))
 				weaponType = EnumWeaponType.MISSILE;
-			if (config.containsKey("WeaponType"))
-				weaponType = EnumWeaponType.valueOf(config.get("WeaponType").toUpperCase());
+			else if (config.containsKey("WeaponType")) {
+				String line = ConfigUtils.configString(config, "WeaponType", "Bomb");
+				if (line != null) {
+					weaponType = EnumWeaponType.valueOf(line.toUpperCase());
+				}
+			}
+
 			if (config.containsKey("LockOnToDriveables"))
-				lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(config.get("LockOnToDriveables").toLowerCase());
+				lockOnToPlanes = lockOnToVehicles = lockOnToMechas =  ConfigUtils.configBool(config, "LockOnToDriveables", lockOnToVehicles);
+
 			lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
 			lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
 			lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
 			lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
 			lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+
 			maxLockOnAngle = ConfigUtils.configFloat(config, "MaxLockOnAngle", maxLockOnAngle);
 			lockOnForce = ConfigUtils.configFloat(config, new String[]{"LockOnForce", "TurningForce"}, lockOnForce);
 			maxDegreeOfMissile = ConfigUtils.configInt(config, "MaxDegreeOfLockOnMissile", maxDegreeOfMissile);
@@ -206,11 +217,11 @@ public class BulletType extends ShootableType
 			shootForSettingPosHeight = ConfigUtils.configInt(config, "ShootForSettingPosHeight", shootForSettingPosHeight);
 			isDoTopAttack = ConfigUtils.configBool(config, "IsDoTopAttack", isDoTopAttack);
 			knockbackModifier = ConfigUtils.configFloat(config, "KnockbackModifier", knockbackModifier);
-			if (config.containsKey("PotionEffect"))
-				hitEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, "PotionEffect")));
-			//todo verify
-//			else if(split[0].equals("PotionEffect"))
-//				hitEffects.add(getPotionEffect(split));
+
+			lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PotionEffect" });
+			for (String[] split : lines) {
+				hitEffects.add(getPotionEffect(split));
+			}
 
 			manualGuidance = ConfigUtils.configBool(config, "ManualGuidance", manualGuidance);
 			laserGuidance = ConfigUtils.configBool(config, "LaserGuidance", laserGuidance);

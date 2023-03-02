@@ -55,9 +55,10 @@ public abstract class PaintableType extends InfoType
 	{
 		super.read(config, file);
 		//iconName textureName [dyeName dyeAmount (dyeDamage)]
-		if (config.containsKey("PaintJob")) {
+
+		ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PaintJob"} );
+		for (String[] split : lines) {
 			try {
-				String[] split = ConfigUtils.getSplitFromKey(config, "PaintJob");
 				int numDyes = (split.length - 2) / 2;
 				ItemStack[] dyeStacks = new ItemStack[numDyes];
 				for(int i = 0; i < numDyes; i++)
@@ -71,24 +72,39 @@ public abstract class PaintableType extends InfoType
 				}
 				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks, true));
 			} catch (Exception e) {
-			FlansMod.log("Reading paintable file failed : " + shortName);
+				StringBuilder fullLine = new StringBuilder();
+				for (String entry : split) {
+					fullLine.append(entry);
+				}
+
+				FlansMod.log("Reading paintable line failed for %s: %s", shortName, fullLine.toString());
 				if (FlansMod.printStackTrace) {
 					e.printStackTrace();
 				}
 			}
 		}
 
-		//TODO, MULTIPLES?
-		try {
-			//Paintjobs
-			if(config.containsKey("advpaintjob")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "advpaintjob");
+		lines = ConfigUtils.getSplitsFromKey(config, new String[] { "AdvPaintJob"} );
+		for (String[] split : lines) {
+			try {
 				ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
 				for(int i = 0; i < (split.length - 4) / 2; i++)
 					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
 				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
+			} catch (Exception e) {
+				StringBuilder fullLine = new StringBuilder();
+				for (String entry : split) {
+					fullLine.append(entry);
+				}
+
+				FlansMod.log("Reading advanced paintable line failed for %s: %s", shortName, fullLine.toString());
+				if (FlansMod.printStackTrace) {
+					e.printStackTrace();
+				}
 			}
-			// Other configs..
+		}
+
+		try {
 			if (config.containsKey("AddPaintableToTables")) {
 				String[] split = ConfigUtils.getSplitFromKey(config, "AddPaintableToTables");
 				if (split.length == 2) {
