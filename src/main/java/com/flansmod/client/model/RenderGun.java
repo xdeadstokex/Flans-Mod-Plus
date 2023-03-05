@@ -401,6 +401,12 @@ public class RenderGun implements IItemRenderer {
 
 	private static float getReloadRotate(GunAnimations animations, ModelGun model) {
 		float reloadRotate = 1F;
+
+		// Snap to zero if reload is finished. Otherwise, weird behaviour.
+		if (!animations.reloading) {
+			return 0F;
+		}
+
 		float effectiveReloadAnimationProgress = animations.lastReloadAnimationProgress
 				+ (animations.reloadAnimationProgress - animations.lastReloadAnimationProgress) * smoothing;
 
