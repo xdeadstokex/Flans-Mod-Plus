@@ -18,7 +18,6 @@ import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.eventhandlers.BulletHitEvent;
 import com.flansmod.common.eventhandlers.BulletLockOnEvent;
-import com.flansmod.common.eventhandlers.GunReloadEvent;
 import com.flansmod.common.guns.raytracing.BlockHit;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.DriveableHit;
@@ -95,7 +94,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public double prevDistanceToEntity = 0;
     public boolean toggleLock = false;
 
-    public double thisSpeed = 0;
     public int closeCount = 0;
     public int soundTime = 0;
     //Used to store speed for submunitions
@@ -388,7 +386,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         break;
                     }
                     if (obj instanceof EntityDriveable && getDistanceToEntity((Entity) obj) < type.driveableProximityTrigger) {
-                        /**
+                        /*
                          if(TeamsManager.getInstance() != null && TeamsManager.getInstance().currentRound != null && ((EntityDriveable)obj).seats[0].riddenByEntity instanceof EntityPlayerMP && owner instanceof EntityPlayer)
                          {
                          EntityPlayerMP player = (EntityPlayerMP)((EntityDriveable)obj).seats[0].riddenByEntity;
@@ -405,7 +403,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             }
         }
         //Create a list for all bullet hits
-        ArrayList<BulletHit> hits = new ArrayList<BulletHit>();
+        ArrayList<BulletHit> hits = new ArrayList<>();
 
         Vector3f origin = new Vector3f(posX, posY, posZ);
         Vector3f motion = new Vector3f(motionX, motionY, motionZ);
@@ -453,6 +451,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         continue;
                     int snapshotToTry = TeamsManager.bulletSnapshotMin;
                     float snapshotPortion = pingOfShooter / (float)TeamsManager.bulletSnapshotDivisor;
+
+                    // Just make sure it's positive...
+                    snapshotToTry = Math.max(0, snapshotToTry);
+
                     if (TeamsManager.bulletSnapshotDivisor > 0) {
                         snapshotToTry += snapshotPortion;
                     }
@@ -484,7 +486,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         float lb = offset - 0.5F;
                         float ub = offset + 0.5F;
 
-                        ArrayList<BulletHit> onStepHits = new ArrayList<>();
+                        ArrayList<BulletHit> onStepHits;
                         ArrayList<BulletHit> altStepHits = new ArrayList<>();
 
                         if (offset > 0.5 && snapshotAfterExists) {
@@ -574,25 +576,27 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         
         //Old way of finding block hit -> MovingObjectPosition hit = worldObj.func_147447_a(posVec, nextPosVec, false, true, true);
         ArrayList<MovingObjectPosition> rayTraceHits = this.rayTraceAllBlocks(worldObj, posVec, nextPosVec, false, true, true);
-       
-        for(MovingObjectPosition hit : rayTraceHits) {
-        	//Calculate the lambda value of the intercept
-        	posVec = Vec3.createVectorHelper(posX, posY, posZ);
-            Vec3 hitVec = posVec.subtract(hit.hitVec);
-            float lambda = 1;
-            //Try each co-ordinate one at a time.
-            if (motionX != 0)
-                lambda = (float) (hitVec.xCoord / motionX);
-            else if (motionY != 0)
-                lambda = (float) (hitVec.yCoord / motionY);
-            else if (motionZ != 0)
-                lambda = (float) (hitVec.zCoord / motionZ);
+        if (rayTraceHits != null) {
+            for(MovingObjectPosition hit : rayTraceHits) {
+                //Calculate the lambda value of the intercept
+                posVec = Vec3.createVectorHelper(posX, posY, posZ);
+                Vec3 hitVec = posVec.subtract(hit.hitVec);
+                float lambda = 1;
+                //Try each co-ordinate one at a time.
+                if (motionX != 0)
+                    lambda = (float) (hitVec.xCoord / motionX);
+                else if (motionY != 0)
+                    lambda = (float) (hitVec.yCoord / motionY);
+                else if (motionZ != 0)
+                    lambda = (float) (hitVec.zCoord / motionZ);
 
-            if (lambda < 0)
-                lambda = -lambda;
-            
-            hits.add(new BlockHit(hit, lambda));
+                if (lambda < 0)
+                    lambda = -lambda;
+
+                hits.add(new BlockHit(hit, lambda));
+            }
         }
+
         
         
         //We hit something
@@ -1027,9 +1031,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             this.motionX = rootx * motiona / roota;
             this.motionZ = rootz * motiona / roota;
             if (Math.abs(this.impactX - this.posX) < 1 && Math.abs(this.impactZ - this.posZ) < 1) {
-                double motionXab = this.motionX;
-                double motionYab = this.motionY;
-                double motionZab = this.motionZ;
                 double motionab = Math.sqrt((motionXa * motionXa) + (motionYa * motionYa) + (motionZa * motionZa));
                 this.motionX = 0;
                 this.motionY = -motionab;
@@ -1038,9 +1039,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         }
         this.renderDistanceWeight = 256D;
         if (owner != null && type.manualGuidance && VLSDelay <= 0 && lockedOnTo == null) {
-
-            this.renderDistanceWeight = 256D;
-            /**
+            /*
              boolean beamRider = true;
              if(!beamRider)
              {
@@ -1098,8 +1097,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
         if (type.torpedo) {
             if (isInWater()) {
-                Vector3f motion2 = new Vector3f(motionX, motionY, motionZ);
-                float length = motion.length();
                 motion.normalise();
                 motionY *= 0.3F;
                 motionX = motion.x * 1;
@@ -1121,14 +1118,11 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         rotationYaw = (float) ((Math.atan2(motionX, motionZ) * 180D) / 3.1415927410125732D);
         rotationPitch = (float) ((Math.atan2(motionY, motionXZ) * 180D) / 3.1415927410125732D);
         //Reset the range of the angles
-        for (; rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) {
-        }
-        for (; rotationPitch - prevRotationPitch >= 180F; prevRotationPitch += 360F) {
-        }
-        for (; rotationYaw - prevRotationYaw < -180F; prevRotationYaw -= 360F) {
-        }
-        for (; rotationYaw - prevRotationYaw >= 180F; prevRotationYaw += 360F) {
-        }
+        while (rotationPitch - prevRotationPitch < -180F) { prevRotationPitch -= 360F; }
+        while (rotationPitch - prevRotationPitch >= 180F) { prevRotationPitch += 360F; }
+        while (rotationYaw - prevRotationYaw < -180F) { prevRotationYaw -= 360F; }
+        while (rotationYaw - prevRotationYaw >= 180F) { prevRotationYaw += 360F; }
+
         rotationPitch = prevRotationPitch + (rotationPitch - prevRotationPitch) * 0.2F;
         rotationYaw = prevRotationYaw + (rotationYaw - prevRotationYaw) * 0.2F;
 
@@ -1304,10 +1298,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
     public float moveToTarget(float current, float target, float speed) {
 
         float pitchToMove = (float) ((Math.sqrt(target * target)) - Math.sqrt((current * current)));
-        for (; pitchToMove > 180F; pitchToMove -= 360F) {
-        }
-        for (; pitchToMove <= -180F; pitchToMove += 360F) {
-        }
+        while (pitchToMove > 180F) { pitchToMove -= 360F; }
+        while (pitchToMove <= -180F) { pitchToMove += 360F; }
 
         float signDeltaY = 0;
         if (pitchToMove > speed) {
