@@ -1,5 +1,6 @@
 # Build and Bins
 .gradle/
+gradle.properties
 build/
 bin/
 out/

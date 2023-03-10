@@ -22,6 +22,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'maven-publish'
 
 version = "1.56"
 group = "com.flansmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -111,6 +112,22 @@ task outputJar(type: Jar) {
     }
 }
 
+task srcJar(type: Jar) {
+    classifier = 'sources'
+    from(sourceSets.main.allSource) {
+        exclude '**/mechaparts/'
+        exclude '**/modernweapons/'
+        exclude '**/mw/'
+        exclude '**/nerf/'
+        exclude '**/simpleparts/'
+        exclude '**/titan/'
+        exclude '**/utility/'
+        exclude '**/ww2/'
+        exclude '**/yeolde/'
+        exclude '**/zombie/'
+    }
+}
+
 task outputPacks(type: Copy) {
     from('build/libs/') {
         include "**/*${version}.jar"
@@ -120,8 +137,18 @@ task outputPacks(type: Copy) {
 }
 
 task deobfJar(type: Jar) {
-    from sourceSets.main.output
     classifier = 'deobf'
+    from sourceSets.main.output
+    exclude '**/mechaparts/'
+    exclude '**/modernweapons/'
+    exclude '**/mw/'
+    exclude '**/nerf/'
+    exclude '**/simpleparts/'
+    exclude '**/titan/'
+    exclude '**/utility/'
+    exclude '**/ww2/'
+    exclude '**/yeolde/'
+    exclude '**/zombie/'
 }
 
 task mechaParts(type: Jar) {
