@@ -374,14 +374,18 @@ public class DriveableType extends PaintableType {
         super.read(config, file);
 
         try {
-            //Old Pre-Read stuff
-            if (config.containsKey("Passengers")) {
-                numPassengers = Integer.parseInt(config.get("Passengers"));
-                seats = new Seat[numPassengers + 1];
+            // Order matters here,
+            numPassengers = ConfigUtils.configInt(config, "Passengers", numPassengers);
+            seats = new Seat[numPassengers + 1];
 
-                if (config.containsKey("Passenger")) {
-                    for (String entry : config.getAll("Passenger")) {
-                        String[] split = ("Passenger " + entry).split(" ");
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Passenger" });
+            if (splits.size() != numPassengers) {
+                FlansMod.log("NumPassengers and Passenger definition mismatch in %s. This needs to be addressed.", file.name);
+                throw new Exception("Invalid Passenger Definitions");
+                // this should be a "disable item" situation
+            } else {
+                try {
+                    for (String[] split : splits) {
                         Seat seat = new Seat(split);
                         if (seat.id < seats.length) {
                             seats[seat.id] = seat;
@@ -391,12 +395,22 @@ public class DriveableType extends PaintableType {
                             }
                         }
                     }
+                } catch (Exception e) {
+                    FlansMod.log("Errored while reading Passenger in " + file.name);
+                    if (FlansMod.printStackTrace) {
+                        FlansMod.log(e);
+                    }
+                    throw new Exception("Invalid Passenger Definitions");
+                    // this should be a "disable item" situation
                 }
             }
 
-
-            if (config.containsKey("NumWheels")) {
-                wheelPositions = new DriveablePosition[Integer.parseInt(config.get("NumWheels"))];
+            int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
+            if (numWheels < 2 || numWheels > 4) {
+                FlansMod.log("Invalid number of wheels registered in " + file.name);
+                throw new Exception("Invalid Wheel Configuration");
+            } else {
+                wheelPositions = new DriveablePosition[numWheels];
             }
 
             if (config.containsKey("Driver")) {

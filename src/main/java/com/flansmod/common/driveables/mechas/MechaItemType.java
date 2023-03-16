@@ -76,13 +76,21 @@ public class MechaItemType extends InfoType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-			if(FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
-				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelMechaTool.class);
+
+			String modelString = ConfigUtils.configString(config, "Model", "");
+			if(FMLCommonHandler.instance().getSide().isClient() && !modelString.isEmpty())
+				model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
+
 			texture = ConfigUtils.configString(config, "Texture", texture);
-			if(config.containsKey("Type"))
-				type = EnumMechaItemType.getToolType(config.get("Type"));
-			if(config.containsKey("ToolType"))
-				function = EnumMechaToolType.getToolType(config.get("ToolType"));
+
+			String typeString = ConfigUtils.configString(config, "Type", "nothing");
+			if (!typeString.isEmpty())
+				type = EnumMechaItemType.getToolType(typeString);
+
+			String toolTypeString = ConfigUtils.configString(config, "ToolType", "nothing");
+			if(!toolTypeString.isEmpty())
+				function = EnumMechaToolType.getToolType(toolTypeString);
+
 			speed = ConfigUtils.configFloat(config, "Speed", speed);
 			toolHardness = ConfigUtils.configFloat(config, "ToolHardness", toolHardness);
 			reach = ConfigUtils.configFloat(config, "Reach", reach);
@@ -115,19 +123,13 @@ public class MechaItemType extends InfoType
 			speedMultiplier = ConfigUtils.configFloat(config, "SpeedMultiplier", speedMultiplier);
 			stopMechaFallDamage = ConfigUtils.configBool(config, "StopMechaFallDamage", stopMechaFallDamage);
 			wasteCompact = ConfigUtils.configBool(config, "WasteCompact", wasteCompact);
-
-		} catch (Exception ignored) {
-
+		} catch (Exception e) {
+			FlansMod.log("Errored reading " + file.name);
+			if (FlansMod.printStackTrace) {
+				e.printStackTrace();
+			}
 		}
     }
-	
-	public static MechaItemType getTool(String find) {
-		for(MechaItemType type : types) {
-			if(type.shortName.equals(find))
-				return type;
-		}
-		return null;
-	}
 	
 	public void reloadModel() {
 		if(modelString != null)

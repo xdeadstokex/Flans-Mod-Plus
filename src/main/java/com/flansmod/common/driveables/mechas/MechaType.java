@@ -107,33 +107,41 @@ public class MechaType extends DriveableType
 			moveSpeed = ConfigUtils.configFloat(config, "MoveSpeed", moveSpeed);
 			squashMobs = ConfigUtils.configBool(config, "SquashMobs", squashMobs);
 			stepHeight = ConfigUtils.configInt(config, "StepHeight", stepHeight);
-			if(config.containsKey("JumpHeight")) {
-				jumpHeight = Float.parseFloat(config.get("JumpHeight"));
-				jumpVelocity = (float) Math.sqrt(Math.abs(9.81F * (jumpHeight + 0.2F) / 200F));
-			}
+
+			jumpHeight = ConfigUtils.configFloat(config, "JumpHeight", -99F);
+			jumpVelocity = (jumpHeight == -99F) ? 1F : (float) Math.sqrt(Math.abs(9.81F * (jumpHeight + 0.2F) / 200F));
+
 			rotateSpeed = ConfigUtils.configFloat(config, "RotateSpeed", rotateSpeed);
 			stompSound = ConfigUtils.configDriveableSound(contentPack, config, "StompSound", stompSound);
 			stompSoundLength = ConfigUtils.configInt(config, "StompSoundLength", stompSoundLength);
 			stompRangeLower = ConfigUtils.configFloat(config, "StompRangeLower", stompRangeLower);
 			stompRangeUpper = ConfigUtils.configFloat(config, "StompRangeUpper", stompRangeUpper);
 
-			if(config.containsKey("LeftArmOrigin")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "LeftArmOrigin");
-				leftArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+			try {
+				String[] split = ConfigUtils.getSplitFromKey(config, new String[] { "LeftArmOrigin" });
+				if(split != null) {
+					leftArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+				}
+
+				split = ConfigUtils.getSplitFromKey(config, new String[] { "RightArmOrigin" });
+				if(split != null) {
+					rightArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+				}
+			} catch (Exception e) {
+				FlansMod.log("Adding mecha arm origins failed in " + file.name);
+				if (FlansMod.printStackTrace) {
+					e.printStackTrace();
+				}
 			}
 
-			if(config.containsKey("RightArmOrigin")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "RightArmOrigin");
-				rightArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-			}
 
 			armLength = ConfigUtils.configFloat(config, "ArmLength", armLength) / 16F;
 			legLength = ConfigUtils.configFloat(config, "LegLength", legLength) / 16F;
 			heldItemScale = ConfigUtils.configFloat(config, "HeldItemScale", heldItemScale);
 			height = ConfigUtils.configFloat(config, "Height", height);
 			width = ConfigUtils.configFloat(config, "Width", width);
-			if(config.containsKey("ChassisHeight"))
-				chassisHeight = (Integer.parseInt(config.get("ChassisHeight")))/16F;
+
+			chassisHeight = (float)Math.floor(ConfigUtils.configFloat(config, "ChassisHeight", chassisHeight*16F))/16F;
 
 			fallDamageMultiplier = ConfigUtils.configFloat(config, "FallDamageMultiplier", fallDamageMultiplier);
 			blockDamageFromFalling = ConfigUtils.configFloat(config, "BlockDamageFromFalling", blockDamageFromFalling);
@@ -142,43 +150,73 @@ public class MechaType extends DriveableType
 			damageBlocksFromFalling = ConfigUtils.configBool(config, "DamageBlocksFromFalling", damageBlocksFromFalling);
 			legSwingLimit = ConfigUtils.configFloat(config, "LegSwingLimit", legSwingLimit);
 
-			if(config.containsKey("LimitHeadTurn")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
-				limitHeadTurn = Boolean.parseBoolean(split[1].toLowerCase());
-				limitHeadTurnValue = Float.parseFloat(split[2]);
+			try {
+				String[] split = ConfigUtils.getSplitFromKey(config, "LimitHeadTurn");
+				if(split != null) {
+					limitHeadTurn = Boolean.parseBoolean(split[1].toLowerCase());
+					limitHeadTurnValue = Float.parseFloat(split[2]);
+				}
+			} catch (Exception e) {
+				FlansMod.log("Setting LimitHeadTurn failed in  " + file.name);
+				if (FlansMod.printStackTrace) {
+					e.printStackTrace();
+				}
 			}
+
 			legSwingTime = ConfigUtils.configFloat(config, "LegSwingTime", legSwingTime);
 			upperArmLimit = ConfigUtils.configFloat(config, "UpperArmLimit", upperArmLimit);
 			lowerArmLimit = ConfigUtils.configFloat(config, "LowerArmLimit", lowerArmLimit);
-			if(config.containsKey("LeftHandModifier")) {
+
+			try {
 				String[] split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
-				leftHandModifierX = Float.parseFloat(split[1])/16F;
-				leftHandModifierY = Float.parseFloat(split[2])/16F;
-				leftHandModifierZ = Float.parseFloat(split[3])/16F;
-			}
-			if(config.containsKey("RightHandModifier")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "RightHandModifier");
-				rightHandModifierX = Float.parseFloat(split[1])/16F;
-				rightHandModifierY = Float.parseFloat(split[2])/16F;
-				rightHandModifierZ = Float.parseFloat(split[3])/16F;
+				if(split != null) {
+
+					leftHandModifierX = Float.parseFloat(split[1])/16F;
+					leftHandModifierY = Float.parseFloat(split[2])/16F;
+					leftHandModifierZ = Float.parseFloat(split[3])/16F;
+				}
+
+				split = ConfigUtils.getSplitFromKey(config, "RightHandModifier");
+				if(split != null) {
+					rightHandModifierX = Float.parseFloat(split[1])/16F;
+					rightHandModifierY = Float.parseFloat(split[2])/16F;
+					rightHandModifierZ = Float.parseFloat(split[3])/16F;
+				}
+			} catch (Exception e) {
+				FlansMod.log("Setting HandModifiers failed in " + file.name);
+				if (FlansMod.printStackTrace) {
+					e.printStackTrace();
+				}
 			}
 
-			if(config.containsKey("LegNode")){
-				String[] split = ConfigUtils.getSplitFromKey(config, "LegNode");
-				LegNode node = new LegNode();
-				node.rotation = Integer.parseInt(split[1]);
-				node.lowerBound = Float.parseFloat(split[2]);
-				node.upperBound = Float.parseFloat(split[3]);
-				node.speed = Integer.parseInt(split[4]);
-				node.legPart = Integer.parseInt(split[5]);
-				legNodes.add(node);
+			try {
+				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LegNode"} );
+				for (String [] split : splits) {
+					LegNode node = new LegNode();
+					node.rotation = Integer.parseInt(split[1]);
+					node.lowerBound = Float.parseFloat(split[2]);
+					node.upperBound = Float.parseFloat(split[3]);
+					node.speed = Integer.parseInt(split[4]);
+					node.legPart = Integer.parseInt(split[5]);
+					legNodes.add(node);
+				}
+
+			} catch (Exception e) {
+				FlansMod.log("Setting HandModifiers failed in " + file.name);
+				if (FlansMod.printStackTrace) {
+					e.printStackTrace();
+				}
 			}
+
 			legAnimSpeed = ConfigUtils.configFloat(config, "LegAnimSpeed", legAnimSpeed);
 			restrictInventoryInput = ConfigUtils.configBool(config, "RestrictInventoryInput", restrictInventoryInput);
 			allowMechaToolsInRestrictedInv = ConfigUtils.configBool(config, "AllowMechaToolsInRestrictedInv", allowMechaToolsInRestrictedInv);
 
-		} catch (Exception ignored) {
-
+		} catch (Exception e) {
+			FlansMod.log("Failed while reading MechaType in " + file.name);
+			if (FlansMod.printStackTrace) {
+				e.printStackTrace();
+			}
 		}
     }
     
@@ -186,14 +224,6 @@ public class MechaType extends DriveableType
 	public void reloadModel()
 	{
 		model = FlansMod.proxy.loadModel(modelString, shortName, ModelMecha.class);
-	}
-    
-    private DriveablePosition getShootPoint(String[] split) {
-    	//No need to look for a specific gun.
-    	if(split.length == 5) {
-    		return new DriveablePosition(split);
-    	}
-		return new DriveablePosition(new Vector3f(), EnumDriveablePart.core);
 	}
 	
 	public static MechaType getMecha(String find) {
