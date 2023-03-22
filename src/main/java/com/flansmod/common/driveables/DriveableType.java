@@ -378,13 +378,15 @@ public class DriveableType extends PaintableType {
             numPassengers = ConfigUtils.configInt(config, "Passengers", numPassengers);
             seats = new Seat[numPassengers + 1];
 
-            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Passenger" });
-            if (splits.size() != numPassengers) {
-                FlansMod.log("NumPassengers and Passenger definition mismatch in %s. This needs to be addressed.", file.name);
-                throw new Exception("Invalid Passenger Definitions");
-                // this should be a "disable item" situation
-            } else {
-                try {
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"Passenger"});
+                if (splits.size() != numPassengers) {
+                    FlansMod.log("NumPassengers and Passenger definition mismatch in %s. This needs to be addressed.", file.name);
+                    throw new Exception("Invalid Passenger Definitions");
+                    // this should be a "disable item" situation
+                } else {
+
                     for (String[] split : splits) {
                         Seat seat = new Seat(split);
                         if (seat.id < seats.length) {
@@ -395,14 +397,14 @@ public class DriveableType extends PaintableType {
                             }
                         }
                     }
-                } catch (Exception e) {
-                    FlansMod.log("Errored while reading Passenger in " + file.name);
-                    if (FlansMod.printStackTrace) {
-                        FlansMod.log(e);
-                    }
-                    throw new Exception("Invalid Passenger Definitions");
-                    // this should be a "disable item" situation
                 }
+            } catch(Exception e){
+                FlansMod.log("Errored while reading Passenger in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(e);
+                }
+                throw new Exception("Invalid Passenger Definitions");
+                // this should be a "disable item" situation
             }
 
             int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
@@ -413,30 +415,36 @@ public class DriveableType extends PaintableType {
                 wheelPositions = new DriveablePosition[numWheels];
             }
 
-            if (config.containsKey("Driver")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "Driver");
-                if (split.length > 4)
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                            Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
-                            Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-                else
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                            Integer.parseInt(split[3]));
-            }
-            if (config.containsKey("Pilot")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "Pilot");
-                if (split.length > 4)
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                            Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
-                            Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-                else
-                    seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
-                            Integer.parseInt(split[3]));
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Driver", "Pilot" });
+                if (splits.size() == 0) {
+                    FlansMod.log("No Driver or Pilot configured in " + file.name);
+                    throw new Exception("No Driver/Pilot Configured!");
+                } else if (splits.size() > 1) {
+                    FlansMod.log("Multiple Drivers or Pilots configured in " + file.name);
+                } else {
+                    String[] split = splits.get(0);
+
+                    if (split.length > 4)
+                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                                Integer.parseInt(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]),
+                                Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                    else
+                        seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                                Integer.parseInt(split[3]));
+                }
+            } catch (Exception e) {
+                FlansMod.log("Errored while reading Driver/Pilot in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(e);
+                }
+                throw new Exception("Invalid Driver/Pilot Definitions");
+                // this should be a "disable item" situation
             }
 
+            if (FMLCommonHandler.instance().getSide().isClient())
+                model = FlansMod.proxy.loadModel(ConfigUtils.configString(config, "Model", null), shortName, ModelDriveable.class);
 
-            if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
-                model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelDriveable.class);
             vehicleGunModelScale = ConfigUtils.configFloat(config, "VehicleGunModelScale", vehicleGunModelScale);
             reloadSoundTick = ConfigUtils.configInt(config, "VehicleGunReloadTick", reloadSoundTick);
             texture = ConfigUtils.configString(config, "Texture", texture);
@@ -462,51 +470,43 @@ public class DriveableType extends PaintableType {
             maxDepth = ConfigUtils.configInt(config, "MaxDepth", maxDepth);
             drag = ConfigUtils.configFloat(config, "Drag", drag);
 
-            if (config.containsKey("TurretOrigin")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "TurretOrigin");
-                turretOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
+            turretOrigin = ConfigUtils.configVector(config, "TurretOrigin", turretOrigin, 1F/16F);
+            turretOriginOffset = ConfigUtils.configVector(config, "TurretOrigin", turretOriginOffset, 1F/16F);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "CollisionPoint", "AddCollisionPoint" });
+                for (String[] split : splits) {
+                    collisionPoints.add(new DriveablePosition(split));
+                }
+            } catch (Exception e) {
+                FlansMod.log("Errored while reading Collision Points in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(e);
+                }
             }
-            if (config.containsKey("TurretOriginOffset")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "TurretOriginOffset");
-                turretOriginOffset = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-            }
-            if (config.containsKey("CollisionPoint")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "CollisionPoint");
-                collisionPoints.add(new DriveablePosition(split));
-            }
-            if (config.containsKey("AddCollisionPoint")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionPoint");
-                collisionPoints.add(new DriveablePosition(split));
-            }
+
 
             collisionDamageEnable = ConfigUtils.configBool(config, "CollisionDamageEnable", collisionDamageEnable);
             collisionDamageThrottle = ConfigUtils.configFloat(config, "CollisionDamageThrottle", collisionDamageThrottle);
             collisionDamageTimes = ConfigUtils.configFloat(config, "CollisionDamageTimes", collisionDamageTimes);
             canLockOnAngle = ConfigUtils.configInt(config, "CanLockAngle", canLockOnAngle);
             lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
-            if (config.containsKey("LockOnToDriveables"))
-                lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(config.get("LockOnToDriveables").toLowerCase());
+
+            lockOnToPlanes = lockOnToVehicles = lockOnToMechas =  ConfigUtils.configBool(config, "LockOnToDriveables", false);
             lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
             lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
             lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
             lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
             lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+
             lockedOnSoundRange = ConfigUtils.configInt(config, "LockedOnSoundRange", lockedOnSoundRange);
             canRoll = ConfigUtils.configBool(config, "CanRoll", canRoll);
 
             //Flares
             hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
-            if (config.containsKey("FlareDelay")) {
-                flareDelay = Integer.parseInt(config.get("FlareDelay"));
-                if (flareDelay <= 0)
-                    flareDelay = 1;
-            }
-            if (config.containsKey("TimeFlareUsing")) {
-                timeFlareUsing = Integer.parseInt(config.get("TimeFlareUsing"));
-                if (timeFlareUsing <= 0)
-                    timeFlareUsing = 1;
-            }
 
+            flareDelay = Math.min(1, ConfigUtils.configInt(config, "FlareDelay", flareDelay));
+            timeFlareUsing = Math.min(1, ConfigUtils.configInt(config, "TimeFlareUsing", timeFlareUsing));
 
             //Boats
             if (config.containsKey("Boat")) {
@@ -515,6 +515,7 @@ public class DriveableType extends PaintableType {
                 floatOnWater = true;
                 wheelStepHeight = 0F;
             }
+
             placeableOnLand = ConfigUtils.configBool(config, "PlaceableOnLand", placeableOnLand);
             placeableOnWater = ConfigUtils.configBool(config, "PlaceableOnWater", placeableOnWater);
             worksUnderWater = ConfigUtils.configBool(config, "WorksUnderwater", worksUnderWater);

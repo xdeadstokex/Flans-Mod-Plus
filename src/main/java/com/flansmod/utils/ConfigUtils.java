@@ -125,9 +125,13 @@ public class ConfigUtils
 	}
 
 	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue) {
+		return configVector(config, settingName, defaultValue, 1F);
+	}
+
+	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue, float scale) {
 		String val = config.get(settingName);
 		if(val != null) {
-			return new Vector3f(val);
+			return (Vector3f) new Vector3f(val).scale(scale);
 		}
 
 		return defaultValue;
