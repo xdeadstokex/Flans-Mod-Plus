@@ -25,6 +25,7 @@ import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.classpath.icedtea.Config;
 
 public class DriveableType extends PaintableType {
     /** The plane model */
@@ -526,9 +527,14 @@ public class DriveableType extends PaintableType {
             canMountEntity = ConfigUtils.configBool(config, "CanMountEntity", canMountEntity);
 
             //Wheels
-            if (config.containsKey("Wheel")) {
-                for (String wheelPos : config.getAll("Wheel")) {
-                    String[] split = ("Wheel " + wheelPos).split(" ");
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
+
+                if (splits.size() != wheelPositions.length) {
+                    throw new Exception("Invalid number of wheels specified!");
+                }
+
+                for (String[] split : splits) {
                     int wheelIndex = Integer.parseInt(split[1]);
                     float x = Float.parseFloat(split[2]) / 16F;
                     float y = Float.parseFloat(split[3]) / 16F;
@@ -542,25 +548,13 @@ public class DriveableType extends PaintableType {
                     DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
                     wheelPositions[wheelIndex] = wheelPosition;
                 }
-            }
-
-            //Wheels
-            if (config.containsKey("WheelPosition")) {
-                for (String wheelPos : config.getAll("WheelPosition")) {
-                    String[] split = ("WheelPosition " + wheelPos).split(" ");
-                    int wheelIndex = Integer.parseInt(split[1]);
-                    float x = Float.parseFloat(split[2]) / 16F;
-                    float y = Float.parseFloat(split[3]) / 16F;
-                    float z = Float.parseFloat(split[4]) / 16F;
-
-                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
-                    if (split.length > 5) {
-                        part = EnumDriveablePart.getPart(split[5]);
-                    }
-
-                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
-                    wheelPositions[wheelIndex] = wheelPosition;
+            } catch (Exception ex) {
+                FlansMod.log("Errored while reading Wheels in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
                 }
+                throw new Exception("Invalid Driver/Pilot Definitions");
+                // this should be a "disable item" situation
             }
 
             wheelStepHeight = ConfigUtils.configFloat(config, new String[]{"WheelRadius", "WheelStepHeight"}, wheelStepHeight);
@@ -571,59 +565,92 @@ public class DriveableType extends PaintableType {
             harvestBlocks = ConfigUtils.configBool(config, "Harvester", harvestBlocks);
             collectHarvest = ConfigUtils.configBool(config, "CollectHarvest", collectHarvest);
             dropHarvest = ConfigUtils.configBool(config, "DropHarvest", dropHarvest);
-            if (config.containsKey("HarvestBox")) {
+
+            try {
                 String[] split = ConfigUtils.getSplitFromKey(config, "HarvestBox");
-                harvestBoxSize = new Vector3f(split[1]);
-                harvestBoxPos = new Vector3f(split[2]);
-            }
-            if (config.containsKey("HarvestMaterial")) {
-                materialsHarvested.add(getMaterial(config.get("HarvestMaterial")));
-            }
-            if (config.containsKey("HarvestToolType")) {
-                switch (config.get("HarvestToolType")) {
-                    case "Axe":
-                        materialsHarvested.add(Material.wood);
-                        materialsHarvested.add(Material.plants);
-                        materialsHarvested.add(Material.vine);
-                        break;
-                    case "Pickaxe":
-                    case "Drill":
-                        materialsHarvested.add(Material.iron);
-                        materialsHarvested.add(Material.anvil);
-                        materialsHarvested.add(Material.rock);
-                        break;
-                    case "Spade":
-                    case "Shovel":
-                    case "Excavator":
-                        materialsHarvested.add(Material.ground);
-                        materialsHarvested.add(Material.grass);
-                        materialsHarvested.add(Material.sand);
-                        materialsHarvested.add(Material.snow);
-                        materialsHarvested.add(Material.clay);
-                        break;
-                    case "Hoe":
-                    case "Combine":
-                        materialsHarvested.add(Material.plants);
-                        materialsHarvested.add(Material.leaves);
-                        materialsHarvested.add(Material.vine);
-                        materialsHarvested.add(Material.cactus);
-                        materialsHarvested.add(Material.gourd);
-                        break;
-                    case "Tank":
-                        materialsHarvested.add(Material.leaves);
-                        materialsHarvested.add(Material.cactus);
-                        materialsHarvested.add(Material.wood);
-                        materialsHarvested.add(Material.plants);
-                        break;
+                if (split != null) {
+                    harvestBoxSize = new Vector3f(split[1]);
+                    harvestBoxPos = new Vector3f(split[2]);
+                }
+
+            } catch (Exception ex) {
+                FlansMod.log("Errored while reading HarvestBox in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
                 }
             }
 
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestMaterial" });
+                for (String[] split : splits) { // This currently doesn't work, see todo
+                    Material m = getMaterial(split[1]);
+                    if (m != null) {
+                        materialsHarvested.add(m);
+                    } else {
+                        FlansMod.log("Material " + split[1] + " couldn't be found for HarvestMaterial in " + file.name);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Errored while reading HarvestMaterial in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestToolType" });
+
+                for (String[] split : splits) {
+                    switch (split[1]) {
+                        case "Axe":
+                            materialsHarvested.add(Material.wood);
+                            materialsHarvested.add(Material.plants);
+                            materialsHarvested.add(Material.vine);
+                            break;
+                        case "Pickaxe":
+                        case "Drill":
+                            materialsHarvested.add(Material.iron);
+                            materialsHarvested.add(Material.anvil);
+                            materialsHarvested.add(Material.rock);
+                            break;
+                        case "Spade":
+                        case "Shovel":
+                        case "Excavator":
+                            materialsHarvested.add(Material.ground);
+                            materialsHarvested.add(Material.grass);
+                            materialsHarvested.add(Material.sand);
+                            materialsHarvested.add(Material.snow);
+                            materialsHarvested.add(Material.clay);
+                            break;
+                        case "Hoe":
+                        case "Combine":
+                            materialsHarvested.add(Material.plants);
+                            materialsHarvested.add(Material.leaves);
+                            materialsHarvested.add(Material.vine);
+                            materialsHarvested.add(Material.cactus);
+                            materialsHarvested.add(Material.gourd);
+                            break;
+                        case "Tank":
+                            materialsHarvested.add(Material.leaves);
+                            materialsHarvested.add(Material.cactus);
+                            materialsHarvested.add(Material.wood);
+                            materialsHarvested.add(Material.plants);
+                            break;
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Errored while adding HarvestToolType in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+
             //Cargo / Payload
             numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
-            numCargoSlots = ConfigUtils.configInt(config, new String[]{"BombSlots", "MineSlots"}, numCargoSlots);
-            numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
-            numCargoSlots = ConfigUtils.configInt(config, new String[]{"MissileSlots", "ShellSlots"}, numCargoSlots);
-            numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
+            numBombSlots = ConfigUtils.configInt(config, new String[]{ "BombSlots", "MineSlots" }, numBombSlots);
+            numMissileSlots = ConfigUtils.configInt(config, new String[]{ "MissileSlots", "ShellSlots" }, numMissileSlots);
+
             fuelTankSize = ConfigUtils.configInt(config, "FuelTankSize", fuelTankSize);
             engineStartTime = ConfigUtils.configInt(config, "EngineStartTime", engineStartTime);
             filterAmmunition = ConfigUtils.configBool(config, "FilterAmmunitionInput", filterAmmunition);
@@ -631,9 +658,31 @@ public class DriveableType extends PaintableType {
             bulletDetectionRadius = ConfigUtils.configFloat(config, "BulletDetection", bulletDetectionRadius);
 
             //Ammo limiters
-            if (config.containsKey("AddAmmo"))
-                ammo.add(BulletType.getBullet(config.get("AddAmmo")));
-            acceptAllAmmo = ConfigUtils.configBool(config, new String[]{"AllowAllAmmo", "AcceptAllAmmo"}, acceptAllAmmo);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddAmmo" });
+
+                for (String[] split : splits) {
+                    if (split.length == 2) {
+                        BulletType bullet = BulletType.getBullet(split[1]);
+                        if (bullet != null) {
+                            ammo.add(bullet);
+                        } else {
+                            FlansMod.log("Could not find bullet " + split[1] + " for " + file.name);
+                        }
+                    } else {
+                        FlansMod.log("Incorrect ammo line given in " + file.name);
+                    }
+
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding ammo failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+            acceptAllAmmo = ConfigUtils.configBool(config, new String[]{ "AllowAllAmmo", "AcceptAllAmmo" }, acceptAllAmmo);
 
                 //Weaponry
             if (config.containsKey("Primary"))
