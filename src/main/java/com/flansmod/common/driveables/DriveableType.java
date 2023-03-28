@@ -689,149 +689,231 @@ public class DriveableType extends PaintableType {
                 primary = EnumWeaponType.valueOf(config.get("Primary").toUpperCase());
             if (config.containsKey("Secondary"))
                 primary = EnumWeaponType.valueOf(config.get("Secondary").toUpperCase());
-            shootDelayPrimary = ConfigUtils.configFloat(config, "ShootDelayPrimary", shootDelayPrimary);
-            shootDelaySecondary = ConfigUtils.configFloat(config, "ShootDelaySecondary", shootDelaySecondary);
+
             damageMultiplierPrimary = ConfigUtils.configFloat(config, "DamageMultiplierPrimary", damageMultiplierPrimary);
             damageMultiplierSecondary = ConfigUtils.configFloat(config, "DamageMultiplierSecondary", damageMultiplierSecondary);
-            if (config.containsKey("RoundsPerMinPrimary"))
-                shootDelayPrimary = Float.parseFloat(config.get("RoundsPerMinPrimary")) < 1200 ? 1200F / Float.parseFloat(config.get("RoundsPerMinPrimary")) : 1;
-            if (config.containsKey("RoundsPerMinSecondary"))
-                shootDelaySecondary = Float.parseFloat(config.get("RoundsPerMinSecondary")) < 1200 ? 1200F / Float.parseFloat(config.get("RoundsPerMinSecondary")) : 1;
+
+            shootDelayPrimary = ConfigUtils.configFloat(config, new String[] { "ShootDelayPrimary", "ShellDelay" }, shootDelayPrimary);
+            shootDelaySecondary = ConfigUtils.configFloat(config, new String[] { "ShootDelaySecondary", "ShootDelay" } , shootDelaySecondary);
+
+
+            try {
+                shootDelayPrimary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinPrimary", shootDelayPrimary*1200F), 1);
+                shootDelaySecondary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinSecondary", shootDelaySecondary*1200F), 1);
+            } catch (Exception ex) {
+                FlansMod.log("Invalid RoundsPerMin set in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+
             placeTimePrimary = ConfigUtils.configInt(config, "PlaceTimePrimary", placeTimePrimary);
             placeTimeSecondary = ConfigUtils.configInt(config, "PlaceTimeSecondary", placeTimeSecondary);
             reloadTimePrimary = ConfigUtils.configInt(config, "ReloadTimePrimary", reloadTimePrimary);
             reloadTimeSecondary = ConfigUtils.configInt(config, "ReloadTimeSecondary", reloadTimeSecondary);
             alternatePrimary = ConfigUtils.configBool(config, "AlternatePrimary", alternatePrimary);
             alternateSecondary = ConfigUtils.configBool(config, "AlternateSecondary", alternateSecondary);
-            if (config.containsKey("ModePrimary"))
-                modePrimary = EnumFireMode.valueOf(config.get("ModePrimary").toUpperCase());
-            if (config.containsKey("ModeSecondary"))
-                modeSecondary = EnumFireMode.valueOf(config.get("ModeSecondary").toUpperCase());
+
+            modePrimary = EnumFireMode.valueOf(ConfigUtils.configString(config, "ModePrimary", EnumFireMode.FULLAUTO.name()));
+            modeSecondary = EnumFireMode.valueOf(ConfigUtils.configString(config, "ModeSecondary", EnumFireMode.FULLAUTO.name()));
+
             bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
+
             bulletSpread = ConfigUtils.configFloat(config, "BulletSpread", bulletSpread);
             rangingGun = ConfigUtils.configBool(config, "RangingGun", rangingGun);
             gunLength = ConfigUtils.configFloat(config, "GunLength", gunLength);
             recoilDist = ConfigUtils.configFloat(config, "RecoilDistance", recoilDist);
             recoilTime = ConfigUtils.configFloat(config, "RecoilTime", recoilTime);
-            if (config.containsKey("ShootPointPrimary")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootPointPrimary");
-                DriveablePosition rootPos;
-                Vector3f offPos;
-                String[] gun;
-                if (split.length == 9) {
-                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
-                } else if (split.length == 8) {
-                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
-                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
-                } else {
-                    gun = split;
-                    offPos = new Vector3f(0, 0, 0);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootPointPrimary" });
+
+                for (String[] split : splits) {
+                    // TODO: Refactor this
+
+                    DriveablePosition rootPos;
+                    Vector3f offPos;
+                    String[] gun;
+                    if (split.length == 9) {
+                        gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                        offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                    } else if (split.length == 8) {
+                        gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
+                        offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+                    } else {
+                        gun = split;
+                        offPos = new Vector3f(0, 0, 0);
+                    }
+                    rootPos = getShootPoint(gun);
+                    ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                    shootPointsPrimary.add(sPoint);
+                    if (rootPos instanceof PilotGun)
+                        pilotGuns.add((PilotGun) sPoint.rootPos);
                 }
-                rootPos = getShootPoint(gun);
-                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-                shootPointsPrimary.add(sPoint);
-                if (rootPos instanceof PilotGun)
-                    pilotGuns.add((PilotGun) sPoint.rootPos);
-            }
-            if (config.containsKey("ShootPointSecondary")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootPointSecondary");
-                DriveablePosition rootPos;
-                Vector3f offPos;
-                String[] gun;
-                if (split.length == 9) {
-                    gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
-                } else if (split.length == 8) {
-                    gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
-                    offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
-                } else {
-                    gun = split;
-                    offPos = new Vector3f(0, 0, 0);
+
+            } catch (Exception ex) {
+                FlansMod.log("Invalid ShootPointPrimary config in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
                 }
-                rootPos = getShootPoint(gun);
-                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-                shootPointsSecondary.add(sPoint);
-                if (rootPos instanceof PilotGun)
-                    pilotGuns.add((PilotGun) sPoint.rootPos);
-            }
-            enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
-            if (config.containsKey("ShootParticlesPrimary")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootParticlesPrimary");
-                shootParticlesPrimary.add(new ShootParticle(
-                        split[1],
-                        Float.parseFloat(split[2]),
-                        Float.parseFloat(split[3]),
-                        Float.parseFloat(split[4])));
             }
 
-            if (config.containsKey("ShootParticlesSecondary")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootParticlesSecondary");
-                shootParticlesSecondary.add(new ShootParticle(
-                        split[1],
-                        Float.parseFloat(split[2]),
-                        Float.parseFloat(split[3]),
-                        Float.parseFloat(split[4])));
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"ShootPointSecondary"});
+
+                for (String[] split : splits) {
+                    // TODO: Refactor this
+
+                    DriveablePosition rootPos;
+                    Vector3f offPos;
+                    String[] gun;
+                    if (split.length == 9) {
+                        gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                        offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                    } else if (split.length == 8) {
+                        gun = new String[]{split[0], split[1], split[2], split[3], split[4]};
+                        offPos = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+                    } else {
+                        gun = split;
+                        offPos = new Vector3f(0, 0, 0);
+                    }
+                    rootPos = getShootPoint(gun);
+                    ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                    shootPointsSecondary.add(sPoint);
+                    if (rootPos instanceof PilotGun)
+                        pilotGuns.add((PilotGun) sPoint.rootPos);
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Invalid ShootPointSecondary config in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
+
+
+            enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesPrimary" });
+
+                for (String[] split : splits) {
+                    if (split.length == 5) { //TODO validate the particle exists
+                        shootParticlesPrimary.add(
+                                new ShootParticle(split[1], Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]))
+                        );
+                    } else {
+                        FlansMod.log("ShootParticlesPrimary config is of incorrect format in " + file.name);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Invalid ShootParticlesPrimary config in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesSecondary" });
+
+                for (String[] split : splits) {
+                    if (split.length == 5) { //TODO validate the particle exists
+                        shootParticlesSecondary.add(
+                                new ShootParticle(split[1], Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]))
+                        );
+                    } else {
+                        FlansMod.log("ShootParticlesSecondary config is of incorrect format in " + file.name);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Invalid ShootParticlesSecondary config in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
 
             setPlayerInvisible = ConfigUtils.configBool(config, "SetPlayerInvisible", setPlayerInvisible);
             IT1 = ConfigUtils.configBool(config, "IT1", IT1);
             fixedPrimaryFire = ConfigUtils.configBool(config, "FixedPrimary", fixedPrimaryFire);
             fixedSecondaryFire = ConfigUtils.configBool(config, "FixedSecondary", fixedSecondaryFire);
-            if (config.containsKey("PrimaryAngle")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "PrimaryAngle");
-                primaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-            }
-            if (config.containsKey("SecondaryAngle")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "SecondaryAngle");
-                secondaryFireAngle = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-            }
 
 
-            //Backwards compatibility stuff
-            if (config.containsKey("AddGun")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddGun");
-                DriveablePosition rootPos;
-                Vector3f offPos;
-                secondary = EnumWeaponType.GUN;
-                PilotGun pilotGun;
+            primaryFireAngle = ConfigUtils.configVector(config, "PrimaryAngle", primaryFireAngle);
+            secondaryFireAngle = ConfigUtils.configVector(config, "SecondaryAngle", secondaryFireAngle);
 
-                if (split.length == 6) {
-                    rootPos = (PilotGun) getShootPoint(split);
-                    offPos = new Vector3f(0, 0, 0);
-                    pilotGun = (PilotGun) getShootPoint(split);
-                } else {
-                    String[] gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-                    rootPos = (PilotGun) getShootPoint(gun);
-                    pilotGun = (PilotGun) getShootPoint(gun);
-                    offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddGun" });
+
+                for (String[] split : splits) {
+                    DriveablePosition rootPos;
+                    Vector3f offPos;
+                    secondary = EnumWeaponType.GUN;
+                    PilotGun pilotGun;
+
+                    if (split.length == 6) { // TODO: Refactor this..
+                        rootPos = (PilotGun) getShootPoint(split);
+                        offPos = new Vector3f(0, 0, 0);
+                        pilotGun = (PilotGun) getShootPoint(split);
+                    } else {
+                        String[] gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
+                        rootPos = (PilotGun) getShootPoint(gun);
+                        pilotGun = (PilotGun) getShootPoint(gun);
+                        offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                    }
+                    ShootPoint sPoint = new ShootPoint(rootPos, offPos);
+                    shootPointsSecondary.add(sPoint);
+                    pilotGuns.add(pilotGun);
+                    driveableRecipe.add(new ItemStack(pilotGun.type.item));
                 }
-                ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-                shootPointsSecondary.add(sPoint);
-                pilotGuns.add(pilotGun);
-                driveableRecipe.add(new ItemStack(pilotGun.type.item));
+            } catch (Exception ex) {
+                FlansMod.log("Adding PilotGun via AddGun failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
 
-            if (config.containsKey("BombPosition")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "BombPosition");
-                primary = EnumWeaponType.BOMB;
-                if (split.length == 4)
-                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(0, 0, 0)));
-                else if (split.length == 7)
-                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
 
-            }
-            if (config.containsKey("BarrelPosition")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "BarrelPosition");
-                primary = EnumWeaponType.SHELL;
-                if (split.length == 4)
-                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(0, 0, 0)));
-                else if (split.length == 7)
-                    shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "BombPosition" });
+
+                if (splits.size() > 1) {
+                    primary = EnumWeaponType.BOMB;
+                }
+
+                for (String[] split : splits) {
+                    if (split.length == 4)
+                        shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(0, 0, 0)));
+                    else if (split.length == 7)
+                        shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding BombPosition failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
 
-            shootDelaySecondary = ConfigUtils.configFloat(config, "ShootDelay", shootDelaySecondary);
-            shootDelayPrimary = ConfigUtils.configFloat(config, "ShellDelay", shootDelayPrimary);
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"BarrelPosition"});
+
+                if (splits.size() > 1) {
+                    primary = EnumWeaponType.SHELL;
+                }
+
+                for (String[] split : splits) {
+                    if (split.length == 4)
+                        shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(0, 0, 0)));
+                    else if (split.length == 7)
+                        shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding BarrelPosition failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
 
                 //Recipe
             if (config.containsKey("AddRecipeParts")) {
