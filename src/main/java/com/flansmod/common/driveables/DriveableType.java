@@ -915,123 +915,234 @@ public class DriveableType extends PaintableType {
                 }
             }
 
-                //Recipe
-            if (config.containsKey("AddRecipeParts")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddRecipeParts");
-                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-                ArrayList<ItemStack> stacks = new ArrayList<>();
-                for (int i = 0; i < (split.length - 2) / 2; i++) {
-                    int amount = Integer.parseInt(split[2 * i + 2]);
-                    boolean damaged = split[2 * i + 3].contains(".");
-                    String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
-                    int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
 
-                    // Only add part if it is NOT null. (Seems obvious?)
-                    ItemStack potentialPart = getRecipeElement(itemName, amount, damage, shortName);
-                    if (potentialPart != null) {
-                        stacks.add(potentialPart);
-                        driveableRecipe.add(potentialPart);
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddRecipeParts" });
+
+                for (String[] split : splits) {
+                    EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+                    ArrayList<ItemStack> stacks = new ArrayList<>();
+                    for (int i = 0; i < (split.length - 2) / 2; i++) {
+                        int amount = Integer.parseInt(split[2 * i + 2]);
+                        boolean damaged = split[2 * i + 3].contains(".");
+                        String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
+                        int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
+
+                        // Only add part if it is NOT null. (Seems obvious?)
+                        ItemStack potentialPart = getRecipeElement(itemName, amount, damage, shortName);
+                        if (potentialPart != null) {
+                            stacks.add(potentialPart);
+                            driveableRecipe.add(potentialPart);
+                        }
+
+                    }
+                    ItemStack[] items = new ItemStack[stacks.size()];
+                    items = stacks.toArray(items);
+                    partwiseRecipe.put(part, items);
+                }
+            } catch (Exception e) {
+                FlansMod.log("Adding RecipeParts failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(e);
+                }
+            }
+
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddDye" });
+
+                for (String[] split : splits) {
+                    int amount = Integer.parseInt(split[1]);
+                    int damage = -1;
+                    for (int i = 0; i < ItemDye.field_150923_a.length; i++) {
+                        if (ItemDye.field_150923_a[i].equals(split[2]))
+                            damage = i;
+                    }
+                    if (damage == -1) {
+                        FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
+                        return;
+                    }
+                    driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
+                }
+            } catch (Exception e) {
+                FlansMod.log("Adding Dye to recipe failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(e);
+                }
+            }
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "SetupPart" });
+
+                for (String[] split : splits) {
+                    EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+                    CollisionBox box;
+                    if (split.length > 9) {
+                        box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Float.parseFloat(split[9]));
+                    } else {
+                        box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
+                    }
+                    health.put(part, box);
+                }
+            } catch (Exception ex) {
+                FlansMod.log("SetupPart failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PartDeathExplosion" });
+
+                for (String[] split : splits) {
+                    EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
+
+                    BoxExplosion exp;
+                    if (split.length > 5) {
+                        exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
+                    } else {
+                        exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]));
                     }
 
+                    partDeathExplosions.put(part, exp);
                 }
-                ItemStack[] items = new ItemStack[stacks.size()];
-                items = stacks.toArray(items);
-                partwiseRecipe.put(part, items);
-            }
 
-            //Dyes
-            else if (config.containsKey("AddDye")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddDye");
-                int amount = Integer.parseInt(split[1]);
-                int damage = -1;
-                for (int i = 0; i < ItemDye.field_150923_a.length; i++) {
-                    if (ItemDye.field_150923_a[i].equals(split[2]))
-                        damage = i;
+            } catch (Exception ex) {
+                FlansMod.log("Adding PartDeathExplosion failed in " + file.name);
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
                 }
-                if (damage == -1) {
-                    FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
-                    return;
-                }
-                driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
             }
 
 
-            //Health
-            else if (config.containsKey("SetupPart")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "SetupPart");
-                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
-                CollisionBox box;
-                if (split.length > 9) {
-                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Float.parseFloat(split[9]));
-                } else {
-                    box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
+            if (seats.length == 0 || seats[0] != null) {
+                seats[0].part = EnumDriveablePart.getPart(ConfigUtils.configString(config, "DriverPart", "core"));
+
+                seats[0].gunName = ConfigUtils.configString(config, new String[] { "DriverGun", "PilotGun" }, seats[0].gunName);
+                seats[0].gunOrigin = ConfigUtils.configVector(config, "DriverGunOrigin", seats[0].gunOrigin, 1F/16);
+                seats[0].rotatedOffset = ConfigUtils.configVector(config, "RotatedDriverOffset", seats[0].rotatedOffset, 1F/16);
+                seats[0].aimingSpeed = ConfigUtils.configVector(config, "DriverAimSpeed", seats[0].aimingSpeed);
+                seats[0].legacyAiming = ConfigUtils.configBool(config, "DriverLegacyAiming", seats[0].legacyAiming);
+                seats[0].yawBeforePitch = ConfigUtils.configBool(config, "DriverYawBeforePitch", seats[0].yawBeforePitch);
+                seats[0].latePitch = ConfigUtils.configBool(config, "DriverLatePitch", seats[0].latePitch);
+                seats[0].traverseSounds = ConfigUtils.configBool(config, "DriverTraverseSounds", seats[0].traverseSounds);
+            } else {
+                FlansMod.log("Driver is not defined!");
+
+                throw new Exception("Driver is not defined! Cannot proceed further.");
+            }
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RotatedPassengerOffset" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].rotatedOffset = new Vector3f(Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set RotatedPassengerOffset in " + file.name);
+                    }
                 }
-                health.put(part, box);
-            }
-            if (config.containsKey("PartDeathExplosion")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "PartDeathExplosion");
-                EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
 
-                BoxExplosion exp;
-                if (split.length > 5) {
-                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]), Float.parseFloat(split[6]), Float.parseFloat(split[7]));
-                } else {
-                    exp = new BoxExplosion(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Boolean.parseBoolean(split[4]));
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerAimSpeed" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]));
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerAimSpeed in " + file.name);
+                    }
                 }
 
-                partDeathExplosions.put(part, exp);
-            //Driver Position
-            }
-//            if (split[0].equals("DriverPart")) {
-//                seats[0].part = EnumDriveablePart.getPart(split[1]);
-//            }
-//            else if (split[0].equals("DriverGun") || split[0].equals("PilotGun")) {
-//                seats[0].gunName = split[2];
-//            }
-//            else if (split[0].equals("DriverGunOrigin"))
-//                seats[0].gunOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
-//
-//            else if (split[0].equals("RotatedDriverOffset")) {
-//                seats[0].rotatedOffset = new Vector3f(Integer.parseInt(split[1]) / 16F, Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F);
-//            }
-//            else if (split[0].equals("RotatedPassengerOffset")) {
-//                seats[Integer.parseInt(split[1])].rotatedOffset = new Vector3f(Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
-//            }
-//            else if (split[0].equals("DriverAimSpeed")) {
-//                seats[0].aimingSpeed = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-//            }
-//            else if (split[0].equals("PassengerAimSpeed")) {
-//                seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]));
-//            }
-//            else if (split[0].equals("DriverLegacyAiming")) {
-//                seats[0].legacyAiming = Boolean.parseBoolean(split[1]);
-//            }
-//            else if (split[0].equals("PassengerLegacyAiming")) {
-//                seats[Integer.parseInt(split[1])].legacyAiming = Boolean.parseBoolean(split[2]);
-//            }
-//            seats[0].yawBeforePitch = ConfigUtils.configInt(config, "DriverYawBeforePitch", seats[0].yawBeforePitch);
-//            else if (split[0].equals("PassengerYawBeforePitch")) {
-//                seats[Integer.parseInt(split[1])].yawBeforePitch = Boolean.parseBoolean(split[2]);
-//            }
-//            seats[0].latePitch = ConfigUtils.configInt(config, "DriverLatePitch", seats[0].latePitch);
-//            if (split[0].equals("PassengerLatePitch")) {
-//                seats[Integer.parseInt(split[1])].latePitch = Boolean.parseBoolean(split[2]);
-//            }
-//            else if (split[0].equals("DriverTraverseSounds")) {
-//                seats[0].traverseSounds = Boolean.parseBoolean(split[1]);
-//            }
-//            else if (split[0].equals("PassengerTraverseSounds")) {
-//                seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
-//            }
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLegacyAiming" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].legacyAiming = Boolean.parseBoolean(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerLegacyAiming in " + file.name);
+                    }
+                }
 
-            if (config.containsKey("GunOrigin")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "GunOrigin");
-                float x = Float.parseFloat(split[2]) / 16F;
-                float y = Float.parseFloat(split[3]) / 16F;
-                float z = Float.parseFloat(split[4]) / 16F;
-                if (seats[Integer.parseInt(split[1])] != null)
-                    seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawBeforePitch" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].yawBeforePitch = Boolean.parseBoolean(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerYawBeforePitch in " + file.name);
+                    }
+                }
+
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLatePitch" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].latePitch = Boolean.parseBoolean(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerLatePitch in " + file.name);
+                    }
+                }
+
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerTraverseSounds" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerTraverseSounds in " + file.name);
+                    }
+                }
+
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSoundLength" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerYawSoundLength in " + file.name);
+                    }
+                }
+
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSoundLength" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerPitchSoundLength in " + file.name);
+                    }
+                }
+
+
+            } catch (Exception ex) {
+                FlansMod.log("Setting passenger specific settings failed in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
+
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "GunOrigin" });
+
+                for (String[] split : splits) {
+                    try {
+                        float x = Float.parseFloat(split[2]) / 16F;
+                        float y = Float.parseFloat(split[3]) / 16F;
+                        float z = Float.parseFloat(split[4]) / 16F;
+                        if (seats[Integer.parseInt(split[1])] != null)
+                            seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
+                    } catch (Exception ex) {
+                        FlansMod.log("Setting GunOrigin failed in " + file.name);
+
+                        if (FlansMod.printStackTrace) {
+                            FlansMod.log(ex);
+                        }
+                    }
+                }
+
+
+            } catch (Exception ex) {
+                FlansMod.log("Setting GunOrigins failed in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
+            }
+
 
             //Y offset for badly built models :P
             yOffset = ConfigUtils.configFloat(config, "YOffset", yOffset);
@@ -1048,26 +1159,19 @@ public class DriveableType extends PaintableType {
             backSoundRange = ConfigUtils.configInt(config, "BackSoundRange", backSoundRange);
             backSoundLength = ConfigUtils.configInt(config, "BackSoundLength", backSoundLength);
             soundTime = ConfigUtils.configInt(config, "SoundTime", soundTime);
+
             seats[0].yawSoundLength = ConfigUtils.configInt(config, "YawSoundLength", seats[0].yawSoundLength);
             seats[0].pitchSoundLength = ConfigUtils.configInt(config, "PitchSoundLength", seats[0].pitchSoundLength);
 
-            if (config.containsKey("PassengerYawSoundLength")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "PassengerYawSoundLength");
-                seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
-            }
 
-            if (config.containsKey("PassengerPitchSoundLength")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "PassengerPitchSoundLength");
-                seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
-            }
 
-           startSound = ConfigUtils.configDriveableSound(contentPack, config, "StartSound", startSound);
-           engineSound = ConfigUtils.configDriveableSound(contentPack, config, "EngineSound", engineSound);
-           idleSound = ConfigUtils.configDriveableSound(contentPack, config, "IdleSound", idleSound);
-           exitSound = ConfigUtils.configDriveableSound(contentPack, config, "ExitSound", exitSound);
-           backSound = ConfigUtils.configDriveableSound(contentPack, config, "BackSound", backSound);
-           seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
-           seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
+            startSound = ConfigUtils.configDriveableSound(contentPack, config, "StartSound", startSound);
+            engineSound = ConfigUtils.configDriveableSound(contentPack, config, "EngineSound", engineSound);
+            idleSound = ConfigUtils.configDriveableSound(contentPack, config, "IdleSound", idleSound);
+            exitSound = ConfigUtils.configDriveableSound(contentPack, config, "ExitSound", exitSound);
+            backSound = ConfigUtils.configDriveableSound(contentPack, config, "BackSound", backSound);
+            seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
+            seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
 
            if (config.containsKey("PassengerYawSound")) {
                String[] split = ConfigUtils.getSplitFromKey(config, "PassengerYawSound");
