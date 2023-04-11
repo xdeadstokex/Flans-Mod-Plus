@@ -25,7 +25,6 @@ import com.flansmod.common.driveables.collisions.CollisionShapeBox;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import org.classpath.icedtea.Config;
 
 public class DriveableType extends PaintableType {
     /** The plane model */
@@ -1105,7 +1104,23 @@ public class DriveableType extends PaintableType {
                     }
                 }
 
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSound" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].yawSound = split[2];
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerYawSound in " + file.name);
+                    }
+                }
 
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSound" });
+                for (String[] split : splits) {
+                    try {
+                        seats[Integer.parseInt(split[1])].pitchSound = split[2];
+                    } catch (Exception ex) {
+                        FlansMod.log("Could not set PassengerPitchSound in " + file.name);
+                    }
+                }
             } catch (Exception ex) {
                 FlansMod.log("Setting passenger specific settings failed in " + file.name);
 
@@ -1160,9 +1175,13 @@ public class DriveableType extends PaintableType {
             backSoundLength = ConfigUtils.configInt(config, "BackSoundLength", backSoundLength);
             soundTime = ConfigUtils.configInt(config, "SoundTime", soundTime);
 
+
+
+            // By here we assume that driver is known
             seats[0].yawSoundLength = ConfigUtils.configInt(config, "YawSoundLength", seats[0].yawSoundLength);
             seats[0].pitchSoundLength = ConfigUtils.configInt(config, "PitchSoundLength", seats[0].pitchSoundLength);
-
+            seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
+            seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
 
 
             startSound = ConfigUtils.configDriveableSound(contentPack, config, "StartSound", startSound);
@@ -1170,54 +1189,14 @@ public class DriveableType extends PaintableType {
             idleSound = ConfigUtils.configDriveableSound(contentPack, config, "IdleSound", idleSound);
             exitSound = ConfigUtils.configDriveableSound(contentPack, config, "ExitSound", exitSound);
             backSound = ConfigUtils.configDriveableSound(contentPack, config, "BackSound", backSound);
-            seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
-            seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
 
-           if (config.containsKey("PassengerYawSound")) {
-               String[] split = ConfigUtils.getSplitFromKey(config, "PassengerYawSound");
-               seats[Integer.parseInt(split[1])].yawSound = split[2];
-               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-           }
-           if (config.containsKey("PassengerPitchSound")) {
-               String[] split = ConfigUtils.getSplitFromKey(config, "PassengerPitchSound");
-               seats[Integer.parseInt(split[1])].pitchSound = split[2];
-               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-           }
-           if (config.containsKey("ShootMainSound")) {
-               String[] split = ConfigUtils.getSplitFromKey(config, "ShootMainSound");
-               shootSoundPrimary = split[1];
-               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-           }
-            if (config.containsKey("ShootSoundPrimary")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootSoundPrimary");
-                shootSoundPrimary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
-            if (config.containsKey("ShellSound")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShellSound");
-                shootSoundPrimary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
-            if (config.containsKey("BombSound")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "BombSound");
-                shootSoundPrimary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
-           if (config.containsKey("ShootReloadSound")) {
-               String[] split = ConfigUtils.getSplitFromKey(config, "ShootReloadSound");
-               shootReloadSound = split[1];
-               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-           }
-           if (config.containsKey("ShootSecondarySound")) {
-               String[] split = ConfigUtils.getSplitFromKey(config, "ShootSecondarySound");
-               shootSoundSecondary = split[1];
-               FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-           }
-            if (config.containsKey("ShootSecondarySound")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "ShootSecondarySound");
-                shootSoundSecondary = split[1];
-                FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-            }
+
+
+
+           shootSoundPrimary = ConfigUtils.configDriveableSound(packName, config, new String[] { "ShootMainSound", "BombSound", "ShootSoundPrimary", "ShellSound" }, shootSoundPrimary);
+           shootReloadSound = ConfigUtils.configDriveableSound(packName, config, "ShootReloadSound", shootReloadSound);
+           shootSoundSecondary = ConfigUtils.configDriveableSound(packName, config, new String[] { "ShootSecondarySound", "ShootSoundSecondary" }, shootSoundSecondary);
+
 
             placeSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundPrimary", placeSoundPrimary);
             placeSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundSecondary", placeSoundSecondary);
@@ -1230,61 +1209,70 @@ public class DriveableType extends PaintableType {
 
             fancyCollision = ConfigUtils.configBool(config, "FancyCollision", fancyCollision);
 
-            if (config.containsKey("AddCollisionMesh")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionMesh");
-                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]), new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]), new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]), new Vector3f(split[9]), new Vector3f(split[10]), "core");
-                collisionBox.add(box);
-                //colbox = box;
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMesh", "AddTurretCollisionMesh" });
+
+                for (String[] split : splits) {
+                    CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]),
+                            new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]),
+                            new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]),
+                            new Vector3f(split[9]), new Vector3f(split[10]), split[0].contains("Turret") ? "turret" : "core");
+                    collisionBox.add(box);
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding collision mesh failed in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
 
-            if (config.containsKey("AddCollisionMeshRaw")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddCollisionMeshRaw");
-                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
-                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
-                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
-                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
-                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
-                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
-                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
-                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
-                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
-                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "core");
-                collisionBox.add(box);
-                //colbox = box;
-            }
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMeshRaw", "AddTurretCollisionMeshRaw" });
 
-            if (config.containsKey("AddTurretCollisionMesh")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddTurretCollisionMesh");
-                CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]), new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]), new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]), new Vector3f(split[9]), new Vector3f(split[10]), "turret");
-                collisionBox.add(box);
-                //colbox = box;
-            }
+                for (String[] split : splits) {
+                    Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+                    Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
+                    Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
+                    Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
+                    Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
+                    Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
+                    Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
+                    Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
+                    Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
+                    Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
+                    CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, split[0].contains("Turret") ? "turret" : "core");
+                    collisionBox.add(box);
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding raw collision mesh failed in " + file.name);
 
-            if (config.containsKey("AddTurretCollisionMeshRaw")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "AddTurretCollisionMeshRaw");
-                Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-                Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
-                Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
-                Vector3f p2 = new Vector3f(Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
-                Vector3f p3 = new Vector3f(Float.parseFloat(split[14]), Float.parseFloat(split[15]), Float.parseFloat(split[16]));
-                Vector3f p4 = new Vector3f(Float.parseFloat(split[17]), Float.parseFloat(split[18]), Float.parseFloat(split[19]));
-                Vector3f p5 = new Vector3f(Float.parseFloat(split[20]), Float.parseFloat(split[21]), Float.parseFloat(split[22]));
-                Vector3f p6 = new Vector3f(Float.parseFloat(split[23]), Float.parseFloat(split[24]), Float.parseFloat(split[25]));
-                Vector3f p7 = new Vector3f(Float.parseFloat(split[26]), Float.parseFloat(split[27]), Float.parseFloat(split[28]));
-                Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
-                CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, "turret");
-                collisionBox.add(box);
-                //colbox = box;
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
 
 
-            if (config.containsKey("LeftLinkPoint")) {
-                leftTrackPoints.add(new Vector3f(config.get("LeftLinkPoint")));
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LeftLinkPoint" });
+
+                for (String[] split : splits) {
+                    leftTrackPoints.add(new Vector3f(split[1]));
+                }
+
+                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RightLinkPoint" });
+
+                for (String[] split : splits) {
+                    rightTrackPoints.add(new Vector3f(split[1]));
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding track link points failed in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
-            if (config.containsKey("RightLinkPoint")) {
-                rightTrackPoints.add(new Vector3f(config.get("RightLinkPoint")));
-            }
+
 
             trackLinkLength = ConfigUtils.configFloat(config, "TrackLinkLength", trackLinkLength);
 
@@ -1292,24 +1280,33 @@ public class DriveableType extends PaintableType {
             onRadar = ConfigUtils.configBool(config, "OnRadar", onRadar);
 
 
-            if (config.containsKey("AddParticle") || config.containsKey("AddEmitter")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, new String[]{"AddParticle", "AddEmitter"});
-                ParticleEmitter emitter = new ParticleEmitter();
-                emitter.effectType = split[1];
-                emitter.emitRate = Integer.parseInt(split[2]);
-                emitter.origin = new Vector3f(split[3]);
-                emitter.extents = new Vector3f(split[4]);
-                emitter.velocity = new Vector3f(split[5]);
-                emitter.minThrottle = Float.parseFloat(split[6]);
-                emitter.maxThrottle = Float.parseFloat(split[7]);
-                emitter.minHealth = Float.parseFloat(split[8]);
-                emitter.maxHealth = Float.parseFloat(split[9]);
-                emitter.part = split[10];
-                //Scale from model coords to world coords
-                emitter.origin.scale(1.0f / 16.0f);
-                emitter.extents.scale(1.0f / 16.0f);
-                emitter.velocity.scale(1.0f / 16.0f);
-                emitters.add(emitter);
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddParticle", "AddEmitter" });
+
+                for (String[] split : splits) {
+                    ParticleEmitter emitter = new ParticleEmitter();
+                    emitter.effectType = split[1];
+                    emitter.emitRate = Integer.parseInt(split[2]);
+                    emitter.origin = new Vector3f(split[3]);
+                    emitter.extents = new Vector3f(split[4]);
+                    emitter.velocity = new Vector3f(split[5]);
+                    emitter.minThrottle = Float.parseFloat(split[6]);
+                    emitter.maxThrottle = Float.parseFloat(split[7]);
+                    emitter.minHealth = Float.parseFloat(split[8]);
+                    emitter.maxHealth = Float.parseFloat(split[9]);
+                    emitter.part = split[10];
+                    //Scale from model coords to world coords
+                    emitter.origin.scale(1.0f / 16.0f);
+                    emitter.extents.scale(1.0f / 16.0f);
+                    emitter.velocity.scale(1.0f / 16.0f);
+                    emitters.add(emitter);
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Adding emitter failed in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
         } catch (Exception e) {
             FlansMod.log("Errored reading " + file.name);

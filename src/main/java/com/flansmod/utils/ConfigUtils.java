@@ -124,6 +124,10 @@ public class ConfigUtils
 		return configSound(contentPack, config, settingName, defaultValue, "driveables");
 	}
 
+	public static String configDriveableSound(String contentPack, ConfigMap config, String[] settingNames, String defaultValue) {
+		return configSound(contentPack, config, settingNames, defaultValue, "driveables");
+	}
+
 	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue) {
 		return configVector(config, settingName, defaultValue, 1F);
 	}
