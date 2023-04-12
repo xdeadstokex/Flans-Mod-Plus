@@ -25,7 +25,7 @@ BAB
    
 ```
 
-### [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
+### [PaintableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/paintjob/PaintableType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)f
 | Keyword | Type | Default | Purpose |
 |-------------|------------------------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Paintjob | iconName textureName [dyeName dyeAmount (dyeDamage)] | ~ | Sets up a new paintjob with the dyes required dyeDamage is optional and I'm not entirely sure how that works. The dye setup in [] can be repeated. (you don't need to add the []) |
@@ -265,7 +265,7 @@ This will override the value set in the gun's model!
 | DropItemOnHit | String | null | Items dropped on various events |
 | Bounciness | Float | (Grenade: 0.9), (Bullet 0) | When grenade or bullet hits an entity or block, the velocity will multiply by this amount |
 | RoundsPerItem | Integer | 1 | The number of rounds fired by a gun per item |
-| FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired. Measured in 0.02\*blocks/tick^2, or 8\*blocks^second^2 |
+| FallSpeed | Float | 1 | Speed at which the projectile should fall after being fired. Measured in 0.02\*blocks/tick^2, or 8\*blocks/second^2 |
 | ThrowSpeed / ShootSpeed | Float | 1 | The speed at which the projectile should be launched. 0 Will give it no velocity and drop instantly. |
 | HitBoxSize | Float | 0.5 | The size of the hitbox. Units are probably /16ths |
 | Damage | Float | 1 | Amount of damage to do when hit. Sets all values for all types below. |
