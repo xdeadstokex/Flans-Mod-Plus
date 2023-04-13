@@ -76,10 +76,10 @@ public class VehicleType extends DriveableType {
     public boolean shootWithOpenDoor = false;
 
     public int trackLinkFix = 5;
-    public boolean flipLinkFix = false;
+/*    public boolean flipLinkFix = false;
 
     public String driftSound = "";
-    public int driftSoundLength;
+    public int driftSoundLength;*/
 
     public ArrayList<SmokePoint> smokers = new ArrayList<SmokePoint>();
     public static ArrayList<VehicleType> types = new ArrayList<VehicleType>();
@@ -110,24 +110,24 @@ public class VehicleType extends DriveableType {
         super.read(config, file);
         try {
             //Movement modifiers
-            turnLeftModifier = ConfigUtils.configFloat(config,"TurnLeftSpeed", turnLeftModifier);
-            turnRightModifier = ConfigUtils.configFloat(config,"TurnRightSpeed", turnRightModifier);
-            squashMobs = ConfigUtils.configBool(config,"SquashMobs", squashMobs);
-            fourWheelDrive = ConfigUtils.configBool(config,"FourWheelDrive", fourWheelDrive);
-            tank = ConfigUtils.configBool(config,new String[]{"Tank", "TankMode"}, tank);
-            throttleDecay = ConfigUtils.configFloat(config,"ThrottleDecay", throttleDecay);
-            mass = ConfigUtils.configFloat(config,"Mass", mass);
-            useRealisticAcceleration = ConfigUtils.configBool(config,"UseRealisticAcceleration", useRealisticAcceleration);
-            gravity = ConfigUtils.configFloat(config,"Gravity", gravity);
-            maxFallSpeed = ConfigUtils.configFloat(config,"MaxFallSpeed", maxFallSpeed);
-            brakingModifier = ConfigUtils.configFloat(config,"BrakingModifier", brakingModifier);
+            turnLeftModifier = ConfigUtils.configFloat(config, "TurnLeftSpeed", turnLeftModifier);
+            turnRightModifier = ConfigUtils.configFloat(config, "TurnRightSpeed", turnRightModifier);
+            squashMobs = ConfigUtils.configBool(config, "SquashMobs", squashMobs);
+            fourWheelDrive = ConfigUtils.configBool(config, "FourWheelDrive", fourWheelDrive);
+            tank = ConfigUtils.configBool(config, new String[]{"Tank", "TankMode"}, tank);
+            throttleDecay = ConfigUtils.configFloat(config, "ThrottleDecay", throttleDecay);
+            mass = ConfigUtils.configFloat(config, "Mass", mass);
+            useRealisticAcceleration = ConfigUtils.configBool(config, "UseRealisticAcceleration", useRealisticAcceleration);
+            gravity = ConfigUtils.configFloat(config, "Gravity", gravity);
+            maxFallSpeed = ConfigUtils.configFloat(config, "MaxFallSpeed", maxFallSpeed);
+            brakingModifier = ConfigUtils.configFloat(config, "BrakingModifier", brakingModifier);
 
             //Visuals
-            hasDoor = ConfigUtils.configBool(config,"HasDoor", hasDoor);
-            shootWithOpenDoor = ConfigUtils.configBool(config,"ShootWithOpenDoor", shootWithOpenDoor);
-            rotateWheels = ConfigUtils.configBool(config,"RotateWheels", rotateWheels);
-            trackLinkFix = ConfigUtils.configInt(config,"FixTrackLink", trackLinkFix);
-            flipLinkFix = ConfigUtils.configBool(config,"FlipLinkFix", flipLinkFix);
+            hasDoor = ConfigUtils.configBool(config, "HasDoor", hasDoor);
+            shootWithOpenDoor = ConfigUtils.configBool(config, "ShootWithOpenDoor", shootWithOpenDoor);
+            rotateWheels = ConfigUtils.configBool(config, "RotateWheels", rotateWheels);
+            trackLinkFix = ConfigUtils.configInt(config, "FixTrackLink", trackLinkFix);
+            //flipLinkFix = ConfigUtils.configBool(config,"FlipLinkFix", flipLinkFix);
 
             //Animations
             doorPos1 = ConfigUtils.configVector(config, "DoorPosition1", doorPos1);
@@ -146,27 +146,47 @@ public class VehicleType extends DriveableType {
 
 
             //Armaments
-            vehicleShootDelay = ConfigUtils.configInt(config,"ShootDelay", vehicleShootDelay);
-            vehicleShellDelay = ConfigUtils.configInt(config,"ShellDelay", vehicleShellDelay);
+            vehicleShootDelay = ConfigUtils.configInt(config, "ShootDelay", vehicleShootDelay);
+            vehicleShellDelay = ConfigUtils.configInt(config, "ShellDelay", vehicleShellDelay);
 
             //Sound
             shootSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ShootSound", shootSoundPrimary);
             shootSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "ShellSound", shootSoundSecondary);
-            driftSoundLength = ConfigUtils.configInt(config,"DriftSoundLength", driftSoundLength);
-            driftSound = ConfigUtils.configDriveableSound(contentPack, config, "DriftSound", driftSound);
-            if (config.containsKey("AddSmokePoint") || config.containsKey("AddSmokeDispenser")) {
-                String key = "AddSmokePoint";
-                if (config.containsKey("AddSmokeDispenser"))
-                    key = "AddSmokeDispenser";
-                String[] split = ConfigUtils.getSplitFromKey(config, key);
-                SmokePoint smoke = new SmokePoint();
-                smoke.position = new Vector3f(split[1]);
-                smoke.direction = new Vector3f(split[2]);
-                smoke.detTime = Integer.parseInt(split[3]);
-                smoke.part = split[4];
-                smokers.add(smoke);
+            //driftSoundLength = ConfigUtils.configInt(config,"DriftSoundLength", driftSoundLength);
+            //driftSound = ConfigUtils.configDriveableSound(contentPack, config, "DriftSound", driftSound);
+
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddSmokePoint", "AddSmokeDispenser" });
+
+                for (String[] split : splits) {
+                    try {
+                        SmokePoint smoke = new SmokePoint();
+                        smoke.position = new Vector3f(split[1]);
+                        smoke.direction = new Vector3f(split[2]);
+                        smoke.detTime = Integer.parseInt(split[3]);
+                        smoke.part = split[4];
+                        smokers.add(smoke);
+                    } catch (Exception ex) {
+                        FlansMod.log("Error thrown adding smoke point in " + file.name);
+
+                        if (FlansMod.printStackTrace) {
+                            FlansMod.log(ex);
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.log("Error thrown adding smoke points in " + file.name);
+
+                if (FlansMod.printStackTrace) {
+                    FlansMod.log(ex);
+                }
             }
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            FlansMod.log("Error thrown parsing " + file.name);
+
+            if (FlansMod.printStackTrace) {
+                FlansMod.log(ex);
+            }
         }
     }
 

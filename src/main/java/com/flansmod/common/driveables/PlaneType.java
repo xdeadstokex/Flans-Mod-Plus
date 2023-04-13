@@ -114,21 +114,23 @@ public class PlaneType extends DriveableType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-			//Plane Mode
-			if(config.containsKey("Mode"))
-				mode = EnumPlaneMode.getMode(config.get("Mode"));
-			//Better flight model?
+			mode = EnumPlaneMode.getMode(ConfigUtils.configString(config, "Mode", "Plane"));
+
 			newFlightControl = ConfigUtils.configBool(config, "NewFlightControl", newFlightControl);
+
 			//Yaw modifiers
 			turnLeftModifier = ConfigUtils.configFloat(config, "TurnLeftSpeed", turnLeftModifier);
 			turnRightModifier = ConfigUtils.configFloat(config, "TurnRightSpeed", turnRightModifier);
+
 			//Pitch modifiers
 			lookUpModifier = ConfigUtils.configFloat(config, "LookUpSpeed", lookUpModifier);
 			lookDownModifier = ConfigUtils.configFloat(config, "LookDownSpeed", lookDownModifier);
+
 			//Roll modifiers
 			rollLeftModifier = ConfigUtils.configFloat(config, "RollLeftSpeed", rollLeftModifier);
 			rollRightModifier = ConfigUtils.configFloat(config, "RollRightSpeed", rollRightModifier);
 
+			// Below are only used when NewFlightControl set.
 			//Lift
 			lift = ConfigUtils.configFloat(config, "Lift", lift);
 			//Flight variables
@@ -148,25 +150,37 @@ public class PlaneType extends DriveableType
 			planeShootDelay = ConfigUtils.configInt(config, "ShootDelay", planeShootDelay);
 			planeBombDelay = ConfigUtils.configInt(config, "BombDelay", planeBombDelay);
 
-			//Propellers
-			if(config.containsKey("Propeller")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "Propeller");
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				propellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
+			try {
+				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HeliPropeller", "Propeller", "HeliTailPropeller" });
+
+				for (String[] split : splits) {
+					try {
+					Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
+
+					if (split[0].contains("HeliTailPropeller")) {
+						heliTailPropellers.add(propeller);
+					} else if (split[0].contains("HeliPropeller")) {
+						heliPropellers.add(propeller);
+					} else {
+						propellers.add(propeller);
+					}
+
+					driveableRecipe.add(new ItemStack(propeller.itemType.item));
+					} catch (Exception ex) {
+						FlansMod.log("Failed to add new propeller in " + file.name);
+						if (FlansMod.printStackTrace) {
+							FlansMod.log(ex);
+						}
+					}
+				}
+			} catch (Exception ex) {
+				// This is a failable condition
+				FlansMod.log("Failed to setup propellers in " + file.name);
+				if (FlansMod.printStackTrace) {
+					FlansMod.log(ex);
+				}
 			}
-			if(config.containsKey("HeliPropeller")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "HeliPropeller");
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				heliPropellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
-			}
-			if(config.containsKey("HeliTailPropeller")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "HeliTailPropeller");
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				heliTailPropellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
-			}
+
 
 			hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
 			flareDelay = ConfigUtils.configInt(config, "FlareDelay", flareDelay);
@@ -237,8 +251,13 @@ public class PlaneType extends DriveableType
             //In-flight inventory
 			invInflight = ConfigUtils.configBool(config, "InflightInventory", invInflight);
 		}
-		catch (Exception ignored)
+		catch (Exception ex)
 		{
+			FlansMod.log("Error thrown parsing " + file.name);
+
+			if (FlansMod.printStackTrace) {
+				FlansMod.log(ex);
+			}
 		}
 	}
     
@@ -247,10 +266,10 @@ public class PlaneType extends DriveableType
     {
     	switch(mode)
     	{
-    	case VTOL : return Math.max(propellers.size(), heliPropellers.size());
-    	case PLANE : return propellers.size();
-    	case HELI : return heliPropellers.size();
-    	default : return 1;
+    		case VTOL: return Math.max(propellers.size(), heliPropellers.size());
+    		case PLANE: return propellers.size();
+    		case HELI: return heliPropellers.size();
+    		default: return 1;
     	}
     }
     
