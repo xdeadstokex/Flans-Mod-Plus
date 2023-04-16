@@ -588,21 +588,21 @@ public class GunType extends PaintableType implements IScope {
         meleeSoundRange = ConfigUtils.configInt(config, "MeleeSoundRange", meleeSoundRange);
         reloadSoundRange = ConfigUtils.configInt(config, "ReloadSoundRange", reloadSoundRange);
         gunSoundRange = ConfigUtils.configInt(config, "GunSoundRange", gunSoundRange);
-        shootSound = ConfigUtils.configGunSound(contentPack, config, "ShootSound", shootSound);
-        bulletInsert = ConfigUtils.configGunSound(contentPack, config, "BulletInsertSound", bulletInsert);
-        actionSound = ConfigUtils.configGunSound(contentPack, config, "ActionSound", actionSound);
-        lastShootSound = ConfigUtils.configGunSound(contentPack, config, "LastShootSound", lastShootSound);
-        suppressedShootSound = ConfigUtils.configGunSound(contentPack, config, "SuppressedShootSound", suppressedShootSound);
-        reloadSound = ConfigUtils.configGunSound(contentPack, config, "ReloadSound", reloadSound);
-        reloadSoundOnEmpty = ConfigUtils.configGunSound(contentPack, config, "EmptyReloadSound", reloadSoundOnEmpty);
-        clickSoundOnEmpty = ConfigUtils.configGunSound(contentPack, config, "EmptyClickSound", clickSoundOnEmpty);
-        clickSoundOnEmptyRepeated = ConfigUtils.configGunSound(contentPack, config, "EmptyClickSoundRepeated", clickSoundOnEmptyRepeated);
-        idleSound = ConfigUtils.configGunSound(contentPack, config, "IdleSound", idleSound);
+        shootSound = ConfigUtils.configGunSound(packName, config, "ShootSound", shootSound);
+        bulletInsert = ConfigUtils.configGunSound(packName, config, "BulletInsertSound", bulletInsert);
+        actionSound = ConfigUtils.configGunSound(packName, config, "ActionSound", actionSound);
+        lastShootSound = ConfigUtils.configGunSound(packName, config, "LastShootSound", lastShootSound);
+        suppressedShootSound = ConfigUtils.configGunSound(packName, config, "SuppressedShootSound", suppressedShootSound);
+        reloadSound = ConfigUtils.configGunSound(packName, config, "ReloadSound", reloadSound);
+        reloadSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyReloadSound", reloadSoundOnEmpty);
+        clickSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyClickSound", clickSoundOnEmpty);
+        clickSoundOnEmptyRepeated = ConfigUtils.configGunSound(packName, config, "EmptyClickSoundRepeated", clickSoundOnEmptyRepeated);
+        idleSound = ConfigUtils.configGunSound(packName, config, "IdleSound", idleSound);
         idleSoundLength = ConfigUtils.configInt(config, "IdleSoundLength", idleSoundLength);
-        meleeSound = ConfigUtils.configGunSound(contentPack, config, "MeleeSound", meleeSound);
+        meleeSound = ConfigUtils.configGunSound(packName, config, "MeleeSound", meleeSound);
 
         //Looping sounds
-        warmupSound = ConfigUtils.configGunSound(contentPack, config, "WarmupSound", warmupSound);
+        warmupSound = ConfigUtils.configGunSound(packName, config, "WarmupSound", warmupSound);
         warmupSoundLength = ConfigUtils.configInt(config, "WarmupSoundLength", warmupSoundLength);
         if (config.containsKey("LoopedSound") || config.containsKey("SpinSound")) {
             String key = "LoopedSound";
@@ -610,15 +610,15 @@ public class GunType extends PaintableType implements IScope {
                 key = "SpinSound";
             loopedSound = config.get(key);
             useLoopingSounds = true;
-            FlansMod.proxy.loadSound(contentPack, "guns", config.get(key));
+            FlansMod.proxy.loadSound(packName, "guns", config.get(key));
         }
-        loopedSound = ConfigUtils.configGunSound(contentPack, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
+        loopedSound = ConfigUtils.configGunSound(packName, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
         if (loopedSound != null && !loopedSound.isEmpty())
             useLoopingSounds = true;
         loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
-        cooldownSound = ConfigUtils.configGunSound(contentPack, config, "CooldownSound", cooldownSound);
-        lockOnSound = ConfigUtils.configGunSound(contentPack, config, "LockOnSound", lockOnSound);
-        distantShootSound = ConfigUtils.configGunSound(contentPack, config, "DistantSound", distantShootSound);
+        cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
+        lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
+        distantShootSound = ConfigUtils.configGunSound(packName, config, "DistantSound", distantShootSound);
         distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
 
 

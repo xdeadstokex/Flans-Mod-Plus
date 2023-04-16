@@ -1180,15 +1180,15 @@ public class DriveableType extends PaintableType {
             // By here we assume that driver is known
             seats[0].yawSoundLength = ConfigUtils.configInt(config, "YawSoundLength", seats[0].yawSoundLength);
             seats[0].pitchSoundLength = ConfigUtils.configInt(config, "PitchSoundLength", seats[0].pitchSoundLength);
-            seats[0].yawSound = ConfigUtils.configDriveableSound(contentPack, config, "YawSound", seats[0].yawSound);
-            seats[0].pitchSound = ConfigUtils.configDriveableSound(contentPack, config, "PitchSound", seats[0].pitchSound);
+            seats[0].yawSound = ConfigUtils.configDriveableSound(packName, config, "YawSound", seats[0].yawSound);
+            seats[0].pitchSound = ConfigUtils.configDriveableSound(packName, config, "PitchSound", seats[0].pitchSound);
 
 
-            startSound = ConfigUtils.configDriveableSound(contentPack, config, "StartSound", startSound);
-            engineSound = ConfigUtils.configDriveableSound(contentPack, config, "EngineSound", engineSound);
-            idleSound = ConfigUtils.configDriveableSound(contentPack, config, "IdleSound", idleSound);
-            exitSound = ConfigUtils.configDriveableSound(contentPack, config, "ExitSound", exitSound);
-            backSound = ConfigUtils.configDriveableSound(contentPack, config, "BackSound", backSound);
+            startSound = ConfigUtils.configDriveableSound(packName, config, "StartSound", startSound);
+            engineSound = ConfigUtils.configDriveableSound(packName, config, "EngineSound", engineSound);
+            idleSound = ConfigUtils.configDriveableSound(packName, config, "IdleSound", idleSound);
+            exitSound = ConfigUtils.configDriveableSound(packName, config, "ExitSound", exitSound);
+            backSound = ConfigUtils.configDriveableSound(packName, config, "BackSound", backSound);
 
 
 
@@ -1198,14 +1198,14 @@ public class DriveableType extends PaintableType {
            shootSoundSecondary = ConfigUtils.configDriveableSound(packName, config, new String[] { "ShootSecondarySound", "ShootSoundSecondary" }, shootSoundSecondary);
 
 
-            placeSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundPrimary", placeSoundPrimary);
-            placeSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "PlaceSoundSecondary", placeSoundSecondary);
-            reloadSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ReloadSoundPrimary", reloadSoundPrimary);
-            reloadSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "ReloadSoundSecondary", reloadSoundSecondary);
-            lockedOnSound = ConfigUtils.configDriveableSound(contentPack, config, "LockedOnSound", lockedOnSound);
-            lockOnSound = ConfigUtils.configGunSound(contentPack, config, "LockOnSound", lockOnSound);
-            lockingOnSound = ConfigUtils.configGunSound(contentPack, config, "LockingOnSound", lockingOnSound);
-            flareSound = ConfigUtils.configDriveableSound(contentPack, config, "FlareSound", flareSound);
+            placeSoundPrimary = ConfigUtils.configDriveableSound(packName, config, "PlaceSoundPrimary", placeSoundPrimary);
+            placeSoundSecondary = ConfigUtils.configDriveableSound(packName, config, "PlaceSoundSecondary", placeSoundSecondary);
+            reloadSoundPrimary = ConfigUtils.configDriveableSound(packName, config, "ReloadSoundPrimary", reloadSoundPrimary);
+            reloadSoundSecondary = ConfigUtils.configDriveableSound(packName, config, "ReloadSoundSecondary", reloadSoundSecondary);
+            lockedOnSound = ConfigUtils.configDriveableSound(packName, config, "LockedOnSound", lockedOnSound);
+            lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
+            lockingOnSound = ConfigUtils.configGunSound(packName, config, "LockingOnSound", lockingOnSound);
+            flareSound = ConfigUtils.configDriveableSound(packName, config, "FlareSound", flareSound);
 
             fancyCollision = ConfigUtils.configBool(config, "FancyCollision", fancyCollision);
 

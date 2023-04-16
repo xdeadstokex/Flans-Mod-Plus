@@ -191,9 +191,9 @@ public class PlaneType extends DriveableType
 
 			//Sound
 			engineSoundLength = ConfigUtils.configInt(config, "PropSoundLength", engineSoundLength);
-			engineSound = ConfigUtils.configDriveableSound(contentPack, config, "PropSound", engineSound);
-			shootSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ShootSound", shootSoundPrimary);
-			shootSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "BombSound", shootSoundSecondary);
+			engineSound = ConfigUtils.configDriveableSound(packName, config, "PropSound", engineSound);
+			shootSoundPrimary = ConfigUtils.configDriveableSound(packName, config, "ShootSound", shootSoundPrimary);
+			shootSoundSecondary = ConfigUtils.configDriveableSound(packName, config, "BombSound", shootSoundSecondary);
 
 
 			//Aesthetics

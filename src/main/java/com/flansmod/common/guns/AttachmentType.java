@@ -137,7 +137,8 @@ public class AttachmentType extends PaintableType implements IScope
 			if(FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("Model")))
 				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelAttachment.class);
 
-			modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
+			// This is read in InfoType
+			//modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
 			texture = ConfigUtils.configString(config, "Texture", texture);
 			silencer = ConfigUtils.configBool(config, "Silencer", silencer);
 			disableMuzzleFlash = ConfigUtils.configBool(config, new String[]{"DisableMuzzleFlash", "DisableFlash"}, disableMuzzleFlash);
@@ -167,9 +168,9 @@ public class AttachmentType extends PaintableType implements IScope
 			numSecAmmoItems = ConfigUtils.configInt(config, "LoadSecondaryIntoGun", numSecAmmoItems);
 			if (config.containsKey("SecondaryFireMode"))
 				secondaryFireMode = EnumFireMode.getFireMode(config.get("SecondaryFireMode"));
-			secondaryShootSound = ConfigUtils.configGunSound(contentPack, config, "SecondaryShootSound", secondaryShootSound);
-			secondaryReloadSound = ConfigUtils.configGunSound(contentPack, config, "SecondaryReloadSound", secondaryReloadSound);
-			toggleSound = ConfigUtils.configGunSound(contentPack, config, "ModeSwitchSound", toggleSound);
+			secondaryShootSound = ConfigUtils.configGunSound(packName, config, "SecondaryShootSound", secondaryShootSound);
+			secondaryReloadSound = ConfigUtils.configGunSound(packName, config, "SecondaryReloadSound", secondaryReloadSound);
+			toggleSound = ConfigUtils.configGunSound(packName, config, "ModeSwitchSound", toggleSound);
 
 			//Multipliers
 			meleeDamageMultiplier = ConfigUtils.configFloat(config, "MeleeDamageMultiplier", meleeDamageMultiplier);
@@ -198,11 +199,7 @@ public class AttachmentType extends PaintableType implements IScope
 			hasNightVision = ConfigUtils.configBool(config, "HasNightVision", hasNightVision);
 
 		} catch (Exception e) {
-				FlansMod.log("Reading attachment file failed.");
-				if(FlansMod.printStackTrace)
-				{
-					e.printStackTrace();
-				}
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading attachment config", null, e);
 		}
 	}
 	

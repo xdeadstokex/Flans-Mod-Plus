@@ -141,7 +141,7 @@ public class BulletType extends ShootableType
 			setEntitiesOnFire = ConfigUtils.configBool(config, "SetEntitiesOnFire", setEntitiesOnFire);
 			hitSoundEnable = ConfigUtils.configBool(config, "HitSoundEnable", hitSoundEnable);
 			entityHitSoundEnable = ConfigUtils.configBool(config, "EntityHitSoundEnable", entityHitSoundEnable);
-			hitSound = ConfigUtils.configSound(contentPack, config, "HitSound", hitSound);
+			hitSound = ConfigUtils.configSound(packName, config, "HitSound", hitSound);
 			hitSoundRange = ConfigUtils.configFloat(config, "HitSoundRange", hitSoundRange);
 			//Dont know why its like this
 			if (config.containsKey("Penetrates")) {
@@ -231,9 +231,7 @@ public class BulletType extends ShootableType
 			speedMultiplier = ConfigUtils.configFloat(config, "BulletSpeedMultiplier", speedMultiplier);
 
 		} catch (Exception e) {
-			FlansMod.log("Reading bullet file failed.");
-			if(FlansMod.printStackTrace)
-				e.printStackTrace();
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading bullet config", null, e);
 		}
 	}
 

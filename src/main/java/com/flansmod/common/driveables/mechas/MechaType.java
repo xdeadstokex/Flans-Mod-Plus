@@ -112,7 +112,7 @@ public class MechaType extends DriveableType
 			jumpVelocity = (jumpHeight == -99F) ? 1F : (float) Math.sqrt(Math.abs(9.81F * (jumpHeight + 0.2F) / 200F));
 
 			rotateSpeed = ConfigUtils.configFloat(config, "RotateSpeed", rotateSpeed);
-			stompSound = ConfigUtils.configDriveableSound(contentPack, config, "StompSound", stompSound);
+			stompSound = ConfigUtils.configDriveableSound(packName, config, "StompSound", stompSound);
 			stompSoundLength = ConfigUtils.configInt(config, "StompSoundLength", stompSoundLength);
 			stompRangeLower = ConfigUtils.configFloat(config, "StompRangeLower", stompRangeLower);
 			stompRangeUpper = ConfigUtils.configFloat(config, "StompRangeUpper", stompRangeUpper);

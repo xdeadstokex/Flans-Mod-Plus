@@ -73,8 +73,8 @@ public class AAGunType extends InfoType
 			recoil = ConfigUtils.configInt(config, "Recoil", recoil);
 			accuracy = ConfigUtils.configInt(config, "Accuracy", accuracy);
 			shootDelay = ConfigUtils.configInt(config, "ShootDelay", shootDelay);
-			shootSound = ConfigUtils.configAASound(contentPack, config, "ShootSound", shootSound);
-			reloadSound = ConfigUtils.configAASound(contentPack, config, "ReloadSound", reloadSound);
+			shootSound = ConfigUtils.configAASound(packName, config, "ShootSound", shootSound);
+			reloadSound = ConfigUtils.configAASound(packName, config, "ReloadSound", reloadSound);
 			fireAlternately = ConfigUtils.configBool(config, "FireAlternately", fireAlternately);
 			if (config.containsKey("NumBarrels")) {
 				String[] split = config.get("NumBarrels").split(" ");

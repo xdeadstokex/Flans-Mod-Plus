@@ -5,6 +5,14 @@ import java.util.*;
 public final class ConfigMap extends HashMap<String, ArrayList<String>> {
     private final HashMap<String, ArrayList<String>> defaultMap = new HashMap<>();
 
+    public String packName = "";
+    public String fileName = "";
+
+    public void setIdentifiers(String pack, String file) {
+        packName = pack;
+        fileName = file;
+    }
+
     public boolean containsKey(String key) {
         return defaultMap.containsKey(key.toLowerCase());
     }
@@ -18,7 +26,11 @@ public final class ConfigMap extends HashMap<String, ArrayList<String>> {
     }
 
     public ArrayList<String> getAll(String key) {
-        return defaultMap.get(key.toLowerCase());
+        if (defaultMap.containsKey(key.toLowerCase())) {
+            return defaultMap.get(key.toLowerCase());
+        }
+
+        return new ArrayList<String>();
     }
 
     public ArrayList<String> put(String key, String value) {

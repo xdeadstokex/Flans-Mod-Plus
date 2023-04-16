@@ -838,6 +838,32 @@ public class FlansMod {
         }
     }
 
+    public static void logException(String message, Exception ex) {
+        if (printStackTrace) {
+            logger.info(message, ex);
+        }
+    }
+
+    // To display validation, parsing errors e.t.c.
+    public static void logPackError(String fileName, String pack, String shortname, String message, String[] split, Exception ex) {
+        FlansMod.log("Error caused by file: %s pack: %s shortname: %s", fileName, pack, shortname);
+        FlansMod.log("\t%s", message);
+
+        if (split != null) {
+            StringBuilder b = new StringBuilder();
+
+            for (String sp : split) {
+                b.append(sp);
+                b.append(" ");
+            }
+            FlansMod.log("\tCaused by line %s", b.toString());
+        }
+
+        if (ex != null && FlansMod.printStackTrace) {
+            logException("\tRelated Exception: ", ex);
+        }
+    }
+
     public static void log(String format, Object... args) {
         log(String.format(format, args));
     }

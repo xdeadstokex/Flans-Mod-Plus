@@ -28,7 +28,12 @@ public class ConfigUtils
 	public static int configInt(ConfigMap config, String settingName, int defaultValue) {
 		String val = config.get(settingName.toLowerCase());
 		if (val != null) {
-			return Integer.parseInt(val);
+			try {
+				return Integer.parseInt(val);
+			} catch (Exception ex) {
+				FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+						"Parsing argument to integer failed", new String[] { settingName, val }, ex);
+			}
 		}
 
 		return defaultValue;
@@ -38,7 +43,12 @@ public class ConfigUtils
 		for (String name : settingNames) {
 			String val = config.get(name.toLowerCase());
 			if(val != null) {
-				return Integer.parseInt(val);
+				try {
+					return Integer.parseInt(val);
+				} catch (Exception ex) {
+					FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+							"Parsing argument to integer failed", new String[] { name, val }, ex);
+				}
 			}
 		}
 
@@ -47,8 +57,15 @@ public class ConfigUtils
 
 	public static float configFloat(ConfigMap config, String settingName, float defaultValue) {
 		String val = config.get(settingName.toLowerCase());
-		if(val != null)
-			return Float.parseFloat(val);
+		if(val != null) {
+			try {
+				return Float.parseFloat(val);
+			} catch (Exception ex) {
+				FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+						"Parsing argument to float failed", new String[] { settingName, val }, ex);
+			}
+		}
+
 		return defaultValue;
 	}
 
@@ -56,7 +73,12 @@ public class ConfigUtils
 		for (String name : settingNames) {
 			String val = config.get(name.toLowerCase());
 			if(val != null) {
-				return Float.parseFloat(val);
+				try {
+					return Float.parseFloat(val);
+				} catch (Exception ex) {
+					FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+							"Parsing argument to float failed", new String[] { name, val }, ex);
+				}
 			}
 		}
 
@@ -65,8 +87,14 @@ public class ConfigUtils
 
 	public static boolean configBool(ConfigMap config, String settingName, boolean defaultValue) {
 		String val = config.get(settingName.toLowerCase());
-		if(val != null)
-			return Boolean.parseBoolean(val);
+		if(val != null) {
+			try {
+				return Boolean.parseBoolean(val);
+			} catch (Exception ex) {
+				FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+						"Parsing argument to boolean failed", new String[] { settingName, val }, ex);
+			}
+		}
 		return defaultValue;
 	}
 
@@ -74,7 +102,12 @@ public class ConfigUtils
 		for (String name : settingNames) {
 			String val = config.get(name.toLowerCase());
 			if(val != null) {
-				return Boolean.parseBoolean(val);
+				try {
+					return Boolean.parseBoolean(val);
+				} catch (Exception ex) {
+					FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+							"Parsing argument to boolean failed", new String[] { name, val }, ex);
+				}
 			}
 		}
 
@@ -135,7 +168,12 @@ public class ConfigUtils
 	public static Vector3f configVector(ConfigMap config, String settingName, Vector3f defaultValue, float scale) {
 		String val = config.get(settingName);
 		if(val != null) {
-			return (Vector3f) new Vector3f(val).scale(scale);
+			try {
+				return (Vector3f) new Vector3f(val).scale(scale);
+			} catch (Exception ex) {
+				FlansMod.logPackError(config.fileName, config.packName, config.fileName,
+						"Parsing argument to vector failed", new String[] { settingName, val }, ex);
+			}
 		}
 
 		return defaultValue;

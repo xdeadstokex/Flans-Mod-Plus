@@ -160,7 +160,7 @@ public class GrenadeType extends ShootableType
 			stickToEntityAfter = ConfigUtils.configBool(config, "StickToEntityAfter", stickToEntityAfter);
 			allowStickSound = ConfigUtils.configBool(config, "AllowStickSound", allowStickSound);
 			stickSoundRange = ConfigUtils.configInt(config, "StickSoundRange", stickSoundRange);
-			stickSound = ConfigUtils.configSound(contentPack, config, "StickSound", stickSound);
+			stickSound = ConfigUtils.configSound(packName, config, "StickSound", stickSound);
 
 			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
 			explodeParticleType = ConfigUtils.configString(config, "ExplodeParticles", explodeParticleType);
@@ -178,7 +178,7 @@ public class GrenadeType extends ShootableType
 			flashRange = ConfigUtils.configInt(config, "FlashRange", flashRange);
 			flashSoundEnable = ConfigUtils.configBool(config, "FlashSoundEnable", flashSoundEnable);
 			flashSoundRange = ConfigUtils.configInt(config, "FlashSoundRange", flashSoundRange);
-			flashSound = ConfigUtils.configSound(contentPack, config, "FlashSound", flashSound);
+			flashSound = ConfigUtils.configSound(packName, config, "FlashSound", flashSound);
 			flashDamageEnable = ConfigUtils.configBool(config, "FlashDamageEnable", flashDamageEnable);
 			flashDamage = ConfigUtils.configFloat(config, "FlashDamage", flashDamage);
 			flashEffects = ConfigUtils.configBool(config, "FlashEffects", flashEffects);
@@ -190,7 +190,7 @@ public class GrenadeType extends ShootableType
 			motionSensor = ConfigUtils.configBool(config, "MotionSensor", motionSensor);
 			motionSensorRange = ConfigUtils.configFloat(config, "MotionSensorRange", motionSensorRange);
 			motionSoundRange = ConfigUtils.configFloat(config, "MotionSoundRange", motionSoundRange);
-			motionSound = ConfigUtils.configSound(contentPack, config, "MotionSound", motionSound);
+			motionSound = ConfigUtils.configSound(packName, config, "MotionSound", motionSound);
 			motionTime = ConfigUtils.configInt(config, "MotionTime", motionTime);
 
 

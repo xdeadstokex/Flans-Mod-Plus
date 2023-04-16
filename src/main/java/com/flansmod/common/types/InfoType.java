@@ -26,7 +26,6 @@ public abstract class InfoType implements IInfoType {
      */
     public static List<InfoType> infoTypes = new ArrayList<>();
 
-    public String contentPack;
     public Item item;
     public int colour = 0xffffff;
     public String iconPath;
@@ -49,9 +48,10 @@ public abstract class InfoType implements IInfoType {
     public final String packName;
 
     public InfoType(TypeFile file) {
-        contentPack = file.name;
         packName = file.pack;
         infoTypes.add(this);
+
+        configMap.setIdentifiers(file.name, file.pack);
     }
 
     /**
@@ -299,7 +299,7 @@ public abstract class InfoType implements IInfoType {
                 damage = i;
         }
         if (damage == -1)
-            FlansMod.log("Failed to find dye colour : " + dyeName + " while adding " + contentPack);
+            FlansMod.log("Failed to find dye colour : " + dyeName + " while adding " + packName);
 
         return damage;
     }
@@ -351,7 +351,7 @@ public abstract class InfoType implements IInfoType {
 
     @Override
     public String getContentPack() {
-        return contentPack;
+        return packName;
     }
 
     @Override

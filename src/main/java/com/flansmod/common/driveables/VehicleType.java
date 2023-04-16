@@ -150,8 +150,8 @@ public class VehicleType extends DriveableType {
             vehicleShellDelay = ConfigUtils.configInt(config, "ShellDelay", vehicleShellDelay);
 
             //Sound
-            shootSoundPrimary = ConfigUtils.configDriveableSound(contentPack, config, "ShootSound", shootSoundPrimary);
-            shootSoundSecondary = ConfigUtils.configDriveableSound(contentPack, config, "ShellSound", shootSoundSecondary);
+            shootSoundPrimary = ConfigUtils.configDriveableSound(packName, config, "ShootSound", shootSoundPrimary);
+            shootSoundSecondary = ConfigUtils.configDriveableSound(packName, config, "ShellSound", shootSoundSecondary);
             //driftSoundLength = ConfigUtils.configInt(config,"DriftSoundLength", driftSoundLength);
             //driftSound = ConfigUtils.configDriveableSound(contentPack, config, "DriftSound", driftSound);
 
