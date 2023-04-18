@@ -856,7 +856,7 @@ public class FlansMod {
                 b.append(sp);
                 b.append(" ");
             }
-            FlansMod.log("\tCaused by line %s", b.toString());
+            FlansMod.log("\tCaused by line: %s", b.toString());
         }
 
         if (ex != null && FlansMod.printStackTrace) {

@@ -331,7 +331,7 @@ public class ClientProxy extends CommonProxy {
         try {
             return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
         } catch (Exception e) {
-            FlansMod.logger.error("Failed to load model : " + shortName + " (" + s + ")", e);
+            FlansMod.logPackError("?", "?", shortName, "Failed to load model", null, e);
         }
         return null;
     }

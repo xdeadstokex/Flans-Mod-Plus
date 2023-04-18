@@ -56,72 +56,60 @@ public abstract class PaintableType extends InfoType
 		super.read(config, file);
 		//iconName textureName [dyeName dyeAmount (dyeDamage)]
 
-		ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PaintJob"} );
-		for (String[] split : lines) {
-			try {
-				int numDyes = (split.length - 2) / 2;
-				ItemStack[] dyeStacks = new ItemStack[numDyes];
-				for(int i = 0; i < numDyes; i++)
-					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 3]), getDyeDamageValue(split[i * 2 + 2]));
-
-				if(split[1].contains("_"))
-				{
-					String[] splat = split[1].split("_");
-					if(splat[0].equals(iconPath))
-						split[1] = splat[1];
-				}
-				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks, true));
-			} catch (Exception e) {
-				StringBuilder fullLine = new StringBuilder();
-				for (String entry : split) {
-					fullLine.append(entry);
-				}
-
-				FlansMod.log("Reading paintable line failed for %s: %s", shortName, fullLine.toString());
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		lines = ConfigUtils.getSplitsFromKey(config, new String[] { "AdvPaintJob"} );
-		for (String[] split : lines) {
-			try {
-				ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
-				for(int i = 0; i < (split.length - 4) / 2; i++)
-					dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
-				paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
-			} catch (Exception e) {
-				StringBuilder fullLine = new StringBuilder();
-				for (String entry : split) {
-					fullLine.append(entry);
-				}
-
-				FlansMod.log("Reading advanced paintable line failed for %s: %s", shortName, fullLine.toString());
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 		try {
-			if (config.containsKey("AddPaintableToTables")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "AddPaintableToTables");
-				if (split.length == 2) {
-					addAnyPaintjobToTables = Boolean.parseBoolean(split[1]);
-				} else if (split.length == 3) {
-					String paintjobId = split[1];
+			ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PaintJob"} );
+			for (String[] split : lines) {
+				try {
+					int numDyes = (split.length - 2) / 2;
+					ItemStack[] dyeStacks = new ItemStack[numDyes];
+					for(int i = 0; i < numDyes; i++)
+						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), getDyeDamageValue(split[i * 2 + 3]));
 
-					for (Paintjob paintjob : paintjobs) {
-						if (paintjob.textureName.equals(paintjobId)) {
-							paintjob.addToTables = Boolean.parseBoolean(split[2]);
+					if(split[1].contains("_"))
+					{
+						String[] splat = split[1].split("_");
+						if(splat[0].equals(iconPath))
+							split[1] = splat[1];
+					}
+					paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks, true));
+				} catch (Exception e) {
+					FlansMod.logPackError(file.name, packName, shortName, "Reading paintjob line failed", split, e);
+				}
+			}
+
+			lines = ConfigUtils.getSplitsFromKey(config, new String[] { "AdvPaintJob"} );
+			for (String[] split : lines) {
+				try {
+					ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
+					for(int i = 0; i < (split.length - 4) / 2; i++)
+						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
+					paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
+				} catch (Exception e) {
+					FlansMod.logPackError(file.name, packName, shortName, "Reading advanced paintjob line failed", split, e);
+				}
+			}
+
+			lines = ConfigUtils.getSplitsFromKey(config, new String[] { "AddPaintableToTables" });
+
+			for (String[] split : lines) {
+				try {
+					if (split.length == 2) {
+						addAnyPaintjobToTables = Boolean.parseBoolean(split[1]);
+					} else if (split.length == 3) {
+						String paintjobId = split[1];
+
+						for (Paintjob paintjob : paintjobs) {
+							if (paintjob.textureName.equals(paintjobId)) {
+								paintjob.addToTables = Boolean.parseBoolean(split[2]);
+							}
 						}
 					}
+				} catch (Exception e) {
+					FlansMod.logPackError(file.name, packName, shortName, "Paintable table configuration failed", split, e);
 				}
 			}
 		} catch (Exception e) {
-			FlansMod.log("Reading file failed : " + shortName);
-			e.printStackTrace();
+			FlansMod.logPackError(file.name, packName, shortName, "Reading paintjob failed", null, e);
 		}
 	}
 	

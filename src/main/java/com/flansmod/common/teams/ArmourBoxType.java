@@ -57,9 +57,8 @@ public class ArmourBoxType extends InfoType
 			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
 
 			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddArmour", "AddArmor"});
-
 			for (String[] split : splits) {
-				if (split != null) {
+				try {
 					StringBuilder name = new StringBuilder(split[2]);
 
 					for(int i = 3; i < split.length; i++)
@@ -96,12 +95,12 @@ public class ArmourBoxType extends InfoType
 					}
 
 					pages.add(entry);
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Adding armour to box failed", split, ex);
 				}
 			}
-		} catch (Exception e) {
-			FlansMod.log("Reading armour box file failed : " + shortName);
-			if (FlansMod.printStackTrace)
-				e.printStackTrace();
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading armour box", null, ex);
 		}
 	}
 

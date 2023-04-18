@@ -67,6 +67,7 @@ public class AAGunType extends InfoType
 		try {
 			if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
 				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelAAGun.class);
+
 			texture = ConfigUtils.configString(config, "Texture", texture);
 			damage = ConfigUtils.configInt(config, "Damage", damage);
 			reloadTime = ConfigUtils.configInt(config, "ReloadTime", reloadTime);
@@ -76,50 +77,85 @@ public class AAGunType extends InfoType
 			shootSound = ConfigUtils.configAASound(packName, config, "ShootSound", shootSound);
 			reloadSound = ConfigUtils.configAASound(packName, config, "ReloadSound", reloadSound);
 			fireAlternately = ConfigUtils.configBool(config, "FireAlternately", fireAlternately);
-			if (config.containsKey("NumBarrels")) {
-				String[] split = config.get("NumBarrels").split(" ");
-				numBarrels = Integer.parseInt(split[1]);
-				barrelX = new int[numBarrels];
-				barrelY = new int[numBarrels];
-				barrelZ = new int[numBarrels];
+
+			numBarrels = ConfigUtils.configInt(config, "NumBarrels", numBarrels);
+			barrelX = new int[numBarrels];
+			barrelY = new int[numBarrels];
+			barrelZ = new int[numBarrels];
+
+			try {
+				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Barrel"} );
+
+				if (splits.size() != numBarrels) {
+					FlansMod.logPackError(file.name, packName, shortName, "Unexpected number of Barrel positions given", null, null);
+				}
+
+				for (String[] split : splits) {
+					try {
+						int id = Integer.parseInt(split[1]);
+						barrelX[id] = Integer.parseInt(split[2]);
+						barrelY[id] = Integer.parseInt(split[3]);
+						barrelZ[id] = Integer.parseInt(split[4]);
+					} catch (Exception ex) {
+						FlansMod.logPackError(file.name, packName, shortName, "Reading barrel failed", split, ex);
+					}
+				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Configuring barrels failed", null, ex);
 			}
-			if(config.containsKey("Barrel")) {
-				String[] split = config.get("Barrel").split(" ");
-				int id = Integer.parseInt(split[1]);
-				barrelX[id] = Integer.parseInt(split[2]);
-				barrelY[id] = Integer.parseInt(split[3]);
-				barrelZ[id] = Integer.parseInt(split[4]);
-			}
+
 			health = ConfigUtils.configInt(config, "Health", health);
 			topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", topViewLimit);
 			bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", bottomViewLimit);
-			if (config.containsKey("Ammo")) {
-				BulletType type = BulletType.getBullet(config.get("Ammo"));
-				if (type != null) {
-					ammo.add(type);
+
+			try {
+				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Ammo" });
+
+				for (String[] split : splits) {
+					if (split.length == 2 && split[1] != null) {
+						BulletType type = BulletType.getBullet(split[1]);
+
+						if (type != null) {
+							ammo.add(type);
+						} else {
+							FlansMod.logPackError(file.name, packName, shortName, "Unrecognised ammo type", split, null);
+						}
+					} else {
+						FlansMod.logPackError(file.name, packName, shortName, "Invalid Ammo line", split, null);
+					}
 				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Adding ammunition failed", null, ex);
 			}
-			if (config.containsKey("GunnerPos")) {
-				String[] split = config.get("GunnerPos").split(" ");
+
+			try {
+				String[] split = ConfigUtils.getSplitFromKey(config, "GunnerPos");
+
 				gunnerX = Integer.parseInt(split[1]);
 				gunnerY = Integer.parseInt(split[2]);
 				gunnerZ = Integer.parseInt(split[3]);
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Setting gunner position failed", null, ex);
 			}
+
+			// Sentry stuff
 			targetMobs = ConfigUtils.configBool(config, "TargetMobs", targetMobs);
 			targetPlayers = ConfigUtils.configBool(config, "TargetPlayers", targetPlayers);
 			targetVehicles = ConfigUtils.configBool(config, "TargetVehicles", targetVehicles);
 			targetPlanes = ConfigUtils.configBool(config, "TargetPlanes", targetPlanes);
 			targetMechas = ConfigUtils.configBool(config, "TargetMechas", targetMechas);
+
 			if(config.containsKey("TargetDriveables"))
 				targetMechas = targetPlanes = targetVehicles = Boolean.parseBoolean(config.get("TargetDriveables"));
+
 			shareAmmo = ConfigUtils.configBool(config, "ShareAmmo", shareAmmo);
 			targetRange = ConfigUtils.configFloat(config, "TargetRange", targetRange);
 			canShootHomingMissile = ConfigUtils.configBool(config, "CanShootHomingMissile", canShootHomingMissile);
 			countExplodeAfterShoot = ConfigUtils.configInt(config, "CountExplodeAfterShoot", countExplodeAfterShoot);
 			isDropThis = ConfigUtils.configBool(config, "IsDropThis", isDropThis);
 
-		} catch (Exception e) {
-			FlansMod.log("Failed to read AA Gun file " + e);
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred when reading AAGun", null, ex);
 		}
 	}
 
