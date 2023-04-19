@@ -151,11 +151,8 @@ public class ArmourType extends InfoType {
             hasDurability = durability > 0;
 
             armourTextureName = ConfigUtils.configString(config, new String[]{"ArmourTexture", "ArmorTexture"}, armourTextureName);
-        } catch (Exception e) {
-            FlansMod.log("Reading armour file failed.");
-            if (FlansMod.printStackTrace) {
-                e.printStackTrace();
-            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading armour file", null, ex);
         }
     }
 

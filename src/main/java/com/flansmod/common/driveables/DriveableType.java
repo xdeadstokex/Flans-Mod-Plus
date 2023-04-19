@@ -106,14 +106,10 @@ public class DriveableType extends PaintableType {
      * Pilot guns also have their own seperate array so ammo handling can be done
      */
     public ArrayList<PilotGun> pilotGuns = new ArrayList<>();
-    public int reloadTimePrimary = 0,
-            reloadTimeSecondary = 0;
-    public String reloadSoundPrimary = "",
-            reloadSoundSecondary = "";
-    public int placeTimePrimary = 5,
-            placeTimeSecondary = 5;
-    public String placeSoundPrimary = "",
-            placeSoundSecondary = "";
+    public int reloadTimePrimary = 0, reloadTimeSecondary = 0;
+    public String reloadSoundPrimary = "", reloadSoundSecondary = "";
+    public int placeTimePrimary = 5, placeTimeSecondary = 5;
+    public String placeSoundPrimary = "", placeSoundSecondary = "";
     //Passengers
     /**
      * The number of passengers, not including the pilot
@@ -263,11 +259,11 @@ public class DriveableType extends PaintableType {
     public int backSoundLength;
 
     public boolean collisionDamageEnable = false;
-    public boolean pushOnCollision = true;
     public float collisionDamageThrottle = 0;
     public float collisionDamageTimes = 0;
 
-    public boolean enableReloadTime = false;
+    // Appears to be unused
+    //public boolean enableReloadTime = false;
 
     public boolean canMountEntity = false;
 
@@ -306,7 +302,8 @@ public class DriveableType extends PaintableType {
     /**
      * Barrel Recoil stuff
      */
-    public float recoilDist = 5F;
+    // Appears to be unused
+    //public float recoilDist = 5F;
     public float recoilTime = 5F;
 
     /**
@@ -320,7 +317,8 @@ public class DriveableType extends PaintableType {
     /**
      * backwards compatibility attempt
      */
-    public float gunLength = 0;
+    // Appears to be unused
+    //public float gunLength = 0;
 
 
     public boolean setPlayerInvisible = false;
@@ -341,8 +339,6 @@ public class DriveableType extends PaintableType {
 
     public ArrayList<CollisionShapeBox> collisionBox = new ArrayList<>();
     public boolean fancyCollision = false;
-
-    public CollisionShapeBox colbox;
 
     public DriveableType(TypeFile file) {
         super(file);
@@ -373,8 +369,8 @@ public class DriveableType extends PaintableType {
 
         super.read(config, file);
 
+        // Must be read first.
         try {
-            // Order matters here,
             numPassengers = ConfigUtils.configInt(config, "Passengers", numPassengers);
             seats = new Seat[numPassengers + 1];
 
@@ -382,11 +378,10 @@ public class DriveableType extends PaintableType {
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"Passenger"});
                 if (splits.size() != numPassengers) {
-                    FlansMod.log("NumPassengers and Passenger definition mismatch in %s. This needs to be addressed.", file.name);
+                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumPassengers and number of Passengers don't match", null, null);
                     throw new Exception("Invalid Passenger Definitions");
                     // this should be a "disable item" situation
                 } else {
-
                     for (String[] split : splits) {
                         Seat seat = new Seat(split);
                         if (seat.id < seats.length) {
@@ -398,21 +393,48 @@ public class DriveableType extends PaintableType {
                         }
                     }
                 }
-            } catch(Exception e){
-                FlansMod.log("Errored while reading Passenger in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(e);
-                }
+            } catch(Exception ex){
+                FlansMod.logPackError(file.name, packName, shortName, "Fatal error: error parsing Passenger definitions", null, ex);
+
                 throw new Exception("Invalid Passenger Definitions");
                 // this should be a "disable item" situation
             }
 
             int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
             if (numWheels < 2 || numWheels > 4) {
-                FlansMod.log("Invalid number of wheels registered in " + file.name);
+                FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumWheels should be either 3 or 4", null, null);
                 throw new Exception("Invalid Wheel Configuration");
             } else {
                 wheelPositions = new DriveablePosition[numWheels];
+            }
+
+            //Wheels
+            try {
+                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
+
+                if (splits.size() != wheelPositions.length) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumWheels differs from number of wheels configured", null, null);
+                    throw new Exception("Invalid Wheel Configuration");
+                }
+
+                for (String[] split : splits) {
+                    int wheelIndex = Integer.parseInt(split[1]);
+                    float x = Float.parseFloat(split[2]) / 16F;
+                    float y = Float.parseFloat(split[3]) / 16F;
+                    float z = Float.parseFloat(split[4]) / 16F;
+
+                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
+                    if (split.length > 5) {
+                        part = EnumDriveablePart.getPart(split[5]);
+                    }
+
+                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
+                    wheelPositions[wheelIndex] = wheelPosition;
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while parsing wheels", null, ex);
+
+                throw new Exception("Invalid Wheel Configuration");
             }
 
             try {
@@ -525,36 +547,7 @@ public class DriveableType extends PaintableType {
             floatOffset = ConfigUtils.configFloat(config, "FloatOffset", floatOffset);
             canMountEntity = ConfigUtils.configBool(config, "CanMountEntity", canMountEntity);
 
-            //Wheels
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
 
-                if (splits.size() != wheelPositions.length) {
-                    throw new Exception("Invalid number of wheels specified!");
-                }
-
-                for (String[] split : splits) {
-                    int wheelIndex = Integer.parseInt(split[1]);
-                    float x = Float.parseFloat(split[2]) / 16F;
-                    float y = Float.parseFloat(split[3]) / 16F;
-                    float z = Float.parseFloat(split[4]) / 16F;
-
-                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
-                    if (split.length > 5) {
-                        part = EnumDriveablePart.getPart(split[5]);
-                    }
-
-                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
-                    wheelPositions[wheelIndex] = wheelPosition;
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Errored while reading Wheels in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
-                }
-                throw new Exception("Invalid Driver/Pilot Definitions");
-                // this should be a "disable item" situation
-            }
 
             wheelStepHeight = ConfigUtils.configFloat(config, new String[]{"WheelRadius", "WheelStepHeight"}, wheelStepHeight);
             wheelSpringStrength = ConfigUtils.configFloat(config, new String[]{"WheelSpringStrength", "SpringStrength"}, wheelSpringStrength);
@@ -721,8 +714,8 @@ public class DriveableType extends PaintableType {
 
             bulletSpread = ConfigUtils.configFloat(config, "BulletSpread", bulletSpread);
             rangingGun = ConfigUtils.configBool(config, "RangingGun", rangingGun);
-            gunLength = ConfigUtils.configFloat(config, "GunLength", gunLength);
-            recoilDist = ConfigUtils.configFloat(config, "RecoilDistance", recoilDist);
+            //gunLength = ConfigUtils.configFloat(config, "GunLength", gunLength);
+            //recoilDist = ConfigUtils.configFloat(config, "RecoilDistance", recoilDist);
             recoilTime = ConfigUtils.configFloat(config, "RecoilTime", recoilTime);
 
             try {
@@ -791,7 +784,7 @@ public class DriveableType extends PaintableType {
             }
 
 
-            enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
+            //enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
 
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesPrimary" });

@@ -76,10 +76,9 @@ public class MechaItemType extends InfoType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-
 			String modelString = ConfigUtils.configString(config, "Model", "");
-			if(FMLCommonHandler.instance().getSide().isClient() && !modelString.isEmpty())
-				model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
+
+			model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
 
 			texture = ConfigUtils.configString(config, "Texture", texture);
 
@@ -123,11 +122,8 @@ public class MechaItemType extends InfoType
 			speedMultiplier = ConfigUtils.configFloat(config, "SpeedMultiplier", speedMultiplier);
 			stopMechaFallDamage = ConfigUtils.configBool(config, "StopMechaFallDamage", stopMechaFallDamage);
 			wasteCompact = ConfigUtils.configBool(config, "WasteCompact", wasteCompact);
-		} catch (Exception e) {
-			FlansMod.log("Errored reading " + file.name);
-			if (FlansMod.printStackTrace) {
-				e.printStackTrace();
-			}
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading Mecha Item file", null, ex);
 		}
     }
 	

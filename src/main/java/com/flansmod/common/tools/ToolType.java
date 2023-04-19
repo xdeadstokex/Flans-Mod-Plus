@@ -65,33 +65,40 @@ public class ToolType extends InfoType
 	{
 		super.read(config, file);
 
-		// The model load can be done on server too, proxy will just skip it.
-		String modelName = ConfigUtils.configString(config, "Model", null);
-		model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
-		texture = ConfigUtils.configString(config, "Texture", texture);
+		try {
+			// The model load can be done on server too, proxy will just skip it.
+			String modelName = ConfigUtils.configString(config, "Model", null);
+			model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
+			texture = ConfigUtils.configString(config, "Texture", texture);
 
-		parachute = ConfigUtils.configBool(config, "Parachute", parachute);
-		remote = ConfigUtils.configBool(config, "ExplosiveRemote", remote);
-		key = ConfigUtils.configBool(config, "Key", key);
-		healPlayers = ConfigUtils.configBool(config, new String[]{"Heal", "HealPlayers"}, healPlayers);
-		healDriveables = ConfigUtils.configBool(config, new String[]{"Repair", "RepairVehicles"}, healDriveables);
-		healAmount = ConfigUtils.configInt(config, new String[]{"HealAmount", "RepairAmount"}, toolLife);
-		toolLife = ConfigUtils.configInt(config, new String[]{"ToolLife", "ToolUes"}, toolLife);
-		EUPerCharge = ConfigUtils.configInt(config, "EUPerCharge", EUPerCharge);
+			parachute = ConfigUtils.configBool(config, "Parachute", parachute);
+			remote = ConfigUtils.configBool(config, "ExplosiveRemote", remote);
+			key = ConfigUtils.configBool(config, "Key", key);
+			healPlayers = ConfigUtils.configBool(config, new String[]{"Heal", "HealPlayers"}, healPlayers);
+			healDriveables = ConfigUtils.configBool(config, new String[]{"Repair", "RepairVehicles"}, healDriveables);
+			healAmount = ConfigUtils.configInt(config, new String[]{"HealAmount", "RepairAmount"}, toolLife);
+			toolLife = ConfigUtils.configInt(config, new String[]{"ToolLife", "ToolUes"}, toolLife);
+			EUPerCharge = ConfigUtils.configInt(config, "EUPerCharge", EUPerCharge);
 
-		if(config.containsKey("RechargeRecipe")) {
 			String[] split = ConfigUtils.getSplitFromKey(config, "RechargeRecipe");
-			for(int i = 0; i < (split.length - 1) / 2; i++)
-			{
-				int amount = Integer.parseInt(split[2 * i + 1]);
-				boolean damaged = split[2 * i + 2].contains(".");
-				String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
-				int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
-				rechargeRecipe.add(getRecipeElement(itemName, amount, damage, shortName));
+			try {
+				for(int i = 0; i < (split.length - 1) / 2; i++)
+				{
+					int amount = Integer.parseInt(split[2 * i + 1]);
+					boolean damaged = split[2 * i + 2].contains(".");
+					String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
+					int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
+					rechargeRecipe.add(getRecipeElement(itemName, amount, damage, shortName));
+				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Couldn't add recharge recipe", split, ex);
 			}
+
+			destroyOnEmpty = ConfigUtils.configBool(config, "DestroyOnEmpty", destroyOnEmpty);
+			foodness = ConfigUtils.configInt(config, new String[]{"Food", "Foodness"}, foodness);
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading tool file", null, ex);
 		}
-		destroyOnEmpty = ConfigUtils.configBool(config, "DestroyOnEmpty", destroyOnEmpty);
-		foodness = ConfigUtils.configInt(config, new String[]{"Food", "Foodness"}, foodness);
 	}
 	
 	@Override

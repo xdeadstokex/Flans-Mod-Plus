@@ -117,8 +117,9 @@ public class MechaType extends DriveableType
 			stompRangeLower = ConfigUtils.configFloat(config, "StompRangeLower", stompRangeLower);
 			stompRangeUpper = ConfigUtils.configFloat(config, "StompRangeUpper", stompRangeUpper);
 
+			String[] split = null;
 			try {
-				String[] split = ConfigUtils.getSplitFromKey(config, new String[] { "LeftArmOrigin" });
+				split = ConfigUtils.getSplitFromKey(config, new String[] { "LeftArmOrigin" });
 				if(split != null) {
 					leftArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
 				}
@@ -127,11 +128,8 @@ public class MechaType extends DriveableType
 				if(split != null) {
 					rightArmOrigin = new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F);
 				}
-			} catch (Exception e) {
-				FlansMod.log("Adding mecha arm origins failed in " + file.name);
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
-				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Adding arm origin failed", split, ex);
 			}
 
 
@@ -151,16 +149,14 @@ public class MechaType extends DriveableType
 			legSwingLimit = ConfigUtils.configFloat(config, "LegSwingLimit", legSwingLimit);
 
 			try {
-				String[] split = ConfigUtils.getSplitFromKey(config, "LimitHeadTurn");
+				split = ConfigUtils.getSplitFromKey(config, "LimitHeadTurn");
 				if(split != null) {
 					limitHeadTurn = Boolean.parseBoolean(split[1].toLowerCase());
 					limitHeadTurnValue = Float.parseFloat(split[2]);
 				}
-			} catch (Exception e) {
-				FlansMod.log("Setting LimitHeadTurn failed in  " + file.name);
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
-				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Setting head turn limit failed", split, ex);
+
 			}
 
 			legSwingTime = ConfigUtils.configFloat(config, "LegSwingTime", legSwingTime);
@@ -168,7 +164,7 @@ public class MechaType extends DriveableType
 			lowerArmLimit = ConfigUtils.configFloat(config, "LowerArmLimit", lowerArmLimit);
 
 			try {
-				String[] split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
+				split = ConfigUtils.getSplitFromKey(config, "LeftHandModifier");
 				if(split != null) {
 
 					leftHandModifierX = Float.parseFloat(split[1])/16F;
@@ -182,29 +178,22 @@ public class MechaType extends DriveableType
 					rightHandModifierY = Float.parseFloat(split[2])/16F;
 					rightHandModifierZ = Float.parseFloat(split[3])/16F;
 				}
-			} catch (Exception e) {
-				FlansMod.log("Setting HandModifiers failed in " + file.name);
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
-				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Setting Hand Modifiers failed", split, ex);
 			}
 
-			try {
-				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LegNode"} );
-				for (String [] split : splits) {
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LegNode"} );
+			for (String[] ssplit : splits) {
+				try {
 					LegNode node = new LegNode();
-					node.rotation = Integer.parseInt(split[1]);
-					node.lowerBound = Float.parseFloat(split[2]);
-					node.upperBound = Float.parseFloat(split[3]);
-					node.speed = Integer.parseInt(split[4]);
-					node.legPart = Integer.parseInt(split[5]);
+					node.rotation = Integer.parseInt(ssplit[1]);
+					node.lowerBound = Float.parseFloat(ssplit[2]);
+					node.upperBound = Float.parseFloat(ssplit[3]);
+					node.speed = Integer.parseInt(ssplit[4]);
+					node.legPart = Integer.parseInt(ssplit[5]);
 					legNodes.add(node);
-				}
-
-			} catch (Exception e) {
-				FlansMod.log("Setting HandModifiers failed in " + file.name);
-				if (FlansMod.printStackTrace) {
-					e.printStackTrace();
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Adding LegNode failed", ssplit, ex);
 				}
 			}
 
@@ -212,11 +201,8 @@ public class MechaType extends DriveableType
 			restrictInventoryInput = ConfigUtils.configBool(config, "RestrictInventoryInput", restrictInventoryInput);
 			allowMechaToolsInRestrictedInv = ConfigUtils.configBool(config, "AllowMechaToolsInRestrictedInv", allowMechaToolsInRestrictedInv);
 
-		} catch (Exception e) {
-			FlansMod.log("Failed while reading MechaType in " + file.name);
-			if (FlansMod.printStackTrace) {
-				e.printStackTrace();
-			}
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading Mecha Type", null, ex);
 		}
     }
     

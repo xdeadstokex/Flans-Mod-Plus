@@ -109,7 +109,7 @@ public abstract class PaintableType extends InfoType
 				}
 			}
 		} catch (Exception e) {
-			FlansMod.logPackError(file.name, packName, shortName, "Reading paintjob failed", null, e);
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading paintjob", null, e);
 		}
 	}
 	
