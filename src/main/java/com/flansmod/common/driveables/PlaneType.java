@@ -150,11 +150,9 @@ public class PlaneType extends DriveableType
 			planeShootDelay = ConfigUtils.configInt(config, "ShootDelay", planeShootDelay);
 			planeBombDelay = ConfigUtils.configInt(config, "BombDelay", planeBombDelay);
 
-			try {
-				ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HeliPropeller", "Propeller", "HeliTailPropeller" });
-
-				for (String[] split : splits) {
-					try {
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HeliPropeller", "Propeller", "HeliTailPropeller" });
+			for (String[] split : splits) {
+				try {
 					Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
 
 					if (split[0].contains("HeliTailPropeller")) {
@@ -166,18 +164,8 @@ public class PlaneType extends DriveableType
 					}
 
 					driveableRecipe.add(new ItemStack(propeller.itemType.item));
-					} catch (Exception ex) {
-						FlansMod.log("Failed to add new propeller in " + file.name);
-						if (FlansMod.printStackTrace) {
-							FlansMod.log(ex);
-						}
-					}
-				}
-			} catch (Exception ex) {
-				// This is a failable condition
-				FlansMod.log("Failed to setup propellers in " + file.name);
-				if (FlansMod.printStackTrace) {
-					FlansMod.log(ex);
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Adding propeller failed", split, ex);
 				}
 			}
 
@@ -253,11 +241,7 @@ public class PlaneType extends DriveableType
 		}
 		catch (Exception ex)
 		{
-			FlansMod.log("Error thrown parsing " + file.name);
-
-			if (FlansMod.printStackTrace) {
-				FlansMod.log(ex);
-			}
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading PlaneType failed", null, ex);
 		}
 	}
     

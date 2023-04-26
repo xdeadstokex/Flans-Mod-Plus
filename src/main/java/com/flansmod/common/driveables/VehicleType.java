@@ -155,38 +155,23 @@ public class VehicleType extends DriveableType {
             //driftSoundLength = ConfigUtils.configInt(config,"DriftSoundLength", driftSoundLength);
             //driftSound = ConfigUtils.configDriveableSound(contentPack, config, "DriftSound", driftSound);
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddSmokePoint", "AddSmokeDispenser" });
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddSmokePoint", "AddSmokeDispenser" });
 
-                for (String[] split : splits) {
-                    try {
-                        SmokePoint smoke = new SmokePoint();
-                        smoke.position = new Vector3f(split[1]);
-                        smoke.direction = new Vector3f(split[2]);
-                        smoke.detTime = Integer.parseInt(split[3]);
-                        smoke.part = split[4];
-                        smokers.add(smoke);
-                    } catch (Exception ex) {
-                        FlansMod.log("Error thrown adding smoke point in " + file.name);
-
-                        if (FlansMod.printStackTrace) {
-                            FlansMod.log(ex);
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Error thrown adding smoke points in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+            for (String[] split : splits) {
+                try {
+                    SmokePoint smoke = new SmokePoint();
+                    smoke.position = new Vector3f(split[1]);
+                    smoke.direction = new Vector3f(split[2]);
+                    smoke.detTime = Integer.parseInt(split[3]);
+                    smoke.part = split[4];
+                    smokers.add(smoke);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding SmokePoint failed", split, ex);
                 }
             }
+
         } catch (Exception ex) {
-            FlansMod.log("Error thrown parsing " + file.name);
-
-            if (FlansMod.printStackTrace) {
-                FlansMod.log(ex);
-            }
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading VehicleType filed", null, ex);
         }
     }
 

@@ -440,10 +440,10 @@ public class DriveableType extends PaintableType {
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Driver", "Pilot" });
                 if (splits.size() == 0) {
-                    FlansMod.log("No Driver or Pilot configured in " + file.name);
+                    FlansMod.logPackError(file.name, packName, shortName, "No Driver or Pilot configured", null, null);
                     throw new Exception("No Driver/Pilot Configured!");
                 } else if (splits.size() > 1) {
-                    FlansMod.log("Multiple Drivers or Pilots configured in " + file.name);
+                    FlansMod.logPackError(file.name, packName, shortName, "Multiple Drivers or Pilots configured", null, null);
                 } else {
                     String[] split = splits.get(0);
 
@@ -455,11 +455,8 @@ public class DriveableType extends PaintableType {
                         seats[0] = new Seat(Integer.parseInt(split[1]), Integer.parseInt(split[2]),
                                 Integer.parseInt(split[3]));
                 }
-            } catch (Exception e) {
-                FlansMod.log("Errored while reading Driver/Pilot in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(e);
-                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Erorred while reading Driver/Pilot", null, ex);
                 throw new Exception("Invalid Driver/Pilot Definitions");
                 // this should be a "disable item" situation
             }
@@ -495,15 +492,12 @@ public class DriveableType extends PaintableType {
             turretOrigin = ConfigUtils.configVector(config, "TurretOrigin", turretOrigin, 1F/16F);
             turretOriginOffset = ConfigUtils.configVector(config, "TurretOrigin", turretOriginOffset, 1F/16F);
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "CollisionPoint", "AddCollisionPoint" });
-                for (String[] split : splits) {
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "CollisionPoint", "AddCollisionPoint" });
+            for (String[] split : splits) {
+                try {
                     collisionPoints.add(new DriveablePosition(split));
-                }
-            } catch (Exception e) {
-                FlansMod.log("Errored while reading Collision Points in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(e);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding collision point", split, ex);
                 }
             }
 
@@ -558,41 +552,33 @@ public class DriveableType extends PaintableType {
             collectHarvest = ConfigUtils.configBool(config, "CollectHarvest", collectHarvest);
             dropHarvest = ConfigUtils.configBool(config, "DropHarvest", dropHarvest);
 
-            try {
-                String[] split = ConfigUtils.getSplitFromKey(config, "HarvestBox");
-                if (split != null) {
-                    harvestBoxSize = new Vector3f(split[1]);
-                    harvestBoxPos = new Vector3f(split[2]);
-                }
-
-            } catch (Exception ex) {
-                FlansMod.log("Errored while reading HarvestBox in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+            String[] asplit = ConfigUtils.getSplitFromKey(config, "HarvestBox");
+            if (asplit != null) {
+                try {
+                    harvestBoxSize = new Vector3f(asplit[1]);
+                    harvestBoxPos = new Vector3f(asplit[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding harvester", asplit, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestMaterial" });
-                for (String[] split : splits) { // This currently doesn't work, see todo
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestMaterial" });
+            for (String[] split : splits) { // This currently doesn't work, see todo
+                try {
                     Material m = getMaterial(split[1]);
                     if (m != null) {
                         materialsHarvested.add(m);
                     } else {
-                        FlansMod.log("Material " + split[1] + " couldn't be found for HarvestMaterial in " + file.name);
+                        FlansMod.logPackError(file.name, packName, shortName, "Couldn't find material for HarvestMaterial", split, null);
                     }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Errored while reading HarvestMaterial in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding HarvestMaterial", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestToolType" });
-
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HarvestToolType" });
+            for (String[] split : splits) {
+                try {
                     switch (split[1]) {
                         case "Axe":
                             materialsHarvested.add(Material.wood);
@@ -629,14 +615,10 @@ public class DriveableType extends PaintableType {
                             materialsHarvested.add(Material.plants);
                             break;
                     }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Errored while adding HarvestToolType in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Setting HarvestToolType failed", split, ex);
                 }
             }
-
 
             //Cargo / Payload
             numCargoSlots = ConfigUtils.configInt(config, "CargoSlots", numCargoSlots);
@@ -649,38 +631,30 @@ public class DriveableType extends PaintableType {
 
             bulletDetectionRadius = ConfigUtils.configFloat(config, "BulletDetection", bulletDetectionRadius);
 
-            //Ammo limiters
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddAmmo" });
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddAmmo" });
-
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     if (split.length == 2) {
                         BulletType bullet = BulletType.getBullet(split[1]);
                         if (bullet != null) {
                             ammo.add(bullet);
                         } else {
-                            FlansMod.log("Could not find bullet " + split[1] + " for " + file.name);
+                            FlansMod.logPackError(file.name, packName, shortName, "Could not find bullet for AddAmmo", split, null);
                         }
                     } else {
-                        FlansMod.log("Incorrect ammo line given in " + file.name);
+                        FlansMod.logPackError(file.name, packName, shortName, "Incorrect format supplied to AddAmmo", split, null);
                     }
-
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding ammo failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown from AddAmmo", split, ex);
                 }
             }
 
+
             acceptAllAmmo = ConfigUtils.configBool(config, new String[]{ "AllowAllAmmo", "AcceptAllAmmo" }, acceptAllAmmo);
 
-                //Weaponry
-            if (config.containsKey("Primary"))
-                primary = EnumWeaponType.valueOf(config.get("Primary").toUpperCase());
-            if (config.containsKey("Secondary"))
-                primary = EnumWeaponType.valueOf(config.get("Secondary").toUpperCase());
+            primary = EnumWeaponType.valueOf(ConfigUtils.configString(config, "Primary", primary.name()));
+            secondary = EnumWeaponType.valueOf(ConfigUtils.configString(config, "Secondary", secondary.name()));
 
             damageMultiplierPrimary = ConfigUtils.configFloat(config, "DamageMultiplierPrimary", damageMultiplierPrimary);
             damageMultiplierSecondary = ConfigUtils.configFloat(config, "DamageMultiplierSecondary", damageMultiplierSecondary);
@@ -693,12 +667,8 @@ public class DriveableType extends PaintableType {
                 shootDelayPrimary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinPrimary", shootDelayPrimary*1200F), 1);
                 shootDelaySecondary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinSecondary", shootDelaySecondary*1200F), 1);
             } catch (Exception ex) {
-                FlansMod.log("Invalid RoundsPerMin set in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
-                }
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown setting RoundsPerMin", null, ex);
             }
-
 
             placeTimePrimary = ConfigUtils.configInt(config, "PlaceTimePrimary", placeTimePrimary);
             placeTimeSecondary = ConfigUtils.configInt(config, "PlaceTimeSecondary", placeTimeSecondary);
@@ -718,10 +688,10 @@ public class DriveableType extends PaintableType {
             //recoilDist = ConfigUtils.configFloat(config, "RecoilDistance", recoilDist);
             recoilTime = ConfigUtils.configFloat(config, "RecoilTime", recoilTime);
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootPointPrimary" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootPointPrimary" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     // TODO: Refactor this
 
                     DriveablePosition rootPos;
@@ -742,19 +712,16 @@ public class DriveableType extends PaintableType {
                     shootPointsPrimary.add(sPoint);
                     if (rootPos instanceof PilotGun)
                         pilotGuns.add((PilotGun) sPoint.rootPos);
-                }
-
-            } catch (Exception ex) {
-                FlansMod.log("Invalid ShootPointPrimary config in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding ShootPointPrimary", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"ShootPointSecondary"});
 
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[]{"ShootPointSecondary"});
+
+            for (String[] split : splits) {
+                try {
                     // TODO: Refactor this
 
                     DriveablePosition rootPos;
@@ -775,54 +742,44 @@ public class DriveableType extends PaintableType {
                     shootPointsSecondary.add(sPoint);
                     if (rootPos instanceof PilotGun)
                         pilotGuns.add((PilotGun) sPoint.rootPos);
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Invalid ShootPointSecondary config in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding ShootPointSecondary", split, ex);
                 }
             }
 
 
-            //enableReloadTime = ConfigUtils.configBool(config, "EnableReloadTime", enableReloadTime);
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesPrimary" });
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesPrimary" });
-
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     if (split.length == 5) { //TODO validate the particle exists
                         shootParticlesPrimary.add(
                                 new ShootParticle(split[1], Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]))
                         );
                     } else {
-                        FlansMod.log("ShootParticlesPrimary config is of incorrect format in " + file.name);
+                        FlansMod.logPackError(file.name, packName, shortName, "ShootParticlesPrimary has invalid format", split, null);
                     }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Invalid ShootParticlesPrimary config in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding ShootParticlesPrimary", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesSecondary" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "ShootParticlesSecondary" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     if (split.length == 5) { //TODO validate the particle exists
                         shootParticlesSecondary.add(
                                 new ShootParticle(split[1], Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]))
                         );
                     } else {
-                        FlansMod.log("ShootParticlesSecondary config is of incorrect format in " + file.name);
+                        FlansMod.logPackError(file.name, packName, shortName, "ShootParticlesSecondary has invalid format", split, null);
                     }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Invalid ShootParticlesSecondary config in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding ShootParticlesSecondary", split, ex);
                 }
             }
+
 
 
             setPlayerInvisible = ConfigUtils.configBool(config, "SetPlayerInvisible", setPlayerInvisible);
@@ -835,10 +792,10 @@ public class DriveableType extends PaintableType {
             secondaryFireAngle = ConfigUtils.configVector(config, "SecondaryAngle", secondaryFireAngle);
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddGun" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddGun" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     DriveablePosition rootPos;
                     Vector3f offPos;
                     secondary = EnumWeaponType.GUN;
@@ -858,60 +815,52 @@ public class DriveableType extends PaintableType {
                     shootPointsSecondary.add(sPoint);
                     pilotGuns.add(pilotGun);
                     driveableRecipe.add(new ItemStack(pilotGun.type.item));
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding PilotGun via AddGun failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding pilot gun with AddGun", split, ex);
                 }
             }
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "BombPosition" });
 
-                if (splits.size() > 1) {
-                    primary = EnumWeaponType.BOMB;
-                }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "BombPosition" });
+            if (splits.size() > 1) {
+                primary = EnumWeaponType.BOMB;
+            }
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     if (split.length == 4)
                         shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(0, 0, 0)));
                     else if (split.length == 7)
                         shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.core), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding BombPosition failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch(Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting BombPosition", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"BarrelPosition"});
 
-                if (splits.size() > 1) {
-                    primary = EnumWeaponType.SHELL;
-                }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[]{"BarrelPosition"});
 
-                for (String[] split : splits) {
+            if (splits.size() > 1) {
+                primary = EnumWeaponType.SHELL;
+            }
+
+            for (String[] split : splits) {
+                try {
                     if (split.length == 4)
                         shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(0, 0, 0)));
                     else if (split.length == 7)
                         shootPointsPrimary.add(new ShootPoint(new DriveablePosition(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F), EnumDriveablePart.turret), new Vector3f(Float.parseFloat(split[4]) / 16F, Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F)));
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding BarrelPosition failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting BarrelPosition", split, ex);
                 }
             }
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddRecipeParts" });
 
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddRecipeParts" });
+            for (String[] split : splits) {
+                try {
                     EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
                     ArrayList<ItemStack> stacks = new ArrayList<>();
                     for (int i = 0; i < (split.length - 2) / 2; i++) {
@@ -931,19 +880,15 @@ public class DriveableType extends PaintableType {
                     ItemStack[] items = new ItemStack[stacks.size()];
                     items = stacks.toArray(items);
                     partwiseRecipe.put(part, items);
-                }
-            } catch (Exception e) {
-                FlansMod.log("Adding RecipeParts failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(e);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "AddRecipeParts threw an error", split, ex);
                 }
             }
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddDye" });
-
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddDye" });
+            for (String[] split : splits) {
+                try {
                     int amount = Integer.parseInt(split[1]);
                     int damage = -1;
                     for (int i = 0; i < ItemDye.field_150923_a.length; i++) {
@@ -951,22 +896,19 @@ public class DriveableType extends PaintableType {
                             damage = i;
                     }
                     if (damage == -1) {
-                        FlansMod.log("Failed to find dye colour : " + split[2] + " while adding " + file.name);
+                        FlansMod.logPackError(file.name, packName, shortName, "Failed to find dye colour in AddDye", split, null);
                         return;
                     }
                     driveableRecipe.add(new ItemStack(Items.dye, amount, damage));
-                }
-            } catch (Exception e) {
-                FlansMod.log("Adding Dye to recipe failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(e);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "AddDye threw an error", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "SetupPart" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "SetupPart" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
                     CollisionBox box;
                     if (split.length > 9) {
@@ -975,18 +917,16 @@ public class DriveableType extends PaintableType {
                         box = new CollisionBox(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[6]), Integer.parseInt(split[7]), Integer.parseInt(split[8]));
                     }
                     health.put(part, box);
-                }
-            } catch (Exception ex) {
-                FlansMod.log("SetupPart failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "SetupPart threw an error", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PartDeathExplosion" });
 
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PartDeathExplosion" });
+            for (String[] split : splits) {
+                try {
+
                     EnumDriveablePart part = EnumDriveablePart.getPart(split[1]);
 
                     BoxExplosion exp;
@@ -997,14 +937,11 @@ public class DriveableType extends PaintableType {
                     }
 
                     partDeathExplosions.put(part, exp);
-                }
-
-            } catch (Exception ex) {
-                FlansMod.log("Adding PartDeathExplosion failed in " + file.name);
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "PartDeathExplosion threw an error", split, ex);
                 }
             }
+
 
 
             if (seats.length == 0 || seats[0] != null) {
@@ -1019,137 +956,117 @@ public class DriveableType extends PaintableType {
                 seats[0].latePitch = ConfigUtils.configBool(config, "DriverLatePitch", seats[0].latePitch);
                 seats[0].traverseSounds = ConfigUtils.configBool(config, "DriverTraverseSounds", seats[0].traverseSounds);
             } else {
-                FlansMod.log("Driver is not defined!");
+                FlansMod.logPackError(file.name, packName, shortName, "Driver is not defined!", null, null);
 
                 throw new Exception("Driver is not defined! Cannot proceed further.");
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RotatedPassengerOffset" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].rotatedOffset = new Vector3f(Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set RotatedPassengerOffset in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RotatedPassengerOffset" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].rotatedOffset = new Vector3f(Integer.parseInt(split[2]) / 16F, Integer.parseInt(split[3]) / 16F, Integer.parseInt(split[4]) / 16F);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set RotatedPassengerOffset", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerAimSpeed" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]));
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerAimSpeed in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerAimSpeed" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].aimingSpeed = new Vector3f(Float.parseFloat(split[2]), Float.parseFloat(split[3]), Float.parseFloat(split[4]));
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerAimSpeed", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLegacyAiming" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].legacyAiming = Boolean.parseBoolean(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerLegacyAiming in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLegacyAiming" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].legacyAiming = Boolean.parseBoolean(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerLegacyAiming", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawBeforePitch" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].yawBeforePitch = Boolean.parseBoolean(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerYawBeforePitch in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawBeforePitch" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].yawBeforePitch = Boolean.parseBoolean(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerYawBeforePitch", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLatePitch" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].latePitch = Boolean.parseBoolean(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerLatePitch in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerLatePitch" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].latePitch = Boolean.parseBoolean(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerLatePitch", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerTraverseSounds" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerTraverseSounds in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerTraverseSounds" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].traverseSounds = Boolean.parseBoolean(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerTraverseSounds", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSoundLength" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerYawSoundLength in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSoundLength" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].yawSoundLength = Integer.parseInt(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerYawSoundLength", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSoundLength" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerPitchSoundLength in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSoundLength" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].pitchSoundLength = Integer.parseInt(split[2]);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerPitchSoundLength", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSound" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].yawSound = split[2];
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerYawSound in " + file.name);
-                    }
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerYawSound" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].yawSound = split[2];
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerYawSound", split, ex);
                 }
+            }
 
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSound" });
-                for (String[] split : splits) {
-                    try {
-                        seats[Integer.parseInt(split[1])].pitchSound = split[2];
-                    } catch (Exception ex) {
-                        FlansMod.log("Could not set PassengerPitchSound in " + file.name);
-                    }
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Setting passenger specific settings failed in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "PassengerPitchSound" });
+            for (String[] split : splits) {
+                try {
+                    seats[Integer.parseInt(split[1])].pitchSound = split[2];
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set PassengerPitchSound", split, ex);
                 }
             }
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "GunOrigin" });
 
-                for (String[] split : splits) {
-                    try {
-                        float x = Float.parseFloat(split[2]) / 16F;
-                        float y = Float.parseFloat(split[3]) / 16F;
-                        float z = Float.parseFloat(split[4]) / 16F;
-                        if (seats[Integer.parseInt(split[1])] != null)
-                            seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
-                    } catch (Exception ex) {
-                        FlansMod.log("Setting GunOrigin failed in " + file.name);
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "GunOrigin" });
 
-                        if (FlansMod.printStackTrace) {
-                            FlansMod.log(ex);
-                        }
-                    }
-                }
-
-
-            } catch (Exception ex) {
-                FlansMod.log("Setting GunOrigins failed in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+            for (String[] split : splits) {
+                try {
+                    float x = Float.parseFloat(split[2]) / 16F;
+                    float y = Float.parseFloat(split[3]) / 16F;
+                    float z = Float.parseFloat(split[4]) / 16F;
+                    if (seats[Integer.parseInt(split[1])] != null)
+                        seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName,"Could not set GunOrigin", split, ex);
                 }
             }
+
 
 
             //Y offset for badly built models :P
@@ -1202,28 +1119,25 @@ public class DriveableType extends PaintableType {
 
             fancyCollision = ConfigUtils.configBool(config, "FancyCollision", fancyCollision);
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMesh", "AddTurretCollisionMesh" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMesh", "AddTurretCollisionMesh" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     CollisionShapeBox box = new CollisionShapeBox(new Vector3f(split[1]), new Vector3f(split[2]),
                             new Vector3f(split[3]), new Vector3f(split[4]), new Vector3f(split[5]),
                             new Vector3f(split[6]), new Vector3f(split[7]), new Vector3f(split[8]),
                             new Vector3f(split[9]), new Vector3f(split[10]), split[0].contains("Turret") ? "turret" : "core");
                     collisionBox.add(box);
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding collision mesh failed in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding collision mesh failed", split, ex);
                 }
             }
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMeshRaw", "AddTurretCollisionMeshRaw" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddCollisionMeshRaw", "AddTurretCollisionMeshRaw" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
+
                     Vector3f pos = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
                     Vector3f size = new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
                     Vector3f p1 = new Vector3f(Float.parseFloat(split[8]), Float.parseFloat(split[9]), Float.parseFloat(split[10]));
@@ -1236,35 +1150,30 @@ public class DriveableType extends PaintableType {
                     Vector3f p8 = new Vector3f(Float.parseFloat(split[29]), Float.parseFloat(split[30]), Float.parseFloat(split[31]));
                     CollisionShapeBox box = new CollisionShapeBox(pos, size, p1, p2, p3, p4, p5, p6, p7, p8, split[0].contains("Turret") ? "turret" : "core");
                     collisionBox.add(box);
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding raw collision mesh failed in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding collision mesh failed", split, ex);
                 }
             }
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LeftLinkPoint" });
-
-                for (String[] split : splits) {
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "LeftLinkPoint" });
+            for (String[] split : splits) {
+                try {
                     leftTrackPoints.add(new Vector3f(split[1]));
-                }
-
-                splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RightLinkPoint" });
-
-                for (String[] split : splits) {
-                    rightTrackPoints.add(new Vector3f(split[1]));
-                }
-            } catch (Exception ex) {
-                FlansMod.log("Adding track link points failed in " + file.name);
-
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding LeftLinkPoint failed", split, ex);
                 }
             }
+
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "RightLinkPoint" });
+            for (String[] split : splits) {
+                try {
+                    rightTrackPoints.add(new Vector3f(split[1]));
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding RightLinkPoint failed", split, ex);
+                }
+            }
+
 
 
             trackLinkLength = ConfigUtils.configFloat(config, "TrackLinkLength", trackLinkLength);
@@ -1273,10 +1182,10 @@ public class DriveableType extends PaintableType {
             onRadar = ConfigUtils.configBool(config, "OnRadar", onRadar);
 
 
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddParticle", "AddEmitter" });
+            splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddParticle", "AddEmitter" });
 
-                for (String[] split : splits) {
+            for (String[] split : splits) {
+                try {
                     ParticleEmitter emitter = new ParticleEmitter();
                     emitter.effectType = split[1];
                     emitter.emitRate = Integer.parseInt(split[2]);
@@ -1293,19 +1202,13 @@ public class DriveableType extends PaintableType {
                     emitter.extents.scale(1.0f / 16.0f);
                     emitter.velocity.scale(1.0f / 16.0f);
                     emitters.add(emitter);
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Adding particle failed", split, ex);
                 }
-            } catch (Exception ex) {
-                FlansMod.log("Adding emitter failed in " + file.name);
+            }
 
-                if (FlansMod.printStackTrace) {
-                    FlansMod.log(ex);
-                }
-            }
-        } catch (Exception e) {
-            FlansMod.log("Errored reading " + file.name);
-            if (FlansMod.printStackTrace) {
-                e.printStackTrace();
-            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading DriveableType failed", null, ex);
         }
     }
 
