@@ -207,9 +207,8 @@ public class GrenadeType extends ShootableType
 			}
 
 			numClips = ConfigUtils.configInt(config, "NumClips", numClips);
-		} catch (Exception e) {
-			FlansMod.log("Reading grenade file failed.");
-			e.printStackTrace();
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error ocurred while reading grenade file", null, ex);
 		}
 	}
 

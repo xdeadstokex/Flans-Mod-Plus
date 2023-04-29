@@ -122,11 +122,11 @@ public class ClientProxy extends CommonProxy {
                         FMLClientHandler.instance().addModAsResource(container);
 
                     } catch (Exception e) {
-                        FlansMod.log("Failed to load images for content pack : " + file.getName());
+                        FlansMod.log("Failed to register content pack : " + file.getName());
                         e.printStackTrace();
                     }
                     // Add the directory to the content pack list
-                    FlansMod.log("Loaded content pack : " + file.getName());
+                    FlansMod.log("Loaded content pack: " + file.getName());
                     contentPacks.add(file);
                 }
             }

@@ -729,7 +729,7 @@ public class TickHandlerClient {
             GL11.glEnable(2929 /* GL_DEPTH_TEST */);
             GL11.glEnable(3008 /* GL_ALPHA_TEST */);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            //FlansMod.log(mc.gameSettings.hideGUI);
+
             tickCountFlash++;
         } else {
             isInFlash = false;

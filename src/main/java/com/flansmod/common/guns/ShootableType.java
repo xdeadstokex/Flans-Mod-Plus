@@ -154,7 +154,7 @@ public abstract class ShootableType extends InfoType {
     @Override
     public void postRead(TypeFile file) {
         if (shootables.containsKey(shortName)) {
-            FlansMod.log("Error : " + shortName + " reduplicated");
+            FlansMod.logPackError(file.name, packName, shortName, "Shootable with shortname already exists!", null, null);
         }
 
         shootables.put(shortName, this);

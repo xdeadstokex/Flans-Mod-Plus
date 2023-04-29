@@ -1269,7 +1269,7 @@ public class DriveableType extends PaintableType {
                 if (stack != null) {
                     stacks.add(stack.copy());
                 } else {
-                    FlansMod.log("Failed to drop item on death of part [%s] on vehicle [%s]", part.type.getShortName(), name);
+                    FlansMod.logPackError("", packName, shortName, "Failed to drop item on death of part " + part.type.getShortName(), null, null);
                 }
             }
         }

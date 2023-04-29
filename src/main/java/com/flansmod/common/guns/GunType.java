@@ -533,10 +533,9 @@ public class GunType extends PaintableType implements IScope {
                     recoil.read(split);
                     useFancyRecoil = true;
                 }
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 useFancyRecoil = false;
-                FlansMod.log("Failed to read fancy recoil for " + shortName);
-                e.printStackTrace();
+                FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", split, ex);
             }
         }
         recoilYaw = ConfigUtils.configFloat(config, "RecoilYaw", recoilYaw) / 10;
