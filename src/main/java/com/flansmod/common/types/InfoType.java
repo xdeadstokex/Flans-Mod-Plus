@@ -120,6 +120,13 @@ public abstract class InfoType implements IInfoType {
     }
 
     /**
+     * This should only be used to read a line at a time, where order matters.
+     */
+    protected void readLine(String[] split, TypeFile file) {
+        // do nothing
+    }
+
+    /**
      * Pack reader
      */
     protected void read(ConfigMap config, TypeFile file) {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.flansmod.common.guns.GunType;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
 import net.minecraft.block.Block;
@@ -68,6 +69,83 @@ public class GunBoxType extends InfoType
 	}
 
 	@Override
+	protected void readLine(String[] split, TypeFile file) {
+		if (split.length < 1) {
+			return;
+		}
+
+		String kword = split[0];
+
+		if (kword.equalsIgnoreCase("Page") || kword.equalsIgnoreCase("SetPage")) {
+			try {
+				//If empty, rename the page. If not, add the current page to list and start next one.
+				StringBuilder pageName = new StringBuilder();
+				for(int i = 1; i < split.length; i++)
+				{
+					pageName.append(split[i]);
+					if((i + 1) < split.length)
+					{
+						pageName.append(" ");
+					}
+				}
+
+				if(gunEntries[0] != null)
+				{
+					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
+					iteratePage(pageName.toString());
+				}
+				else
+				{
+					currentPage.setPageName(pageName.toString());
+				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Setting Page name failed", split, ex);
+			}
+		}
+
+
+		if (kword.equalsIgnoreCase("AddGun"))
+		{
+			try {
+				InfoType type = InfoType.getType(split[1]);
+
+				if (type == null) {
+					FlansMod.logPackError(file.name, packName, shortName, "Unable to find item for gunbox, skipping entry", split, null);
+					return;
+				}
+
+				List<ItemStack> parts = getRecipe(split);
+				nextGun++;
+				if(nextGun > gunEntries.length - 1)
+				{
+					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
+					iteratePage("Default " + (gunPages.size() + 2));
+					nextGun++;
+				}
+				gunEntries[nextGun] = new GunBoxEntry(type, parts);
+			} catch(Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Adding gun to GunBox failed", split, ex);
+			}
+		}
+
+
+		if (kword.equalsIgnoreCase("AddAmmo") || kword.equalsIgnoreCase("AddAltAmmo") || kword.equalsIgnoreCase("AddAlternateAmmo")) {
+			try {
+				InfoType ammoType = InfoType.getType(split[1]);
+				if (ammoType == null || ammoType.item == null) {
+					FlansMod.logPackError(file.name, packName, shortName, "Ammo item not found for gunbox, skipping", split, null);
+					return;
+				}
+
+				gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+
+			} catch(Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Adding ammo to GunBox failed", split, ex);
+			}
+		}
+	}
+
+	@Override
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
@@ -85,70 +163,10 @@ public class GunBoxType extends InfoType
 			buttonTextColor = ConfigUtils.configString(config, "ButtonTextColor", buttonTextColor);
 			buttonTextHoverColor = ConfigUtils.configString(config, "ButtonTextHighlight", buttonTextHoverColor);
 
-
-			if (config.containsKey("Page") || config.containsKey("SetPage")) {
-				String key = "Page";
-				if (config.containsKey("SetPage"))
-					key = "SetPage";
-
-				String[] split = ConfigUtils.getSplitFromKey(config, key);
-				//If empty, rename the page. If not, add the current page to list and start next one.
-				String[] pageNameArray = Arrays.copyOfRange(split, 1, split.length);
-				StringBuilder pageName = new StringBuilder();
-				for(int i = 0; i < pageNameArray.length; i++) {
-				    pageName.append(pageNameArray[i]);
-				    if((i + 1) < pageNameArray.length)
-				    {
-				        pageName.append(" ");
-				    }
-				}
-				if(gunEntries[0] != null) {
-					currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
-					iteratePage(pageName.toString());
-				} else {
-					currentPage.setPageName(pageName.toString());
-				}
-			}
-
-			if (config.containsKey("AddGun"))
-			{
-				try {
-					List<ItemStack> parts = getRecipe(ConfigUtils.getSplitFromKey(config, "AddGun"));
-					nextGun++;
-					if(nextGun > gunEntries.length - 1)
-					{
-						currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun));
-						iteratePage("Default " + (gunPages.size() + 2));
-						nextGun++;
-					}
-					gunEntries[nextGun] = new GunBoxEntry(InfoType.getType(config.get("AddGun")), parts);
-				} catch(Exception e) {
-					if (FlansMod.printDebugLog) {
-						FlansMod.log("Failed to add gun %s to box %s", config.get("AddGun"), shortName);
-					}
-
-				}
-
-			}
-			if (config.containsKey("AddAmmo") || config.containsKey("AddAltAmmo")) {
-				String key = "AddAmmo";
-				if (config.containsKey("AddAltAmmo"))
-					key = "AddAltAmmo";
-				try {
-					if	(InfoType.getType(config.get("key")) != null && InfoType.getType(config.get("key")).item != null) {
-						gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(config.get("key")), getRecipe(ConfigUtils.getSplitFromKey(config, key))));
-					}
-				} catch(Exception e) {
-					FlansMod.log("Failed to add ammo (%s) to box (%s)", config.get("key"), shortName);
-				}
-			}
-
+			// Entry loading MUST happen in order, so cannot be done using the config map.
 		}
-		catch (Exception e) {
-			FlansMod.log("Reading gun box file failed : " + shortName);
-			if (FlansMod.printStackTrace) {
-				FlansMod.log(e.toString());
-			}
+		catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while loading GunBox", null, ex);
 		}
 	}
 

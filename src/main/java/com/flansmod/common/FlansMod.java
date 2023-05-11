@@ -838,14 +838,14 @@ public class FlansMod {
         }
     }
 
-    public static void logException(String message, Exception ex) {
+    public static void logException(String message, Throwable ex) {
         if (printStackTrace) {
             logger.info(message, ex);
         }
     }
 
     // To display validation, parsing errors e.t.c.
-    public static void logPackError(String fileName, String pack, String shortname, String message, String[] split, Exception ex) {
+    public static void logPackError(String fileName, String pack, String shortname, String message, String[] split, Throwable ex) {
         FlansMod.log("Error caused by file: %s pack: %s shortname: %s", fileName, pack, shortname);
         FlansMod.log("\t%s", message);
 

@@ -41,6 +41,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -330,8 +331,12 @@ public class ClientProxy extends CommonProxy {
             return null;
         try {
             return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
-        } catch (Exception e) {
-            FlansMod.logPackError("?", "?", shortName, "Failed to load model", null, e);
+        } catch (InvocationTargetException ex) {
+            FlansMod.logPackError("?", "?", shortName, "Model is incompatible, or you are in a dev environment", null, ex.getCause());
+        } catch (ClassNotFoundException ex) {
+            FlansMod.logPackError("?", "?", shortName, "Model (probably) not found", null, ex);
+        } catch (Exception ex) {
+            FlansMod.logPackError("?", "?", shortName, "Failed to load model (unknown cause)", null, ex);
         }
         return null;
     }
