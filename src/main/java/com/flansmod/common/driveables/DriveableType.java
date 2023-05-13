@@ -372,24 +372,26 @@ public class DriveableType extends PaintableType {
         // Must be read first.
         try {
             numPassengers = ConfigUtils.configInt(config, "Passengers", numPassengers);
-            seats = new Seat[numPassengers + 1];
-
 
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"Passenger"});
-                if (splits.size() != numPassengers) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumPassengers and number of Passengers don't match", null, null);
-                    throw new Exception("Invalid Passenger Definitions");
-                    // this should be a "disable item" situation
-                } else {
-                    for (String[] split : splits) {
-                        Seat seat = new Seat(split);
-                        if (seat.id < seats.length) {
-                            seats[seat.id] = seat;
-                            if (seat.gunType != null) {
-                                seat.gunnerID = numPassengerGunners++;
-                                driveableRecipe.add(new ItemStack(seat.gunType.item));
-                            }
+                if (splits.size() < numPassengers) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Fewer passenger definitions than NumPassengers. You should check this.", null, null);
+                    numPassengers = splits.size();
+                } else if (splits.size() > numPassengers) {
+                    FlansMod.logPackError(file.name, packName, shortName, "More passenger definitions than NumPassengers. You should check this.", null, null);
+                    numPassengers = splits.size();
+                }
+
+                seats = new Seat[numPassengers + 1];
+
+                for (String[] split : splits) {
+                    Seat seat = new Seat(split);
+                    if (seat.id < seats.length) {
+                        seats[seat.id] = seat;
+                        if (seat.gunType != null) {
+                            seat.gunnerID = numPassengerGunners++;
+                            driveableRecipe.add(new ItemStack(seat.gunType.item));
                         }
                     }
                 }
@@ -401,6 +403,12 @@ public class DriveableType extends PaintableType {
             }
 
             int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
+
+            if (numWheels == 0) {
+                numWheels = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" }).size();
+                FlansMod.logPackError(file.name, packName, shortName, "Please specify NumWheels, defaulting to counting wheels", null, null);
+            }
+
             if (numWheels < 2 || numWheels > 4) {
                 FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumWheels should be either 3 or 4", null, null);
                 throw new Exception("Invalid Wheel Configuration");
@@ -442,9 +450,11 @@ public class DriveableType extends PaintableType {
                 if (splits.size() == 0) {
                     FlansMod.logPackError(file.name, packName, shortName, "No Driver or Pilot configured", null, null);
                     throw new Exception("No Driver/Pilot Configured!");
-                } else if (splits.size() > 1) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Multiple Drivers or Pilots configured", null, null);
                 } else {
+                    if (splits.size() > 1) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Multiple Drivers or Pilots configured. Using first.", null, null);
+                    }
+
                     String[] split = splits.get(0);
 
                     if (split.length > 4)
@@ -653,8 +663,23 @@ public class DriveableType extends PaintableType {
 
             acceptAllAmmo = ConfigUtils.configBool(config, new String[]{ "AllowAllAmmo", "AcceptAllAmmo" }, acceptAllAmmo);
 
-            primary = EnumWeaponType.valueOf(ConfigUtils.configString(config, "Primary", primary.name()));
-            secondary = EnumWeaponType.valueOf(ConfigUtils.configString(config, "Secondary", secondary.name()));
+            String line = ConfigUtils.configString(config, "Primary", null);
+            try {
+                if (line != null) {
+                    primary = EnumWeaponType.valueOf(line.toUpperCase());
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Primary weapon type not known", new String[] { "Primary", line }, ex);
+            }
+
+            line = ConfigUtils.configString(config, "Secondary", null);
+            try {
+                if (line != null) {
+                    secondary = EnumWeaponType.valueOf(line.toUpperCase());
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Secondary weapon type not known", new String[] { "Secondary", line }, ex);
+            }
 
             damageMultiplierPrimary = ConfigUtils.configFloat(config, "DamageMultiplierPrimary", damageMultiplierPrimary);
             damageMultiplierSecondary = ConfigUtils.configFloat(config, "DamageMultiplierSecondary", damageMultiplierSecondary);
@@ -677,8 +702,24 @@ public class DriveableType extends PaintableType {
             alternatePrimary = ConfigUtils.configBool(config, "AlternatePrimary", alternatePrimary);
             alternateSecondary = ConfigUtils.configBool(config, "AlternateSecondary", alternateSecondary);
 
-            modePrimary = EnumFireMode.valueOf(ConfigUtils.configString(config, "ModePrimary", EnumFireMode.FULLAUTO.name()));
-            modeSecondary = EnumFireMode.valueOf(ConfigUtils.configString(config, "ModeSecondary", EnumFireMode.FULLAUTO.name()));
+            line = ConfigUtils.configString(config, "ModePrimary", null);
+            try {
+                if (line != null) {
+                    modePrimary = EnumFireMode.valueOf(line.toUpperCase());
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Primary weapon fire mode not known", new String[] { "PrimaryMode", line }, ex);
+            }
+
+
+            line = ConfigUtils.configString(config, "ModeSecondary", null);
+            try {
+                if (line != null) {
+                    modeSecondary = EnumFireMode.valueOf(line.toUpperCase());
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Secondary weapon fire mode not known", new String[] { "SecondaryMode", line }, ex);
+            }
 
             bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
 
@@ -874,6 +915,8 @@ public class DriveableType extends PaintableType {
                         if (potentialPart != null) {
                             stacks.add(potentialPart);
                             driveableRecipe.add(potentialPart);
+                        } else {
+                            FlansMod.logPackError(file.name, packName, shortName, "Item not found for AddRecipeParts", split, null);
                         }
 
                     }
@@ -1057,11 +1100,16 @@ public class DriveableType extends PaintableType {
 
             for (String[] split : splits) {
                 try {
+                    int seatId = Integer.parseInt(split[1]);
+
                     float x = Float.parseFloat(split[2]) / 16F;
                     float y = Float.parseFloat(split[3]) / 16F;
                     float z = Float.parseFloat(split[4]) / 16F;
-                    if (seats[Integer.parseInt(split[1])] != null)
+                    if (seatId < seats.length && seats[seatId] != null) {
                         seats[Integer.parseInt(split[1])].gunOrigin = new Vector3f(x, y, z);
+                    } else {
+                        FlansMod.logPackError(file.name, packName, shortName, "Passenger seat not found for GunOrigin", split, null);
+                    }
                 } catch (Exception ex) {
                     FlansMod.logPackError(file.name, packName, shortName,"Could not set GunOrigin", split, ex);
                 }

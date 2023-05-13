@@ -191,8 +191,12 @@ public class BulletType extends ShootableType
 				weaponType = EnumWeaponType.MISSILE;
 			else if (config.containsKey("WeaponType")) {
 				String line = ConfigUtils.configString(config, "WeaponType", "Bomb");
-				if (line != null) {
-					weaponType = EnumWeaponType.valueOf(line.toUpperCase());
+				try {
+					if (line != null) {
+						weaponType = EnumWeaponType.valueOf(line.toUpperCase());
+					}
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "WeaponType not known in BulletType", new String[] { "WeaponType", line}, ex);
 				}
 			}
 

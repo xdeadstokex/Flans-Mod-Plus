@@ -1351,7 +1351,10 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 itemName = itemName.split("\\.")[0];
             }
             ItemStack dropStack = InfoType.getRecipeElement(itemName, damage);
-            entity.entityDropItem(dropStack, 0.5F);
+
+            if (dropStack != null) {
+                entity.entityDropItem(dropStack, 0.5F);
+            }
         }
     }
 

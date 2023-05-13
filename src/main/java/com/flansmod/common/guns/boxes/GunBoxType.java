@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
@@ -195,10 +196,18 @@ public class GunBoxType extends InfoType
 		List<ItemStack> recipe = new ArrayList<ItemStack>();
 
 		for (int i = 0; i < (split.length - 2) / 2; i++) {
-			if (split[i * 2 + 3].contains("."))
-				recipe.add(getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName));
-			else
-				recipe.add(getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName));
+			ItemStack recipeElement = null;
+			if (split[i * 2 + 3].contains(".")) {
+				recipeElement = getRecipeElement(split[i * 2 + 3].split("\\.")[0], Integer.parseInt(split[i * 2 + 2]), Integer.valueOf(split[i * 2 + 3].split("\\.")[1]), shortName);
+			} else {
+				 recipeElement = getRecipeElement(split[i * 2 + 3], Integer.parseInt(split[i * 2 + 2]), 0, shortName);
+			}
+
+			if (recipeElement != null) {
+				recipe.add(recipeElement);
+			} else {
+				FlansMod.logPackError(null, packName, shortName, "Could not find item for recipe", split, null);
+			}
 		}
 
 		return recipe;
@@ -208,7 +217,13 @@ public class GunBoxType extends InfoType
 	@Override
 	public void addRecipe(Item par1Item) {
 		if (smeltableFrom != null) {
-			GameRegistry.addSmelting(getRecipeElement(smeltableFrom, 0), new ItemStack(item), 0.0F);
+			ItemStack recipeElement = getRecipeElement(smeltableFrom, 0);
+
+			if (recipeElement != null) {
+				GameRegistry.addSmelting(recipeElement, new ItemStack(item), 0.0F);
+			} else {
+				FlansMod.logPackError(null, packName, shortName, "Could not find item for SmeltableFrom", null, null);
+			}
 		}
 		if (recipeLine == null)
 			return;
@@ -276,20 +291,33 @@ public class GunBoxType extends InfoType
 					recipe[i * 2 + rows] = recipeLine[i * 2 + 1].charAt(0);
 					// Split ID with . and if it contains a second part, use it
 					// as damage value.
+					ItemStack recipeElement = null;
 					if (recipeLine[i * 2 + 2].contains("."))
-						recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.valueOf(recipeLine[i * 2 + 2].split("\\.")[1]));
+						recipeElement = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.valueOf(recipeLine[i * 2 + 2].split("\\.")[1]));
 					else
-						recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2], 0);
+						recipeElement = getRecipeElement(recipeLine[i * 2 + 2], 0);
+
+					if (recipeElement == null) {
+						FlansMod.logPackError(null, packName, shortName, "Could not find item for recipe", new String[] { recipeLine[i * 2 + 2] }, null);
+					}
+					recipe[i * 2 + rows + 1] = recipeElement;
 				}
 				GameRegistry.addRecipe(new ItemStack(block, recipeOutput, 0), recipe);
 			}
 			else {
 				recipe = new Object[recipeLine.length - 1];
 				for (int i = 0; i < (recipeLine.length - 1); i++) {
+					ItemStack recipeElement = null;
 					if (recipeLine[i + 1].contains("."))
-						recipe[i] = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.valueOf(recipeLine[i + 1].split("\\.")[1]));
+						recipeElement = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.valueOf(recipeLine[i + 1].split("\\.")[1]));
 					else
-						recipe[i] = getRecipeElement(recipeLine[i + 1], 0);
+						recipeElement = getRecipeElement(recipeLine[i + 1], 0);
+
+					if (recipeElement == null) {
+						FlansModClient.logPackError(null, packName, shortName, "Could not find item for recipe", new String[] { recipeLine[i+1] }, null);
+					}
+
+					recipe[i] = recipeElement;
 				}
 				GameRegistry.addShapelessRecipe(new ItemStack(block, recipeOutput, 0), recipe);
 			}

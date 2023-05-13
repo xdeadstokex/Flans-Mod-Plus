@@ -80,16 +80,16 @@ public class ArmourBoxType extends InfoType
 						entry.armours[i] = ArmourType.getArmourType(lineSplit[0]);
 						for(int j = 0; j < (lineSplit.length - 1) / 2; j++)
 						{
-							ItemStack stack;
+							ItemStack recipeElement = null;
 							if(lineSplit[j * 2 + 1].contains("."))
-								stack = getRecipeElement(lineSplit[j * 2 + 1].split("\\.")[0], Integer.parseInt(lineSplit[j * 2 + 2]), Integer.parseInt(lineSplit[j * 2 + 1].split("\\.")[1]), shortName);
+								recipeElement = getRecipeElement(lineSplit[j * 2 + 1].split("\\.")[0], Integer.parseInt(lineSplit[j * 2 + 2]), Integer.parseInt(lineSplit[j * 2 + 1].split("\\.")[1]), shortName);
 							else
-								stack = getRecipeElement(lineSplit[j * 2 + 1], Integer.parseInt(lineSplit[j * 2 + 2]), 0, shortName);
+								recipeElement = getRecipeElement(lineSplit[j * 2 + 1], Integer.parseInt(lineSplit[j * 2 + 2]), 0, shortName);
 
-							if(stack != null) {
-								entry.requiredStacks[i].add(stack);
+							if(recipeElement != null) {
+								entry.requiredStacks[i].add(recipeElement);
 							} else {
-								if (FlansMod.printDebugLog) { FlansMod.log("Could not add part %s to %s in armourbox %s", lineSplit[j * 2 + 1], name.toString(), shortName); }
+								FlansMod.logPackError(file.name, packName, shortName, "Could not find item for armour recipe", split, null);
 							}
 						}
 					}

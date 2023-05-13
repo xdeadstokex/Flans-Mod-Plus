@@ -174,7 +174,13 @@ public abstract class InfoType implements IInfoType {
      */
     public void addRecipe(Item par1Item) {
         if (smeltableFrom != null) {
-            GameRegistry.addSmelting(getRecipeElement(smeltableFrom, 0), new ItemStack(item), 0.0F);
+            ItemStack recipeElement = getRecipeElement(smeltableFrom, 0);
+
+            if (recipeElement != null) {
+                GameRegistry.addSmelting(recipeElement, new ItemStack(item), 0.0F);
+            } else {
+                FlansMod.logPackError(null, packName, shortName, "Could not find item for SmeltableFrom", new String[] { smeltableFrom }, null);
+            }
         }
         if (recipeLine == null)
             return;
@@ -238,20 +244,36 @@ public abstract class InfoType implements IInfoType {
                     recipe[i * 2 + rows] = recipeLine[i * 2 + 1].charAt(0);
                     // Split ID with . and if it contains a second part, use it
                     // as damage value.
+                    ItemStack recipeElement = null;
+
                     if (recipeLine[i * 2 + 2].contains("."))
-                        recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.parseInt(recipeLine[i * 2 + 2].split("\\.")[1]));
+                        recipeElement = getRecipeElement(recipeLine[i * 2 + 2].split("\\.")[0], Integer.parseInt(recipeLine[i * 2 + 2].split("\\.")[1]));
                     else
-                        recipe[i * 2 + rows + 1] = getRecipeElement(recipeLine[i * 2 + 2], 0);
+                        recipeElement = getRecipeElement(recipeLine[i * 2 + 2], 0);
+
+                    if (recipeElement == null) {
+                        FlansMod.logPackError(null, packName, shortName, "Could not find item for recipe", new String[] { recipeLine[i * 2 + 2] }, null);
+                    }
+
+                    recipe[i * 2 + rows + 1] = recipeElement;
                 }
                     GameRegistry.addRecipe(new ItemStack(item, recipeOutput), recipe);
             } else {
 
                 recipe = new Object[recipeLine.length - 1];
                 for (int i = 0; i < (recipeLine.length - 1); i++) {
+                    ItemStack recipeElement = null;
+
                     if (recipeLine[i + 1].contains("."))
-                        recipe[i] = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.parseInt(recipeLine[i + 1].split("\\.")[1]));
+                        recipeElement = getRecipeElement(recipeLine[i + 1].split("\\.")[0], Integer.parseInt(recipeLine[i + 1].split("\\.")[1]));
                     else
-                        recipe[i] = getRecipeElement(recipeLine[i + 1], 0);
+                        recipeElement = getRecipeElement(recipeLine[i + 1], 0);
+
+                    if (recipeElement == null) {
+                        FlansMod.logPackError(null, packName, shortName, "Could not find item for recipe", new String[] { recipeLine[i+1] }, null);
+                    }
+
+                    recipe[i] = recipeElement;
                 }
                 GameRegistry.addShapelessRecipe(new ItemStack(item, recipeOutput), recipe);
             }
@@ -294,7 +316,6 @@ public abstract class InfoType implements IInfoType {
             return new ItemStack(Items.iron_ingot, amount);
         }
 
-        FlansMod.log("Could not find " + s + " when adding recipe for " + requester);
         return null;
     }
 
@@ -307,8 +328,6 @@ public abstract class InfoType implements IInfoType {
             if (ItemDye.field_150923_a[i].equals(dyeName))
                 damage = i;
         }
-        if (damage == -1)
-            FlansMod.log("Failed to find dye colour : " + dyeName + " while adding " + packName);
 
         return damage;
     }

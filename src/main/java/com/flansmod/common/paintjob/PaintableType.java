@@ -62,8 +62,16 @@ public abstract class PaintableType extends InfoType
 				try {
 					int numDyes = (split.length - 2) / 2;
 					ItemStack[] dyeStacks = new ItemStack[numDyes];
-					for(int i = 0; i < numDyes; i++)
-						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), getDyeDamageValue(split[i * 2 + 3]));
+					for(int i = 0; i < numDyes; i++) {
+						int dyeID = getDyeDamageValue(split[i * 2 + 3]);
+
+						if (dyeID == -1) {
+							FlansMod.logPackError(file.name, packName, shortName, "Unknown dye name for Paintjob", split, null);
+						}
+
+						// Do different behaviour here?
+						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), dyeID);
+					}
 
 					if(split[1].contains("_"))
 					{
@@ -81,8 +89,18 @@ public abstract class PaintableType extends InfoType
 			for (String[] split : lines) {
 				try {
 					ItemStack[] dyeStacks = new ItemStack[(split.length - 4) / 2];
-					for(int i = 0; i < (split.length - 4) / 2; i++)
-						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), getDyeDamageValue(split[i * 2 + 4]));
+					for(int i = 0; i < (split.length - 4) / 2; i++) {
+						int dyeID = getDyeDamageValue(split[i * 2 + 4]);
+
+						if (dyeID == -1) {
+							FlansMod.logPackError(file.name, packName, shortName, "Unknown dye name for AdvPaintjob", split, null);
+						}
+
+						// Do different behaviour here?
+						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 5]), dyeID);
+					}
+
+
 					paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], split[3], dyeStacks, true));
 				} catch (Exception e) {
 					FlansMod.logPackError(file.name, packName, shortName, "Reading advanced paintjob line failed", split, e);

@@ -132,7 +132,14 @@ public class PartType extends InfoType {
                     boolean damaged = split[2 * i + 3].contains(".");
                     String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
                     int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
-                    stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
+
+                    ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
+
+                    if (recipeElement == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Could not find item for PartBoxRecipe", split, null);
+                    }
+
+                    stacks[i] = recipeElement;
                 }
                 partBoxRecipe.addAll(Arrays.asList(stacks));
             }

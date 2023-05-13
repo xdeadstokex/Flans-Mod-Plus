@@ -83,7 +83,9 @@ public class ItemGrenade extends ItemShootable implements IFlanItem
 					itemName = itemName.split("\\.")[0];
 				}
 				ItemStack dropStack = InfoType.getRecipeElement(itemName, damage);
-				world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, dropStack));
+				if (dropStack != null) {
+					world.spawnEntityInWorld(new EntityItem(world, player.posX, player.posY, player.posZ, dropStack));
+				}
 			}
 		}
 		return stack;

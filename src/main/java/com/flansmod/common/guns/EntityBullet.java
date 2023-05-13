@@ -1253,7 +1253,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     itemName = itemName.split("\\.")[0];
                 }
                 ItemStack dropStack = InfoType.getRecipeElement(itemName, damage);
-                entityDropItem(dropStack, 1.0F);
+                if (dropStack != null) {
+                    entityDropItem(dropStack, 1.0F);
+                }
             }
         } catch (Exception e) {
 //			FlansMod.log("EntityBullet.setDead() Error ("+this+")");
@@ -1355,7 +1357,10 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 itemName = itemName.split("\\.")[0];
             }
             ItemStack dropStack = InfoType.getRecipeElement(itemName, damage);
-            entityDropItem(dropStack, 1.0F);
+
+            if (dropStack != null) {
+                entityDropItem(dropStack, 1.0F);
+            }
         }
     }
 

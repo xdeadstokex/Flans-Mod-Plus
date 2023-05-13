@@ -572,9 +572,17 @@ public class GunType extends PaintableType implements IScope {
         dropItemOnShoot = config.get("DropItemOnShoot");
         numBurstRounds = ConfigUtils.configInt(config, "NumBurstRounds", numBurstRounds);
         minigunStartSpeed = ConfigUtils.configFloat(config, "MinigunStartSpeed", minigunStartSpeed);
-        if (config.containsKey("ItemUseAction")) {
-            itemUseAction = EnumAction.valueOf(config.get("ItemUseAction").toLowerCase());
+
+        String line = ConfigUtils.configString(config, "ItemUseAction", null);
+        try {
+            if (line != null) {
+                itemUseAction = EnumAction.valueOf(line.toLowerCase());
+            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "ItemUseAction not recognised in gun", new String[] { "ItemUseAction", line }, ex);
         }
+
+        // This is needed, because the presence of the value overrides the default value of zero.
         if (config.containsKey("HipFireWhileSprinting"))
            hipFireWhileSprinting = Boolean.parseBoolean(config.get("HipFireWhileSprinting").toLowerCase()) ? 1 : 2;
 
