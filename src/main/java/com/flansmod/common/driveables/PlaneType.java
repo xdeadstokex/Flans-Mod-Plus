@@ -163,7 +163,11 @@ public class PlaneType extends DriveableType
 						propellers.add(propeller);
 					}
 
-					driveableRecipe.add(new ItemStack(propeller.itemType.item));
+					if (propeller.itemType == null) {
+						FlansMod.logPackError(file.name, packName, shortName, "Couldn't find item for propeller, not adding to recipe.", split, null);
+					} else {
+						driveableRecipe.add(new ItemStack(propeller.itemType.item));
+					}
 				} catch (Exception ex) {
 					FlansMod.logPackError(file.name, packName, shortName, "Adding propeller failed", split, ex);
 				}

@@ -1,6 +1,7 @@
 package com.flansmod.common.driveables;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -371,17 +372,18 @@ public class DriveableType extends PaintableType {
 
         // Must be read first.
         try {
-            numPassengers = ConfigUtils.configInt(config, "Passengers", numPassengers);
-
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"Passenger"});
-                if (splits.size() < numPassengers) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Fewer passenger definitions than NumPassengers. You should check this.", null, null);
-                    numPassengers = splits.size();
-                } else if (splits.size() > numPassengers) {
-                    FlansMod.logPackError(file.name, packName, shortName, "More passenger definitions than NumPassengers. You should check this.", null, null);
-                    numPassengers = splits.size();
-                }
+                // numpassengers from config isn't really needed, we can just count instead.
+                numPassengers = splits.size();
+
+                //if (splits.size() < numPassengers) {
+                //    FlansMod.logPackError(file.name, packName, shortName, "Fewer passenger definitions than NumPassengers. You should check this.", null, null);
+                //    numPassengers = splits.size();
+                //} else if (splits.size() > numPassengers) {
+                //    FlansMod.logPackError(file.name, packName, shortName, "More passenger definitions than NumPassengers. You should check this.", null, null);
+                //    numPassengers = splits.size();
+                //}
 
                 seats = new Seat[numPassengers + 1];
 
@@ -402,31 +404,30 @@ public class DriveableType extends PaintableType {
                 // this should be a "disable item" situation
             }
 
-            int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
-
-            if (numWheels == 0) {
-                numWheels = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" }).size();
-                FlansMod.logPackError(file.name, packName, shortName, "Please specify NumWheels, defaulting to counting wheels", null, null);
-            }
-
-            if (numWheels < 2 || numWheels > 4) {
-                FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumWheels should be either 3 or 4", null, null);
-                throw new Exception("Invalid Wheel Configuration");
-            } else {
-                wheelPositions = new DriveablePosition[numWheels];
-            }
+            // numWheels from config can just be ignored at this point.
+            //int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
 
             //Wheels
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
 
-                if (splits.size() != wheelPositions.length) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: NumWheels differs from number of wheels configured", null, null);
+                int numWheels = splits.size();
+
+                if (numWheels < 2 || numWheels > 4) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: Either 3 or 4 wheels are required", null, null);
                     throw new Exception("Invalid Wheel Configuration");
+                } else {
+                    wheelPositions = new DriveablePosition[numWheels];
                 }
 
+                int counter = 0;
                 for (String[] split : splits) {
                     int wheelIndex = Integer.parseInt(split[1]);
+                    if (wheelIndex >= numWheels) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Incorrect wheel index given, defaulting to counting.", split, null);
+                        wheelIndex = counter;
+                    }
+
                     float x = Float.parseFloat(split[2]) / 16F;
                     float y = Float.parseFloat(split[3]) / 16F;
                     float z = Float.parseFloat(split[4]) / 16F;
@@ -438,6 +439,8 @@ public class DriveableType extends PaintableType {
 
                     DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
                     wheelPositions[wheelIndex] = wheelPosition;
+
+                    counter++;
                 }
             } catch (Exception ex) {
                 FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while parsing wheels", null, ex);
@@ -471,8 +474,7 @@ public class DriveableType extends PaintableType {
                 // this should be a "disable item" situation
             }
 
-            if (FMLCommonHandler.instance().getSide().isClient())
-                model = FlansMod.proxy.loadModel(ConfigUtils.configString(config, "Model", null), shortName, ModelDriveable.class);
+            model = FlansMod.proxy.loadModel(modelString, shortName, ModelDriveable.class);
 
             vehicleGunModelScale = ConfigUtils.configFloat(config, "VehicleGunModelScale", vehicleGunModelScale);
             reloadSoundTick = ConfigUtils.configInt(config, "VehicleGunReloadTick", reloadSoundTick);
@@ -837,25 +839,24 @@ public class DriveableType extends PaintableType {
 
             for (String[] split : splits) {
                 try {
-                    DriveablePosition rootPos;
-                    Vector3f offPos;
                     secondary = EnumWeaponType.GUN;
-                    PilotGun pilotGun;
 
-                    if (split.length == 6) { // TODO: Refactor this..
-                        rootPos = (PilotGun) getShootPoint(split);
-                        offPos = new Vector3f(0, 0, 0);
-                        pilotGun = (PilotGun) getShootPoint(split);
+                    if (split.length == 6 || split.length == 9) {
+                        PilotGun pilotGun = new PilotGun(Arrays.copyOfRange(split, 0, 6));
+                        Vector3f offPos = split.length == 6 ? Vector3f.Zero : new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+
+                        if (pilotGun.type == null) {
+                            // The gun type is not found, skip.
+                            FlansMod.logPackError(file.name, packName, shortName, "Could not find gun type for AddGun. Skipping.", split, null);
+                        } else {
+                            ShootPoint sPoint = new ShootPoint(pilotGun, offPos);
+                            shootPointsSecondary.add(sPoint);
+                            pilotGuns.add(pilotGun);
+                            driveableRecipe.add(new ItemStack(pilotGun.type.item));
+                        }
                     } else {
-                        String[] gun = new String[]{split[0], split[1], split[2], split[3], split[4], split[5]};
-                        rootPos = (PilotGun) getShootPoint(gun);
-                        pilotGun = (PilotGun) getShootPoint(gun);
-                        offPos = new Vector3f(Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F, Float.parseFloat(split[8]) / 16F);
+                        FlansMod.logPackError(file.name, packName, shortName, "AddGun not in correct format. Skipping.", split, null);
                     }
-                    ShootPoint sPoint = new ShootPoint(rootPos, offPos);
-                    shootPointsSecondary.add(sPoint);
-                    pilotGuns.add(pilotGun);
-                    driveableRecipe.add(new ItemStack(pilotGun.type.item));
                 } catch (Exception ex) {
                     FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding pilot gun with AddGun", split, ex);
                 }

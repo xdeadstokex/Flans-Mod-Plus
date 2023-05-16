@@ -103,9 +103,8 @@ public class ArmourType extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
         try {
-            String modelName = ConfigUtils.configString(config, "Model", null);
-            if (modelName != null) {
-                model = FlansMod.proxy.loadModel(modelName, shortName, ModelCustomArmour.class);
+            model = FlansMod.proxy.loadModel(modelString, shortName, ModelCustomArmour.class);
+            if (model != null) {
                 model.type = this;
             }
 

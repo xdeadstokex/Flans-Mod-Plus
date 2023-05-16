@@ -662,24 +662,16 @@ public class GunType extends PaintableType implements IScope {
 
         deployable = ConfigUtils.configBool(config, "Deployable", deployable);
 
-        if (FMLCommonHandler.instance().getSide().isClient() && deployable && config.containsKey("DeployedModel")) {
-            deployableModel = FlansMod.proxy.loadModel(config.get("DeployedModel"), shortName, ModelMG.class);
-            deployableModelString = config.get("DeployedModel");
-        }
+        deployableModelString = ConfigUtils.configString(configMap, "DeployedModel", null);
+        deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
 
-        if (FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("Model"))) {
-            model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelGun.class);
-        }
+        model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
 
-        if (FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("CasingModel"))) {
-            casingModel = FlansMod.proxy.loadModel(config.get("CasingModel"), shortName, ModelCasing.class);
-            casingModelString = config.get("CasingModel");
-        }
+        casingModelString = ConfigUtils.configString(config, "CasingModel", null);
+        casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
 
-        if (FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("FlashModel"))) {
-            flashModel = FlansMod.proxy.loadModel(config.get("FlashModel"), shortName, ModelFlash.class);
-            flashModelString = config.get("FlashModel");
-        }
+        flashModelString = ConfigUtils.configString(config, "FlashModel", null);
+        flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
 
         casingTexture = config.get("CasingTexture");
         flashTexture = config.get("FlashTexture");

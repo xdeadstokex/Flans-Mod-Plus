@@ -173,17 +173,15 @@ public abstract class ShootableType extends InfoType {
         super.read(config, file);
 
         //Model and Texture
-        if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model")) {
-            model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelBase.class);
-        }
-        if (configMap.containsKey("Texture"))
-            texture = config.get("Texture");
+        model = FlansMod.proxy.loadModel(modelString, shortName, ModelBase.class);
+
+        texture = ConfigUtils.configString(config, "Texture", texture);
 
         //Item Stuff
         maxStackSize = ConfigUtils.configInt(config, new String[]{"StackSize", "MaxStackSize"}, maxStackSize);
-        dropItemOnShoot = config.get("DropItemOnShoot");
-        dropItemOnReload = config.get("DropItemOnReload");
-        dropItemOnHit = config.get("DropItemOnHit");
+        dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", dropItemOnShoot);
+        dropItemOnReload = ConfigUtils.configString(config, "DropItemOnReload", dropItemOnReload);
+        dropItemOnHit = ConfigUtils.configString(config, "DropItemOnHit", dropItemOnHit);
         roundsPerItem = ConfigUtils.configInt(config, "RoundsPerItem",  roundsPerItem);
 
         //Physics

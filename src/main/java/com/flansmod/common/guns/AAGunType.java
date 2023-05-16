@@ -65,8 +65,7 @@ public class AAGunType extends InfoType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-			if (FMLCommonHandler.instance().getSide().isClient() && config.containsKey("Model"))
-				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelAAGun.class);
+			model = FlansMod.proxy.loadModel(modelString, shortName, ModelAAGun.class);
 
 			texture = ConfigUtils.configString(config, "Texture", texture);
 			damage = ConfigUtils.configInt(config, "Damage", damage);

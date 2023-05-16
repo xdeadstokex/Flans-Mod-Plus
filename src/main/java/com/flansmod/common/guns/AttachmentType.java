@@ -134,8 +134,7 @@ public class AttachmentType extends PaintableType implements IScope
 			if (config.containsKey("AttachmentType"))
 				type = EnumAttachmentType.get(config.get("AttachmentType"));
 
-			if(FMLCommonHandler.instance().getSide().isClient() && (config.containsKey("Model")))
-				model = FlansMod.proxy.loadModel(config.get("Model"), shortName, ModelAttachment.class);
+			model = FlansMod.proxy.loadModel(modelString, shortName, ModelAttachment.class);
 
 			// This is read in InfoType
 			//modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);

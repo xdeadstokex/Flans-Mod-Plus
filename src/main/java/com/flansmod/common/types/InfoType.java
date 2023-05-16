@@ -131,7 +131,7 @@ public abstract class InfoType implements IInfoType {
      */
     protected void read(ConfigMap config, TypeFile file) {
         // Model stuff
-        modelString = ConfigUtils.configString(configMap, "Model", modelString);
+        modelString = ConfigUtils.configString(configMap, "Model", null);
         modelScale = ConfigUtils.configFloat(configMap, "ModelScale", modelScale);
 
         // Text stuff

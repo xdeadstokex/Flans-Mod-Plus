@@ -76,8 +76,6 @@ public class MechaItemType extends InfoType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-			String modelString = ConfigUtils.configString(config, "Model", "");
-
 			model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
 
 			texture = ConfigUtils.configString(config, "Texture", texture);
@@ -128,8 +126,7 @@ public class MechaItemType extends InfoType
     }
 	
 	public void reloadModel() {
-		if(modelString != null)
-			model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
+		model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
 	}
 
 	@Override
