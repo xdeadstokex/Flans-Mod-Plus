@@ -509,11 +509,9 @@ public class GunType extends PaintableType implements IScope {
         super.read(config, file);
 
         damage = ConfigUtils.configFloat(config, "Damage", damage);
-        if (config.containsKey("MeleeDamage")) {
-            meleeDamage = Float.parseFloat(config.get("MeleeDamage"));
-            if (meleeDamage > 0F)
-                secondaryFunction = EnumSecondaryFunction.MELEE;
-        }
+        meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
+        secondaryFunction = meleeDamage > 0 ? EnumSecondaryFunction.MELEE : secondaryFunction;
+
         meleeDamageDriveableModifier = ConfigUtils.configFloat(config, "MeleeDamageDriveableModifier", meleeDamageDriveableModifier);
         recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
         recoilCounterCoefficientSneaking = ConfigUtils.configFloat(config, "CounterRecoilForceSneaking", recoilCounterCoefficientSneaking);
@@ -526,18 +524,18 @@ public class GunType extends PaintableType implements IScope {
 
         //Recoil
         recoilPitch = ConfigUtils.configFloat(config, "Recoil", recoilPitch);
-        if (config.containsKey("FancyRecoil")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "FancyRecoil");
-            try {
-                if (split.length > 1) {
-                    recoil.read(split);
-                    useFancyRecoil = true;
-                }
-            } catch (Exception ex) {
-                useFancyRecoil = false;
-                FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", split, ex);
+
+        String[] aSplit = ConfigUtils.getSplitFromKey(config, "FancyRecoil");
+        try {
+            if (aSplit != null && aSplit.length > 1) {
+                recoil.read(aSplit);
+                useFancyRecoil = true;
             }
+        } catch (Exception ex) {
+            useFancyRecoil = false;
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", aSplit, ex);
         }
+
         recoilYaw = ConfigUtils.configFloat(config, "RecoilYaw", recoilYaw) / 10;
         rndRecoilPitchRange = ConfigUtils.configFloat(config, "RandomRecoilRange", rndRecoilPitchRange);
         rndRecoilYawRange = ConfigUtils.configFloat(config, "RandomRecoilYawRange", rndRecoilYawRange);
@@ -559,7 +557,7 @@ public class GunType extends PaintableType implements IScope {
         //Lock on settings
         lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
         if (config.containsKey("LockOnToDriveables"))
-            lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(config.get("LockOnToDriveables"));
+            lockOnToPlanes = lockOnToVehicles = lockOnToMechas = ConfigUtils.configBool(config, "LockOnToDriveables", false);
         lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
         lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
         lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
@@ -584,7 +582,7 @@ public class GunType extends PaintableType implements IScope {
 
         // This is needed, because the presence of the value overrides the default value of zero.
         if (config.containsKey("HipFireWhileSprinting"))
-           hipFireWhileSprinting = Boolean.parseBoolean(config.get("HipFireWhileSprinting").toLowerCase()) ? 1 : 2;
+           hipFireWhileSprinting = ConfigUtils.configBool(config, "HipFireWhileSprinting", false) ? 1 : 2;
 
         //Sounds
         shootDelay = ConfigUtils.configFloat(config, "ShootDelay", shootDelay);
@@ -611,17 +609,11 @@ public class GunType extends PaintableType implements IScope {
         //Looping sounds
         warmupSound = ConfigUtils.configGunSound(packName, config, "WarmupSound", warmupSound);
         warmupSoundLength = ConfigUtils.configInt(config, "WarmupSoundLength", warmupSoundLength);
-        if (config.containsKey("LoopedSound") || config.containsKey("SpinSound")) {
-            String key = "LoopedSound";
-            if (config.containsKey("SpinSound"))
-                key = "SpinSound";
-            loopedSound = config.get(key);
-            useLoopingSounds = true;
-            FlansMod.proxy.loadSound(packName, "guns", config.get(key));
-        }
+
         loopedSound = ConfigUtils.configGunSound(packName, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
         if (loopedSound != null && !loopedSound.isEmpty())
             useLoopingSounds = true;
+
         loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
         cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
         lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
@@ -636,21 +628,30 @@ public class GunType extends PaintableType implements IScope {
         if(maxZoom>1F)
             secondaryFunction=EnumSecondaryFunction.ZOOM;
         zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
-        if (config.containsKey("Mode")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "Mode");
-            mode = EnumFireMode.getFireMode(split[1]);
-            defaultmode = mode;
-            submode = new EnumFireMode[split.length - 1];
-            for (int i = 0; i < submode.length; i++) {
-                submode[i] = EnumFireMode.getFireMode(split[1 + i]);
+
+        aSplit = ConfigUtils.getSplitFromKey(config, "Mode");
+
+        if (aSplit != null) {
+            try {
+                mode = EnumFireMode.getFireMode(aSplit[1]);
+                defaultmode = mode;
+                submode = new EnumFireMode[aSplit.length - 1];
+                for (int i = 0; i < submode.length; i++) {
+                    submode[i] = EnumFireMode.getFireMode(aSplit[1 + i]);
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting gun mode", aSplit, ex);
             }
         }
-        if (config.containsKey("Scope")) {
+
+        String scopeString = ConfigUtils.configString(config, "Scope", null);
+        if (scopeString == null || scopeString.equalsIgnoreCase("None")) {
+            hasScopeOverlay = false;
+        } else {
             hasScopeOverlay = true;
-            if (config.get("Scope").equalsIgnoreCase("None"))
-                hasScopeOverlay = false;
-            else defaultScopeTexture = config.get("Scope");
+            defaultScopeTexture = scopeString;
         }
+
         allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
         zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
         if (zoomLevel > 1F)
@@ -692,10 +693,17 @@ public class GunType extends PaintableType implements IScope {
         sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
         pivotHeight = ConfigUtils.configFloat(config, "PivotHeight", modelScale);
 
-        if (config.containsKey("Ammo")) {
-            for (String ammoOption : config.getAll("Ammo")) {
-                ShootableType type = ShootableType.getShootableType(ammoOption);
-                ammo.add(type);
+        ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Ammo" });
+        for (String[] split : splits) {
+            try {
+                ShootableType type = ShootableType.getShootableType(split[1]);
+                if (type == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Couldn't find shootable type for adding Ammo to gun", split, null);
+                } else {
+                    ammo.add(type);
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Ammo for gun", split, ex);
             }
         }
 
@@ -704,29 +712,44 @@ public class GunType extends PaintableType implements IScope {
         canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
         canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
         oneHanded = ConfigUtils.configBool(config, "OneHanded", oneHanded);
-        if (config.containsKey("SecondaryFunction"))
-            secondaryFunction = EnumSecondaryFunction.get(config.get("SecondaryFunction"));
+
+        String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
+        secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
+
         usableByPlayers = ConfigUtils.configBool(config, "UsableByPlayers", usableByPlayers);
         usableByMechas = ConfigUtils.configBool(config, "UsableByMechas", usableByMechas);
 
         //Custom Melee Stuff
-        if (config.containsKey("UseCustomMelee") && Boolean.parseBoolean(config.get("UseCustomMelee"))) {
+        if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
             secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
         }
-        if (config.containsKey("UseCustomMeleeWhenShoot") && Boolean.parseBoolean(config.get("UseCustomMeleeWhenShoot")))
+
+        if (ConfigUtils.configBool(config, "UseCustomMeleeWhenShoot", false)) {
             secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
-        meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
-        if (config.containsKey("AddNode")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "AddNode");
-            meleePath.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
-            meleePathAngles.add(new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6])));
         }
-        if (config.containsKey("MeleeDamagePoint")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "MeleeDamagePoint");
-            meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
-        } else if (config.containsKey("MeleeDamageOffset")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "MeleeDamageOffset");
-            meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+
+        meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
+
+        try {
+            aSplit = ConfigUtils.getSplitFromKey(config, "AddNode");
+
+            if (aSplit != null) {
+                meleePath.add(new Vector3f(Float.parseFloat(aSplit[1]) / 16F, Float.parseFloat(aSplit[2]) / 16F, Float.parseFloat(aSplit[3]) / 16F));
+                meleePathAngles.add(new Vector3f(Float.parseFloat(aSplit[4]), Float.parseFloat(aSplit[5]), Float.parseFloat(aSplit[6])));
+            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", aSplit, ex);
+        }
+
+
+        try {
+            aSplit = ConfigUtils.getSplitFromKey(config, new String[] { "MeleeDamagePoint", "MeleeDamageOffset" });
+
+            if (aSplit != null) {
+                meleeDamagePoints.add(new Vector3f(Float.parseFloat(aSplit[1]) / 16F, Float.parseFloat(aSplit[2]) / 16F, Float.parseFloat(aSplit[3]) / 16F));
+            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", aSplit, ex);
         }
 
         //Player modifiers
@@ -737,18 +760,22 @@ public class GunType extends PaintableType implements IScope {
         //Attachment settings
         allowAllAttachments = ConfigUtils.configBool(config, "AllowAllAttachments", allowAllAttachments);
 
-        if (config.containsKey("AllowAttachments")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "AllowAttachments");
-            for (int i = 1; i < split.length; i++) {
-                allowedAttachments.add(AttachmentType.getAttachment(split[i]));
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AllowAttachments" });
+        try {
+            for (String[] split : splits) {
+                for (int i=1; i<split.length; i++) {
+                    AttachmentType type = AttachmentType.getAttachment(split[i]);
+                    if (type != null) {
+                        allowedAttachments.add(type);
+                    } else {
+                        FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments", split, null);
+                    }
+                }
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to add allowed attachment with AllowAttachments", aSplit, ex);
         }
-        if (config.containsKey("AllowAttachments")) {
-            String[] attachments = config.get("AllowAttachments").split(" ");
-            for (String attachment : attachments) {
-                allowedAttachments.add(AttachmentType.getAttachment(attachment));
-            }
-        }
+
         allowBarrelAttachments = ConfigUtils.configBool(config, "AllowBarrelAttachments", allowBarrelAttachments);
         allowScopeAttachments = ConfigUtils.configBool(config, "AllowScopeAttachments", allowScopeAttachments);
         allowStockAttachments = ConfigUtils.configBool(config, "AllowStockAttachments", allowStockAttachments);
@@ -760,13 +787,18 @@ public class GunType extends PaintableType implements IScope {
         numGenericAttachmentSlots = ConfigUtils.configInt(config, "NumGenericAttachmentSlots", numGenericAttachmentSlots);
 
             //Shield settings
-        if (config.containsKey("shield")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "shield");
-            shield = true;
-            shieldDamageAbsorption = Float.parseFloat(split[1]);
-            shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
-            shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+        String[] split = ConfigUtils.getSplitFromKey(config, "Shield");
+        try {
+            if (split != null) {
+                shield = true;
+                shieldDamageAbsorption = Float.parseFloat(split[1]);
+                shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
+                shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to config Shield", split, ex);
         }
+
 
         if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
             processAnimationConfigs(config);
@@ -774,6 +806,8 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public void processAnimationConfigs(ConfigMap config) {
+        // These provide a way to override model configs without recompiling the model.
+
         model.minigunBarrelOrigin = ConfigUtils.configVector(config, "animMinigunBarrelOrigin", model.minigunBarrelOrigin);
         model.barrelAttachPoint = ConfigUtils.configVector(config, "animBarrelAttachPoint", model.barrelAttachPoint);
         model.scopeAttachPoint = ConfigUtils.configVector(config, "animScopeAttachPoint", model.scopeAttachPoint);
@@ -841,96 +875,98 @@ public class GunType extends PaintableType implements IScope {
         model.isBulletCounterActive = ConfigUtils.configBool(config, "animIsBulletCounterActive", model.isBulletCounterActive);
         model.isAdvBulletCounterActive = ConfigUtils.configBool(config, "animIsAdvBulletCounterActive", model.isAdvBulletCounterActive);
 
-        if (configMap.containsKey("animAnimationType")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "animAnimationType");
-            if (split[1].equals("NONE"))
+        String[] split = ConfigUtils.getSplitFromKey(config, "animAnimationType");
+        if (split != null) {
+            if (split[1].equalsIgnoreCase("NONE"))
                 model.animationType = EnumAnimationType.NONE;
-            else if (split[1].equals("BOTTOM_CLIP"))
+            else if (split[1].equalsIgnoreCase("BOTTOM_CLIP"))
                 model.animationType = EnumAnimationType.BOTTOM_CLIP;
-            else if (split[1].equals("CUSTOMBOTTOM_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBOTTOM_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMBOTTOM_CLIP;
-            else if (split[1].equals("PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.PISTOL_CLIP;
-            else if (split[1].equals("CUSTOMPISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMPISTOL_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMPISTOL_CLIP;
-            else if (split[1].equals("TOP_CLIP"))
+            else if (split[1].equalsIgnoreCase("TOP_CLIP"))
                 model.animationType = EnumAnimationType.TOP_CLIP;
-            else if (split[1].equals("CUSTOMTOP_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMTOP_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMTOP_CLIP;
-            else if (split[1].equals("SIDE_CLIP"))
+            else if (split[1].equalsIgnoreCase("SIDE_CLIP"))
                 model.animationType = EnumAnimationType.SIDE_CLIP;
-            else if (split[1].equals("CUSTOMSIDE_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSIDE_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMSIDE_CLIP;
-            else if (split[1].equals("P90"))
+            else if (split[1].equalsIgnoreCase("P90"))
                 model.animationType = EnumAnimationType.P90;
-            else if (split[1].equals("CUSTOMP90"))
+            else if (split[1].equalsIgnoreCase("CUSTOMP90"))
                 model.animationType = EnumAnimationType.CUSTOMP90;
-            else if (split[1].equals("SHOTGUN"))
+            else if (split[1].equalsIgnoreCase("SHOTGUN"))
                 model.animationType = EnumAnimationType.SHOTGUN;
-            else if (split[1].equals("CUSTOMSHOTGUN"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSHOTGUN"))
                 model.animationType = EnumAnimationType.CUSTOMSHOTGUN;
-            else if (split[1].equals("RIFLE"))
+            else if (split[1].equalsIgnoreCase("RIFLE"))
                 model.animationType = EnumAnimationType.RIFLE;
-            else if (split[1].equals("CUSTOMRIFLE"))
+            else if (split[1].equalsIgnoreCase("CUSTOMRIFLE"))
                 model.animationType = EnumAnimationType.CUSTOMRIFLE;
-            else if (split[1].equals("REVOLVER"))
+            else if (split[1].equalsIgnoreCase("REVOLVER"))
                 model.animationType = EnumAnimationType.REVOLVER;
-            else if (split[1].equals("CUSTOMREVOLVER"))
+            else if (split[1].equalsIgnoreCase("CUSTOMREVOLVER"))
                 model.animationType = EnumAnimationType.CUSTOMREVOLVER;
-            else if (split[1].equals("REVOLVER2"))
+            else if (split[1].equalsIgnoreCase("REVOLVER2"))
                 model.animationType = EnumAnimationType.REVOLVER;
-            else if (split[1].equals("CUSTOMREVOLVER2"))
+            else if (split[1].equalsIgnoreCase("CUSTOMREVOLVER2"))
                 model.animationType = EnumAnimationType.CUSTOMREVOLVER;
-            else if (split[1].equals("END_LOADED"))
+            else if (split[1].equalsIgnoreCase("END_LOADED"))
                 model.animationType = EnumAnimationType.END_LOADED;
-            else if (split[1].equals("CUSTOMEND_LOADED"))
+            else if (split[1].equalsIgnoreCase("CUSTOMEND_LOADED"))
                 model.animationType = EnumAnimationType.CUSTOMEND_LOADED;
-            else if (split[1].equals("RIFLE_TOP"))
+            else if (split[1].equalsIgnoreCase("RIFLE_TOP"))
                 model.animationType = EnumAnimationType.RIFLE_TOP;
-            else if (split[1].equals("CUSTOMRIFLE_TOP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMRIFLE_TOP"))
                 model.animationType = EnumAnimationType.CUSTOMRIFLE_TOP;
-            else if (split[1].equals("BULLPUP"))
+            else if (split[1].equalsIgnoreCase("BULLPUP"))
                 model.animationType = EnumAnimationType.BULLPUP;
-            else if (split[1].equals("CUSTOMBULLPUP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBULLPUP"))
                 model.animationType = EnumAnimationType.CUSTOMBULLPUP;
-            else if (split[1].equals("ALT_PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("ALT_PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.ALT_PISTOL_CLIP;
-            else if (split[1].equals("CUSTOMALT_PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMALT_PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMALT_PISTOL_CLIP;
-            else if (split[1].equals("GENERIC"))
+            else if (split[1].equalsIgnoreCase("GENERIC"))
                 model.animationType = EnumAnimationType.GENERIC;
-            else if (split[1].equals("CUSTOMGENERIC"))
+            else if (split[1].equalsIgnoreCase("CUSTOMGENERIC"))
                 model.animationType = EnumAnimationType.CUSTOMGENERIC;
-            else if (split[1].equals("BACK_LOADED"))
+            else if (split[1].equalsIgnoreCase("BACK_LOADED"))
                 model.animationType = EnumAnimationType.BACK_LOADED;
-            else if (split[1].equals("CUSTOMBACK_LOADED"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBACK_LOADED"))
                 model.animationType = EnumAnimationType.CUSTOMBACK_LOADED;
-            else if (split[1].equals("STRIKER"))
+            else if (split[1].equalsIgnoreCase("STRIKER"))
                 model.animationType = EnumAnimationType.STRIKER;
-            else if (split[1].equals("CUSTOMSTRIKER"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSTRIKER"))
                 model.animationType = EnumAnimationType.CUSTOMSTRIKER;
-            else if (split[1].equals("BREAK_ACTION"))
+            else if (split[1].equalsIgnoreCase("BREAK_ACTION"))
                 model.animationType = EnumAnimationType.BREAK_ACTION;
-            else if (split[1].equals("CUSTOMBREAK_ACTION"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBREAK_ACTION"))
                 model.animationType = EnumAnimationType.CUSTOMBREAK_ACTION;
-            else if (split[1].equals("CUSTOM"))
+            else if (split[1].equalsIgnoreCase("CUSTOM"))
                 model.animationType = EnumAnimationType.CUSTOM;
         }
-        if (configMap.containsKey("animMeleeAnimation")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "animMeleeAnimation");
-            if (split[1].equals("DEFAULT"))
+
+        split = ConfigUtils.getSplitFromKey(config, "animMeleeAnimation");
+        if (split != null) {
+            if (split[1].equalsIgnoreCase("DEFAULT"))
                 model.meleeAnimation = EnumMeleeAnimation.DEFAULT;
-            else if (split[1].equals("NONE"))
+            else if (split[1].equalsIgnoreCase("NONE"))
                 model.meleeAnimation = EnumMeleeAnimation.NONE;
-            else if (split[1].equals("BLUNT_SWING"))
+            else if (split[1].equalsIgnoreCase("BLUNT_SWING"))
                 model.meleeAnimation = EnumMeleeAnimation.BLUNT_SWING;
-            else if (split[1].equals("BLUNT_BASH"))
+            else if (split[1].equalsIgnoreCase("BLUNT_BASH"))
                 model.meleeAnimation = EnumMeleeAnimation.BLUNT_BASH;
-            else if (split[1].equals("STAB_UNDERARM"))
+            else if (split[1].equalsIgnoreCase("STAB_UNDERARM"))
                 model.meleeAnimation = EnumMeleeAnimation.STAB_UNDERARM;
-            else if (split[1].equals("STAB_OVERARM"))
+            else if (split[1].equalsIgnoreCase("STAB_OVERARM"))
                 model.meleeAnimation = EnumMeleeAnimation.STAB_OVERARM;
         }
+
         model.tiltGunTime = ConfigUtils.configFloat(config, "animTiltGunTime", model.tiltGunTime);
         model.unloadClipTime = ConfigUtils.configFloat(config, "animUnloadClipTime", model.unloadClipTime);
         model.loadClipTime = ConfigUtils.configFloat(config, "animLoadClipTime", model.loadClipTime);

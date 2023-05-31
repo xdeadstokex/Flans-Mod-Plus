@@ -63,8 +63,8 @@ public class Team extends InfoType
 		super.read(config, file);
 		try
 		{
-			if (config.containsKey("TeamColour")) {
-				String[] split = ConfigUtils.getSplitFromKey(config, "TeamColour");
+			String[] split = ConfigUtils.getSplitFromKey(config, "TeamColour");
+			if (split != null) {
 				teamColour = (Integer.parseInt(split[1]) << 16) + ((Integer.parseInt(split[2])) << 8) + ((Integer.parseInt(split[3])));
 			}
 

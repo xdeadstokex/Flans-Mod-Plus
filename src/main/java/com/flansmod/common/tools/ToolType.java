@@ -82,19 +82,21 @@ public class ToolType extends InfoType
 
 			String[] split = ConfigUtils.getSplitFromKey(config, "RechargeRecipe");
 			try {
-				for(int i = 0; i < (split.length - 1) / 2; i++)
-				{
-					int amount = Integer.parseInt(split[2 * i + 1]);
-					boolean damaged = split[2 * i + 2].contains(".");
-					String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
-					int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
+				if (split != null) {
+					for(int i = 0; i < (split.length - 1) / 2; i++)
+					{
+						int amount = Integer.parseInt(split[2 * i + 1]);
+						boolean damaged = split[2 * i + 2].contains(".");
+						String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
+						int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
 
-					ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
+						ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
 
-					if (recipeElement != null) {
-						rechargeRecipe.add(recipeElement);
-					} else {
-						FlansMod.logPackError(file.name, packName, shortName, "Could not find item for RechargeRecipe", split, null);
+						if (recipeElement != null) {
+							rechargeRecipe.add(recipeElement);
+						} else {
+							FlansMod.logPackError(file.name, packName, shortName, "Could not find item for RechargeRecipe", split, null);
+						}
 					}
 				}
 			} catch (Exception ex) {

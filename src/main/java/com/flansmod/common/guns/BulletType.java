@@ -143,11 +143,10 @@ public class BulletType extends ShootableType
 			entityHitSoundEnable = ConfigUtils.configBool(config, "EntityHitSoundEnable", entityHitSoundEnable);
 			hitSound = ConfigUtils.configSound(packName, config, "HitSound", hitSound);
 			hitSoundRange = ConfigUtils.configFloat(config, "HitSoundRange", hitSoundRange);
-			//Dont know why its like this
-			if (config.containsKey("Penetrates")) {
-				boolean pens = Boolean.parseBoolean(config.get("Penetrates"));
-				penetratingPower = pens ? 1F : 0.7F;
-			}
+
+			boolean pens = ConfigUtils.configBool(config, "Penetrates", true);
+			penetratingPower = pens ? 1F : 0.7F;
+
 			penetratingPower = ConfigUtils.configFloat(config, new String[]{"Penetration", "PenetratingPower"}, penetratingPower);
 			penetrationDecay = ConfigUtils.configFloat(config, "PenetrationDecay", penetrationDecay);
 

@@ -130,9 +130,11 @@ public class AAGunType extends InfoType
 			try {
 				String[] split = ConfigUtils.getSplitFromKey(config, "GunnerPos");
 
-				gunnerX = Integer.parseInt(split[1]);
-				gunnerY = Integer.parseInt(split[2]);
-				gunnerZ = Integer.parseInt(split[3]);
+				if (split != null) {
+					gunnerX = Integer.parseInt(split[1]);
+					gunnerY = Integer.parseInt(split[2]);
+					gunnerZ = Integer.parseInt(split[3]);
+				}
 			} catch (Exception ex) {
 				FlansMod.logPackError(file.name, packName, shortName, "Setting gunner position failed", null, ex);
 			}

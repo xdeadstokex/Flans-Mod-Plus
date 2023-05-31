@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
 import net.minecraft.block.material.Material;
@@ -408,45 +409,49 @@ public class DriveableType extends PaintableType {
             //int numWheels = ConfigUtils.configInt(config, "NumWheels", 0);
 
             //Wheels
-            try {
-                ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
+            // This is bad design, but Mechas do not have or need wheels.
+            if (!(this instanceof MechaType)) {
+                try {
+                    ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Wheel", "WheelPosition" });
 
-                int numWheels = splits.size();
+                    int numWheels = splits.size();
 
-                if (numWheels < 2 || numWheels > 4) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error: Either 3 or 4 wheels are required", null, null);
+                    if (numWheels < 2 || numWheels > 4) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Fatal error: Either 3 or 4 wheels are required", null, null);
+                        throw new Exception("Invalid Wheel Configuration");
+                    } else {
+                        wheelPositions = new DriveablePosition[numWheels];
+                    }
+
+                    int counter = 0;
+                    for (String[] split : splits) {
+                        int wheelIndex = Integer.parseInt(split[1]);
+                        if (wheelIndex >= numWheels) {
+                            FlansMod.logPackError(file.name, packName, shortName, "Incorrect wheel index given, defaulting to counting.", split, null);
+                            wheelIndex = counter;
+                        }
+
+                        float x = Float.parseFloat(split[2]) / 16F;
+                        float y = Float.parseFloat(split[3]) / 16F;
+                        float z = Float.parseFloat(split[4]) / 16F;
+
+                        EnumDriveablePart part = EnumDriveablePart.coreWheel;
+                        if (split.length > 5) {
+                            part = EnumDriveablePart.getPart(split[5]);
+                        }
+
+                        DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
+                        wheelPositions[wheelIndex] = wheelPosition;
+
+                        counter++;
+                    }
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while parsing wheels", null, ex);
+
                     throw new Exception("Invalid Wheel Configuration");
-                } else {
-                    wheelPositions = new DriveablePosition[numWheels];
                 }
-
-                int counter = 0;
-                for (String[] split : splits) {
-                    int wheelIndex = Integer.parseInt(split[1]);
-                    if (wheelIndex >= numWheels) {
-                        FlansMod.logPackError(file.name, packName, shortName, "Incorrect wheel index given, defaulting to counting.", split, null);
-                        wheelIndex = counter;
-                    }
-
-                    float x = Float.parseFloat(split[2]) / 16F;
-                    float y = Float.parseFloat(split[3]) / 16F;
-                    float z = Float.parseFloat(split[4]) / 16F;
-
-                    EnumDriveablePart part = EnumDriveablePart.coreWheel;
-                    if (split.length > 5) {
-                        part = EnumDriveablePart.getPart(split[5]);
-                    }
-
-                    DriveablePosition wheelPosition = new DriveablePosition(new Vector3f(x, y, z), part);
-                    wheelPositions[wheelIndex] = wheelPosition;
-
-                    counter++;
-                }
-            } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while parsing wheels", null, ex);
-
-                throw new Exception("Invalid Wheel Configuration");
             }
+
 
             try {
                 ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Driver", "Pilot" });

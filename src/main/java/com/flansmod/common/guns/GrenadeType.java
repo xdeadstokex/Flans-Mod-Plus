@@ -167,8 +167,16 @@ public class GrenadeType extends ShootableType
 			smokeTime = ConfigUtils.configInt(config, "SmokeTime", smokeTime);
 			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
 			smokeParticleType = ConfigUtils.configString(config, "SmokeParticles", smokeParticleType);
-			if(config.containsKey("SmokeEffect"))
-				smokeEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, "SmokeEffect")));
+
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "SmokeEffect" });
+			for (String[] split : splits) {
+				try {
+					smokeEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't add SmokeEffect for grenade", split, ex);
+				}
+			}
+
 			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
 			spinWhenThrown = ConfigUtils.configBool(config, "SpinWhenThrown", spinWhenThrown);
 			remote = ConfigUtils.configBool(config, "Remote", remote);
@@ -197,18 +205,20 @@ public class GrenadeType extends ShootableType
 			//Deployable Bag Stuff
 			if(config.containsKey("DeployableBag"))
 				isDeployableBag = true;
+
 			numUses = ConfigUtils.configInt(config, "NumUses", numUses);
 			healAmount = ConfigUtils.configFloat(config, "HealAmount", healAmount);
-			if(config.containsKey("AddPotionEffect") || config.containsKey("PotionEffect")) {
-				String key = "AddPotionEffect";
-				if (config.containsKey("PotionEffect"))
-					key = "PotionEffect";
-				potionEffects.add(getPotionEffect(ConfigUtils.getSplitFromKey(config, key)));
+
+			String[] split = ConfigUtils.getSplitFromKey(config, new String[] { "AddPotionEffect", "PotionEffect" });
+
+			if (split != null) {
+				potionEffects.add(getPotionEffect(split));
 			}
+
 
 			numClips = ConfigUtils.configInt(config, "NumClips", numClips);
 		} catch (Exception ex) {
-			FlansMod.logPackError(file.name, packName, shortName, "Fatal error ocurred while reading grenade file", null, ex);
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading grenade file", null, ex);
 		}
 	}
 

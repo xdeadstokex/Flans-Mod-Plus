@@ -9,6 +9,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
+import org.classpath.icedtea.Config;
 
 import java.util.HashMap;
 
@@ -159,11 +160,11 @@ public abstract class ShootableType extends InfoType {
 
         shootables.put(shortName, this);
 
-        if (readDamageVsPlayer == false) {
+        if (!readDamageVsPlayer) {
             damageVsPlayer = damageVsLiving;
-        } if (readDamageVsEntity == false) {
+        } if (!readDamageVsEntity) {
             damageVsEntity = damageVsVehicles;
-        } if (readDamageVsPlanes == false) {
+        } if (!readDamageVsPlanes) {
             damageVsPlanes = damageVsVehicles;
         }
     }
@@ -189,24 +190,31 @@ public abstract class ShootableType extends InfoType {
         throwSpeed = ConfigUtils.configFloat(config, new String[]{"ThrowSpeed", "ShootSpeed"}, throwSpeed);
         hitBoxSize = ConfigUtils.configFloat(config, "HitBoxSize",  hitBoxSize);
 
-        //Hit stuff
+        //Hit stuff - goofy logic, idk why.
         if (config.containsKey("Damage")) {
-            damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = Float.parseFloat(config.get("Damage"));
+            damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = ConfigUtils.configFloat(config, "Damage", 0F);
         }
+
         damageVsLiving = ConfigUtils.configFloat(config, "DamageVsLiving",  damageVsLiving);
+
         if (config.containsKey("DamageVsPlayer")) {
             damageVsPlayer = ConfigUtils.configFloat(config, "DamageVsPlayer",  damageVsPlayer);
             readDamageVsPlayer = true;
         }
+
         if (config.containsKey("DamageVsEntity")) {
             damageVsEntity = ConfigUtils.configFloat(config, "DamageVsEntity",  damageVsEntity);
             readDamageVsEntity = true;
         }
+
         damageVsVehicles = ConfigUtils.configFloat(config, "DamageVsVehicles",  damageVsVehicles);
+
         if (config.containsKey("DamageVsPlanes")) {
             damageVsPlanes = ConfigUtils.configFloat(config, "DamageVsPlanes",  damageVsPlanes);
             readDamageVsPlanes = true;
         }
+
+
         ignoreArmorProbability = ConfigUtils.configFloat(config, "IgnoreArmorProbability",  ignoreArmorProbability);
         ignoreArmorDamageFactor = ConfigUtils.configFloat(config, "IgnoreArmorDamageFactor",  ignoreArmorDamageFactor);
         breaksGlass = ConfigUtils.configBool(config, "BreaksGlass",  breaksGlass);

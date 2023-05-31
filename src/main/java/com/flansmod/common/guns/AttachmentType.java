@@ -129,10 +129,10 @@ public class AttachmentType extends PaintableType implements IScope
 	@Override
 	protected void read(ConfigMap config, TypeFile file) {
 		try {
-
 			super.read(config, file);
-			if (config.containsKey("AttachmentType"))
-				type = EnumAttachmentType.get(config.get("AttachmentType"));
+
+			String typeString = ConfigUtils.configString(config, "AttachmentType", type.toString());
+			type = EnumAttachmentType.get(typeString);
 
 			model = FlansMod.proxy.loadModel(modelString, shortName, ModelAttachment.class);
 
@@ -148,9 +148,11 @@ public class AttachmentType extends PaintableType implements IScope
 			flashlightStrength = ConfigUtils.configInt(config, "FlashlightStrength", flashlightStrength);
 
 			//Mode override
-			if(config.containsKey("ModeOverride"))
-				modeOverride = EnumFireMode.getFireMode(config.get("ModeOverride"));
-//
+			String modeOverrideString = ConfigUtils.configString(config, "ModeOverride", null);
+			if (modeOverrideString != null) {
+				modeOverride = EnumFireMode.getFireMode(modeOverrideString);
+			}
+
 			//Secondary Stuff
 			secondaryFire = ConfigUtils.configBool(config, "SecondaryMode", secondaryFire);
 			//todo fix multiples
@@ -165,8 +167,12 @@ public class AttachmentType extends PaintableType implements IScope
 			secondaryShootDelay = ConfigUtils.configInt(config, "SecondaryShootDelay", secondaryShootDelay);
 			secondaryNumBullets = ConfigUtils.configInt(config, "SecondaryNumBullets", secondaryNumBullets);
 			numSecAmmoItems = ConfigUtils.configInt(config, "LoadSecondaryIntoGun", numSecAmmoItems);
-			if (config.containsKey("SecondaryFireMode"))
-				secondaryFireMode = EnumFireMode.getFireMode(config.get("SecondaryFireMode"));
+
+			String secondaryFireModeString = ConfigUtils.configString(config, "SecondaryFireMode", null);
+			if (secondaryFireModeString != null) {
+				secondaryFireMode = EnumFireMode.getFireMode(secondaryFireModeString);
+			}
+
 			secondaryShootSound = ConfigUtils.configGunSound(packName, config, "SecondaryShootSound", secondaryShootSound);
 			secondaryReloadSound = ConfigUtils.configGunSound(packName, config, "SecondaryReloadSound", secondaryReloadSound);
 			toggleSound = ConfigUtils.configGunSound(packName, config, "ModeSwitchSound", toggleSound);
@@ -189,11 +195,13 @@ public class AttachmentType extends PaintableType implements IScope
 			zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
 			zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
 			FOVZoomLevel = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVZoomLevel);
-			if (config.containsKey("ZoomOverlay")) {
+
+			String zoomOverlayString = ConfigUtils.configString(config, "ZoomOverlay", null);
+			if (zoomOverlayString == null || zoomOverlayString.equalsIgnoreCase("None")) {
+				hasScopeOverlay = false;
+			} else {
 				hasScopeOverlay = true;
-				if (config.get("ZoomOverlay").equals("None"))
-					hasScopeOverlay = false;
-				else zoomOverlay = config.get("ZoomOverlay");
+				zoomOverlay = zoomOverlayString;
 			}
 			hasNightVision = ConfigUtils.configBool(config, "HasNightVision", hasNightVision);
 

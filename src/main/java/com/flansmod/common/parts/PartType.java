@@ -112,37 +112,54 @@ public class PartType extends InfoType {
             useRFPower = ConfigUtils.configBool(config, new String[]{"UseRF", "UseRFPower"}, useRFPower);
             RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
             // Engine compatibility
-            if (config.containsKey("WorksWith")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "WorksWith");
-                worksWith = new ArrayList<EnumType>();
-                for (int i = 0; i < split.length - 1; i++) {
-                    worksWith.add(EnumType.get(split[i + 1]));
+
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "WorksWith" });
+            try {
+                if (splits.size() > 0) {
+                    worksWith = new ArrayList<EnumType>();
                 }
+                for (String[] split : splits) {
+                    for (int i=1; i<split.length; i++) {
+                        EnumType type = EnumType.get(split[i]);
+                        if (type == null) {
+                            FlansMod.logPackError(file.name, packName, shortName, "type not found for part WorksWith", split, null);
+                        } else {
+                            worksWith.add(type);
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown wile processing WorksWith", null, ex);
             }
 
             // Fuel cans
             fuel = ConfigUtils.configInt(config, "Fuel", fuel);
 
             //Recipe
-            if (config.containsKey("PartBoxRecipe")) {
-                String[] split = ConfigUtils.getSplitFromKey(config, "PartBoxRecipe");
-                ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
-                for (int i = 0; i < (split.length - 2) / 2; i++) {
-                    int amount = Integer.parseInt(split[2 * i + 2]);
-                    boolean damaged = split[2 * i + 3].contains(".");
-                    String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
-                    int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
+            String[] split = ConfigUtils.getSplitFromKey(config, "PartBoxRecipe");
+            try {
+                if (split != null) {
+                    ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
+                    for (int i = 0; i < (split.length - 2) / 2; i++) {
+                        int amount = Integer.parseInt(split[2 * i + 2]);
+                        boolean damaged = split[2 * i + 3].contains(".");
+                        String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
+                        int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
 
-                    ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
+                        ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
 
-                    if (recipeElement == null) {
-                        FlansMod.logPackError(file.name, packName, shortName, "Could not find item for PartBoxRecipe", split, null);
+                        if (recipeElement == null) {
+                            FlansMod.logPackError(file.name, packName, shortName, "Could not find item for PartBoxRecipe", split, null);
+                        }
+
+                        stacks[i] = recipeElement;
                     }
-
-                    stacks[i] = recipeElement;
+                    partBoxRecipe.addAll(Arrays.asList(stacks));
                 }
-                partBoxRecipe.addAll(Arrays.asList(stacks));
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while constructing PartBoxRecipe for part", split, ex);
             }
+
         } catch (Exception e) {
             FlansMod.log("Reading part file failed.");
             e.printStackTrace();
