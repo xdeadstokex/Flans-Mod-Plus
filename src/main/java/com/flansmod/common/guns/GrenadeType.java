@@ -209,12 +209,14 @@ public class GrenadeType extends ShootableType
 			numUses = ConfigUtils.configInt(config, "NumUses", numUses);
 			healAmount = ConfigUtils.configFloat(config, "HealAmount", healAmount);
 
-			String[] split = ConfigUtils.getSplitFromKey(config, new String[] { "AddPotionEffect", "PotionEffect" });
-
-			if (split != null) {
-				potionEffects.add(getPotionEffect(split));
+			splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddPotionEffect", "PotionEffect" });
+			for (String[] split : splits) {
+				try {
+					potionEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't add PotionEffect", split, ex);
+				}
 			}
-
 
 			numClips = ConfigUtils.configInt(config, "NumClips", numClips);
 		} catch (Exception ex) {

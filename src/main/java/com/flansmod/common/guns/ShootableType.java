@@ -236,12 +236,12 @@ public abstract class ShootableType extends InfoType {
         explosionDamageVsPlayer = ConfigUtils.configFloat(config, "ExplosionDamageVsPlayer",  explosionDamageVsPlayer);
         explosionDamageVsPlane = ConfigUtils.configFloat(config, "ExplosionDamageVsPlane",  explosionDamageVsPlane);
         explosionDamageVsVehicle = ConfigUtils.configFloat(config, "ExplosionDamageVsVehicle",  explosionDamageVsVehicle);
-        dropItemOnDetonate = config.get("DropItemOnDetonate");
-        detonateSound = config.get("DetonateSound");
+        dropItemOnDetonate = ConfigUtils.configString(config, "DropItemOnDetonate", dropItemOnDetonate);
+        detonateSound = ConfigUtils.configString(config, "DetonateSound", detonateSound);
 
         //Submunitions
         hasSubmunitions = ConfigUtils.configBool(config, "HasSubmunitions",  hasSubmunitions);
-        submunition = config.get("Submunition");
+        submunition = ConfigUtils.configString(config, "Submunition", submunition);
         numSubmunitions = ConfigUtils.configInt(config, "NumSubmunitions",  numSubmunitions);
         subMunitionTimer = ConfigUtils.configInt(config, "SubmunitionDelay",  subMunitionTimer);
         submunitionSpread = ConfigUtils.configFloat(config, "SubmunitionSpread",  submunitionSpread);
@@ -250,7 +250,7 @@ public abstract class ShootableType extends InfoType {
 
         //Particles
         trailParticles = ConfigUtils.configBool(config, new String[]{"TrailParticles", "SmokeTrail"},  trailParticles);
-        trailParticleType = config.get("TrailParticleType");
+        trailParticleType = ConfigUtils.configString(config, "TrailParticleType", trailParticleType);
     }
 
     public static ShootableType getShootableType(String string) {

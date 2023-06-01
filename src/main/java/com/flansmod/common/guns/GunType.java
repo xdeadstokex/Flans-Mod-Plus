@@ -16,6 +16,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import org.classpath.icedtea.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -567,7 +568,7 @@ public class GunType extends PaintableType implements IScope {
 
         consumeGunUponUse = ConfigUtils.configBool(config, "ConsumeGunOnUse", consumeGunUponUse);
         showCrosshair = ConfigUtils.configBool(config, "ShowCrosshair", showCrosshair);
-        dropItemOnShoot = config.get("DropItemOnShoot");
+        dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", null);
         numBurstRounds = ConfigUtils.configInt(config, "NumBurstRounds", numBurstRounds);
         minigunStartSpeed = ConfigUtils.configFloat(config, "MinigunStartSpeed", minigunStartSpeed);
 
@@ -674,9 +675,9 @@ public class GunType extends PaintableType implements IScope {
         flashModelString = ConfigUtils.configString(config, "FlashModel", null);
         flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
 
-        casingTexture = config.get("CasingTexture");
-        flashTexture = config.get("FlashTexture");
-        muzzleFlashParticle = config.get("MuzzleFlashParticle");
+        casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
+        flashTexture = ConfigUtils.configString(config, "FlashTexture", null);
+        muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", null);;
         muzzleFlashParticleSize = ConfigUtils.configFloat(config, "MuzzleFlashParticleSize", muzzleFlashParticleSize);
         showMuzzleFlashParticles = ConfigUtils.configBool(config, "ShowMuzzleFlashParticle", showMuzzleFlashParticles);
         if (showMuzzleFlashParticles)
@@ -685,9 +686,9 @@ public class GunType extends PaintableType implements IScope {
         muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
         muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
         modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
-        texture = config.get("Texture");
-        hitTexture = config.get("CasingTexture");
-        deployableTexture = config.get("DeployedTexture");
+        texture = ConfigUtils.configString(config, "Texture", texture);
+        hitTexture = ConfigUtils.configString(config, "CasingTexture", hitTexture);
+        deployableTexture = ConfigUtils.configString(config, "DeployedTexture", deployableTexture);
         topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", modelScale);
         bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
         sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
@@ -730,27 +731,25 @@ public class GunType extends PaintableType implements IScope {
 
         meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
 
-        try {
-            aSplit = ConfigUtils.getSplitFromKey(config, "AddNode");
-
-            if (aSplit != null) {
-                meleePath.add(new Vector3f(Float.parseFloat(aSplit[1]) / 16F, Float.parseFloat(aSplit[2]) / 16F, Float.parseFloat(aSplit[3]) / 16F));
-                meleePathAngles.add(new Vector3f(Float.parseFloat(aSplit[4]), Float.parseFloat(aSplit[5]), Float.parseFloat(aSplit[6])));
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddNode" });
+        for (String[] split : splits) {
+            try {
+                meleePath.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+                meleePathAngles.add(new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6])));
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", split, ex);
             }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", aSplit, ex);
         }
 
-
-        try {
-            aSplit = ConfigUtils.getSplitFromKey(config, new String[] { "MeleeDamagePoint", "MeleeDamageOffset" });
-
-            if (aSplit != null) {
-                meleeDamagePoints.add(new Vector3f(Float.parseFloat(aSplit[1]) / 16F, Float.parseFloat(aSplit[2]) / 16F, Float.parseFloat(aSplit[3]) / 16F));
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "MeleeDamagePoint", "MeleeDamageOffset" });
+        for (String[] split : splits) {
+            try {
+                meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", split, ex);
             }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", aSplit, ex);
         }
+
 
         //Player modifiers
         moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);

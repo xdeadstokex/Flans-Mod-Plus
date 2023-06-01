@@ -155,10 +155,20 @@ public class AttachmentType extends PaintableType implements IScope
 
 			//Secondary Stuff
 			secondaryFire = ConfigUtils.configBool(config, "SecondaryMode", secondaryFire);
-			//todo fix multiples
-//			else if(split[0].equals("SecondaryAmmo"))
-//				secondaryAmmo.add(split[1]);
-			secondaryAmmo.add(ConfigUtils.configString(config, "SecondaryAmmo", ""));
+
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "SecondaryAmmo" });
+			try {
+				for (String[] split : splits) {
+					if (split.length == 2) {
+						secondaryAmmo.add(split[1]);
+					} else {
+						FlansMod.logPackError(file.name, packName, shortName, "SecondaryAmmo in unknown format, skipping", split, null);
+					}
+				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Error thrown while parsing SecondaryMode", null, ex);
+			}
+
 			secondaryDamage = ConfigUtils.configFloat(config, "SecondaryDamage", secondaryDamage);
 			secondarySpread = ConfigUtils.configFloat(config, new String[]{"SecondarySpread", "SecondaryAccuracy"}, secondarySpread);
 			secondarySpeed = ConfigUtils.configFloat(config, "SecondaryBulletSpeed", secondarySpeed);

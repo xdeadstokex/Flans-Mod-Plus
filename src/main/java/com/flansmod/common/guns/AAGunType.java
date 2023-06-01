@@ -147,7 +147,7 @@ public class AAGunType extends InfoType
 			targetMechas = ConfigUtils.configBool(config, "TargetMechas", targetMechas);
 
 			if(config.containsKey("TargetDriveables"))
-				targetMechas = targetPlanes = targetVehicles = Boolean.parseBoolean(config.get("TargetDriveables"));
+				targetMechas = targetPlanes = targetVehicles = ConfigUtils.configBool(config, "TargetDriveables", false);
 
 			shareAmmo = ConfigUtils.configBool(config, "ShareAmmo", shareAmmo);
 			targetRange = ConfigUtils.configFloat(config, "TargetRange", targetRange);

@@ -169,7 +169,11 @@ public class BulletType extends ShootableType
 
 			ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "SmokeEffect" });
 			for (String[] split : lines) {
-				smokeEffects.add(getPotionEffect(split));
+				try {
+					smokeEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't read PotionEffect for bullet", split, ex);
+				}
 			}
 
 			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
@@ -223,7 +227,11 @@ public class BulletType extends ShootableType
 
 			lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PotionEffect" });
 			for (String[] split : lines) {
-				hitEffects.add(getPotionEffect(split));
+				try {
+					hitEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't read PotionEffect for bullet", split, ex);
+				}
 			}
 
 			manualGuidance = ConfigUtils.configBool(config, "ManualGuidance", manualGuidance);
