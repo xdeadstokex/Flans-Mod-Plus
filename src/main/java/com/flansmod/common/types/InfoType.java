@@ -49,6 +49,7 @@ public abstract class InfoType implements IInfoType {
 
     public InfoType(TypeFile file) {
         packName = file.pack;
+
         infoTypes.add(this);
 
         configMap.setIdentifiers(file.name, file.pack);
@@ -91,6 +92,8 @@ public abstract class InfoType implements IInfoType {
                 break;
             if (line.startsWith("//") || line.trim().isEmpty())
                 continue;
+
+            readLine(line.split(" "), file);
 
             if (!line.contains(" ")) {
                 configMap.put(line.trim(), "");
@@ -308,7 +311,7 @@ public abstract class InfoType implements IInfoType {
             }
         }
         for (InfoType type : infoTypes) {
-            if (type.shortName.equals(s))
+            if (type.shortName != null && type.shortName.equals(s))
                 return new ItemStack(type.item, amount, damage);
         } if (s.equals("gunpowder")) {
             return new ItemStack(Items.gunpowder, amount);

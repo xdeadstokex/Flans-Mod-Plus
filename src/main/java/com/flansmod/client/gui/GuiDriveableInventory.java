@@ -141,10 +141,8 @@ public class GuiDriveableInventory extends GuiContainer {
                 if (driveable.getDriveableType().ammo.size() > 0) {
                     listHoveringText.add("[Missiles]");
                     for (BulletType ammo : driveable.getDriveableType().ammo) {
-                        if (ammo != null) {
-                            if (ammo != null && ammo.weaponType != EnumWeaponType.BOMB) {
-                                listHoveringText.add("> " + ammo.name);
-                            }
+                        if (ammo != null && ammo.weaponType != EnumWeaponType.SHELL) {
+                            listHoveringText.add("> " + ammo.name);
                         }
                     }
                 }

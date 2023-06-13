@@ -633,7 +633,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 currentGun = (currentGun + 1) % shootPoints.size();
                 setCurrentGun(currentGun, secondary);
                 shootEach(type, shootPoints.get(currentGun), currentGun, secondary, weaponType);
-            } else for (int i = 0; i < shootPoints.size(); i++)
+           } else for (int i = 0; i < shootPoints.size(); i++)
                 shootEach(type, shootPoints.get(i), i, secondary, weaponType);
         }
     }
@@ -1839,9 +1839,6 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     public boolean hasEnoughFuel() {
         //if (seats == null || seats[0] == null || seats[0].riddenByEntity == null)
         //return false;
-        System.out.println(driverIsCreative());
-        System.out.println(driveableData.fuelInTank > Math.abs(driveableData.engine.fuelConsumption * throttle));
-        System.out.println(getDriveableType().fuelTankSize < 0);
         return driverIsCreative() || driveableData.fuelInTank > Math.abs(driveableData.engine.fuelConsumption * throttle) || getDriveableType().fuelTankSize < 0;
     }
 

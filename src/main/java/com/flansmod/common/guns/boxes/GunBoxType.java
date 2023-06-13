@@ -138,7 +138,7 @@ public class GunBoxType extends InfoType
 					return;
 				}
 
-				gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(InfoType.getType(split[1]), getRecipe(split)));
+				gunEntries[nextGun].addAmmoEntry(new GunBoxEntry(ammoType, getRecipe(split)));
 
 			} catch(Exception ex) {
 				FlansMod.logPackError(file.name, packName, shortName, "Adding ammo to GunBox failed", split, ex);

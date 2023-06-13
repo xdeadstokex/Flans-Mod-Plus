@@ -670,7 +670,7 @@ public class DriveableType extends PaintableType {
 
             acceptAllAmmo = ConfigUtils.configBool(config, new String[]{ "AllowAllAmmo", "AcceptAllAmmo" }, acceptAllAmmo);
 
-            String line = ConfigUtils.configString(config, "Primary", null);
+            String line = ConfigUtils.configString(config, "Primary", "NONE");
             try {
                 if (line != null) {
                     primary = EnumWeaponType.valueOf(line.toUpperCase());
@@ -679,7 +679,7 @@ public class DriveableType extends PaintableType {
                 FlansMod.logPackError(file.name, packName, shortName, "Primary weapon type not known", new String[] { "Primary", line }, ex);
             }
 
-            line = ConfigUtils.configString(config, "Secondary", null);
+            line = ConfigUtils.configString(config, "Secondary", "NONE");
             try {
                 if (line != null) {
                     secondary = EnumWeaponType.valueOf(line.toUpperCase());
@@ -691,13 +691,18 @@ public class DriveableType extends PaintableType {
             damageMultiplierPrimary = ConfigUtils.configFloat(config, "DamageMultiplierPrimary", damageMultiplierPrimary);
             damageMultiplierSecondary = ConfigUtils.configFloat(config, "DamageMultiplierSecondary", damageMultiplierSecondary);
 
-            shootDelayPrimary = ConfigUtils.configFloat(config, new String[] { "ShootDelayPrimary", "ShellDelay" }, shootDelayPrimary);
+            shootDelayPrimary = ConfigUtils.configFloat(config, new String[] { "ShootDelayPrimary", "ShellDelay", "BombDelay" }, shootDelayPrimary);
             shootDelaySecondary = ConfigUtils.configFloat(config, new String[] { "ShootDelaySecondary", "ShootDelay" } , shootDelaySecondary);
 
 
             try {
-                shootDelayPrimary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinPrimary", shootDelayPrimary*1200F), 1);
-                shootDelaySecondary = Math.min(1200F / ConfigUtils.configFloat(config, "RoundsPerMinSecondary", shootDelaySecondary*1200F), 1);
+                if (shootDelayPrimary == -1) {
+                    shootDelayPrimary = Math.max(1200F / ConfigUtils.configFloat(config, "RoundsPerMinPrimary", 60), 1);
+                }
+
+                if (shootDelaySecondary == -1) {
+                    shootDelaySecondary = Math.max(1200F / ConfigUtils.configFloat(config, "RoundsPerMinSecondary", 60), 1);
+                }
             } catch (Exception ex) {
                 FlansMod.logPackError(file.name, packName, shortName, "Error thrown setting RoundsPerMin", null, ex);
             }
@@ -888,7 +893,7 @@ public class DriveableType extends PaintableType {
 
             splits = ConfigUtils.getSplitsFromKey(config, new String[]{"BarrelPosition"});
 
-            if (splits.size() > 1) {
+            if (splits.size() >= 1) {
                 primary = EnumWeaponType.SHELL;
             }
 
@@ -993,7 +998,7 @@ public class DriveableType extends PaintableType {
 
 
 
-            if (seats.length == 0 || seats[0] != null) {
+            if (seats.length > 0 && seats[0] != null) {
                 seats[0].part = EnumDriveablePart.getPart(ConfigUtils.configString(config, "DriverPart", "core"));
 
                 seats[0].gunName = ConfigUtils.configString(config, new String[] { "DriverGun", "PilotGun" }, seats[0].gunName);

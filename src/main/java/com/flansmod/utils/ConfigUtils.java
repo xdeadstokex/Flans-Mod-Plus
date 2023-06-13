@@ -169,7 +169,13 @@ public class ConfigUtils
 		String val = config.get(settingName);
 		if(val != null) {
 			try {
-				return (Vector3f) new Vector3f(val).scale(scale);
+				if (val.contains("[")) {
+					return new Vector3f(val).scale(scale);
+				} else {
+					String[] split = val.split(" ");
+					return (new Vector3f(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]))).scale(scale);
+				}
+
 			} catch (Exception ex) {
 				FlansMod.logPackError(config.fileName, config.packName, config.fileName,
 						"Parsing argument to vector failed", new String[] { settingName, val }, ex);

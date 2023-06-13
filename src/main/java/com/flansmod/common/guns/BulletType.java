@@ -1,7 +1,6 @@
 package com.flansmod.common.guns;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.flansmod.utils.ConfigMap;
@@ -13,9 +12,6 @@ import net.minecraft.potion.PotionEffect;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.guns.boxes.BlockGunBox;
-
-
 
 public class BulletType extends ShootableType
 {
@@ -186,13 +182,30 @@ public class BulletType extends ShootableType
 			boostPhaseParticle = ConfigUtils.configString(config, "BoostParticle", boostPhaseParticle);
 			torpedo = ConfigUtils.configBool(config, "Torpedo", torpedo);
 
-			if (config.containsKey("Bomb"))
-				weaponType = EnumWeaponType.BOMB;
-			else if (config.containsKey("Shell"))
-				weaponType = EnumWeaponType.SHELL;
-			else if (config.containsKey("Missile"))
-				weaponType = EnumWeaponType.MISSILE;
-			else if (config.containsKey("WeaponType")) {
+
+			// Some content packs use 'true' and false after this, which confuses things...
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Bomb" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.BOMB;
+				}
+			}
+
+			splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Shell" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.SHELL;
+				}
+			}
+
+			splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Missile" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.MISSILE;
+				}
+			}
+
+			if (config.containsKey("WeaponType")) {
 				String line = ConfigUtils.configString(config, "WeaponType", "Bomb");
 				try {
 					if (line != null) {
