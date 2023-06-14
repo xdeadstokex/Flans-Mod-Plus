@@ -48,36 +48,32 @@ public class ArmourBoxType extends InfoType
 	}
 
 	@Override
-	protected void read(ConfigMap config, TypeFile file)
-	{
-		super.read(config, file);
-		try {
-			topTexturePath = ConfigUtils.configString(config, "TopTexture", topTexturePath);
-			bottomTexturePath = ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
-			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
+	protected void readLine(String[] split, TypeFile file) {
+		if (split.length > 0 && (split[0].equalsIgnoreCase("AddArmour") || split[0].equalsIgnoreCase("AddArmor"))) {
+			try {
+				StringBuilder name = new StringBuilder(split[2]);
 
-			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddArmour", "AddArmor"});
-			for (String[] split : splits) {
-				try {
-					StringBuilder name = new StringBuilder(split[2]);
-
-					for(int i = 3; i < split.length; i++)
-						name.append(" ").append(split[i]);
-					ArmourBoxEntry entry = new ArmourBoxEntry(split[1], name.toString());
-					//Read the next 4 lines for each armour piece
-					for (int i = 0; i < 4; i++)
+				for(int i = 3; i < split.length; i++)
+					name.append(" ").append(split[i]);
+				ArmourBoxEntry entry = new ArmourBoxEntry(split[1], name.toString());
+				//Read the next 4 lines for each armour piece
+				for (int i = 0; i < 4; i++)
+				{
+					String line;
+					line = file.readLine();
+					if(line == null)
+						continue;
+					if(line.startsWith("//"))
 					{
-						String line;
-						line = file.readLine();
-						if(line == null)
-							continue;
-						if(line.startsWith("//"))
-						{
-							i--;
-							continue;
-						}
-						String[] lineSplit = line.split(" ");
-						entry.armours[i] = ArmourType.getArmourType(lineSplit[0]);
+						i--;
+						continue;
+					}
+					String[] lineSplit = line.split(" ");
+
+					ArmourType armourType = ArmourType.getArmourType(lineSplit[0]);
+
+					if (armourType != null) {
+						entry.armours[i] = armourType;
 						for(int j = 0; j < (lineSplit.length - 1) / 2; j++)
 						{
 							ItemStack recipeElement = null;
@@ -92,13 +88,26 @@ public class ArmourBoxType extends InfoType
 								FlansMod.logPackError(file.name, packName, shortName, "Could not find item for armour recipe", split, null);
 							}
 						}
+					} else {
+						FlansMod.logPackError(file.name, packName, shortName, "Couldn't find armour type for armour box", lineSplit, null);
 					}
-
-					pages.add(entry);
-				} catch (Exception ex) {
-					FlansMod.logPackError(file.name, packName, shortName, "Adding armour to box failed", split, ex);
 				}
+
+				pages.add(entry);
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Adding armour to box failed", split, ex);
 			}
+		}
+	}
+
+	@Override
+	protected void read(ConfigMap config, TypeFile file)
+	{
+		super.read(config, file);
+		try {
+			topTexturePath = ConfigUtils.configString(config, "TopTexture", topTexturePath);
+			bottomTexturePath = ConfigUtils.configString(config, "BottomTexture", bottomTexturePath);
+			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading armour box", null, ex);
 		}

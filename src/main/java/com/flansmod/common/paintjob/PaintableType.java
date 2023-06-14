@@ -133,7 +133,7 @@ public abstract class PaintableType extends InfoType
 	
 	public Paintjob getPaintjob(int i)
 	{
-		return paintjobs.get(i);
+		return paintjobs.get(Math.min(paintjobs.size()-1, i));
 	}
 
 	public float GetRecommendedScale()

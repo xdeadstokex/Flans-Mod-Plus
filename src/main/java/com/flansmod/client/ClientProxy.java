@@ -327,7 +327,7 @@ public class ClientProxy extends CommonProxy {
      */
     @Override
     public <T> T loadModel(String s, String shortName, Class<T> typeClass) {
-        if (s == null || shortName == null)
+        if (s == null || s.equalsIgnoreCase("None") || shortName == null)
             return null;
         try {
             return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
