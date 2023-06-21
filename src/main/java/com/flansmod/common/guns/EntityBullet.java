@@ -766,6 +766,27 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                             FlansMod.proxy.playBlockBreakSound(xTile, yTile, zTile, block, this.dimension);
                         } 
                     }
+		if (type.hitSoundEnable){
+                    if(block.equals(Blocks.brick_block)){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_bricks").toString(), 0.5F,1);
+                    }
+                    else if(mat==Material.ground || mat==Material.grass || mat==Material.sand || mat==Material.clay || mat==Material.tnt){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_dirt").toString(), 0.5F,1);
+                    }
+                    else if(mat==Material.glass || mat==Material.redstoneLight || mat==Material.ice || mat==Material.packedIce){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_glass").toString(), 0.5F,1);
+                    }
+                    else if(mat==Material.iron || mat==Material.anvil){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_metal").toString(), 0.5F,1);
+                    }
+                    else if(mat==Material.rock){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_rock").toString(), 0.5F,1);
+                    }
+                    else if(mat==Material.wood){
+                        worldObj.playSoundEffect(posX,posY,posZ,FlansModResourceHandler.getSound("impact_wood").toString(), 0.5F,1);
+                    }
+		}
+			
 
                     if (worldObj.isRemote) {
                         if (block.getMaterial() != Material.air && this.type.explosionRadius <= 0) {
