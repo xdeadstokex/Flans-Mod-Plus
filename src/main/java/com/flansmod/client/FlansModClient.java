@@ -141,13 +141,15 @@ public class FlansModClient extends FlansMod {
     public static boolean hitMarkerHeadshot = false;
     public static float hitMarkerPenAmount = 1F;
     public static boolean hitMarkerExplosion = false;
-
+    
+    public static boolean combineAmmoOnReload = true;
+    public static boolean ammoToUpperInventoryOnReload = false;
+    
+    
     public void load() {
         log("Loading Flan's mod client side.");
         MinecraftForge.EVENT_BUS.register(this);
     }
-
-    //private static final ResourceLocation zombieSkin = new ResourceLocation("flansmod", "skins/zombie.png");
 
     @SubscribeEvent
     public void renderOffHandGun(RenderPlayerEvent.Specials.Post event) {
@@ -192,7 +194,7 @@ public class FlansModClient extends FlansMod {
         GL11.glPopMatrix();
     }
 
-    //Handle player hiding / name tag removal for teams
+    //Handle player hiding / name tag removal
     @SubscribeEvent
     public void renderLiving(RenderPlayerEvent.Pre event) {
         PlayerData data = PlayerHandler.getPlayerData(event.entityPlayer, Side.CLIENT);
@@ -203,8 +205,8 @@ public class FlansModClient extends FlansMod {
                 data.snapshots[0].renderSnapshot();
         }
 
-        RendererLivingEntity.NAME_TAG_RANGE = 64F;
-        RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 32F;
+        RendererLivingEntity.NAME_TAG_RANGE = FlansMod.nameTagRenderRange;
+        RendererLivingEntity.NAME_TAG_RANGE_SNEAK = FlansMod.nameTagSneakRenderRange;
         if (event.entity instanceof EntityPlayer && teamInfo != null && teamInfo.gametype != null && !"No Gametype".equals(teamInfo.gametype)) {
             PlayerScoreData rendering = teamInfo.getPlayerScoreData(event.entity.getCommandSenderName());
             PlayerScoreData thePlayer = teamInfo.getPlayerScoreData(minecraft.thePlayer.getCommandSenderName());
@@ -242,8 +244,6 @@ public class FlansModClient extends FlansMod {
                 RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 0F;
             }
         }
-
-
     }
 
     public static float shootTime(boolean left) {
@@ -632,11 +632,26 @@ public class FlansModClient extends FlansMod {
         FlansMod.configFile.save();
         aimButton = buttonInput;
     }
-
+    
     public static void setFireButton(FlanMouseButton buttonInput) {
         Property cw = FlansMod.configFile.get("Input Settings", "Fire Button", "right", "The mouse button used to fire a gun 'left' or 'right'");
         cw.set(buttonInput.toString());
         FlansMod.configFile.save();
         fireButton = buttonInput;
     }
+    
+    public static void setCombineAmmoOnReload(boolean combineAmmoOnReload) {
+        Property cw = FlansMod.configFile.get("Input Settings", "Combine Ammo On Reload", true, "Whether or not to combine unloaded magazines with damaged magazines in the inventory");
+        cw.set(combineAmmoOnReload);
+        FlansMod.configFile.save();
+        FlansModClient.combineAmmoOnReload = combineAmmoOnReload;
+    }
+    
+    public static void setAmmoToUpperInventoryOnReload(boolean ammoToUpperInventoryOnReload) {   	                     
+        Property cw = FlansMod.configFile.get("Input Settings", "Ammo To Upper Inventory On Reload", false, "Whether or not to first try to put unloaded ammo in the upper inventory instead of the hotbar");
+        cw.set(ammoToUpperInventoryOnReload);
+        FlansMod.configFile.save();
+        FlansModClient.ammoToUpperInventoryOnReload = ammoToUpperInventoryOnReload;
+    }
+    
 }

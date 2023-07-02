@@ -47,6 +47,16 @@ public class BulletType extends ShootableType
 	public float penetratingPower = 1F;
 	// In % of penetration to remove per tick.
 	public float penetrationDecay = 0F;
+
+	/*
+	 * How much the loss of penetration power affects the damage of the bullet. 0 = damage not affected by that kind of penetration,
+	 * 1 = damage is fully affected by bullet penetration of that kind
+	 */
+	public float playerPenetrationEffectOnDamage = 0F;
+	public float entityPenetrationEffectOnDamage = 0F;
+	public float blockPenetrationEffectOnDamage = 0F;
+	public float penetrationDecayEffectOnDamage = 0F;
+
 	// Knocback modifier. less gives less kb, more gives more kb, 1 = normal kb.
 	public float knockbackModifier;
 	/** Lock on variables. If true, then the bullet will search for a target at the moment it is fired */
@@ -145,6 +155,12 @@ public class BulletType extends ShootableType
 
 			penetratingPower = ConfigUtils.configFloat(config, new String[]{"Penetration", "PenetratingPower"}, penetratingPower);
 			penetrationDecay = ConfigUtils.configFloat(config, "PenetrationDecay", penetrationDecay);
+
+			playerPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "PlayerPenetrationDamageEffect", playerPenetrationEffectOnDamage);
+			entityPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "EntityPenetrationDamageEffect", entityPenetrationEffectOnDamage);
+			blockPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "BlockPenetrationDamageEffect", blockPenetrationEffectOnDamage);
+			penetrationDecayEffectOnDamage = ConfigUtils.configFloat(config, "PenetrationDecayDamageEffect", penetrationDecayEffectOnDamage);
+
 
 			dragInAir = ConfigUtils.configFloat(config, "DragInAir", dragInAir);
 			dragInAir = Math.max(0, Math.min(1, dragInAir)); // Clamp to [0, 1]

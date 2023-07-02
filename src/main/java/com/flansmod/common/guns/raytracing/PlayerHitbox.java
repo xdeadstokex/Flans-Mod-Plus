@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
@@ -192,11 +193,12 @@ public class PlayerHitbox {
         bullet.lastHitPenAmount = Math.max(bullet.lastHitPenAmount, damageModifier);
 
         if (type == EnumHitboxType.HEAD) {
-            damageModifier *= 2F;
+            damageModifier *= FlansMod.masterHeadshotModifier;
             bullet.lastHitHeadshot = true;
         } else if(type == EnumHitboxType.LEGS) {
-            damageModifier *=0.5F;
+            damageModifier *= FlansMod.masterLegModifier;
         }
+
         switch (type) {
             case LEGS:
             case BODY:
@@ -204,7 +206,7 @@ public class PlayerHitbox {
             case LEFTARM:
             case RIGHTARM: {
                 //Calculate the hit damage
-                float hitDamage = bullet.damage * bullet.type.damageVsPlayer * damageModifier;
+                float hitDamage = bullet.getDamageAffectedByPenetration() * bullet.type.damageVsPlayer * damageModifier;
                 //Create a damage source object
                 DamageSource damagesource = bullet.owner == null ? DamageSource.generic : bullet.getBulletDamage(type == EnumHitboxType.HEAD);
                 //When the damage is 0 (such as with Nerf guns) the entityHurt Forge hook is not called, so this hacky thing is here

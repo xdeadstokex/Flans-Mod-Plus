@@ -3,8 +3,11 @@ package com.flansmod.common.guns;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.flansmod.common.network.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -23,6 +26,7 @@ import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.eventhandlers.GunFiredEvent;
+import com.flansmod.common.eventhandlers.GunReloadEvent;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.EntityHit;
 import com.flansmod.common.guns.raytracing.EnumHitboxType;
@@ -283,171 +287,209 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
     @SideOnly(Side.CLIENT)
     private void onUpdateClient(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-        if (entity instanceof EntityPlayer && ((EntityPlayer) entity).inventory.getCurrentItem() == itemstack) {
-            //Get useful objects
-            Minecraft mc = Minecraft.getMinecraft();
-            EntityPlayer player = (EntityPlayer) entity;
-            PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
-            //Switch Delay
-            if (mc.thePlayer == entity
-                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
-                    != GunAnimations.lastInventorySlot) {
-                GunAnimations.lastInventorySlot = mc.thePlayer.inventory.currentItem;
-                ItemStack stack = mc.thePlayer.getHeldItem();
-                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
-                if (stack != null && stack.getItem() instanceof ItemGun) {
-                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
-                    if (animationLength == 0) {
-                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
-                    } else {
-                        animations.switchAnimationProgress = 1;
-                        animations.switchAnimationLength = animationLength;
-                        PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight = Math.max(PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight, animationLength);
-                    }
+        if (!(entity instanceof EntityPlayer))
+            return;
+        if (((EntityPlayer) entity).inventory.getCurrentItem() != itemstack) {
+            if (soundDelay > 0) {
+                soundDelay--;
+            }
+            return;
+        }
 
+        //Get useful objects
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = (EntityPlayer) entity;
+        PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
+
+        handleGunSwitchDelay(player, mc);
+
+        //Play idle sounds
+        if (soundDelay <= 0 && type.idleSound != null) {
+            PacketPlaySound.sendSoundPacket(entity.posX, entity.posY, entity.posZ, type.idleSoundRange, entity.dimension, type.idleSound, false);
+            soundDelay = type.idleSoundLength;
+        }
+
+        //If crouching, translate weapon model (zoom)
+        crouching = player.isSneaking();
+        //If running, reposition the gun
+        sprinting = player.isSprinting();
+
+        //This code is not for deployables
+        if (type.deployable)
+            return;
+
+
+        GameSettings gameSettings = FMLClientHandler.instance().getClient().gameSettings;
+        //If in a GUI
+        if (FMLClientHandler.instance().getClient().currentScreen != null) {
+            leftMouseHeld = false;
+            rightMouseHeld = false;
+            FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, false, player.rotationYaw, player.rotationPitch));
+            FlansMod.getPacketHandler().sendToServer(new PacketGunFire(false, false, player.rotationYaw, player.rotationPitch));
+            if (FlansModClient.currentScope != null) {
+                FlansModClient.currentScope = null;
+                gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+                gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+                gameSettings.fovSetting = FlansModClient.originalFOV;
+
+                //Send default spread packet to server
+                FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+            }
+        } else if (mc.objectMouseOver != null && (mc.objectMouseOver.entityHit instanceof EntityFlagpole || mc.objectMouseOver.entityHit instanceof EntityFlag || mc.objectMouseOver.entityHit instanceof EntityGunItem || (mc.objectMouseOver.entityHit instanceof EntityGrenade && ((EntityGrenade) mc.objectMouseOver.entityHit).type.isDeployableBag))) {
+            //Do not shoot ammo bags, flags or dropped gun items
+        }
+
+        //Else do shoot code
+        else {
+            //Get whether mice are held
+            boolean lastRightMouseHeld = rightMouseHeld;
+            lastLeftMouseHeld = leftMouseHeld;
+            rightMouseHeld = Mouse.isButtonDown(FlansModClient.fireButton.getButton());
+            leftMouseHeld = Mouse.isButtonDown(FlansModClient.aimButton.getButton());
+
+            boolean offHandFull = false;
+
+            //----------------------------- Off hand item ---------------------------------------------------------------------
+            if (type.getOneHanded()) {
+                if (data.offHandGunSlot == player.inventory.currentItem + 1)
+                    data.offHandGunSlot = 0;
+                //Cycle selection
+                int dWheel = Mouse.getDWheel();
+                if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && dWheel != 0) {
+                    data.cycleOffHandItem(player, dWheel);
                 }
-            }
 
-            //Play idle sounds
-            if (soundDelay <= 0 && type.idleSound != null) {
-                PacketPlaySound.sendSoundPacket(entity.posX, entity.posY, entity.posZ, type.idleSoundRange, entity.dimension, type.idleSound, false);
-                soundDelay = type.idleSoundLength;
-            }
-
-            //If crouching, translate weapon model (zoom)
-            crouching = player.isSneaking();
-            //If running, reposition the gun
-            sprinting = player.isSprinting();
-
-            //This code is not for deployables
-            if (type.deployable)
-                return;
-
-
-            GameSettings gameSettings = FMLClientHandler.instance().getClient().gameSettings;
-            //If in a GUI
-            if (FMLClientHandler.instance().getClient().currentScreen != null) {
-                if (FlansModClient.currentScope != null) {
-                    FlansModClient.currentScope = null;
-                    gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
-                    gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
-                    gameSettings.fovSetting = FlansModClient.originalFOV;
-
-                    //Send default spread packet to server
-                    FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
-                }
-            } else if (mc.objectMouseOver != null && (mc.objectMouseOver.entityHit instanceof EntityFlagpole || mc.objectMouseOver.entityHit instanceof EntityFlag || mc.objectMouseOver.entityHit instanceof EntityGunItem || (mc.objectMouseOver.entityHit instanceof EntityGrenade && ((EntityGrenade) mc.objectMouseOver.entityHit).type.isDeployableBag))) {
-                //Do not shoot ammo bags, flags or dropped gun items
-            }
-            //Else do shoot code
-            else {
-                //Get whether mice are held
-                boolean lastRightMouseHeld = rightMouseHeld;
-                lastLeftMouseHeld = leftMouseHeld;
-                rightMouseHeld = Mouse.isButtonDown(FlansModClient.fireButton.getButton());
-                leftMouseHeld = Mouse.isButtonDown(FlansModClient.aimButton.getButton());
-
-
-                boolean offHandFull = false;
-
-                //----------------------------- Off hand item ---------------------------------------------------------------------
-                if (type.getOneHanded()) {
-                    if (data.offHandGunSlot == player.inventory.currentItem + 1)
-                        data.offHandGunSlot = 0;
-                    //Cycle selection
-                    int dWheel = Mouse.getDWheel();
-                    if (Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode()) && dWheel != 0) {
-                        data.cycleOffHandItem(player, dWheel);
-                    }
-
-                    if (data.offHandGunSlot != 0) {
-                        offHandFull = true;
-                        ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
-                        if (offHandGunStack != null && offHandGunStack.getItem() instanceof ItemGun) {
-                            GunType offHandGunType = ((ItemGun) offHandGunStack.getItem()).type;
-                            if (offHandGunType.usableByPlayers) {
-                                //If we are using a burst mode gun, and there is burst left to be done, try to do it
-                                if (offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.BURST && data.burstRoundsRemainingLeft > 0) {
+                if (data.offHandGunSlot != 0) {
+                    offHandFull = true;
+                    ItemStack offHandGunStack = player.inventory.getStackInSlot(data.offHandGunSlot - 1);
+                    if (offHandGunStack != null && offHandGunStack.getItem() instanceof ItemGun) {
+                        GunType offHandGunType = ((ItemGun) offHandGunStack.getItem()).type;
+                        if (offHandGunType.usableByPlayers) {
+                            //If we are using a burst mode gun, and there is burst left to be done, try to do it
+                            if (offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.BURST && data.burstRoundsRemainingLeft > 0) {
+                                if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
+                                    player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
+                            } else {
+                                //Send packet when firing a semi or starting to fire a full
+                                if (leftMouseHeld && !lastLeftMouseHeld) {
+                                    FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, true, player.rotationYaw, player.rotationPitch));
                                     if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
                                         player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
-                                } else {
-                                    //Send packet when firing a semi or starting to fire a full
-                                    if (leftMouseHeld && !lastLeftMouseHeld) {
-                                        FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, true, player.rotationYaw, player.rotationPitch));
-                                        if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
-                                            player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
-                                    }
-                                    if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && !leftMouseHeld && lastLeftMouseHeld) //Full auto. Send released mouse packet
-                                    {
-                                        FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, false, player.rotationYaw, player.rotationPitch));
-                                    }
-                                    if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && leftMouseHeld) {
-                                        if (clientSideShoot(player, offHandGunStack, offHandGunType, true)) {
-                                            player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
-                                        }    
+                                }
+                                if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && !leftMouseHeld && lastLeftMouseHeld) //Full auto. Send released mouse packet
+                                {
+                                    FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, false, player.rotationYaw, player.rotationPitch));
+                                }
+                                if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && leftMouseHeld) {
+                                    if (clientSideShoot(player, offHandGunStack, offHandGunType, true)) {
+                                        player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
                                     }
                                 }
                             }
-                        } else data.offHandGunSlot = 0;
-                    }
+                        }
+                    } else data.offHandGunSlot = 0;
                 }
+            }
 
-                //--------------------------------- Main hand item ---------------------------------------------
-                if (type.usableByPlayers) {
-                    //If we are using a burst mode gun, and there is burst left to be done, try to do it
-                    if (type.getFireMode(itemstack) == EnumFireMode.BURST && data.burstRoundsRemainingRight > 0) {
+            //--------------------------------- Main hand item ---------------------------------------------
+            if (type.usableByPlayers) {
+                //If we are using a burst mode gun, and there is burst left to be done, try to do it
+                if (type.getFireMode(itemstack) == EnumFireMode.BURST && data.burstRoundsRemainingRight > 0) {
+                    if (clientSideShoot(player, itemstack, type, false))
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                } else {
+                    //Send packet when firing a semi or starting to fire a full
+                    if (rightMouseHeld && !lastRightMouseHeld) {
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunFire(false, true, player.rotationYaw, player.rotationPitch));
                         if (clientSideShoot(player, itemstack, type, false))
                             player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                    } else {
-                        //Send packet when firing a semi or starting to fire a full
-                        if (rightMouseHeld && !lastRightMouseHeld) {
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunFire(false, true, player.rotationYaw, player.rotationPitch));
-                            if (clientSideShoot(player, itemstack, type, false))
-                                player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                        }
-                        //Full auto. Send released mouse packet
-                        if ((type.getFireMode(itemstack) == EnumFireMode.FULLAUTO || type.getFireMode(itemstack) == EnumFireMode.MINIGUN) && !rightMouseHeld && lastRightMouseHeld) {
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunFire(false, false, player.rotationYaw, player.rotationPitch));
-                        }
-                        if ((type.getFireMode(itemstack) == EnumFireMode.FULLAUTO || type.getFireMode(itemstack) == EnumFireMode.MINIGUN) && rightMouseHeld) {
-                            if (clientSideShoot(player, itemstack, type, false))
-                                player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-                        }
-		    }
+                    }
+                    //Full auto. Send released mouse packet
+                    if ((type.getFireMode(itemstack) == EnumFireMode.FULLAUTO || type.getFireMode(itemstack) == EnumFireMode.MINIGUN) && !rightMouseHeld && lastRightMouseHeld) {
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunFire(false, false, player.rotationYaw, player.rotationPitch));
+                    }
+                    if ((type.getFireMode(itemstack) == EnumFireMode.FULLAUTO || type.getFireMode(itemstack) == EnumFireMode.MINIGUN) && rightMouseHeld) {
+                        if (clientSideShoot(player, itemstack, type, false))
+                            player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+                    }
                 }
-                IScope currentScope = type.getCurrentScope(itemstack);
-                if (FlansModClient.aimType == AimType.TOGGLE) {
-                    if (!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null) {
-                        if (FlansModClient.currentScope == null) {
-							/*if(type.allowNightVision)
-								isNightVision = true;
-							if(type.allowSlow)
-								isSlow = true;*/
-                            FlansModClient.currentScope = currentScope;
-                            FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
-                            float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
-                            FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
-                            gameSettings.thirdPersonView = 0;
+            }
+            IScope currentScope = type.getCurrentScope(itemstack);
+            if (FlansModClient.aimType == AimType.TOGGLE) {
+                if (!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && FlansModClient.scopeTime <= 0 && FMLClientHandler.instance().getClient().currentScreen == null) {
+                    if (FlansModClient.currentScope == null) {
+                        /*if(type.allowNightVision)
+                            isNightVision = true;
+                        if(type.allowSlow)
+                            isSlow = true;*/
+                        FlansModClient.currentScope = currentScope;
+                        FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
+                        FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
+                        float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+                        gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
+                        FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+                        gameSettings.thirdPersonView = 0;
 
 
-                            // This fixes some of the issues with FOV getting changed by repeated scoping
-                            // and unscoping.
-                            // In effect, it says that we should only set the 'original' zoom of the client
-                            // if we know the FOV is
-                            // unaffected from scoping.
-                            if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
-                                FlansModClient.originalFOV = gameSettings.fovSetting;
-                            }
+                        // This fixes some of the issues with FOV getting changed by repeated scoping
+                        // and unscoping.
+                        // In effect, it says that we should only set the 'original' zoom of the client
+                        // if we know the FOV is
+                        // unaffected from scoping.
+                        if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
+                            FlansModClient.originalFOV = gameSettings.fovSetting;
+                        }
 
-                            //Send ads spread packet to server
-                            sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
-                            isScoped = FlansModClient.currentScope != null;
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
-                        } else {
-                            //if(type.allowNightVision)
-                            //isNightVision = false;
+                        //Send ads spread packet to server
+                        sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
+                        isScoped = FlansModClient.currentScope != null;
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
+                    } else {
+                        //if(type.allowNightVision)
+                        //isNightVision = false;
+                        FlansModClient.currentScope = null;
+                        gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
+                        gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
+                        gameSettings.fovSetting = FlansModClient.originalFOV;
+
+                        //Send default spread packet to server
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
+                        isScoped = FlansModClient.currentScope != null;
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
+                    }
+                    FlansModClient.scopeTime = 10;
+                }
+            } else {
+                if (!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && /*FlansModClient.scopeTime <= 0 &&*/ FMLClientHandler.instance().getClient().currentScreen == null) {
+                    if (FlansModClient.currentScope == null) {
+                        /*if(type.allowNightVision)
+                            isNightVision = true;
+                        if(type.allowSlow)
+                            isSlow = true;*/
+                        FlansModClient.currentScope = currentScope;
+                        FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
+                        FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
+                        float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
+                        gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
+                        FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
+                        gameSettings.thirdPersonView = 0;
+
+                        // This fixes some of the issues with FOV getting changed by repeated scoping and unscoping.
+                        // In effect, it says that we should only set the 'original' zoom of the client if we know the FOV is
+                        // unaffected from scoping.
+                        if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
+                            FlansModClient.originalFOV = gameSettings.fovSetting;
+                        }
+
+                        //Send ads spread packet to server
+                        sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
+                        isScoped = FlansModClient.currentScope != null;
+                        FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
+                    }
+                    FlansModClient.scopeTime = 10;
+                } else {
+                    if (!Mouse.isButtonDown(FlansModClient.aimButton.getButton())) {
+                        if (FlansModClient.currentScope != null) {
                             FlansModClient.currentScope = null;
                             gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
                             gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
@@ -458,56 +500,36 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                             isScoped = FlansModClient.currentScope != null;
                             FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
                         }
-                        FlansModClient.scopeTime = 10;
-                    }
-                } else {
-                    if (!offHandFull && (type.secondaryFunction == EnumSecondaryFunction.ADS_ZOOM || type.secondaryFunction == EnumSecondaryFunction.ZOOM) && Mouse.isButtonDown(FlansModClient.aimButton.getButton()) && /*FlansModClient.scopeTime <= 0 &&*/ FMLClientHandler.instance().getClient().currentScreen == null) {
-                        if (FlansModClient.currentScope == null) {
-							/*if(type.allowNightVision)
-								isNightVision = true;
-							if(type.allowSlow)
-								isSlow = true;*/
-                            FlansModClient.currentScope = currentScope;
-                            FlansModClient.lastZoomLevel = currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor();
-                            FlansModClient.lastFOVZoomLevel = currentScope.hasVariableZoom()?1F:currentScope.getFOVFactor();
-                            float f = FlansModClient.originalMouseSensitivity = gameSettings.mouseSensitivity;
-                            gameSettings.mouseSensitivity = f / (float) Math.sqrt(currentScope.hasVariableZoom()?getCurrentVariableZoom(itemstack):currentScope.getZoomFactor());
-                            FlansModClient.originalThirdPerson = gameSettings.thirdPersonView;
-                            gameSettings.thirdPersonView = 0;
-
-                            // This fixes some of the issues with FOV getting changed by repeated scoping and unscoping.
-                            // In effect, it says that we should only set the 'original' zoom of the client if we know the FOV is
-                            // unaffected from scoping.
-                            if (Math.abs(FlansModClient.zoomProgress - FlansModClient.lastZoomProgress) < 0.0001F) {
-                                FlansModClient.originalFOV = gameSettings.fovSetting;
-                            }
-
-                            //Send ads spread packet to server
-                            sendADSSpreadToServer(itemstack, player.isSneaking(), player.isSprinting());
-                            isScoped = FlansModClient.currentScope != null;
-                            FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
-                        }
-                        FlansModClient.scopeTime = 10;
-                    } else {
-                        if (!Mouse.isButtonDown(FlansModClient.aimButton.getButton())) {
-                            if (FlansModClient.currentScope != null) {
-                                FlansModClient.currentScope = null;
-                                gameSettings.mouseSensitivity = FlansModClient.originalMouseSensitivity;
-                                gameSettings.thirdPersonView = FlansModClient.originalThirdPerson;
-                                gameSettings.fovSetting = FlansModClient.originalFOV;
-
-                                //Send default spread packet to server
-                                FlansMod.getPacketHandler().sendToServer(new PacketGunSpread(itemstack, type.getDefaultSpread(itemstack)));
-                                isScoped = FlansModClient.currentScope != null;
-                                FlansMod.getPacketHandler().sendToServer(new PacketGunState(isScoped));
-                            }
-                        }
                     }
                 }
             }
         }
+
         if (soundDelay > 0) {
             soundDelay--;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void handleGunSwitchDelay(EntityPlayer entity, Minecraft mc) {
+
+        if (mc.thePlayer == entity
+                && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                != GunAnimations.lastInventorySlot) {
+            GunAnimations.lastInventorySlot = mc.thePlayer.inventory.currentItem;
+            ItemStack stack = mc.thePlayer.getHeldItem();
+            GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+            if (stack != null && stack.getItem() instanceof ItemGun) {
+                float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                if (animationLength == 0) {
+                    animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                } else {
+                    animations.switchAnimationProgress = 1;
+                    animations.switchAnimationLength = animationLength;
+                    PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight = Math.max(PlayerHandler.getPlayerData(mc.thePlayer, Side.CLIENT).shootTimeRight, animationLength);
+                }
+
+            }
         }
     }
     public void increaseZoom(ItemStack gun){
@@ -814,99 +836,12 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         if (data == null)
             return;
 
-        if (!type.canSetPosition)
-            this.impactX = this.impactY = this.impactZ = 0;
+        checkForLockOn(player, data);
+        checkForMelee(player, data, itemstack, world);
+    }
 
-        if (lockOnSoundDelay > 0)
-            lockOnSoundDelay--;
+    private void checkForMelee(EntityPlayer player, PlayerData data, ItemStack itemstack, World world) {
 
-        Entity closestEntity = null;
-        if (type.lockOnToLivings || type.lockOnToMechas || type.lockOnToPlanes || type.lockOnToPlayers || type.lockOnToVehicles) {
-            //double closestAngle;
-
-            for (Object obj : player.worldObj.loadedEntityList) {
-                Entity entity = (Entity) obj;
-                Vec3 playerVec = player.getLookVec();
-                double dXYZ = Math.sqrt((entity.posX - player.posX) * (entity.posX - player.posX) + (entity.posY - player.posY) * (entity.posY - player.posY) + (entity.posZ - player.posZ) * (entity.posZ - player.posZ));
-                Vector3f relPosVec = new Vector3f(entity.posX - player.posX, entity.posY - player.posY, entity.posZ - player.posZ);
-                Vector3f playerVec3f = new Vector3f(playerVec.xCoord, playerVec.yCoord, playerVec.zCoord);
-                float angle = Math.abs(Vector3f.angle(playerVec3f, relPosVec));
-                if (angle < Math.toRadians(type.canLockOnAngle) && dXYZ < type.maxRangeLockOn) {
-                    String etype = entity.getEntityData().getString("EntityType");
-                    if ((type.lockOnToMechas && entity instanceof EntityMecha) ||
-                            (type.lockOnToVehicles && entity instanceof EntityVehicle) ||
-                            (type.lockOnToVehicles && etype.equals("Vehicle")) || // for vehicle of other Mod
-                            (type.lockOnToPlanes && entity instanceof EntityPlane) ||
-                            (type.lockOnToPlanes && etype.equals("Plane")) || // for plane of other Mod
-                            (type.lockOnToPlayers && entity instanceof EntityPlayer) ||
-                            (type.lockOnToLivings && entity instanceof EntityLivingBase)) {
-                        //if(entity instanceof EntityMecha || entity instanceof EntityVehicle || entity instanceof EntityPlane || entity instanceof EntityPlayer || entity instanceof EntityLivingBase)
-                        if (!data.reloadingRight)
-                            closestEntity = entity;
-                        //closestAngle = angle;
-                    }
-                }
-            }
-
-            if (closestEntity != null) {
-                closestEntity.getEntityData().setBoolean("LockOn", true);
-            }
-
-            if (closestEntity != null && lockOnSoundDelay <= 0 && !player.worldObj.isRemote && player.getCurrentEquippedItem() != null) {
-                if (player.getCurrentEquippedItem().getItem() instanceof ItemGun) {
-                    ItemGun itemGun;
-                    itemGun = (ItemGun) player.getCurrentEquippedItem().getItem();
-                    PacketPlaySound.sendSoundPacket(player.posX, player.posY, player.posZ, 10, player.dimension, itemGun.type.lockOnSound, false);
-                    //PacketPlaySound.sendSoundPacket(player.posX, player.posY, player.posZ, 100, player.dimension, itemGun.type.shootSound, false);
-                    lockOnSoundDelay = type.lockOnSoundTime;
-                    if (closestEntity instanceof EntityDriveable && ((EntityDriveable) closestEntity).getDriveableType().hasFlare) {
-                        EntityDriveable entityDriveable = (EntityDriveable) closestEntity;
-                        PacketPlaySound.sendSoundPacket(closestEntity.posX, closestEntity.posY, closestEntity.posZ,
-                                entityDriveable.getDriveableType().lockedOnSoundRange,
-                                closestEntity.dimension, entityDriveable.getDriveableType().lockingOnSound, false);
-                    }
-                }
-            }
-        }
-			/*
-			//TODO; Add scope attachment override to enable NV for add-on NV scopes
-				//If player is holding gun, apply modifiers below
-				if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemGun)
-				{
-					ItemGun itemGun;
-					itemGun = (ItemGun)player.getCurrentEquippedItem().getItem();
-					//Apply night vision while scoped if AllowNightVision = True
-					if(itemGun.type.allowNightVision && FlansModClient.currentScope != null)
-					{
-						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
-					}
-					AttachmentType scope = itemGun.type.getScope(itemstack);
-					//IScope scope = itemGun.type.getCurrentScope(itemstack);
-					//FlansMod.log(scope);
-					//Apply night vision while scoped if attachment.hasNightVision = True
-					if(scope != null && scope.hasNightVision && FlansModClient.currentScope != null)
-					{
-						player.addPotionEffect(new PotionEffect(Potion.nightVision.id, -1, 0));
-						//FlansMod.log("1");
-					}
-					//Apply a penalty to jumpMovement equal to the moveSpeed penalty (0.5 moveSpeed = 0.5 jumpDistance)
-					if(itemGun.type.moveSpeedModifier != 1F)
-					{
-						player.jumpMovementFactor = 0.0F;
-					}
-					else
-						player.jumpMovementFactor = 0.02F;
-				}
-				*/
-
-
-        //if(data.lastMeleePositions == null || data.lastMeleePositions.length != type.meleeDamagePoints.size())
-        //{
-        //	data.lastMeleePositions = new Vector3f[type.meleeDamagePoints.size()];
-        //	for(int j = 0; j < type.meleeDamagePoints.size(); j++)
-        //		data.lastMeleePositions[j] = new Vector3f(player.posX, player.posY, player.posZ);
-        //}
-        //Melee weapon
         if (data.meleeLength > 0 && type.meleePath.size() > 0 && player.inventory.getCurrentItem() == itemstack) {
             for (int k = 0; k < type.meleeDamagePoints.size(); k++) {
                 Vector3f meleeDamagePoint = type.meleeDamagePoints.get(k);
@@ -1077,6 +1012,61 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
     }
 
+    private void checkForLockOn(EntityPlayer player, PlayerData data) {
+        if (!type.canSetPosition)
+            this.impactX = this.impactY = this.impactZ = 0;
+
+        if (lockOnSoundDelay > 0)
+            lockOnSoundDelay--;
+
+        Entity closestEntity = null;
+        if (type.lockOnToLivings || type.lockOnToMechas || type.lockOnToPlanes || type.lockOnToPlayers || type.lockOnToVehicles) {
+            for (Object obj : player.worldObj.loadedEntityList) {
+                Entity entity = (Entity) obj;
+                Vec3 playerVec = player.getLookVec();
+                double dXYZ = Math.sqrt((entity.posX - player.posX) * (entity.posX - player.posX) + (entity.posY - player.posY) * (entity.posY - player.posY) + (entity.posZ - player.posZ) * (entity.posZ - player.posZ));
+                Vector3f relPosVec = new Vector3f(entity.posX - player.posX, entity.posY - player.posY, entity.posZ - player.posZ);
+                Vector3f playerVec3f = new Vector3f(playerVec.xCoord, playerVec.yCoord, playerVec.zCoord);
+                float angle = Math.abs(Vector3f.angle(playerVec3f, relPosVec));
+                if (angle < Math.toRadians(type.canLockOnAngle) && dXYZ < type.maxRangeLockOn) {
+                    String etype = entity.getEntityData().getString("EntityType");
+                    if ((type.lockOnToMechas && entity instanceof EntityMecha) ||
+                            (type.lockOnToVehicles && entity instanceof EntityVehicle) ||
+                            (type.lockOnToVehicles && etype.equals("Vehicle")) || // for vehicle of other Mod
+                            (type.lockOnToPlanes && entity instanceof EntityPlane) ||
+                            (type.lockOnToPlanes && etype.equals("Plane")) || // for plane of other Mod
+                            (type.lockOnToPlayers && entity instanceof EntityPlayer) ||
+                            (type.lockOnToLivings && entity instanceof EntityLivingBase)) {
+                        //if(entity instanceof EntityMecha || entity instanceof EntityVehicle || entity instanceof EntityPlane || entity instanceof EntityPlayer || entity instanceof EntityLivingBase)
+                        if (!data.reloadingRight)
+                            closestEntity = entity;
+                        //closestAngle = angle;
+                    }
+                }
+            }
+
+            if (closestEntity != null) {
+                closestEntity.getEntityData().setBoolean("LockOn", true);
+            }
+
+            if (closestEntity != null && lockOnSoundDelay <= 0 && !player.worldObj.isRemote && player.getCurrentEquippedItem() != null) {
+                if (player.getCurrentEquippedItem().getItem() instanceof ItemGun) {
+                    ItemGun itemGun;
+                    itemGun = (ItemGun) player.getCurrentEquippedItem().getItem();
+                    PacketPlaySound.sendSoundPacket(player.posX, player.posY, player.posZ, 10, player.dimension, itemGun.type.lockOnSound, false);
+                    //PacketPlaySound.sendSoundPacket(player.posX, player.posY, player.posZ, 100, player.dimension, itemGun.type.shootSound, false);
+                    lockOnSoundDelay = type.lockOnSoundTime;
+                    if (closestEntity instanceof EntityDriveable && ((EntityDriveable) closestEntity).getDriveableType().hasFlare) {
+                        EntityDriveable entityDriveable = (EntityDriveable) closestEntity;
+                        PacketPlaySound.sendSoundPacket(closestEntity.posX, closestEntity.posY, closestEntity.posZ,
+                                entityDriveable.getDriveableType().lockedOnSoundRange,
+                                closestEntity.dimension, entityDriveable.getDriveableType().lockingOnSound, false);
+                    }
+                }
+            }
+        }
+    }
+
     public boolean DoesHitBlock(Vec3 startPos, Vec3 endPos, float time, EntityPlayer player) {
         Vec3 delta = endPos.subtract(startPos);
         Vec3 hitPos = endPos;
@@ -1134,7 +1124,6 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
     }
 
-
     public ItemStack tryToShoot(ItemStack gunStack, GunType gunType, World world, EntityPlayerMP entityplayer, boolean left) {
         sprinting = entityplayer.isSprinting();
         if (type.deployable || !type.usableByPlayers)
@@ -1173,8 +1162,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 } else {
                     reloadCount = 1;
                 }
-
-                if (reload(gunStack, gunType, world, entityplayer, false, left)) {
+                
+                if (reload(gunStack, gunType, world, entityplayer, false, left, false, false)) {
                     //Set player shoot delay to be the reload delay
                     //Set both gun delays to avoid reloading two guns at once
                     //data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
@@ -1191,7 +1180,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     }
                     //Send reload packet to induce reload effects client side
                     //ItemGun.setReloadCount(gunStack, reloadCount);
-                    FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount, (int) reloadTime, singlesReload), entityplayer);
+                    FlansMod.getPacketHandler().sendTo(new PacketReload(left, reloadCount, (int) reloadTime, singlesReload, false, false), entityplayer);
                     //Play reload sound
                     String soundToPlay = null;
                     AttachmentType grip = gunType.getGrip(gunStack);
@@ -1247,19 +1236,23 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
     /**
      * Reload method. Called automatically when firing with an empty clip
-     */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left) {
-        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload);
+     */    
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
+        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload, combineAmmoOnReload, ammoToUpperInventory);
     }
-
+    
     /**
      * Reload method. Called automatically when firing with an empty clip
      */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload) {
-        boolean reloadedSomething = false;
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
+    	GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
+    	MinecraftForge.EVENT_BUS.post(gunReloadEvent);
+    	if(gunReloadEvent.isCanceled()) return false;   
+    	
+    	boolean reloadedSomething = false;
 
-        //Load the gun without having the ammo if gunDevMode is enabled
-        if (FlansMod.gunDevMode) {
+        //Load the gun without having the ammo if gunDevMode is enabled or it's set in the event
+        if (FlansMod.gunDevMode || !gunReloadEvent.isNeedsAmmo()) {
             ShootableType ammo = type.getDefaultAmmo();
             if (ammo != null) {
                 ItemStack stackToLoad = new ItemStack(ammo.item);
@@ -1278,7 +1271,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         //If you cannot reload half way through a clip, reject the player for trying to do so
         if (forceReload && !gunType.canForceReload)
             return false;
-
+        
         String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
@@ -1307,6 +1300,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         }
                     }
                 }
+               
                 //If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
                 if (bestSlot != -1) {
                     ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
@@ -1315,7 +1309,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
                     //The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
                     if (bulletStack != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
-                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative))
+                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative, combineAmmoOnReload, ammoToUpperInventory))
                             entity.entityDropItem(bulletStack, 0.5F);
                     }
 
@@ -1563,6 +1557,24 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 event.setCanceled(true);
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
+            return;
+        EntityPlayer player = event.entityPlayer;
+        if (player == null || player.getHeldItem() == null)
+            return;
+        if (!(player.getHeldItem().getItem() instanceof ItemGun))
+            return;
+
+        if (FlansMod.holdingGunsDisablesAll)
+            event.setCanceled(true);
+
+        TileEntity tileEntity = event.world.getTileEntity(event.x, event.y, event.z);
+        if (FlansMod.holdingGunsDisablesChests && tileEntity != null && tileEntity instanceof IInventory)
+            event.setCanceled(true);
     }
 
     @Override

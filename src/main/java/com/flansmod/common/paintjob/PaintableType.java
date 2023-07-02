@@ -16,16 +16,13 @@ public abstract class PaintableType extends InfoType
 {
 	//Paintjobs
 	/** The list of all available paintjobs for this gun */
-	public ArrayList<Paintjob> paintjobs = new ArrayList<Paintjob>();
+	public ArrayList<Paintjob> paintjobs = new ArrayList<>();
 	/** The default paintjob for this gun. This is created automatically in the load process from existing info */
 	public Paintjob defaultPaintjob;
 	/** Whether to add this paintjob to the paintjob table, gunmode table e.t.c. */
 	public Boolean addAnyPaintjobToTables = true;
 	/** Assigns IDs to paintjobs */
 	private int nextPaintjobID = 1;
-	/** Add a friendly paintjob name */
-	private String paintjobName;
-
 
 	public PaintableType(TypeFile file)
 	{
@@ -44,7 +41,7 @@ public abstract class PaintableType extends InfoType
 		//After all lines have been read, set up the default paintjob
 		defaultPaintjob = new Paintjob(0, "default", iconPath, texture, new ItemStack[0], true);
 		//Move to a new list to ensure that the default paintjob is always first
-		ArrayList<Paintjob> newPaintjobList = new ArrayList<Paintjob>();
+		ArrayList<Paintjob> newPaintjobList = new ArrayList<>();
 		newPaintjobList.add(defaultPaintjob);
 		newPaintjobList.addAll(paintjobs);
 		paintjobs = newPaintjobList;
@@ -133,7 +130,13 @@ public abstract class PaintableType extends InfoType
 	
 	public Paintjob getPaintjob(int i)
 	{
-		return paintjobs.get(Math.min(paintjobs.size()-1, i));
+		// This needs to be fixed properly, see https://trello.com/c/c8ssBecf
+		// Basically, invalid paintjob ID gets saved (ie the original removed from packs), and crashes when trying to load it
+		if (i >= paintjobs.size()) {
+			return defaultPaintjob;
+		}
+
+		return paintjobs.get(i);
 	}
 
 	public float GetRecommendedScale()

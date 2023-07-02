@@ -82,6 +82,8 @@ public abstract class ShootableType extends InfoType {
     public float ignoreArmorProbability = 0;
     public float ignoreArmorDamageFactor = 0;
 
+    private float blockPenetrationModifier = -1;
+
     //Detonation Conditions
     /**
      * If 0, then the grenade will last until some other detonation condition is met, else the grenade will detonate after this time (in ticks)
@@ -215,6 +217,7 @@ public abstract class ShootableType extends InfoType {
         }
 
 
+        blockPenetrationModifier = ConfigUtils.configFloat(config, "BlockPenetrationModifier", blockPenetrationModifier);
         ignoreArmorProbability = ConfigUtils.configFloat(config, "IgnoreArmorProbability",  ignoreArmorProbability);
         ignoreArmorDamageFactor = ConfigUtils.configFloat(config, "IgnoreArmorDamageFactor",  ignoreArmorDamageFactor);
         breaksGlass = ConfigUtils.configBool(config, "BreaksGlass",  breaksGlass);
@@ -260,6 +263,10 @@ public abstract class ShootableType extends InfoType {
     @Override
     public float GetRecommendedScale() {
         return 0.0f;
+    }
+
+    public float getBlockPenetrationModifier() {
+    	return blockPenetrationModifier < 0 ? FlansMod.masterBlockPenetrationModifier : blockPenetrationModifier;
     }
 
     @Override

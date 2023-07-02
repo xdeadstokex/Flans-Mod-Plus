@@ -1,7 +1,5 @@
 package com.flansmod.client.gui;
 
-import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,8 +7,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
@@ -24,14 +20,12 @@ import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.client.model.ModelAttachment;
 import com.flansmod.client.model.ModelDriveable;
-import com.flansmod.client.model.ModelPlane;
 import com.flansmod.client.model.RenderGun;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.network.PacketGunPaint;
 import com.flansmod.common.paintjob.ContainerPaintjobTable;
 import com.flansmod.common.paintjob.IPaintableItem;
@@ -219,7 +213,7 @@ public class GuiPaintjobTable extends GuiContainer
 					case gun: 
 					{
 						GunType gunType = (GunType)paintableType;
-						ClientProxy.gunRenderer.renderGun(tempStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, 0F, ItemRenderType.ENTITY); 
+						ClientProxy.gunRenderer.renderGunModel(tempStack, gunType, 1F / 16F, gunType.model, GunAnimations.defaults, ItemRenderType.ENTITY);
 						break;
 					}
 					case attachment: 
