@@ -474,12 +474,14 @@ public class DriveableType extends PaintableType {
                                 Integer.parseInt(split[3]));
                 }
             } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Erorred while reading Driver/Pilot", null, ex);
+                FlansMod.logPackError(file.name, packName, shortName, "Errored while reading Driver/Pilot", null, ex);
                 throw new Exception("Invalid Driver/Pilot Definitions");
                 // this should be a "disable item" situation
             }
 
-            model = FlansMod.proxy.loadModel(modelString, shortName, ModelDriveable.class);
+            if (FMLCommonHandler.instance().getSide().isClient()) {
+                model = FlansMod.proxy.loadModel(modelString, shortName, ModelDriveable.class);
+            }
 
             vehicleGunModelScale = ConfigUtils.configFloat(config, "VehicleGunModelScale", vehicleGunModelScale);
             reloadSoundTick = ConfigUtils.configInt(config, "VehicleGunReloadTick", reloadSoundTick);

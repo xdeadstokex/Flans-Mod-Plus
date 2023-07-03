@@ -136,8 +136,8 @@ public class MechaType extends DriveableType
 			armLength = ConfigUtils.configFloat(config, "ArmLength", armLength) / 16F;
 			legLength = ConfigUtils.configFloat(config, "LegLength", legLength) / 16F;
 			heldItemScale = ConfigUtils.configFloat(config, "HeldItemScale", heldItemScale);
-			height = ConfigUtils.configFloat(config, "Height", height);
-			width = ConfigUtils.configFloat(config, "Width", width);
+			height = ConfigUtils.configFloat(config, "Height", height*16F)/16F;
+			width = ConfigUtils.configFloat(config, "Width", width*16F)/16F;
 
 			chassisHeight = (float)Math.floor(ConfigUtils.configFloat(config, "ChassisHeight", chassisHeight*16F))/16F;
 

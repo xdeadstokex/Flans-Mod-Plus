@@ -76,7 +76,9 @@ public class MechaItemType extends InfoType
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
 		try {
-			model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
+			if (FMLCommonHandler.instance().getSide().isClient()) {
+				model = FlansMod.proxy.loadModel(modelString, shortName, ModelMechaTool.class);
+			}
 
 			texture = ConfigUtils.configString(config, "Texture", texture);
 

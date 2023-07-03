@@ -171,7 +171,7 @@ public class VehicleType extends DriveableType {
             }
 
         } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading VehicleType filed", null, ex);
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading VehicleType failed", null, ex);
         }
     }
 

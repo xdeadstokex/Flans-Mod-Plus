@@ -665,15 +665,19 @@ public class GunType extends PaintableType implements IScope {
         deployable = ConfigUtils.configBool(config, "Deployable", deployable);
 
         deployableModelString = ConfigUtils.configString(configMap, "DeployedModel", null);
-        deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
-
-        model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
 
         casingModelString = ConfigUtils.configString(config, "CasingModel", null);
-        casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
 
         flashModelString = ConfigUtils.configString(config, "FlashModel", null);
-        flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
+
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
+            casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
+            flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
+            model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
+        }
+
+
 
         casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
         flashTexture = ConfigUtils.configString(config, "FlashTexture", null);

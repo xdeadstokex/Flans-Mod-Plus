@@ -176,7 +176,9 @@ public abstract class ShootableType extends InfoType {
         super.read(config, file);
 
         //Model and Texture
-        model = FlansMod.proxy.loadModel(modelString, shortName, ModelBase.class);
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            model = FlansMod.proxy.loadModel(modelString, shortName, ModelBase.class);
+        }
 
         texture = ConfigUtils.configString(config, "Texture", texture);
 

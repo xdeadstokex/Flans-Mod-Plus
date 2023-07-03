@@ -68,7 +68,10 @@ public class ToolType extends InfoType
 		try {
 			// The model load can be done on server too, proxy will just skip it.
 			String modelName = ConfigUtils.configString(config, "Model", null);
-			model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
+
+			if (FMLCommonHandler.instance().getSide().isClient()) {
+				model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
+			}
 			texture = ConfigUtils.configString(config, "Texture", texture);
 
 			parachute = ConfigUtils.configBool(config, "Parachute", parachute);

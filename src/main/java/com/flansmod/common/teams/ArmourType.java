@@ -9,6 +9,7 @@ import com.flansmod.common.types.TypeFile;
 
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -103,7 +104,11 @@ public class ArmourType extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
         try {
-            model = FlansMod.proxy.loadModel(modelString, shortName, ModelCustomArmour.class);
+
+            if (FMLCommonHandler.instance().getSide().isClient()) {
+                model = FlansMod.proxy.loadModel(modelString, shortName, ModelCustomArmour.class);
+            }
+
             if (model != null) {
                 model.type = this;
             }
@@ -168,6 +173,7 @@ public class ArmourType extends InfoType {
      */
     public void reloadModel() {
         model = FlansMod.proxy.loadModel(modelString, shortName, ModelCustomArmour.class);
+
         if (model != null)
             model.type = this;
     }
