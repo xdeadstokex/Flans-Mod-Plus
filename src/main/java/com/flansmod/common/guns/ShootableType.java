@@ -9,7 +9,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
-import org.classpath.icedtea.Config;
 
 import java.util.HashMap;
 

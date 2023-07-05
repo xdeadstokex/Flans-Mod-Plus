@@ -16,7 +16,6 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.classpath.icedtea.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -16,7 +16,6 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.utils.ConfigUtils;
-import org.classpath.icedtea.Config;
 
 public class ToolType extends InfoType 
 {
