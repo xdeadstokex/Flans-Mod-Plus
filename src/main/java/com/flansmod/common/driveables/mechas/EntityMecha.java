@@ -1,5 +1,6 @@
 package com.flansmod.common.driveables.mechas;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import com.flansmod.client.debug.EntityDebugVector;
@@ -132,8 +133,7 @@ public class EntityMecha extends EntityDriveable
     
 
 
-	public EntityMecha(World world) 
-	{
+	public EntityMecha(World world) {
 		super(world);
 		setSize(2F, 3F);
 		stepHeight = 3;
@@ -142,8 +142,7 @@ public class EntityMecha extends EntityDriveable
 		isMecha = true;
 	}
 	
-	public EntityMecha(World world, double x, double y, double z, MechaType type, DriveableData data, NBTTagCompound tags, EntityPlayer p)
-	{
+	public EntityMecha(World world, double x, double y, double z, MechaType type, DriveableData data, NBTTagCompound tags, EntityPlayer p) {
 		super(world, type, data, p);
 		legAxes = new RotatedAxes();
 		setSize(2F, 3F);
@@ -154,8 +153,7 @@ public class EntityMecha extends EntityDriveable
 		isMecha = true;
 	}
 	
-	public EntityMecha(World world, double x, double y, double z, EntityPlayer placer, MechaType type, DriveableData data, NBTTagCompound tags) 
-	{
+	public EntityMecha(World world, double x, double y, double z, EntityPlayer placer, MechaType type, DriveableData data, NBTTagCompound tags) {
 		this(world, x, y, z, type, data, tags, placer);
 		rotateYaw(placer.rotationYaw + 90F);
 		legAxes.rotateGlobalYaw(placer.rotationYaw + 90F);
@@ -164,8 +162,7 @@ public class EntityMecha extends EntityDriveable
 	}
 	
     @Override
-    protected void initType(DriveableType type, boolean clientSide)
-    {
+    protected void initType(DriveableType type, boolean clientSide) {
     	super.initType(type, clientSide);
     	setSize(((MechaType)type).width, ((MechaType)type).height);
     	stepHeight = ((MechaType)type).stepHeight;
@@ -173,8 +170,7 @@ public class EntityMecha extends EntityDriveable
     }
 	
 	@Override
-    protected void writeEntityToNBT(NBTTagCompound tag)
-    {
+    protected void writeEntityToNBT(NBTTagCompound tag) {
         super.writeEntityToNBT(tag);
         tag.setFloat("LegsYaw", legAxes.getYaw());
         tag.setTag("Inventory", inventory.writeToNBT(new NBTTagCompound()));
@@ -182,8 +178,7 @@ public class EntityMecha extends EntityDriveable
     }
 
 	@Override
-    protected void readEntityFromNBT(NBTTagCompound tag)
-    {
+    protected void readEntityFromNBT(NBTTagCompound tag) {
         super.readEntityFromNBT(tag);
         legAxes.setAngles(tag.getFloat("LegsYaw"), 0, 0);
         inventory.readFromNBT(tag.getCompoundTag("Inventory"));
@@ -191,16 +186,14 @@ public class EntityMecha extends EntityDriveable
     }
 	
 	@Override
-	public void writeSpawnData(ByteBuf data)
-	{
+	public void writeSpawnData(ByteBuf data) {
 		super.writeSpawnData(data);
 		ByteBufUtils.writeTag(data, inventory.writeToNBT(new NBTTagCompound()));
 		isMecha = true;
 	}
 	
 	@Override
-	public void readSpawnData(ByteBuf data)
-	{
+	public void readSpawnData(ByteBuf data) {
 		super.readSpawnData(data);
 		legAxes.rotateGlobalYaw(axes.getYaw());
 		prevLegsYaw = legAxes.getYaw();
@@ -210,13 +203,10 @@ public class EntityMecha extends EntityDriveable
 	}
 
 	@Override
-	public void onMouseMoved(int deltaX, int deltaY)
-	{
-	}
+	public void onMouseMoved(int deltaX, int deltaY) {}
 	
 	@Override
-	public boolean interactFirst(EntityPlayer entityplayer)
-    {
+	public boolean interactFirst(EntityPlayer entityplayer) {
 		if(isDead)
 			return false;
 		if(worldObj.isRemote)
@@ -243,112 +233,83 @@ public class EntityMecha extends EntityDriveable
 	}
 	
 	@Override
-	public boolean pressKey(int key, EntityPlayer player)
-	{
+	public boolean pressKey(int key, EntityPlayer player) {
 		MechaType type = getMechaType();
     	DriveableData data = getDriveableData();
 		//send keys which require server side updates to the server
-    	if(worldObj.isRemote && (key == 6 || key == 8 || key == 9))
-    	{
+    	if(worldObj.isRemote && (key == 6 || key == 8 || key == 9)) {
     		FlansMod.getPacketHandler().sendToServer(new PacketDriveableKey(key));
     		return true;
     	}
-		
-    	switch(key)
-    	{
-    		case 0 : //Forwards (these movement cases are redundant, as Mechas need to stop when the key is released)
-    		{
-    			return true;
-    		}
-    		case 1 : //Backwards
-    		{
-    			return true;
-    		}
-    		case 2 : //Left
-    		{
-    			return true;
-    		}
-    		case 3 : //Right
-    		{
-    			return true;
-    		}
-			case 4 : //Jump
-			{
-				boolean canThrustCreatively = seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer)seats[0].riddenByEntity).capabilities.isCreativeMode;
-				if(onGround && (jumpDelay == 0) && (canThrustCreatively || data.fuelInTank > data.engine.fuelConsumption) && isPartIntact(EnumDriveablePart.hips))
-				{
-					jumpDelay = 20;
-					motionY += type.jumpVelocity;
-					if(!canThrustCreatively)
-						data.fuelInTank -= data.engine.fuelConsumption;
-				}
+
+
+		switch (key) {
+			case 0: // Forwards
+			case 1: // Backwards
+			case 2: // Left
+			case 3: // Right
 				return true;
-			}
-			case 5 : //Down : Do nothing
-			{
+			case 4: // Jump
+				return handleJump(data, type);
+			case 5: // Down: Do nothing
 				return true;
-			}
-			case 6 : //Exit : Get out
-			{
-				if (seats[0].riddenByEntity != null) {
-					seats[0].riddenByEntity.setInvisible(false);
-					seats[0].riddenByEntity.mountEntity(null);
-				}
-				
-          		return true;
-			}
-			case 7 : //Inventory
-			{
-				FlansMod.getPacketHandler().sendToServer(new PacketDriveableGUI(4));
-				((EntityPlayer)seats[0].riddenByEntity).openGui(FlansMod.INSTANCE, 10, worldObj, chunkCoordX, chunkCoordY, chunkCoordZ);
+			case 6: // Exit: Get out
+				handleExit();
+				break;
+			case 7: // Inventory
+				handleInventory();
+				break;
+			case 8: // UseR
+			case 9: // UseL
 				return true;
-			}
-			case 8 : //UseR
-			{
-				return true; //useItem(false);
-			}
-			case 9 : //UseL
-			{
-				return true; //useItem(true);
-			}
-			case 10 : //Change control mode : Do nothing
-			{
-				FlansMod.proxy.changeControlMode((EntityPlayer)seats[0].riddenByEntity);
-				seats[0].playerLooking = new RotatedAxes(0,0,0);
+			case 10: // Change control mode
+				handleControlModeChange();
+				break;
+			case 11: // Roll left
+			case 12: // Roll right
+			case 13: // Gear
+			case 14: // Door
+			case 15:
+			case 16:
+			case 17:
 				return true;
-			}
-			case 11 : //Roll left : Do nothing
-			{
-				return true;
-			}
-			case 12 : //Roll right : Do nothing
-			{
-				return true;
-			}
-			case 13 : //Gear : Do nothing
-			{
-				return true;
-			}
-			case 14 : //Door : Do nothing
-			{
-				return true;
-			}
-			case 15 : //???
-			{
-				return true;
-			}
-			case 16 : //???
-			{
-				return true;
-			}
-			case 17 : //???
-			{
-				return true;
-			}
-			
-    	}
+			default:
+				return false;
+		}
+
 		return false;
 	}
+
+	private boolean handleJump(DriveableData data, MechaType type) {
+		boolean canThrustCreatively = seats != null && seats[0] != null && seats[0].riddenByEntity instanceof EntityPlayer && ((EntityPlayer) seats[0].riddenByEntity).capabilities.isCreativeMode;
+		if (onGround && (jumpDelay == 0) && (canThrustCreatively || data.fuelInTank > data.engine.fuelConsumption) && isPartIntact(EnumDriveablePart.hips)) {
+			jumpDelay = 20;
+			motionY += type.jumpVelocity;
+			if (!canThrustCreatively) {
+				data.fuelInTank -= data.engine.fuelConsumption;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void handleExit() {
+		if (seats[0].riddenByEntity != null) {
+			seats[0].riddenByEntity.setInvisible(false);
+			seats[0].riddenByEntity.mountEntity(null);
+		}
+	}
+
+	private void handleInventory() {
+		FlansMod.getPacketHandler().sendToServer(new PacketDriveableGUI(4));
+		((EntityPlayer) seats[0].riddenByEntity).openGui(FlansMod.INSTANCE, 10, worldObj, chunkCoordX, chunkCoordY, chunkCoordZ);
+	}
+
+	private void handleControlModeChange() {
+		FlansMod.proxy.changeControlMode((EntityPlayer) seats[0].riddenByEntity);
+		seats[0].playerLooking = new RotatedAxes(0, 0, 0);
+	}
+
 	
 	private boolean useItem(boolean left)
 	{
@@ -435,7 +396,6 @@ public class EntityMecha extends EntityDriveable
 						shoot(heldStack, gunType, bulletStack, creative, left);
 						
 						//Apply animations to 3D modelled guns
-						//TODO : Move to client side and sync
 						if(worldObj.isRemote)
 						{
 							int pumpDelay = gunType.model == null ? 0 : gunType.model.pumpDelay;
@@ -445,12 +405,9 @@ public class EntityMecha extends EntityDriveable
 							float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
 							float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
 
-							if(left)
-							{
+							if(left) {
 								leftAnimations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
-							}
-							else
-							{
+							} else {
 								rightAnimations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
 							}
 						}
@@ -586,9 +543,7 @@ public class EntityMecha extends EntityDriveable
 		 		setDead();
 	        }			
 			
-		}
-        else
-        {
+		} else {
         	driveableData.parts.get(EnumDriveablePart.core).attack(i * vulnerability(), damagesource.isFireDamage());
         }
         return true;
@@ -798,15 +753,11 @@ public class EntityMecha extends EntityDriveable
 			}
 		}
 		if(diamondTimer > 0) --diamondTimer;
-		
-		//TODO better implement this
-		if(isPartIntact(EnumDriveablePart.hips))
-		{
+
+		if(isPartIntact(EnumDriveablePart.hips)) {
 			setSize(type.width, type.height);
 			yOffset = type.yOffset;
-		}
-		else
-		{
+		} else {
 			setSize(type.width, type.height - type.chassisHeight);
 			yOffset = type.yOffset - type.chassisHeight;
 		}
@@ -819,8 +770,7 @@ public class EntityMecha extends EntityDriveable
 		ticksSinceUsed++;
 		if(!worldObj.isRemote && seats[0].riddenByEntity != null)
 			ticksSinceUsed = 0;
-		if(!worldObj.isRemote && TeamsManager.mechaLove > 0 && ticksSinceUsed > TeamsManager.mechaLove * 20)
-		{
+		if(!worldObj.isRemote && TeamsManager.mechaLove > 0 && ticksSinceUsed > TeamsManager.mechaLove * 20) {
 			setDead();
 		}
 		
@@ -829,11 +779,9 @@ public class EntityMecha extends EntityDriveable
 			toggleTimer--;
 		
 		//Player is not driving this. Update its position from server update packets 
-		if(worldObj.isRemote && !thePlayerIsDrivingThis)
-		{
+		if(worldObj.isRemote && !thePlayerIsDrivingThis) {
 			//The driveable is currently moving towards its server position. Continue doing so.
-            if (serverPositionTransitionTicker > 0)
-            {
+            if (serverPositionTransitionTicker > 0) {
                 double x = posX + (serverPosX - posX) / serverPositionTransitionTicker;
                 double y = posY + (serverPosY - posY) / serverPositionTransitionTicker;
                 double z = posZ + (serverPosZ - posZ) / serverPositionTransitionTicker;
@@ -853,15 +801,12 @@ public class EntityMecha extends EntityDriveable
 		
 		//Movement
 		
-		if(seats[0] != null)
-		{
+		if(seats[0] != null) {
 			if(seats[0].riddenByEntity instanceof EntityLivingBase && !(seats[0].riddenByEntity instanceof EntityPlayer))
 				axes.setAngles(((EntityLivingBase)seats[0].riddenByEntity).renderYawOffset + 90F, 0F, 0F);
-			else
-			{
+			else {
 				//Function to limit Head Movement Left/Right
-				if(type.limitHeadTurn)
-				{
+				if(type.limitHeadTurn) {
 					float axesLegs = legAxes.getYaw();
 					float axesBody = axes.getYaw();
 					

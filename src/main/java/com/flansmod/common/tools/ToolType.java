@@ -3,6 +3,7 @@ package com.flansmod.common.tools;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.flansmod.utils.ConfigMap;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigUtils;
 
 public class ToolType extends InfoType 
 {
@@ -54,53 +56,59 @@ public class ToolType extends InfoType
 		tools.put(shortName, this);
 	}
 
+
+
 	/** Pack reader */
 	@Override
-	protected void read(String[] split, TypeFile file)
+	protected void read(ConfigMap config, TypeFile file)
 	{
-		super.read(split, file);
-		try
-		{
-			if(FMLCommonHandler.instance().getSide().isClient() && split[0].equals("Model"))
-				model = FlansMod.proxy.loadModel(split[1], shortName, ModelBase.class);
-			else if(split[0].equals("Texture"))
-				texture = split[1];
-			else if(split[0].equals("Parachute"))
-				parachute = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("ExplosiveRemote"))
-				remote = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("Key"))
-				key = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("Heal") || split[0].equals("HealPlayers"))
-				healPlayers = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("Repair") || split[0].equals("RepairVehicles"))
-				healDriveables = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("HealAmount") || split[0].equals("RepairAmount"))
-				healAmount = Integer.parseInt(split[1]);
-			else if(split[0].equals("ToolLife") || split[0].equals("ToolUses"))
-				toolLife = Integer.parseInt(split[1]);
-			else if(split[0].equals("EUPerCharge"))
-				EUPerCharge = Integer.parseInt(split[1]);
-			else if(split[0].equals("RechargeRecipe"))
-			{
-				for(int i = 0; i < (split.length - 1) / 2; i++)
-				{
-					int amount = Integer.parseInt(split[2 * i + 1]);
-					boolean damaged = split[2 * i + 2].contains(".");
-					String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
-					int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
-					rechargeRecipe.add(getRecipeElement(itemName, amount, damage, shortName));
-				}
+		super.read(config, file);
+
+		try {
+			// The model load can be done on server too, proxy will just skip it.
+			String modelName = ConfigUtils.configString(config, "Model", null);
+
+			if (FMLCommonHandler.instance().getSide().isClient()) {
+				model = FlansMod.proxy.loadModel(modelName, shortName, ModelBase.class);
 			}
-			else if(split[0].equals("DestroyOnEmpty"))
-				destroyOnEmpty = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("Food") || split[0].equals("Foodness"))
-				foodness = Integer.parseInt(split[1]);
-		} 
-		catch (Exception e)
-		{
-			FlansMod.log("Reading file failed : " + shortName);
-			e.printStackTrace();
+			texture = ConfigUtils.configString(config, "Texture", texture);
+
+			parachute = ConfigUtils.configBool(config, "Parachute", parachute);
+			remote = ConfigUtils.configBool(config, "ExplosiveRemote", remote);
+			key = ConfigUtils.configBool(config, "Key", key);
+			healPlayers = ConfigUtils.configBool(config, new String[]{"Heal", "HealPlayers"}, healPlayers);
+			healDriveables = ConfigUtils.configBool(config, new String[]{"Repair", "RepairVehicles"}, healDriveables);
+			healAmount = ConfigUtils.configInt(config, new String[]{"HealAmount", "RepairAmount"}, toolLife);
+			toolLife = ConfigUtils.configInt(config, new String[]{"ToolLife", "ToolUes"}, toolLife);
+			EUPerCharge = ConfigUtils.configInt(config, "EUPerCharge", EUPerCharge);
+
+			String[] split = ConfigUtils.getSplitFromKey(config, "RechargeRecipe");
+			try {
+				if (split != null) {
+					for(int i = 0; i < (split.length - 1) / 2; i++)
+					{
+						int amount = Integer.parseInt(split[2 * i + 1]);
+						boolean damaged = split[2 * i + 2].contains(".");
+						String itemName = damaged ? split[2 * i + 2].split("\\.")[0] : split[2 * i + 2];
+						int damage = damaged ? Integer.parseInt(split[2 * i + 2].split("\\.")[1]) : 0;
+
+						ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
+
+						if (recipeElement != null) {
+							rechargeRecipe.add(recipeElement);
+						} else {
+							FlansMod.logPackError(file.name, packName, shortName, "Could not find item for RechargeRecipe", split, null);
+						}
+					}
+				}
+			} catch (Exception ex) {
+				FlansMod.logPackError(file.name, packName, shortName, "Couldn't add recharge recipe", split, ex);
+			}
+
+			destroyOnEmpty = ConfigUtils.configBool(config, "DestroyOnEmpty", destroyOnEmpty);
+			foodness = ConfigUtils.configInt(config, new String[]{"Food", "Foodness"}, foodness);
+		} catch (Exception ex) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading tool file", null, ex);
 		}
 	}
 	

@@ -38,7 +38,6 @@ public class PacketChangeZoom extends PacketBase {
         ItemStack currentItem = playerEntity.inventory.getCurrentItem();
         if (currentItem != null && currentItem.getItem() instanceof ItemGun) {
             ItemGun itemGun = (ItemGun) currentItem.getItem();
-            System.out.println(isPositive);
 
             if(isPositive)
                 itemGun.increaseZoom(currentItem);

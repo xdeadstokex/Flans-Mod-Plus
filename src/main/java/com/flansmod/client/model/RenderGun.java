@@ -604,7 +604,7 @@ public class RenderGun implements IItemRenderer {
 
 			//Handle muzzle flash stuffs
 			renderMuzzleFlash(animations, model, type, barrelAttachment, item, f);
-			
+
 			// Render the slide and charge action
 			if (slideAttachment == null)
 				renderSlideModels(scopeAttachment, type, animations, model, f, item);
@@ -994,7 +994,6 @@ public class RenderGun implements IItemRenderer {
 
 						break;
 					}
-					//TODO
 					case SHOTGUN: case STRIKER: case CUSTOMSHOTGUN: case CUSTOMSTRIKER:
 					{
 						float maxBullets = getNumBulletsInReload(animations, gripAttachment, type, item);
@@ -1103,7 +1102,7 @@ public class RenderGun implements IItemRenderer {
 		}
 		GL11.glPopMatrix();
 	}
-	
+
 	private void renderMuzzleFlash(GunAnimations animations, ModelGun model, GunType type, AttachmentType barrelAttachment, ItemStack item, float f) {
 		boolean isFlashEnabled = barrelAttachment == null || !barrelAttachment.disableMuzzleFlash;
 
@@ -1215,6 +1214,24 @@ public class RenderGun implements IItemRenderer {
 		GL11.glTranslatef(model.gripAttachPoint.x, model.gripAttachPoint.y, model.gripAttachPoint.z);
 		grip.model.renderAttachmentAmmo(f);
 		renderEngine.bindTexture(FlansModResourceHandler.getPaintjobTexture(otherAmmo));
+	}
+
+	/** Load the corresponding casing model and texture */
+//	private void renderCasingModel(float f, AttachmentType grip, GunType gun, ItemStack gunStack)
+//	{
+
+//	}
+
+	/** Load the corresponding flash model and texture */
+//	private void renderFlashModel()
+//	{
+//
+//	}
+
+	// Part of arms cleanup to rewrite into one method
+	private void renderArms(EntityPlayer player, ModelGun model, GunType type, GunAnimations anim)
+	{
+		
 	}
 
 	private void renderFirstPersonArm(EntityPlayer player, ModelGun model, GunAnimations anim) {
@@ -1351,7 +1368,6 @@ public class RenderGun implements IItemRenderer {
 	 * Get the number of bullets to reload in animation, based on ammo type to
 	 * reload
 	 */
-	//TODO
 	private float getNumBulletsInReload(GunAnimations animations, AttachmentType grip, GunType gun, ItemStack gunStack)
 	{
 		// If this is a singles reload, we want to know the number of bullets already in the gun

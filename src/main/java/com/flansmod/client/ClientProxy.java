@@ -41,6 +41,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,11 +123,11 @@ public class ClientProxy extends CommonProxy {
                         FMLClientHandler.instance().addModAsResource(container);
 
                     } catch (Exception e) {
-                        FlansMod.log("Failed to load images for content pack : " + file.getName());
+                        FlansMod.log("Failed to register content pack : " + file.getName());
                         e.printStackTrace();
                     }
                     // Add the directory to the content pack list
-                    FlansMod.log("Loaded content pack : " + file.getName());
+                    FlansMod.log("Loaded content pack: " + file.getName());
                     contentPacks.add(file);
                 }
             }
@@ -323,12 +324,16 @@ public class ClientProxy extends CommonProxy {
      */
     @Override
     public <T> T loadModel(String s, String shortName, Class<T> typeClass) {
-        if (s == null || shortName == null)
+        if (s == null || s.equalsIgnoreCase("None") || shortName == null)
             return null;
         try {
             return typeClass.cast(Class.forName(getModelName(s)).getConstructor().newInstance());
-        } catch (Exception e) {
-            FlansMod.logger.error("Failed to load model : " + shortName + " (" + s + ")", e);
+        } catch (InvocationTargetException ex) {
+            FlansMod.logPackError("?", "?", shortName, "Model is incompatible, or you are in a dev environment", null, ex.getCause());
+        } catch (ClassNotFoundException ex) {
+            FlansMod.logPackError("?", "?", shortName, "Model (probably) not found", null, ex);
+        } catch (Exception ex) {
+            FlansMod.logPackError("?", "?", shortName, "Failed to load model (unknown cause)", null, ex);
         }
         return null;
     }

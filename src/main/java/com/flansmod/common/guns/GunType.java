@@ -6,6 +6,8 @@ import com.flansmod.common.paintjob.PaintableType;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -503,725 +505,546 @@ public class GunType extends PaintableType implements IScope {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
+
+        damage = ConfigUtils.configFloat(config, "Damage", damage);
+        meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
+        secondaryFunction = meleeDamage > 0 ? EnumSecondaryFunction.MELEE : secondaryFunction;
+
+        meleeDamageDriveableModifier = ConfigUtils.configFloat(config, "MeleeDamageDriveableModifier", meleeDamageDriveableModifier);
+        recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
+        recoilCounterCoefficientSneaking = ConfigUtils.configFloat(config, "CounterRecoilForceSneaking", recoilCounterCoefficientSneaking);
+        recoilCounterCoefficientSprinting = ConfigUtils.configFloat(config, "CounterRecoilForceSprinting", recoilCounterCoefficientSprinting);
+        sneakSpreadMultiplier = ConfigUtils.configFloat(config, "SneakSpreadModifier", sneakSpreadMultiplier);
+        sprintSpreadMultiplier = ConfigUtils.configFloat(config, "SprintSpreadModifier", sprintSpreadMultiplier);
+        canForceReload = ConfigUtils.configBool(config, "CanForceReload", canForceReload);
+        allowRearm = ConfigUtils.configBool(config, "AllowRearm", allowRearm);
+        reloadTime = ConfigUtils.configInt(config, "ReloadTime", reloadTime);
+
+        //Recoil
+        recoilPitch = ConfigUtils.configFloat(config, "Recoil", recoilPitch);
+
+        String[] aSplit = ConfigUtils.getSplitFromKey(config, "FancyRecoil");
         try {
-            if (split[0].equals("Damage"))
-                damage = Float.parseFloat(split[1]);
-            else if (split[0].equals("MeleeDamage")) {
-                meleeDamage = Float.parseFloat(split[1]);
-                if (meleeDamage > 0F)
-                    secondaryFunction = EnumSecondaryFunction.MELEE;
-            } else if (split[0].equals("MeleeDamageDriveableModifier")) {
-                meleeDamageDriveableModifier = Float.parseFloat(split[1]);
-            } else if (split[0].equals("CounterRecoilForce"))
-                recoilCounterCoefficient = Float.parseFloat(split[1]);
-            else if (split[0].equals("CounterRecoilForceSneaking"))
-                recoilCounterCoefficientSneaking = Float.parseFloat(split[1]);
-            else if (split[0].equals("CounterRecoilForceSprinting"))
-                recoilCounterCoefficientSprinting = Float.parseFloat(split[1]);
-            else if (split[0].equals("SneakSpreadModifier"))
-                sneakSpreadMultiplier = Float.parseFloat(split[1]);
-            else if (split[0].equals("SprintSpreadModifier"))
-                sprintSpreadMultiplier = Float.parseFloat(split[1]);
-            else if (split[0].equals("CanForceReload"))
-                canForceReload = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowRearm"))
-                allowRearm = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("ReloadTime"))
-                reloadTime = Integer.parseInt(split[1]);
-
-            //Recoil
-            else if (split[0].equals("Recoil"))
-                recoilPitch = Float.parseFloat(split[1]);
-            else if (split[0].equals("FancyRecoil")) {
-                try {
-                    if (split.length > 1) {
-                        recoil.read(split);
-                        useFancyRecoil = true;
-                    }
-                } catch (Exception e) {
-                    useFancyRecoil = false;
-                    FlansMod.log("Failed to read fancy recoil for " + shortName);
-                    e.printStackTrace();
-                }
+            if (aSplit != null && aSplit.length > 1) {
+                recoil.read(aSplit);
+                useFancyRecoil = true;
             }
-            else if (split[0].equals("RecoilYaw"))
-                recoilYaw = Float.parseFloat(split[1]) / 10;
-            else if (split[0].equals("RandomRecoilRange"))
-                rndRecoilPitchRange = Float.parseFloat(split[1]);
-            else if (split[0].equals("RandomRecoilYawRange"))
-                rndRecoilYawRange = Float.parseFloat(split[1]);
-            else if (split[0].equals("DecreaseRecoil"))
-                decreaseRecoilPitch = Float.parseFloat(split[1]);
-            else if (split[0].equals("DecreaseRecoilYaw"))
-                decreaseRecoilYaw = Float.parseFloat(split[1]) > 0 ? Float.parseFloat(split[1]) : 0.5F;
-            else if (split[0].equals("RecoilSneakingMultiplier"))
-                recoilSneakingMultiplier = Float.parseFloat(split[1]);
-            else if (split[0].equals("RecoilSprintingMultiplier"))
-                recoilSprintingMultiplier = Float.parseFloat(split[1]);
-            else if (split[0].equals("RecoilSneakingMultiplierYaw"))
-                recoilSneakingMultiplierYaw = Float.parseFloat(split[1]);
-            else if (split[0].equals("RecoilSprintingMultiplierYaw"))
-                recoilSprintingMultiplierYaw = Float.parseFloat(split[1]);
-            else if (split[0].equals("Accuracy") || split[0].equals("Spread"))
-                defaultSpread = bulletSpread = Float.parseFloat(split[1]);
-            else if (split[0].equals("ADSSpreadModifier"))
-                adsSpreadModifier = Float.parseFloat(split[1]);
-            else if (split[0].equals("ADSSpreadModifierShotgun"))
-                adsSpreadModifierShotgun = Float.parseFloat(split[1]);
-            else if (split[0].equals("NumBullets"))
-                numBullets = Integer.parseInt(split[1]);
-            else if (split[0].equals("AllowNumBulletsByBulletType"))
-                allowNumBulletsByBulletType = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("AllowSpreadByBullet"))
-                allowSpreadByBullet = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("CanLockAngle"))
-                canLockOnAngle = Integer.parseInt(split[1]);
-            else if (split[0].equals("LockOnSoundTime"))
-                lockOnSoundTime = Integer.parseInt(split[1]);
-            else if (split[0].equals("LockOnToDriveables"))
-                lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("LockOnToVehicles"))
-                lockOnToVehicles = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("LockOnToPlanes"))
-                lockOnToPlanes = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("LockOnToMechas"))
-                lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("LockOnToPlayers"))
-                lockOnToPlayers = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("LockOnToLivings"))
-                lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());
+        } catch (Exception ex) {
+            useFancyRecoil = false;
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", aSplit, ex);
+        }
 
-            else if (split[0].equals("ConsumeGunOnUse"))
-                consumeGunUponUse = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("ShowCrosshair"))
-                showCrosshair = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("DropItemOnShoot"))
-                dropItemOnShoot = split[1];
-            else if (split[0].equals("NumBurstRounds"))
-                numBurstRounds = Integer.parseInt(split[1]);
-            else if (split[0].equals("MinigunStartSpeed"))
-                minigunStartSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("ItemUseAction"))
-                itemUseAction = EnumAction.valueOf(split[1].toLowerCase());
-            else if (split[0].equals("HipFireWhileSprinting"))
-                hipFireWhileSprinting = Boolean.parseBoolean(split[1].toLowerCase()) ? 1 : 2;
-            else if (split[0].equals("MaxRangeLockOn"))
-                maxRangeLockOn = Integer.parseInt(split[1]);
+        recoilYaw = ConfigUtils.configFloat(config, "RecoilYaw", recoilYaw) / 10;
+        rndRecoilPitchRange = ConfigUtils.configFloat(config, "RandomRecoilRange", rndRecoilPitchRange);
+        rndRecoilYawRange = ConfigUtils.configFloat(config, "RandomRecoilYawRange", rndRecoilYawRange);
+        decreaseRecoilPitch = ConfigUtils.configFloat(config, "DecreaseRecoil", decreaseRecoilPitch);
+        decreaseRecoilYaw = ConfigUtils.configFloat(config, "DecreaseRecoilYaw", decreaseRecoilYaw);
+        decreaseRecoilYaw = decreaseRecoilYaw > 0 ? decreaseRecoilYaw : 0.5F;
+        recoilSneakingMultiplier = ConfigUtils.configFloat(config, "RecoilSneakingMultiplier", recoilSneakingMultiplier);
+        recoilSprintingMultiplier = ConfigUtils.configFloat(config, "RecoilSprintingMultiplier", recoilSprintingMultiplier);
+        recoilSneakingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSneakingMultiplierYaw", recoilSneakingMultiplierYaw);
+        recoilSprintingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSprintingMultiplierYaw", recoilSprintingMultiplierYaw);
+        defaultSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
+        adsSpreadModifier = ConfigUtils.configFloat(config, "ADSSpreadModifier", adsSpreadModifier);
+        adsSpreadModifierShotgun = ConfigUtils.configFloat(config, "ADSSpreadModifierShotgun", adsSpreadModifierShotgun);
+        numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
+        allowNumBulletsByBulletType = ConfigUtils.configBool(config, "AllowNumBulletsByBulletType", allowNumBulletsByBulletType);
+        allowSpreadByBullet = ConfigUtils.configBool(config, "AllowSpreadByBullet", allowSpreadByBullet);
+        canLockOnAngle = ConfigUtils.configInt(config, "CanLockAngle", canLockOnAngle);
 
+        //Lock on settings
+        lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
+        if (config.containsKey("LockOnToDriveables"))
+            lockOnToPlanes = lockOnToVehicles = lockOnToMechas = ConfigUtils.configBool(config, "LockOnToDriveables", false);
+        lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
+        lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
+        lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
+        lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
+        lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+        maxRangeLockOn = ConfigUtils.configInt(config, "MaxRangeLockOn", maxRangeLockOn);
 
-                //Sounds
-            else if (split[0].equals("ShootDelay"))
-                shootDelay = Float.parseFloat(split[1]);
-            else if (split[0].equals("RoundsPerMin"))
-                roundsPerMin = Float.parseFloat(split[1]);
-            else if (split[0].equals("SoundLength"))
-                shootSoundLength = Integer.parseInt(split[1]);
-            else if (split[0].equals("DistortSound"))
-                distortSound = split[1].equals("True");
-            else if (split[0].equals("IdleSoundRange"))
-                idleSoundRange = Integer.parseInt(split[1]);
-            else if (split[0].equals("MeleeSoundRange"))
-                meleeSoundRange = Integer.parseInt(split[1]);
-            else if (split[0].equals("ReloadSoundRange"))
-                reloadSoundRange = Integer.parseInt(split[1]);
-            else if (split[0].equals("GunSoundRange"))
-                gunSoundRange = Integer.parseInt(split[1]);
-            else if (split[0].equals("ShootSound")) {
-                shootSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("BulletInsertSound")) {
-                bulletInsert = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("ActionSound")) {
-                actionSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("LastShootSound")) {
-                lastShootSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("SuppressedShootSound")) {
-                suppressedShootSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("ReloadSound")) {
-                reloadSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("EmptyReloadSound")) {
-                reloadSoundOnEmpty = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("EmptyClickSound")) {
-                clickSoundOnEmpty = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("EmptyClickSoundRepeated")) {
-                clickSoundOnEmptyRepeated = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("IdleSound")) {
-                idleSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("IdleSoundLength"))
-                idleSoundLength = Integer.parseInt(split[1]);
-            else if (split[0].equals("MeleeSound")) {
-                meleeSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
+        consumeGunUponUse = ConfigUtils.configBool(config, "ConsumeGunOnUse", consumeGunUponUse);
+        showCrosshair = ConfigUtils.configBool(config, "ShowCrosshair", showCrosshair);
+        dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", null);
+        numBurstRounds = ConfigUtils.configInt(config, "NumBurstRounds", numBurstRounds);
+        minigunStartSpeed = ConfigUtils.configFloat(config, "MinigunStartSpeed", minigunStartSpeed);
+
+        String line = ConfigUtils.configString(config, "ItemUseAction", null);
+        try {
+            if (line != null) {
+                itemUseAction = EnumAction.valueOf(line.toLowerCase());
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "ItemUseAction not recognised in gun", new String[] { "ItemUseAction", line }, ex);
+        }
 
-            //Looping sounds
-            else if (split[0].equals("WarmupSound")) {
-                warmupSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("WarmupSoundLength"))
-                warmupSoundLength = Integer.parseInt(split[1]);
-            else if (split[0].equals("LoopedSound") || split[0].equals("SpinSound")) {
-                loopedSound = split[1];
-                useLoopingSounds = true;
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("LoopedSoundLength") || split[0].equals("SpinSoundLength"))
-                loopedSoundLength = Integer.parseInt(split[1]);
-            else if (split[0].equals("CooldownSound")) {
-                cooldownSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("LockOnSound")) {
-                lockOnSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("DistantSound")) {
-                distantShootSound = split[1];
-                FlansMod.proxy.loadSound(contentPack, "guns", split[1]);
-            } else if (split[0].equals("DistantSoundRange")) {
-                distantSoundRange = Integer.parseInt(split[1]);
-            }
+        // This is needed, because the presence of the value overrides the default value of zero.
+        if (config.containsKey("HipFireWhileSprinting"))
+           hipFireWhileSprinting = ConfigUtils.configBool(config, "HipFireWhileSprinting", false) ? 1 : 2;
 
-            //Modes and zoom settings
+        //Sounds
+        shootDelay = ConfigUtils.configFloat(config, "ShootDelay", shootDelay);
+        roundsPerMin = ConfigUtils.configFloat(config, "RoundsPerMin", roundsPerMin);
+        shootSoundLength = ConfigUtils.configInt(config, "SoundLength", shootSoundLength);
+        distortSound = ConfigUtils.configBool(config, "DistortSound", distortSound);
+        idleSoundRange = ConfigUtils.configInt(config, "IdleSoundRange", idleSoundRange);
+        meleeSoundRange = ConfigUtils.configInt(config, "MeleeSoundRange", meleeSoundRange);
+        reloadSoundRange = ConfigUtils.configInt(config, "ReloadSoundRange", reloadSoundRange);
+        gunSoundRange = ConfigUtils.configInt(config, "GunSoundRange", gunSoundRange);
+        shootSound = ConfigUtils.configGunSound(packName, config, "ShootSound", shootSound);
+        bulletInsert = ConfigUtils.configGunSound(packName, config, "BulletInsertSound", bulletInsert);
+        actionSound = ConfigUtils.configGunSound(packName, config, "ActionSound", actionSound);
+        lastShootSound = ConfigUtils.configGunSound(packName, config, "LastShootSound", lastShootSound);
+        suppressedShootSound = ConfigUtils.configGunSound(packName, config, "SuppressedShootSound", suppressedShootSound);
+        reloadSound = ConfigUtils.configGunSound(packName, config, "ReloadSound", reloadSound);
+        reloadSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyReloadSound", reloadSoundOnEmpty);
+        clickSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyClickSound", clickSoundOnEmpty);
+        clickSoundOnEmptyRepeated = ConfigUtils.configGunSound(packName, config, "EmptyClickSoundRepeated", clickSoundOnEmptyRepeated);
+        idleSound = ConfigUtils.configGunSound(packName, config, "IdleSound", idleSound);
+        idleSoundLength = ConfigUtils.configInt(config, "IdleSoundLength", idleSoundLength);
+        meleeSound = ConfigUtils.configGunSound(packName, config, "MeleeSound", meleeSound);
 
-            else if (split[0].equals("HasVariableZoom")){
-                hasVariableZoom = Boolean.parseBoolean(split[1]);
-            }
-            else if (split[0].equals("MinZoom")) {
-                minZoom = Float.parseFloat(split[1]);
-            }
-            else if (split[0].equals("MaxZoom")) {
-                maxZoom = Float.parseFloat(split[1]);
-                if(maxZoom>1F)
-                    secondaryFunction=EnumSecondaryFunction.ZOOM;
-            }
-            else if (split[0].equals("ZoomAugment")) {
-                zoomAugment = Float.parseFloat(split[1]);
-            }
+        //Looping sounds
+        warmupSound = ConfigUtils.configGunSound(packName, config, "WarmupSound", warmupSound);
+        warmupSoundLength = ConfigUtils.configInt(config, "WarmupSoundLength", warmupSoundLength);
+
+        loopedSound = ConfigUtils.configGunSound(packName, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
+        if (loopedSound != null && !loopedSound.isEmpty())
+            useLoopingSounds = true;
+
+        loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
+        cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
+        lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
+        distantShootSound = ConfigUtils.configGunSound(packName, config, "DistantSound", distantShootSound);
+        distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
 
 
+        //Modes and zoom settings
+        hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
+        minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
+        maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
+        if(maxZoom>1F)
+            secondaryFunction=EnumSecondaryFunction.ZOOM;
+        zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
 
-            else if (split[0].equals("Mode")) {
-                mode = EnumFireMode.getFireMode(split[1]);
+        aSplit = ConfigUtils.getSplitFromKey(config, "Mode");
+
+        if (aSplit != null) {
+            try {
+                mode = EnumFireMode.getFireMode(aSplit[1]);
                 defaultmode = mode;
-                submode = new EnumFireMode[split.length - 1];
+                submode = new EnumFireMode[aSplit.length - 1];
                 for (int i = 0; i < submode.length; i++) {
-                    submode[i] = EnumFireMode.getFireMode(split[1 + i]);
+                    submode[i] = EnumFireMode.getFireMode(aSplit[1 + i]);
                 }
-            } else if (split[0].equals("Scope")) {
-                hasScopeOverlay = true;
-                if (split[1].equals("None"))
-                    hasScopeOverlay = false;
-                else defaultScopeTexture = split[1];
-            } else if (split[0].equals("AllowNightVision")) {
-                allowNightVision = Boolean.parseBoolean(split[1]);
-            } else if (split[0].equals("ZoomLevel")) {
-                zoomLevel = Float.parseFloat(split[1]);
-                if (zoomLevel > 1F)
-                    secondaryFunction = EnumSecondaryFunction.ZOOM;
-            } else if (split[0].equals("FOVZoomLevel")) {
-                FOVFactor = Float.parseFloat(split[1]);
-                if (FOVFactor > 1F)
-                    secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
-            } else if (split[0].equals("Deployable"))
-                deployable = split[1].equals("True");
-            else if (FMLCommonHandler.instance().getSide().isClient() && deployable && split[0].equals("DeployedModel")) {
-                deployableModel = FlansMod.proxy.loadModel(split[1], shortName, ModelMG.class);
-                deployableModelString = split[1];
-            } else if (FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("Model")))
-                model = FlansMod.proxy.loadModel(split[1], shortName, ModelGun.class);
-            else if (FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("CasingModel"))) {
-                casingModel = FlansMod.proxy.loadModel(split[1], shortName, ModelCasing.class);
-                casingModelString = split[1];
-            } else if (FMLCommonHandler.instance().getSide().isClient() && (split[0].equals("FlashModel"))) {
-                flashModel = FlansMod.proxy.loadModel(split[1], shortName, ModelFlash.class);
-                flashModelString = split[1];
-            } else if (split[0].equals("CasingTexture"))
-                casingTexture = split[1];
-            else if (split[0].equals("FlashTexture"))
-                flashTexture = split[1];
-            else if (split[0].equals("MuzzleFlashParticle"))
-                muzzleFlashParticle = split[1];
-            else if (split[0].equals("MuzzleFlashParticleSize"))
-                muzzleFlashParticleSize = Float.parseFloat(split[1]);
-            else if (split[0].equals("ShowMuzzleFlashParticle")) {
-                showMuzzleFlashParticles = Boolean.parseBoolean(split[1]);
-                useMuzzleFlashDefaults = false;
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting gun mode", aSplit, ex);
             }
-            else if (split[0].equals("ShowMuzzleFlashParticleFirstPerson"))
-                showMuzzleFlashParticlesFirstPerson = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("MuzzleFlashParticleShoulderOffset"))
-                muzzleFlashParticlesShoulderOffset = new Vector3f(split[1], null);
-            else if (split[0].equals("MuzzleFlashParticleHandOffset"))
-                muzzleFlashParticlesHandOffset = new Vector3f(split[1], null);
-            else if (split[0].equals("ModelScale"))
-                modelScale = Float.parseFloat(split[1]);
-            else if (split[0].equals("Texture"))
-                texture = split[1];
-            else if (split[0].equals("HitTexture"))
-                hitTexture = split[1];
-            else if (split[0].equals("DeployedTexture"))
-                deployableTexture = split[1];
-            else if (split[0].equals("StandBackDistance"))
-                standBackDist = Float.parseFloat(split[1]);
-            else if (split[0].equals("TopViewLimit"))
-                topViewLimit = -Float.parseFloat(split[1]);
-            else if (split[0].equals("BottomViewLimit"))
-                bottomViewLimit = Float.parseFloat(split[1]);
-            else if (split[0].equals("SideViewLimit"))
-                sideViewLimit = Float.parseFloat(split[1]);
-            else if (split[0].equals("PivotHeight"))
-                pivotHeight = Float.parseFloat(split[1]);
-            else if (split[0].equals("Ammo")) {
-                ShootableType type = ShootableType.getShootableType(split[1]);
-                if (type != null)
-                    ammo.add(type);
-            } else if (split[0].equals("NumAmmoSlots") || split[0].equals("NumAmmoItemsInGun") || split[0].equals("LoadIntoGun"))
-                numPrimaryAmmoItems = Integer.parseInt(split[1]);
-            else if (split[0].equals("BulletSpeed"))
-                bulletSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("CanShootUnderwater"))
-                canShootUnderwater = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("CanSetPosition"))
-                canSetPosition = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("OneHanded")) {
-                oneHanded = Boolean.parseBoolean(split[1].toLowerCase());
-            }
-            else if (split[0].equals("SecondaryFunction"))
-                secondaryFunction = EnumSecondaryFunction.get(split[1]);
-            else if (split[0].equals("UsableByPlayers"))
-                usableByPlayers = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("UsableByMechas"))
-                usableByMechas = Boolean.parseBoolean(split[1]);
+        }
 
-                //Custom Melee Stuff
-            else if (split[0].equals("UseCustomMelee") && Boolean.parseBoolean(split[1]))
-                secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
-            else if (split[0].equals("UseCustomMeleeWhenShoot") && Boolean.parseBoolean(split[1]))
-                secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
-            else if (split[0].equals("MeleeTime"))
-                meleeTime = Integer.parseInt(split[1]);
-            else if (split[0].equals("AddNode")) {
+        String scopeString = ConfigUtils.configString(config, "Scope", null);
+        if (scopeString == null || scopeString.equalsIgnoreCase("None")) {
+            hasScopeOverlay = false;
+        } else {
+            hasScopeOverlay = true;
+            defaultScopeTexture = scopeString;
+        }
+
+        allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
+        zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
+        if (zoomLevel > 1F)
+            secondaryFunction = EnumSecondaryFunction.ZOOM;
+
+        FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
+        if (FOVFactor > 1F)
+            secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
+
+        deployable = ConfigUtils.configBool(config, "Deployable", deployable);
+
+        deployableModelString = ConfigUtils.configString(configMap, "DeployedModel", null);
+
+        casingModelString = ConfigUtils.configString(config, "CasingModel", null);
+
+        flashModelString = ConfigUtils.configString(config, "FlashModel", null);
+
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
+            casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
+            flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
+            model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
+        }
+
+
+
+        casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
+        flashTexture = ConfigUtils.configString(config, "FlashTexture", null);
+        muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", null);;
+        muzzleFlashParticleSize = ConfigUtils.configFloat(config, "MuzzleFlashParticleSize", muzzleFlashParticleSize);
+        showMuzzleFlashParticles = ConfigUtils.configBool(config, "ShowMuzzleFlashParticle", showMuzzleFlashParticles);
+        if (showMuzzleFlashParticles)
+            useMuzzleFlashDefaults = false;
+        showMuzzleFlashParticlesFirstPerson = ConfigUtils.configBool(config, "ShowMuzzleFlashParticleFirstPerson", showMuzzleFlashParticlesFirstPerson);
+        muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
+        muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
+        modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
+        texture = ConfigUtils.configString(config, "Texture", texture);
+        hitTexture = ConfigUtils.configString(config, "CasingTexture", hitTexture);
+        deployableTexture = ConfigUtils.configString(config, "DeployedTexture", deployableTexture);
+        topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", modelScale);
+        bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
+        sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
+        pivotHeight = ConfigUtils.configFloat(config, "PivotHeight", modelScale);
+
+        ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Ammo" });
+        for (String[] split : splits) {
+            try {
+                ShootableType type = ShootableType.getShootableType(split[1]);
+                if (type == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Couldn't find shootable type for adding Ammo to gun", split, null);
+                } else {
+                    ammo.add(type);
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Ammo for gun", split, ex);
+            }
+        }
+
+        numPrimaryAmmoItems = ConfigUtils.configInt(config, new String[]{"NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun"},  numPrimaryAmmoItems);
+        bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
+        canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
+        canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
+        oneHanded = ConfigUtils.configBool(config, "OneHanded", oneHanded);
+
+        String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
+        secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
+
+        usableByPlayers = ConfigUtils.configBool(config, "UsableByPlayers", usableByPlayers);
+        usableByMechas = ConfigUtils.configBool(config, "UsableByMechas", usableByMechas);
+
+        //Custom Melee Stuff
+        if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
+            secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
+        }
+
+        if (ConfigUtils.configBool(config, "UseCustomMeleeWhenShoot", false)) {
+            secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
+        }
+
+        meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
+
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddNode" });
+        for (String[] split : splits) {
+            try {
                 meleePath.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
                 meleePathAngles.add(new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6])));
-            } else if (split[0].equals("MeleeDamagePoint") || split[0].equals("MeleeDamageOffset")) {
-                meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", split, ex);
             }
+        }
 
-            //Player modifiers
-            else if (split[0].equals("MoveSpeedModifier") || split[0].equals("Slowness"))
-                moveSpeedModifier = Float.parseFloat(split[1]);
-            else if (split[0].equals("KnockbackReduction") || split[0].equals("KnockbackModifier"))
-                knockbackModifier = Float.parseFloat(split[1]);
-            else if (split[0].equals("SwitchDelay"))
-                switchDelay = Float.parseFloat(split[1]);
-                //Attachment settings
-            else if (split[0].equals("AllowAllAttachments"))
-                allowAllAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowAttachments")) {
-                for (int i = 1; i < split.length; i++) {
-                    allowedAttachments.add(AttachmentType.getAttachment(split[i]));
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "MeleeDamagePoint", "MeleeDamageOffset" });
+        for (String[] split : splits) {
+            try {
+                meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", split, ex);
+            }
+        }
+
+
+        //Player modifiers
+        moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
+        knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
+        switchDelay = ConfigUtils.configFloat(config, "SwitchDelay", switchDelay);
+
+        //Attachment settings
+        allowAllAttachments = ConfigUtils.configBool(config, "AllowAllAttachments", allowAllAttachments);
+
+        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AllowAttachments" });
+        try {
+            for (String[] split : splits) {
+                for (int i=1; i<split.length; i++) {
+                    AttachmentType type = AttachmentType.getAttachment(split[i]);
+                    if (type != null) {
+                        allowedAttachments.add(type);
+                    } else {
+                        FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments", split, null);
+                    }
                 }
-            } else if (split[0].equals("AllowBarrelAttachments"))
-                allowBarrelAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowScopeAttachments"))
-                allowScopeAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowStockAttachments"))
-                allowStockAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowGripAttachments"))
-                allowGripAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowGadgetAttachments"))
-                allowGadgetAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowSlideAttachments"))
-                allowSlideAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowPumpAttachments"))
-                allowPumpAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("AllowAccessoryAttachments"))
-                allowAccessoryAttachments = Boolean.parseBoolean(split[1].toLowerCase());
-            else if (split[0].equals("NumGenericAttachmentSlots"))
-                numGenericAttachmentSlots = Integer.parseInt(split[1]);
+            }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to add allowed attachment with AllowAttachments", aSplit, ex);
+        }
 
-                //Shield settings
-            else if (split[0].equalsIgnoreCase("shield")) {
+        allowBarrelAttachments = ConfigUtils.configBool(config, "AllowBarrelAttachments", allowBarrelAttachments);
+        allowScopeAttachments = ConfigUtils.configBool(config, "AllowScopeAttachments", allowScopeAttachments);
+        allowStockAttachments = ConfigUtils.configBool(config, "AllowStockAttachments", allowStockAttachments);
+        allowGripAttachments = ConfigUtils.configBool(config, "AllowGripAttachments", allowGripAttachments);
+        allowGadgetAttachments = ConfigUtils.configBool(config, "AllowGadgetAttachments", allowGadgetAttachments);
+        allowSlideAttachments = ConfigUtils.configBool(config, "AllowSlideAttachments", allowSlideAttachments);
+        allowPumpAttachments = ConfigUtils.configBool(config, "AllowPumpAttachments", allowPumpAttachments);
+        allowAccessoryAttachments = ConfigUtils.configBool(config, "AllowAccessoryAttachments", allowAccessoryAttachments);
+        numGenericAttachmentSlots = ConfigUtils.configInt(config, "NumGenericAttachmentSlots", numGenericAttachmentSlots);
+
+            //Shield settings
+        String[] split = ConfigUtils.getSplitFromKey(config, "Shield");
+        try {
+            if (split != null) {
                 shield = true;
                 shieldDamageAbsorption = Float.parseFloat(split[1]);
                 shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
                 shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
-            } else if (FMLCommonHandler.instance().getSide().isClient()) {
-                processAnimationConfigs(split);
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Failed to config Shield", split, ex);
+        }
 
-        } catch (Exception e) {
-            if (split != null) {
-                StringBuilder msg = new StringBuilder(" : ");
-                for (String s : split) msg.append(" ").append(s);
-                FlansMod.log("Reading gun file failed. " + file.name + msg);
-            } else {
-                FlansMod.log("Reading gun file failed. " + file.name);
-            }
-            if (FlansMod.printStackTrace) {
-                e.printStackTrace();
-            }
+
+        if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
+            processAnimationConfigs(config);
         }
     }
 
-    public void processAnimationConfigs(String[] split) {
-        if (split[0].equals("animMinigunBarrelOrigin"))
-            model.minigunBarrelOrigin = parseVector3f(split);
-        else if (split[0].equals("animBarrelAttachPoint"))
-            model.barrelAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animScopeAttachPoint"))
-            model.scopeAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animStockAttachPoint"))
-            model.stockAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animGripAttachPoint"))
-            model.gripAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animGadgetAttachPoint"))
-            model.gadgetAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animSlideAttachPoint"))
-            model.slideAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animPumpAttachPoint"))
-            model.pumpAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animAccessoryAttachPoint"))
-            model.accessoryAttachPoint = parseVector3f(split);
+    public void processAnimationConfigs(ConfigMap config) {
+        // These provide a way to override model configs without recompiling the model.
 
-        else if (split[0].equals("animDefaultBarrelFlashPoint"))
-            model.defaultBarrelFlashPoint = parseVector3f(split);
-        else if (split[0].equals("animMuzzleFlashPoint"))
-            model.muzzleFlashPoint = parseVector3f(split);
+        model.minigunBarrelOrigin = ConfigUtils.configVector(config, "animMinigunBarrelOrigin", model.minigunBarrelOrigin);
+        model.barrelAttachPoint = ConfigUtils.configVector(config, "animBarrelAttachPoint", model.barrelAttachPoint);
+        model.scopeAttachPoint = ConfigUtils.configVector(config, "animScopeAttachPoint", model.scopeAttachPoint);
+        model.stockAttachPoint = ConfigUtils.configVector(config, "animStockAttachPoint", model.stockAttachPoint);
+        model.gripAttachPoint = ConfigUtils.configVector(config, "animGripAttachPoint", model.gripAttachPoint);
+        model.gadgetAttachPoint = ConfigUtils.configVector(config, "animGadgetAttachPoint", model.gadgetAttachPoint);
+        model.slideAttachPoint = ConfigUtils.configVector(config, "animSlideAttachPoint", model.slideAttachPoint);
+        model.pumpAttachPoint = ConfigUtils.configVector(config, "animPumpAttachPoint", model.pumpAttachPoint);
+        model.accessoryAttachPoint = ConfigUtils.configVector(config, "animAccessoryAttachPoint", model.accessoryAttachPoint);
 
-        else if (split[0].equals("animHasFlash"))
-            model.hasFlash = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animHasArms"))
-            model.hasArms = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("easyArms"))
-            model.easyArms = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("armScale"))
-            model.armScale = parseVector3f(split);
+        model.defaultBarrelFlashPoint = ConfigUtils.configVector(config, "animDefaultBarrelFlashPoint", model.defaultBarrelFlashPoint);
+        model.muzzleFlashPoint = ConfigUtils.configVector(config, "animMuzzleFlashPoint", model.muzzleFlashPoint);
 
+        model.hasFlash = ConfigUtils.configBool(config, "animHasFlash", model.hasFlash);
+        model.hasArms = ConfigUtils.configBool(config, "animHasArms", model.hasArms);
+        model.easyArms = ConfigUtils.configBool(config, "easyArms", model.easyArms);
+        model.armScale = ConfigUtils.configVector(config, "armScale", model.armScale);
 
-        else if (split[0].equals("animLeftArmPos"))
-            model.leftArmPos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmRot"))
-            model.leftArmRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmScale"))
-            model.leftArmScale = parseVector3f(split);
-        else if (split[0].equals("animRightArmPos"))
-            model.rightArmPos = parseVector3f(split);
-        else if (split[0].equals("animRightArmRot"))
-            model.rightArmRot = parseVector3f(split);
-        else if (split[0].equals("animRightArmScale"))
-            model.rightArmScale = parseVector3f(split);
+        model.leftArmPos = ConfigUtils.configVector(config, "animLeftArmPos", model.leftArmPos);
+        model.leftArmRot = ConfigUtils.configVector(config, "animLeftArmRot", model.leftArmRot);
+        model.leftArmScale = ConfigUtils.configVector(config, "animLeftArmScale", model.leftArmScale);
+        model.rightArmPos = ConfigUtils.configVector(config, "animRightArmPos", model.rightArmPos);
+        model.rightArmRot = ConfigUtils.configVector(config, "animRightArmRot", model.rightArmRot);
+        model.rightArmScale = ConfigUtils.configVector(config, "animRightArmScale", model.rightArmScale);
 
-        else if (split[0].equals("animRightArmReloadPos"))
-            model.rightArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animRightArmReloadRot"))
-            model.rightArmReloadRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmReloadPos"))
-            model.leftArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmReloadRot"))
-            model.leftArmReloadRot = parseVector3f(split);
+        model.rightArmReloadPos = ConfigUtils.configVector(config, "animRightArmReloadPos", model.rightArmReloadPos);
+        model.rightArmReloadRot = ConfigUtils.configVector(config, "animRightArmReloadRot", model.rightArmReloadRot);
+        model.leftArmReloadPos = ConfigUtils.configVector(config, "animLeftArmReloadPos", model.leftArmReloadPos);
+        model.leftArmReloadRot = ConfigUtils.configVector(config, "animLeftArmReloadRot", model.leftArmReloadRot);
 
-        else if (split[0].equals("animRightArmChargePos"))
-            model.rightArmChargePos = parseVector3f(split);
-        else if (split[0].equals("animRightArmChargeRot"))
-            model.rightArmChargeRot = parseVector3f(split);
-        else if (split[0].equals("animLeftArmChargePos"))
-            model.leftArmChargePos = parseVector3f(split);
-        else if (split[0].equals("animLeftArmChargeRot"))
-            model.leftArmChargeRot = parseVector3f(split);
+        model.rightArmChargePos = ConfigUtils.configVector(config, "animRightArmChargePos", model.rightArmChargePos);
+        model.rightArmChargeRot = ConfigUtils.configVector(config, "animRightArmChargeRot", model.rightArmChargeRot);
+        model.leftArmChargePos = ConfigUtils.configVector(config, "animLeftArmChargePos", model.leftArmChargePos);
+        model.leftArmChargeRot = ConfigUtils.configVector(config, "animLeftArmChargeRot", model.leftArmChargeRot);
 
-        else if (split[0].equals("animStagedRightArmReloadPos"))
-            model.stagedrightArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animStagedRightArmReloadRot"))
-            model.stagedrightArmReloadRot = parseVector3f(split);
-        else if (split[0].equals("animStagedLeftArmReloadPos"))
-            model.stagedleftArmReloadPos = parseVector3f(split);
-        else if (split[0].equals("animStagedLeftArmReloadRot"))
-            model.stagedleftArmReloadRot = parseVector3f(split);
+        model.stagedrightArmReloadPos = ConfigUtils.configVector(config, "animStagedRightArmReloadPos", model.stagedrightArmReloadPos);
+        model.stagedrightArmReloadRot = ConfigUtils.configVector(config, "animStagedRightArmReloadRot", model.stagedrightArmReloadRot);
+        model.stagedleftArmReloadPos = ConfigUtils.configVector(config, "animStagedLeftArmReloadPos", model.stagedleftArmReloadPos);
+        model.stagedleftArmReloadRot = ConfigUtils.configVector(config, "animStagedLeftArmReloadRot", model.stagedleftArmReloadRot);
 
-        else if (split[0].equals("animRightHandAmmo"))
-            model.rightHandAmmo = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandAmmo"))
-            model.leftHandAmmo = Boolean.parseBoolean(split[1]);
+        model.rightHandAmmo = ConfigUtils.configBool(config, "animRightHandAmmo", model.rightHandAmmo);
+        model.leftHandAmmo = ConfigUtils.configBool(config, "animLeftHandAmmo", model.leftHandAmmo);
 
-        else if (split[0].equals("animGunSlideDistance"))
-            model.gunSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltGunSlideDistance"))
-            model.altgunSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRecoilSlideDistance"))
-            model.RecoilSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotatedSlideDistance"))
-            model.RotateSlideDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animShakeDistance"))
-            model.ShakeDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRecoilAmount"))
-            model.recoilAmount = Float.parseFloat(split[1]);
+        model.gunSlideDistance = ConfigUtils.configFloat(config, "animGunSlideDistance", model.gunSlideDistance);
+        model.altgunSlideDistance = ConfigUtils.configFloat(config, "animAltGunSlideDistance", model.altgunSlideDistance);
+        model.RecoilSlideDistance = ConfigUtils.configFloat(config, "animRecoilSlideDistance", model.RecoilSlideDistance);
+        model.RotateSlideDistance = ConfigUtils.configFloat(config, "animRotatedSlideDistance", model.RotateSlideDistance);
+        model.ShakeDistance = ConfigUtils.configFloat(config, "animShakeDistance", model.ShakeDistance);
+        model.recoilAmount = ConfigUtils.configFloat(config, "animRecoilAmount", model.recoilAmount);
 
-        else if (split[0].equals("animCasingAnimDistance"))
-            model.casingAnimDistance = parseVector3f(split);
-        else if (split[0].equals("animCasingAnimSpread"))
-            model.casingAnimSpread = parseVector3f(split);
-        else if (split[0].equals("animCasingAnimTime"))
-            model.casingAnimTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCasingRotateVector"))
-            model.casingRotateVector = parseVector3f(split);
-        else if (split[0].equals("animCasingAttachPoint"))
-            model.casingAttachPoint = parseVector3f(split);
-        else if (split[0].equals("animCasingDelay"))
-            model.casingDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCasingScale"))
-            model.caseScale = Float.parseFloat(split[1]);
-        else if (split[0].equals("animFlashScale"))
-            model.flashScale = Float.parseFloat(split[1]);
+        model.casingAnimDistance = ConfigUtils.configVector(config, "animCasingAnimDistance", model.casingAnimDistance);
+        model.casingAnimSpread = ConfigUtils.configVector(config, "animCasingAnimSpread", model.casingAnimSpread);
+        model.casingAnimTime = ConfigUtils.configInt(config, "animCasingAnimTime", model.casingAnimTime);
+        model.casingRotateVector = ConfigUtils.configVector(config, "animCasingRotateVector", model.casingRotateVector);
+        model.casingAttachPoint = ConfigUtils.configVector(config, "animCasingAttachPoint", model.casingAttachPoint);
+        model.casingDelay = ConfigUtils.configInt(config, "animCasingDelay", model.casingDelay);
+        model.caseScale = ConfigUtils.configFloat(config, "animCasingScale", model.caseScale);
+        model.flashScale = ConfigUtils.configFloat(config, "animFlashScale", model.flashScale);
 
-        else if (split[0].equals("animChargeHandleDistance"))
-            model.chargeHandleDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animChargeDelay"))
-            model.chargeDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animChargeDelayAfterReload"))
-            model.chargeDelayAfterReload = Integer.parseInt(split[1]);
-        else if (split[0].equals("animChargeTime"))
-            model.chargeTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animCountOnRightHandSide"))
-            model.countOnRightHandSide = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animIsBulletCounterActive"))
-            model.isBulletCounterActive = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animIsAdvBulletCounterActive"))
-            model.isAdvBulletCounterActive = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animAnimationType")) {
-            if (split[1].equals("NONE"))
+        model.chargeHandleDistance = ConfigUtils.configFloat(config, "animChargeHandleDistance", model.chargeHandleDistance);
+        model.chargeDelay = ConfigUtils.configInt(config, "animChargeDelay", model.chargeDelay);
+        model.chargeDelayAfterReload = ConfigUtils.configInt(config, "animChargeDelayAfterReload", model.chargeDelayAfterReload);
+        model.chargeTime = ConfigUtils.configInt(config, "animChargeTime", model.chargeTime);
+        model.countOnRightHandSide = ConfigUtils.configBool(config, "animCountOnRightHandSide", model.countOnRightHandSide);
+        model.isBulletCounterActive = ConfigUtils.configBool(config, "animIsBulletCounterActive", model.isBulletCounterActive);
+        model.isAdvBulletCounterActive = ConfigUtils.configBool(config, "animIsAdvBulletCounterActive", model.isAdvBulletCounterActive);
+
+        String[] split = ConfigUtils.getSplitFromKey(config, "animAnimationType");
+        if (split != null) {
+            if (split[1].equalsIgnoreCase("NONE"))
                 model.animationType = EnumAnimationType.NONE;
-            else if (split[1].equals("BOTTOM_CLIP"))
+            else if (split[1].equalsIgnoreCase("BOTTOM_CLIP"))
                 model.animationType = EnumAnimationType.BOTTOM_CLIP;
-            else if (split[1].equals("CUSTOMBOTTOM_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBOTTOM_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMBOTTOM_CLIP;
-            else if (split[1].equals("PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.PISTOL_CLIP;
-            else if (split[1].equals("CUSTOMPISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMPISTOL_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMPISTOL_CLIP;
-            else if (split[1].equals("TOP_CLIP"))
+            else if (split[1].equalsIgnoreCase("TOP_CLIP"))
                 model.animationType = EnumAnimationType.TOP_CLIP;
-            else if (split[1].equals("CUSTOMTOP_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMTOP_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMTOP_CLIP;
-            else if (split[1].equals("SIDE_CLIP"))
+            else if (split[1].equalsIgnoreCase("SIDE_CLIP"))
                 model.animationType = EnumAnimationType.SIDE_CLIP;
-            else if (split[1].equals("CUSTOMSIDE_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSIDE_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMSIDE_CLIP;
-            else if (split[1].equals("P90"))
+            else if (split[1].equalsIgnoreCase("P90"))
                 model.animationType = EnumAnimationType.P90;
-            else if (split[1].equals("CUSTOMP90"))
+            else if (split[1].equalsIgnoreCase("CUSTOMP90"))
                 model.animationType = EnumAnimationType.CUSTOMP90;
-            else if (split[1].equals("SHOTGUN"))
+            else if (split[1].equalsIgnoreCase("SHOTGUN"))
                 model.animationType = EnumAnimationType.SHOTGUN;
-            else if (split[1].equals("CUSTOMSHOTGUN"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSHOTGUN"))
                 model.animationType = EnumAnimationType.CUSTOMSHOTGUN;
-            else if (split[1].equals("RIFLE"))
+            else if (split[1].equalsIgnoreCase("RIFLE"))
                 model.animationType = EnumAnimationType.RIFLE;
-            else if (split[1].equals("CUSTOMRIFLE"))
+            else if (split[1].equalsIgnoreCase("CUSTOMRIFLE"))
                 model.animationType = EnumAnimationType.CUSTOMRIFLE;
-            else if (split[1].equals("REVOLVER"))
+            else if (split[1].equalsIgnoreCase("REVOLVER"))
                 model.animationType = EnumAnimationType.REVOLVER;
-            else if (split[1].equals("CUSTOMREVOLVER"))
+            else if (split[1].equalsIgnoreCase("CUSTOMREVOLVER"))
                 model.animationType = EnumAnimationType.CUSTOMREVOLVER;
-            else if (split[1].equals("REVOLVER2"))
+            else if (split[1].equalsIgnoreCase("REVOLVER2"))
                 model.animationType = EnumAnimationType.REVOLVER;
-            else if (split[1].equals("CUSTOMREVOLVER2"))
+            else if (split[1].equalsIgnoreCase("CUSTOMREVOLVER2"))
                 model.animationType = EnumAnimationType.CUSTOMREVOLVER;
-            else if (split[1].equals("END_LOADED"))
+            else if (split[1].equalsIgnoreCase("END_LOADED"))
                 model.animationType = EnumAnimationType.END_LOADED;
-            else if (split[1].equals("CUSTOMEND_LOADED"))
+            else if (split[1].equalsIgnoreCase("CUSTOMEND_LOADED"))
                 model.animationType = EnumAnimationType.CUSTOMEND_LOADED;
-            else if (split[1].equals("RIFLE_TOP"))
+            else if (split[1].equalsIgnoreCase("RIFLE_TOP"))
                 model.animationType = EnumAnimationType.RIFLE_TOP;
-            else if (split[1].equals("CUSTOMRIFLE_TOP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMRIFLE_TOP"))
                 model.animationType = EnumAnimationType.CUSTOMRIFLE_TOP;
-            else if (split[1].equals("BULLPUP"))
+            else if (split[1].equalsIgnoreCase("BULLPUP"))
                 model.animationType = EnumAnimationType.BULLPUP;
-            else if (split[1].equals("CUSTOMBULLPUP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBULLPUP"))
                 model.animationType = EnumAnimationType.CUSTOMBULLPUP;
-            else if (split[1].equals("ALT_PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("ALT_PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.ALT_PISTOL_CLIP;
-            else if (split[1].equals("CUSTOMALT_PISTOL_CLIP"))
+            else if (split[1].equalsIgnoreCase("CUSTOMALT_PISTOL_CLIP"))
                 model.animationType = EnumAnimationType.CUSTOMALT_PISTOL_CLIP;
-            else if (split[1].equals("GENERIC"))
+            else if (split[1].equalsIgnoreCase("GENERIC"))
                 model.animationType = EnumAnimationType.GENERIC;
-            else if (split[1].equals("CUSTOMGENERIC"))
+            else if (split[1].equalsIgnoreCase("CUSTOMGENERIC"))
                 model.animationType = EnumAnimationType.CUSTOMGENERIC;
-            else if (split[1].equals("BACK_LOADED"))
+            else if (split[1].equalsIgnoreCase("BACK_LOADED"))
                 model.animationType = EnumAnimationType.BACK_LOADED;
-            else if (split[1].equals("CUSTOMBACK_LOADED"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBACK_LOADED"))
                 model.animationType = EnumAnimationType.CUSTOMBACK_LOADED;
-            else if (split[1].equals("STRIKER"))
+            else if (split[1].equalsIgnoreCase("STRIKER"))
                 model.animationType = EnumAnimationType.STRIKER;
-            else if (split[1].equals("CUSTOMSTRIKER"))
+            else if (split[1].equalsIgnoreCase("CUSTOMSTRIKER"))
                 model.animationType = EnumAnimationType.CUSTOMSTRIKER;
-            else if (split[1].equals("BREAK_ACTION"))
+            else if (split[1].equalsIgnoreCase("BREAK_ACTION"))
                 model.animationType = EnumAnimationType.BREAK_ACTION;
-            else if (split[1].equals("CUSTOMBREAK_ACTION"))
+            else if (split[1].equalsIgnoreCase("CUSTOMBREAK_ACTION"))
                 model.animationType = EnumAnimationType.CUSTOMBREAK_ACTION;
-            else if (split[1].equals("CUSTOM"))
+            else if (split[1].equalsIgnoreCase("CUSTOM"))
                 model.animationType = EnumAnimationType.CUSTOM;
-        } else if (split[0].equals("animMeleeAnimation")) {
-            if (split[1].equals("DEFAULT"))
+        }
+
+        split = ConfigUtils.getSplitFromKey(config, "animMeleeAnimation");
+        if (split != null) {
+            if (split[1].equalsIgnoreCase("DEFAULT"))
                 model.meleeAnimation = EnumMeleeAnimation.DEFAULT;
-            else if (split[1].equals("NONE"))
+            else if (split[1].equalsIgnoreCase("NONE"))
                 model.meleeAnimation = EnumMeleeAnimation.NONE;
-            else if (split[1].equals("BLUNT_SWING"))
+            else if (split[1].equalsIgnoreCase("BLUNT_SWING"))
                 model.meleeAnimation = EnumMeleeAnimation.BLUNT_SWING;
-            else if (split[1].equals("BLUNT_BASH"))
+            else if (split[1].equalsIgnoreCase("BLUNT_BASH"))
                 model.meleeAnimation = EnumMeleeAnimation.BLUNT_BASH;
-            else if (split[1].equals("STAB_UNDERARM"))
+            else if (split[1].equalsIgnoreCase("STAB_UNDERARM"))
                 model.meleeAnimation = EnumMeleeAnimation.STAB_UNDERARM;
-            else if (split[1].equals("STAB_OVERARM"))
+            else if (split[1].equalsIgnoreCase("STAB_OVERARM"))
                 model.meleeAnimation = EnumMeleeAnimation.STAB_OVERARM;
-        } else if (split[0].equals("animTiltGunTime"))
-            model.tiltGunTime = Float.parseFloat(split[1]);
-        else if (split[0].equals("animUnloadClipTime"))
-            model.unloadClipTime = Float.parseFloat(split[1]);
-        else if (split[0].equals("animLoadClipTime"))
-            model.loadClipTime = Float.parseFloat(split[1]);
+        }
 
-        else if (split[0].equals("animScopeIsOnSlide"))
-            model.scopeIsOnSlide = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animScopeIsOnBreakAction"))
-            model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+        model.tiltGunTime = ConfigUtils.configFloat(config, "animTiltGunTime", model.tiltGunTime);
+        model.unloadClipTime = ConfigUtils.configFloat(config, "animUnloadClipTime", model.unloadClipTime);
+        model.loadClipTime = ConfigUtils.configFloat(config, "animLoadClipTime", model.loadClipTime);
 
-        else if (split[0].equals("animNumBulletsInReloadAnimation"))
-            model.numBulletsInReloadAnimation = Float.parseFloat(split[1]);
+        model.scopeIsOnSlide = ConfigUtils.configBool(config, "animScopeIsOnSlide", model.scopeIsOnSlide);
+        model.scopeIsOnBreakAction = ConfigUtils.configBool(config, "animScopeIsOnBreakAction", model.scopeIsOnBreakAction);
 
-        else if (split[0].equals("animPumpDelay"))
-            model.pumpDelay = Integer.parseInt(split[1]);
-        else if (split[0].equals("animPumpDelayAfterReload"))
-            model.pumpDelayAfterReload = Integer.parseInt(split[1]);
-        else if (split[0].equals("animPumpTime"))
-            model.pumpTime = Integer.parseInt(split[1]);
-        else if (split[0].equals("animHammerDelay"))
-            model.hammerDelay = Integer.parseInt(split[1]);
+        model.numBulletsInReloadAnimation = ConfigUtils.configFloat(config, "animNumBulletsInReloadAnimation", model.numBulletsInReloadAnimation);
+        model.pumpDelay = ConfigUtils.configInt(config, "animPumpDelay", model.pumpDelay);
+        model.pumpDelayAfterReload = ConfigUtils.configInt(config, "animPumpDelayAfterReload", model.pumpDelayAfterReload);
+        model.pumpTime = ConfigUtils.configInt(config, "animPumpTime", model.pumpTime);
+        model.hammerDelay = ConfigUtils.configInt(config, "animHammerDelay", model.hammerDelay);
 
-        else if (split[0].equals("animPumpHandleDistance"))
-            model.pumpHandleDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animEndLoadedAmmoDistance"))
-            model.endLoadedAmmoDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animBreakActionAmmoDistance"))
-            model.breakActionAmmoDistance = Float.parseFloat(split[1]);
-        else if (split[0].equals("animScopeIsOnBreakAction"))
-            model.scopeIsOnBreakAction = Boolean.parseBoolean(split[1]);
+        model.pumpHandleDistance = ConfigUtils.configFloat(config, "animPumpHandleDistance", model.pumpHandleDistance);
+        model.endLoadedAmmoDistance = ConfigUtils.configFloat(config, "animEndLoadedAmmoDistance", model.endLoadedAmmoDistance);
+        model.breakActionAmmoDistance = ConfigUtils.configFloat(config, "animBreakActionAmmoDistance", model.breakActionAmmoDistance);
+        model.scopeIsOnBreakAction = ConfigUtils.configBool(config, "animScopeIsOnBreakAction", model.scopeIsOnBreakAction);
 
-        else if (split[0].equals("animGripIsOnPump"))
-            model.gripIsOnPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animGadgetsOnPump"))
-            model.gripIsOnPump = Boolean.parseBoolean(split[1]);
+        model.gripIsOnPump = ConfigUtils.configBool(config, "animGripIsOnPump", model.gripIsOnPump);
+        model.gripIsOnPump = ConfigUtils.configBool(config, "animGadgetsOnPump", model.gripIsOnPump);
 
-        else if (split[0].equals("animBarrelBreakPoint"))
-            model.barrelBreakPoint = parseVector3f(split);
-        else if (split[0].equals("animAltBarrelBreakPoint"))
-            model.altbarrelBreakPoint = parseVector3f(split);
+        model.barrelBreakPoint = ConfigUtils.configVector(config, "animBarrelBreakPoint", model.barrelBreakPoint);
+        model.altbarrelBreakPoint = ConfigUtils.configVector(config, "animAltBarrelBreakPoint", model.altbarrelBreakPoint);
 
-        else if (split[0].equals("animRevolverFlipAngle"))
-            model.revolverFlipAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRevolver2FlipAngle"))
-            model.revolver2FlipAngle = Float.parseFloat(split[1]);
+        model.revolverFlipAngle = ConfigUtils.configFloat(config, "animRevolverFlipAngle", model.revolverFlipAngle);
+        model.revolver2FlipAngle = ConfigUtils.configFloat(config, "animRevolver2FlipAngle", model.revolver2FlipAngle);
 
-        else if (split[0].equals("animRevolverFlipPoint"))
-            model.revolverFlipPoint = parseVector3f(split);
-        else if (split[0].equals("animRevolver2FlipPoint"))
-            model.revolver2FlipPoint = parseVector3f(split);
+        model.revolverFlipPoint = ConfigUtils.configVector(config, "animRevolverFlipPoint", model.revolverFlipPoint);
+        model.revolver2FlipPoint = ConfigUtils.configVector(config, "animRevolver2FlipPoint", model.revolver2FlipPoint);
 
-        else if (split[0].equals("animBreakAngle"))
-            model.breakAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltBreakAngle"))
-            model.altbreakAngle = Float.parseFloat(split[1]);
+        model.breakAngle = ConfigUtils.configFloat(config, "animBreakAngle", model.breakAngle);
+        model.altbreakAngle = ConfigUtils.configFloat(config, "animAltBreakAngle", model.altbreakAngle);
 
-        else if (split[0].equals("animSpinningCocking"))
-            model.spinningCocking = Boolean.parseBoolean(split[1]);
+        model.spinningCocking = ConfigUtils.configBool(config, "animSpinningCocking", model.spinningCocking);
 
-        else if (split[0].equals("animSpinPoint"))
-            model.spinPoint = parseVector3f(split);
-        else if (split[0].equals("animHammerSpinPoint"))
-            model.hammerSpinPoint = parseVector3f(split);
-        else if (split[0].equals("animAltHammerSpinPoint"))
-            model.althammerSpinPoint = parseVector3f(split);
-        else if (split[0].equals("animHammerAngle"))
-            model.hammerAngle = Float.parseFloat(split[1]);
-        else if (split[0].equals("animAltHammerAngle"))
-            model.althammerAngle = Float.parseFloat(split[1]);
+        model.spinPoint = ConfigUtils.configVector(config, "animSpinPoint", model.spinPoint);
+        model.hammerSpinPoint = ConfigUtils.configVector(config, "animHammerSpinPoint", model.hammerSpinPoint);
+        model.althammerSpinPoint = ConfigUtils.configVector(config, "animAltHammerSpinPoint", model.althammerSpinPoint);
+        model.hammerAngle = ConfigUtils.configFloat(config, "animHammerAngle", model.hammerAngle);
+        model.althammerAngle = ConfigUtils.configFloat(config, "animAltHammerAngle", model.althammerAngle);
 
-        else if (split[0].equals("animIsSingleAction"))
-            model.isSingleAction = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animSlideLockOnEmpty"))
-            model.slideLockOnEmpty = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandPump"))
-            model.lefthandPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandPump"))
-            model.righthandPump = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandCharge"))
-            model.leftHandCharge = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandCharge"))
-            model.rightHandCharge = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animLeftHandBolt"))
-            model.leftHandBolt = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animRightHandBolt"))
-            model.rightHandBolt = Boolean.parseBoolean(split[1]);
+        model.isSingleAction = ConfigUtils.configBool(config, "animIsSingleAction", model.isSingleAction);
+        model.slideLockOnEmpty = ConfigUtils.configBool(config, "animSlideLockOnEmpty", model.slideLockOnEmpty);
+        model.lefthandPump = ConfigUtils.configBool(config, "animLeftHandPump", model.lefthandPump);
+        model.righthandPump = ConfigUtils.configBool(config, "animRightHandPump", model.righthandPump);
+        model.leftHandCharge = ConfigUtils.configBool(config, "animLeftHandCharge", model.leftHandCharge);
+        model.rightHandCharge = ConfigUtils.configBool(config, "animRightHandCharge", model.rightHandCharge);
+        model.leftHandBolt = ConfigUtils.configBool(config, "animLeftHandBolt", model.leftHandBolt);
+        model.rightHandBolt = ConfigUtils.configBool(config, "animRightHandBolt", model.rightHandBolt);
 
-        else if (split[0].equals("animPumpModifier"))
-            model.pumpModifier = Float.parseFloat(split[1]);
-        else if (split[0].equals("animChargeModifier"))
-            model.chargeModifier = parseVector3f(split);
-        else if (split[0].equals("animGunOffset"))
-            model.gunOffset = Float.parseFloat(split[1]);
-        else if (split[0].equals("animCrouchZoom"))
-            model.crouchZoom = Float.parseFloat(split[1]);
-        else if (split[0].equals("animFancyStance"))
-            model.fancyStance = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animSprintStanceTranslate"))
-            model.sprintStanceTranslate = parseVector3f(split);
-        else if (split[0].equals("animSprintStanceRotate"))
-            model.sprintStanceRotate = parseVector3f(split);
+        model.pumpModifier = ConfigUtils.configFloat(config, "animPumpModifier", model.pumpModifier);
+        model.chargeModifier = ConfigUtils.configVector(config, "animChargeModifier", model.chargeModifier);
+        model.gunOffset = ConfigUtils.configFloat(config, "animGunOffset", model.gunOffset);
+        model.crouchZoom = ConfigUtils.configFloat(config, "animCrouchZoom", model.crouchZoom);
+        model.fancyStance = ConfigUtils.configBool(config, "animFancyStance", model.fancyStance);
+        model.stanceTranslate = ConfigUtils.configVector(config, "animTranslateClip", model.stanceTranslate);
+        model.stanceRotate = ConfigUtils.configVector(config, "animStanceRotate", model.stanceRotate);
 
-        else if (split[0].equals("animRotateGunVertical"))
-            model.rotateGunVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotateGunHorizontal"))
-            model.rotateGunHorizontal = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTiltGun"))
-            model.tiltGun = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTranslateGun"))
-            model.translateGun = parseVector3f(split);
-        else if (split[0].equals("animRotateClipVertical"))
-            model.rotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedRotateClipVertical"))
-            model.stagedrotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animRotateClipHorizontal"))
-            model.rotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedRotateClipHorizontal"))
-            model.stagedrotateClipVertical = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTiltClip"))
-            model.tiltClip = Float.parseFloat(split[1]);
-        else if (split[0].equals("animStagedTiltClip"))
-            model.stagedtiltClip = Float.parseFloat(split[1]);
-        else if (split[0].equals("animTranslateClip"))
-            model.translateClip = parseVector3f(split);
-        else if (split[0].equals("animStagedTranslateClip"))
-            model.stagedtranslateClip = parseVector3f(split);
-        else if (split[0].equals("animStagedReload"))
-            model.stagedReload = Boolean.parseBoolean(split[1]);
+        model.rotateGunVertical = ConfigUtils.configFloat(config, "animRotateGunVertical", model.rotateGunVertical);
+        model.rotateGunHorizontal = ConfigUtils.configFloat(config, "animRotateGunHorizontal", model.rotateGunHorizontal);
+        model.tiltGun = ConfigUtils.configFloat(config, "animTiltGun", model.tiltGun);
+        model.translateGun = ConfigUtils.configVector(config, "animTranslateGun", model.translateGun);
+        model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipVertical", model.rotateClipVertical);
+        model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipVertical", model.stagedrotateClipVertical);
+        model.rotateClipVertical = ConfigUtils.configFloat(config, "animRotateClipHorizontal", model.rotateClipVertical);
+        model.stagedrotateClipVertical = ConfigUtils.configFloat(config, "animStagedRotateClipHorizontal", model.stagedrotateClipVertical);
+        model.tiltClip = ConfigUtils.configFloat(config, "animTiltClip", model.tiltClip);
+        model.stagedtiltClip = ConfigUtils.configFloat(config, "animStagedTiltClip", model.stagedtiltClip);
+        model.translateClip = ConfigUtils.configVector(config, "animTranslateClip", model.translateClip);
+        model.stagedtranslateClip = ConfigUtils.configVector(config, "animStagedTranslateClip", model.stagedtranslateClip);
+        model.stagedReload = ConfigUtils.configBool(config, "animStagedReload", model.stagedReload);
 
-        else if (split[0].equals("animThirdPersonOffset"))
-            model.thirdPersonOffset = parseVector3f(split);
-        else if (split[0].equals("animItemFrameOffset"))
-            model.itemFrameOffset = parseVector3f(split);
-        else if (split[0].equals("animStillRenderGunWhenScopedOverlay"))
-            model.stillRenderGunWhenScopedOverlay = Boolean.parseBoolean(split[1]);
-        else if (split[0].equals("animAdsEffectMultiplier"))
-            model.adsEffectMultiplier = Float.parseFloat(split[1]);
+        model.thirdPersonOffset = ConfigUtils.configVector(config, "animThirdPersonOffset", model.thirdPersonOffset);
+        model.itemFrameOffset = ConfigUtils.configVector(config, "animItemFrameOffset", model.itemFrameOffset);
+        model.stillRenderGunWhenScopedOverlay = ConfigUtils.configBool(config, "animStillRenderGunWhenScopedOverlay", model.stillRenderGunWhenScopedOverlay);
+        model.adsEffectMultiplier = ConfigUtils.configFloat(config, "animAdsEffectMultiplier", model.adsEffectMultiplier);
     }
 
     /**
@@ -1256,10 +1079,6 @@ public class GunType extends PaintableType implements IScope {
 
     public boolean getOneHanded() {
         return !FlansMod.masterDualWieldDisable && oneHanded;
-    }
-
-    public Vector3f parseVector3f(String[] inp) {
-        return new Vector3f(Float.parseFloat(inp[1]), Float.parseFloat(inp[2]), Float.parseFloat(inp[3]));
     }
 
     public boolean isAmmo(ItemStack stack) {

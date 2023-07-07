@@ -206,7 +206,7 @@ public class EntityFlag extends Entity implements ITeamObject {
 	@Override
     public boolean interactFirst(EntityPlayer player) //interact
     {
-    	/* TODO : Check the generalised code in TeamsManager works
+    	/*
     	if(player instanceof EntityPlayerMP && TeamsManager.getInstance().currentGametype != null)
     		TeamsManager.getInstance().currentGametype.objectClickedByPlayer(this, (EntityPlayerMP)player);
     		*/

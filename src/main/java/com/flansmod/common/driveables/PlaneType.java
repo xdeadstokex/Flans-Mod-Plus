@@ -1,7 +1,10 @@
 package com.flansmod.common.driveables;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.item.ItemStack;
 
 import com.flansmod.client.model.ModelPlane;
@@ -108,217 +111,141 @@ public class PlaneType extends DriveableType
     }
     
     @Override
-	protected void read(String[] split, TypeFile file)
-	{
-		super.read(split, file);
-		try
-		{		
-			//Plane Mode
-			if(split[0].equals("Mode"))
-				mode = EnumPlaneMode.getMode(split[1]);
-			//Better flight model?
-			if (split[0].equals("NewFlightControl"))
-				newFlightControl = Boolean.parseBoolean(split[1]);
-			
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
+			mode = EnumPlaneMode.getMode(ConfigUtils.configString(config, "Mode", "Plane"));
+
+			newFlightControl = ConfigUtils.configBool(config, "NewFlightControl", newFlightControl);
+
 			//Yaw modifiers
-			if(split[0].equals("TurnLeftSpeed"))
-				turnLeftModifier = Float.parseFloat(split[1]);
-			if(split[0].equals("TurnRightSpeed"))
-				turnRightModifier = Float.parseFloat(split[1]);
+			turnLeftModifier = ConfigUtils.configFloat(config, "TurnLeftSpeed", turnLeftModifier);
+			turnRightModifier = ConfigUtils.configFloat(config, "TurnRightSpeed", turnRightModifier);
+
 			//Pitch modifiers
-			if(split[0].equals("LookUpSpeed"))
-				lookUpModifier = Float.parseFloat(split[1]);
-			if(split[0].equals("LookDownSpeed"))
-				lookDownModifier = Float.parseFloat(split[1]);
+			lookUpModifier = ConfigUtils.configFloat(config, "LookUpSpeed", lookUpModifier);
+			lookDownModifier = ConfigUtils.configFloat(config, "LookDownSpeed", lookDownModifier);
+
 			//Roll modifiers
-			if(split[0].equals("RollLeftSpeed"))
-				rollLeftModifier = Float.parseFloat(split[1]);
-			if(split[0].equals("RollRightSpeed"))
-				rollRightModifier = Float.parseFloat(split[1]);
-			
+			rollLeftModifier = ConfigUtils.configFloat(config, "RollLeftSpeed", rollLeftModifier);
+			rollRightModifier = ConfigUtils.configFloat(config, "RollRightSpeed", rollRightModifier);
+
+			// Below are only used when NewFlightControl set.
 			//Lift
-			if(split[0].equals("Lift"))
-				lift = Float.parseFloat(split[1]);
+			lift = ConfigUtils.configFloat(config, "Lift", lift);
 			//Flight variables
-			if(split[0].equals("TakeoffSpeed"))
-				takeoffSpeed = Float.parseFloat(split[1]);
-			if(split[0].equals("MaxSpeed"))
-				maxSpeed = Float.parseFloat(split[1]);
+			takeoffSpeed = ConfigUtils.configFloat(config, "TakeoffSpeed", takeoffSpeed);
+			maxSpeed = ConfigUtils.configFloat(config, "MaxSpeed", maxSpeed);
 			//Is it Supersonic?
-			if (split[0].equals("Supersonic"))
-				supersonic = Boolean.parseBoolean(split[1]);
-			if(split[0].equals("MaxThrust"))
-				maxThrust = Float.parseFloat(split[1]);
-            if (split[0].equals("Mass"))
-                mass = Float.parseFloat(split[1]);
-			if(split[0].equals("WingArea"))
-				wingArea = Float.parseFloat(split[1]);
+			supersonic = ConfigUtils.configBool(config, "Supersonic", supersonic);
+			maxThrust = ConfigUtils.configFloat(config, "MaxThrust", maxThrust);
+			mass = ConfigUtils.configFloat(config, "Mass", mass);
+			wingArea = ConfigUtils.configFloat(config, "WingArea", wingArea);
 
-			if (split[0].equals("HeliThrottlePull"))
-				heliThrottlePull = Boolean.parseBoolean(split[1]);
-			if (split[0].equals("EmptyDrag"))
-				emptyDrag = Float.parseFloat(split[1]);
-							
+
+			heliThrottlePull = ConfigUtils.configBool(config, "HeliThrottlePull", heliThrottlePull);
+			emptyDrag = ConfigUtils.configFloat(config, "EmptyDrag", emptyDrag);
+
 			//Propellers and Armaments
+			planeShootDelay = ConfigUtils.configInt(config, "ShootDelay", planeShootDelay);
+			planeBombDelay = ConfigUtils.configInt(config, "BombDelay", planeBombDelay);
 
-			if(split[0].equals("ShootDelay"))
-				planeShootDelay = Integer.parseInt(split[1]);
-			if(split[0].equals("BombDelay"))
-				planeBombDelay = Integer.parseInt(split[1]);
-			
-			//Propellers
-			if(split[0].equals("Propeller"))
-			{
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				propellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "HeliPropeller", "Propeller", "HeliTailPropeller" });
+			for (String[] split : splits) {
+				try {
+					Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
+
+					if (split[0].contains("HeliTailPropeller")) {
+						heliTailPropellers.add(propeller);
+					} else if (split[0].contains("HeliPropeller")) {
+						heliPropellers.add(propeller);
+					} else {
+						propellers.add(propeller);
+					}
+
+					if (propeller.itemType == null) {
+						FlansMod.logPackError(file.name, packName, shortName, "Couldn't find item for propeller, not adding to recipe.", split, null);
+					} else {
+						driveableRecipe.add(new ItemStack(propeller.itemType.item));
+					}
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Adding propeller failed", split, ex);
+				}
 			}
-			if(split[0].equals("HeliPropeller"))
-			{
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				heliPropellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
-			}
-			if(split[0].equals("HeliTailPropeller"))
-			{
-				Propeller propeller = new Propeller(Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4]), EnumDriveablePart.getPart(split[5]), PartType.getPart(split[6]));
-				heliTailPropellers.add(propeller);
-				driveableRecipe.add(new ItemStack(propeller.itemType.item));
-			}
-			
-			if(split[0].equals("HasFlare"))
-				hasFlare = split[1].equals("True");
-			if(split[0].equals("FlareDelay"))
-			{
-				flareDelay = Integer.parseInt(split[1]);
-				if(flareDelay<=0)
-					flareDelay = 1;
-			}
-			if(split[0].equals("TimeFlareUsing"))
-			{
-				timeFlareUsing = Integer.parseInt(split[1]);
-				if(timeFlareUsing<=0)
-					timeFlareUsing = 1;
-			}
+
+
+			hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
+			flareDelay = ConfigUtils.configInt(config, "FlareDelay", flareDelay);
+			flareDelay = flareDelay <= 0 ? 1 : flareDelay;
+
+			timeFlareUsing = ConfigUtils.configInt(config, "TimeFlareUsing", timeFlareUsing);
+			timeFlareUsing = timeFlareUsing <= 0 ? 1 : timeFlareUsing;
 
 			//Sound
-			if(split[0].equals("PropSoundLength"))
-				engineSoundLength = Integer.parseInt(split[1]);
-			if(split[0].equals("PropSound"))
-			{
-				engineSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-			}
-			if(split[0].equals("ShootSound"))
-			{
-				shootSoundPrimary = split[1];
-				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-			}
-			if(split[0].equals("BombSound"))
-			{
-				shootSoundSecondary = split[1];
-				FlansMod.proxy.loadSound(contentPack, "driveables", split[1]);
-			}
+			engineSoundLength = ConfigUtils.configInt(config, "PropSoundLength", engineSoundLength);
+			engineSound = ConfigUtils.configDriveableSound(packName, config, "PropSound", engineSound);
+			shootSoundPrimary = ConfigUtils.configDriveableSound(packName, config, "ShootSound", shootSoundPrimary);
+			shootSoundSecondary = ConfigUtils.configDriveableSound(packName, config, "BombSound", shootSoundSecondary);
 
-			
+
 			//Aesthetics
-            if(split[0].equals("HasGear"))
-                hasGear = split[1].equals("True");
-            if(split[0].equals("HasDoor"))
-                hasDoor = split[1].equals("True");
-            if(split[0].equals("HasWing"))
-                hasWing = split[1].equals("True");
-            if(split[0].equals("FoldWingForLand"))
-                foldWingForLand = split[1].equals("True");
-            if(split[0].equals("FlyWithOpenDoor"))
-				flyWithOpenDoor = split[1].equals("True");
-			if(split[0].equals("AutoOpenDoorsNearGround"))
-				autoOpenDoorsNearGround = Boolean.parseBoolean(split[1]);
-			if (split[0].equals("AutoDeployLandingGearNearGround"))
-				autoDeployLandingGearNearGround = Boolean.parseBoolean(split[1]);
-            if(split[0].equals("RestingPitch"))
-                restingPitch = Float.parseFloat(split[1]);
-            if(split[0].equals("SpinWithoutTail"))
-                spinWithoutTail = Boolean.parseBoolean(split[1]);
-            if(split[0].equals("Valkyrie"))
-                valkyrie = Boolean.parseBoolean(split[1]);
-            
+			hasGear = ConfigUtils.configBool(config, "HasGear", hasGear);
+			hasDoor = ConfigUtils.configBool(config, "HasDoor", hasDoor);
+			hasWing = ConfigUtils.configBool(config, "HasWing", hasWing);
+			foldWingForLand = ConfigUtils.configBool(config, "FoldWingForLand", foldWingForLand);
+			flyWithOpenDoor = ConfigUtils.configBool(config, "FlyWithOpenDoor", flyWithOpenDoor);
+			autoOpenDoorsNearGround = ConfigUtils.configBool(config, "AutoOpenDoorsNearGround", autoOpenDoorsNearGround);
+			autoDeployLandingGearNearGround = ConfigUtils.configBool(config, "AutoDeployLandingGearNearGround", autoDeployLandingGearNearGround);
+			restingPitch = ConfigUtils.configFloat(config, "RestingPitch", restingPitch);
+			spinWithoutTail = ConfigUtils.configBool(config, "SpinWithoutTail", spinWithoutTail);
+			valkyrie = ConfigUtils.configBool(config, "Valkyrie", valkyrie);
+
             //Animations
             //Wings
-            if(split[0].equals("WingPosition1"))
-            	wingPos1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingPosition2"))
-            	wingPos2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingRotation1"))
-            	wingRot1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingRotation2"))
-            	wingRot2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingRate"))
-            	wingRate = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingRotRate"))
-            	wingRotRate = new Vector3f(split[1], shortName);
-            
+			wingPos1 = ConfigUtils.configVector(config, "WingPosition1", wingPos1);
+			wingPos2 = ConfigUtils.configVector(config, "WingPosition2", wingPos2);
+			wingRot1 = ConfigUtils.configVector(config, "WingRotation1", wingRot1);
+			wingRot2 = ConfigUtils.configVector(config, "WingRotation2", wingRot2);
+			wingRate = ConfigUtils.configVector(config, "WingRate", wingRate);
+			wingRotRate = ConfigUtils.configVector(config, "WingRotRate", wingRotRate);
+
             //Wing Wheels
-            if(split[0].equals("WingWheelPosition1"))
-            	wingWheelPos1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingWheelPosition2"))
-            	wingWheelPos2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingWheelRotation1"))
-            	wingWheelRot1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingWheelRotation2"))
-            	wingWheelRot2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingWheelRate"))
-            	wingWheelRate = new Vector3f(split[1], shortName);
-            if(split[0].equals("WingWheelRotRate"))
-            	wingWheelRotRate = new Vector3f(split[1], shortName);
-            
+			wingWheelPos1 = ConfigUtils.configVector(config, "WingWheelPosition1", wingWheelPos1);
+			wingWheelPos2= ConfigUtils.configVector(config, "WingWheelPosition2", wingWheelPos2);
+			wingWheelRot1 = ConfigUtils.configVector(config, "WingWheelRotation1", wingWheelRot1);
+			wingWheelRot2 = ConfigUtils.configVector(config, "WingWheelRotation2", wingWheelRot2);
+			wingWheelRate = ConfigUtils.configVector(config, "WingWheelRate", wingWheelRate);
+			wingWheelRotRate = ConfigUtils.configVector(config, "WingWheelRotRate", wingWheelRotRate);
+
             //Body Wheels
-            if(split[0].equals("BodyWheelPosition1"))
-            	bodyWheelPos1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("BodyWheelPosition2"))
-            	bodyWheelPos2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("BodyWheelRotation1"))
-            	bodyWheelRot1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("BodyWheelRotation2"))
-            	bodyWheelRot2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("BodyWheelRate"))
-            	bodyWheelRate = new Vector3f(split[1], shortName);
-            if(split[0].equals("BodyWheelRotRate"))
-            	bodyWheelRotRate = new Vector3f(split[1], shortName);
-            
+			bodyWheelPos1 = ConfigUtils.configVector(config, "BodyWheelPosition1", bodyWheelPos1);
+			bodyWheelPos2 = ConfigUtils.configVector(config, "BodyWheelPosition2", bodyWheelPos2);
+			bodyWheelRot1 = ConfigUtils.configVector(config, "BodyWheelRotation1", bodyWheelRot1);
+			bodyWheelRot2 = ConfigUtils.configVector(config, "BodyWheelRotation2", bodyWheelRot2);
+			bodyWheelRate =  ConfigUtils.configVector(config, "BodyWheelRate", bodyWheelRate);
+			bodyWheelRotRate = ConfigUtils.configVector(config, "BodyWheelRotRate", bodyWheelRotRate);
+
             //Tail Wheels
-            if(split[0].equals("TailWheelPosition1"))
-            	tailWheelPos1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("TailWheelPosition2"))
-            	tailWheelPos2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("TailWheelRotation1"))
-            	tailWheelRot1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("TailWheelRotation2"))
-            	tailWheelRot2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("TailWheelRate"))
-            	tailWheelRate = new Vector3f(split[1], shortName);
-            if(split[0].equals("TailWheelRotRate"))
-            	tailWheelRotRate = new Vector3f(split[1], shortName);
-            
-            if(split[0].equals("DoorPosition1"))
-            	doorPos1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("DoorPosition2"))
-            	doorPos2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("DoorRotation1"))
-            	doorRot1 = new Vector3f(split[1], shortName);
-            if(split[0].equals("DoorRotation2"))
-            	doorRot2 = new Vector3f(split[1], shortName);
-            if(split[0].equals("DoorRate"))
-            	doorRate = new Vector3f(split[1], shortName);
-            if(split[0].equals("DoorRotRate"))
-            	doorRotRate = new Vector3f(split[1], shortName);
-            
+			tailWheelPos1 = ConfigUtils.configVector(config, "TailWheelPosition1", tailWheelPos1);
+			tailWheelPos2 = ConfigUtils.configVector(config, "TailWheelPosition2", tailWheelPos2);
+			tailWheelRot1 = ConfigUtils.configVector(config, "TailWheelRotation1", tailWheelRot1);
+			tailWheelRot2 = ConfigUtils.configVector(config, "TailWheelRotation2", tailWheelRot2);
+			tailWheelRate = ConfigUtils.configVector(config, "TailWheelRate", tailWheelRate);
+			tailWheelRotRate = ConfigUtils.configVector(config, "TailWheelRotRate", tailWheelRotRate);
+
+			doorPos1 = ConfigUtils.configVector(config, "DoorPosition1", doorPos1);
+			doorPos2 = ConfigUtils.configVector(config, "DoorPosition2", doorPos2);
+			doorRot1 = ConfigUtils.configVector(config, "DoorRotation1", doorRot1);
+			doorRot2 = ConfigUtils.configVector(config, "DoorRotation2", doorRot2);
+			doorRate = ConfigUtils.configVector(config, "DoorRate", doorRate);
+			doorRotRate = ConfigUtils.configVector(config, "DoorRotRate", doorRotRate);
+
             //In-flight inventory
-            if(split[0].equals("InflightInventory"))
-                invInflight = split[1].equals("False");
+			invInflight = ConfigUtils.configBool(config, "InflightInventory", invInflight);
 		}
-		catch (Exception ignored)
+		catch (Exception ex)
 		{
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading PlaneType failed", null, ex);
 		}
 	}
     
@@ -327,10 +254,10 @@ public class PlaneType extends DriveableType
     {
     	switch(mode)
     	{
-    	case VTOL : return Math.max(propellers.size(), heliPropellers.size());
-    	case PLANE : return propellers.size();
-    	case HELI : return heliPropellers.size();
-    	default : return 1;
+    		case VTOL: return Math.max(propellers.size(), heliPropellers.size());
+    		case PLANE: return propellers.size();
+    		case HELI: return heliPropellers.size();
+    		default: return 1;
     	}
     }
     
@@ -349,13 +276,13 @@ public class PlaneType extends DriveableType
 					stacks.add(new ItemStack(propeller.itemType.item));
 
 				} else {
-					FlansMod.log("Couldn't drop propeller!");
+					FlansMod.logPackError("", packName, shortName, "Couldn't drop propeller! Check it is a valid item", null, null);
 				}
 
 				if (engine.item != null) {
 					stacks.add(new ItemStack(engine.item));
 				} else {
-					FlansMod.log("Couldn't drop engine!");
+					FlansMod.logPackError("", packName, shortName, "Couldn't drop engine on plane death!", null, null);
 				}
     		}
     	}

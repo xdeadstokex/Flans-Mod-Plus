@@ -58,7 +58,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 		super();
 	}
 	
-	public Vector3f(String input, String typeName)
+	public Vector3f(String input)
 	{
 		//Input should be of the form [float,float,float]
 		String noBrackets = input.substring(1, input.length() - 1);
@@ -219,7 +219,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 	 * @return this
 	 */
 	@Override
-	public Vector negate() {
+	public Vector3f negate() {
 		x = -x;
 		y = -y;
 		z = -z;
@@ -287,7 +287,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 	 * @see org.lwjgl.vector.Vector#load(FloatBuffer)
 	 */
 	@Override
-	public Vector load(FloatBuffer buf) {
+	public Vector3f load(FloatBuffer buf) {
 		x = buf.get();
 		y = buf.get();
 		z = buf.get();
@@ -298,7 +298,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 	 * @see org.lwjgl.vector.Vector#scale(float)
 	 */
 	@Override
-	public Vector scale(float scale) {
+	public Vector3f scale(float scale) {
 
 		x *= scale;
 		y *= scale;
@@ -312,7 +312,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
 	 * @see org.lwjgl.vector.Vector#store(FloatBuffer)
 	 */
 	@Override
-	public Vector store(FloatBuffer buf) {
+	public Vector3f store(FloatBuffer buf) {
 
 		buf.put(x);
 		buf.put(y);

@@ -3,6 +3,8 @@ package com.flansmod.common.guns;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
@@ -10,9 +12,6 @@ import net.minecraft.potion.PotionEffect;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.EnumWeaponType;
 import com.flansmod.common.types.TypeFile;
-import com.flansmod.common.guns.boxes.BlockGunBox;
-
-
 
 public class BulletType extends ShootableType
 {
@@ -48,16 +47,16 @@ public class BulletType extends ShootableType
 	public float penetratingPower = 1F;
 	// In % of penetration to remove per tick.
 	public float penetrationDecay = 0F;
-	
+
 	/*
-	 * How much the loss of penetration power affects the damage of the bullet. 0 = damage not affected by that kind of penetration, 
+	 * How much the loss of penetration power affects the damage of the bullet. 0 = damage not affected by that kind of penetration,
 	 * 1 = damage is fully affected by bullet penetration of that kind
 	 */
 	public float playerPenetrationEffectOnDamage = 0F;
 	public float entityPenetrationEffectOnDamage = 0F;
 	public float blockPenetrationEffectOnDamage = 0F;
 	public float penetrationDecayEffectOnDamage = 0F;
-	
+
 	// Knocback modifier. less gives less kb, more gives more kb, 1 = normal kb.
 	public float knockbackModifier;
 	/** Lock on variables. If true, then the bullet will search for a target at the moment it is fired */
@@ -140,172 +139,142 @@ public class BulletType extends ShootableType
 	}
 
 	@Override
-	protected void read(String[] split, TypeFile file)
-	{
-		super.read(split, file);
-		try
-		{
-			if(split[0].equals("FlakParticles"))
-				flak = Integer.parseInt(split[1]);
-			else if(split[0].equals("FlakParticleType"))
-				flakParticles = split[1];
-			else if(split[0].equals("SetEntitiesOnFire"))
-				setEntitiesOnFire = Boolean.parseBoolean(split[1]);
+	protected void read(ConfigMap config, TypeFile file) {
+		super.read(config, file);
+		try {
+			flak = ConfigUtils.configInt(config, "FlakParticles", flak);
+			flakParticles = ConfigUtils.configString(config, "FlakParticleType", flakParticles);
+			setEntitiesOnFire = ConfigUtils.configBool(config, "SetEntitiesOnFire", setEntitiesOnFire);
+			hitSoundEnable = ConfigUtils.configBool(config, "HitSoundEnable", hitSoundEnable);
+			entityHitSoundEnable = ConfigUtils.configBool(config, "EntityHitSoundEnable", entityHitSoundEnable);
+			hitSound = ConfigUtils.configSound(packName, config, "HitSound", hitSound);
+			hitSoundRange = ConfigUtils.configFloat(config, "HitSoundRange", hitSoundRange);
 
-			else if(split[0].equals("HitSoundEnable"))
-				hitSoundEnable = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("EntityHitSoundEnable"))
-				entityHitSoundEnable = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("HitSound"))
-			{
-				hitSound = split[1];
-				FlansMod.proxy.loadSound(contentPack, "sound", split[1]);
+			boolean pens = ConfigUtils.configBool(config, "Penetrates", true);
+			penetratingPower = pens ? 1F : 0.7F;
+
+			penetratingPower = ConfigUtils.configFloat(config, new String[]{"Penetration", "PenetratingPower"}, penetratingPower);
+			penetrationDecay = ConfigUtils.configFloat(config, "PenetrationDecay", penetrationDecay);
+
+			playerPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "PlayerPenetrationDamageEffect", playerPenetrationEffectOnDamage);
+			entityPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "EntityPenetrationDamageEffect", entityPenetrationEffectOnDamage);
+			blockPenetrationEffectOnDamage = ConfigUtils.configFloat(config, "BlockPenetrationDamageEffect", blockPenetrationEffectOnDamage);
+			penetrationDecayEffectOnDamage = ConfigUtils.configFloat(config, "PenetrationDecayDamageEffect", penetrationDecayEffectOnDamage);
+
+
+			dragInAir = ConfigUtils.configFloat(config, "DragInAir", dragInAir);
+			dragInAir = Math.max(0, Math.min(1, dragInAir)); // Clamp to [0, 1]
+
+			dragInWater = ConfigUtils.configFloat(config, "DragInWater", dragInWater);
+			dragInWater = Math.max(0, Math.min(1, dragInWater)); // Clamp to [0, 1]
+
+			numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
+			bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, bulletSpread);
+			livingProximityTrigger = ConfigUtils.configFloat(config, "LivingProximityTrigger", livingProximityTrigger);
+			driveableProximityTrigger = ConfigUtils.configFloat(config, "VehicleProximityTrigger", driveableProximityTrigger);
+			damageToTriggerer = ConfigUtils.configFloat(config, "DamageToTriggerer", damageToTriggerer);
+			primeDelay = ConfigUtils.configInt(config, new String[]{ "PrimeDelay", "TriggerDelay" }, primeDelay);
+			explodeParticles = ConfigUtils.configInt(config, "NumExplodeParticles", explodeParticles);
+			explodeParticleType = ConfigUtils.configString(config, "ExplodeParticles", explodeParticleType);
+			smokeTime = ConfigUtils.configInt(config, "SmokeTime", smokeTime);
+			smokeParticleType = ConfigUtils.configString(config, "SmokeParticles", smokeParticleType);
+
+			ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "SmokeEffect" });
+			for (String[] split : lines) {
+				try {
+					smokeEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't read PotionEffect for bullet", split, ex);
+				}
 			}
-			else if(split[0].equals("HitSoundRange"))
-				hitSoundRange = Float.parseFloat(split[1]);
-			else if(split[0].equals("Penetrates"))
-				penetratingPower = (Boolean.parseBoolean(split[1].toLowerCase()) ? 1F : 0.7F);
-			else if(split[0].equals("Penetration") || split[0].equals("PenetratingPower"))
-				penetratingPower = Float.parseFloat(split[1]);
-			else if(split[0].equals("PenetrationDecay"))
-				penetrationDecay = Float.parseFloat(split[1]);
-						
-			else if(split[0].equals("PlayerPenetrationDamageEffect"))
-				playerPenetrationEffectOnDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("EntityPenetrationDamageEffect"))
-				entityPenetrationEffectOnDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("BlockPenetrationDamageEffect"))
-				blockPenetrationEffectOnDamage = Float.parseFloat(split[1]);
-			else if(split[0].equals("PenetrationDecayDamageEffect"))
-				penetrationDecayEffectOnDamage = Float.parseFloat(split[1]);
-			
-			else if(split[0].equals("DragInAir"))
-			{
-				dragInAir = Float.parseFloat(split[1]);
-				dragInAir = dragInAir<0? 0: dragInAir>1? 1: dragInAir;
-			}
-			else if(split[0].equals("DragInWater"))
-			{
-				dragInWater = Float.parseFloat(split[1]);
-				dragInWater = dragInWater<0? 0: dragInWater>1? 1: dragInWater;
+
+			smokeRadius = ConfigUtils.configFloat(config, "SmokeRadius", smokeRadius);
+			VLS = ConfigUtils.configBool(config, new String[]{"VLS", "HasDeadZone"}, VLS);
+			VLSTime = ConfigUtils.configInt(config, "DeadZoneTime", VLSTime);
+			fixedDirection = ConfigUtils.configBool(config, "FixedTrackDirection", fixedDirection);
+			turnRadius = ConfigUtils.configFloat(config, "GuidedTurnRadius", turnRadius);
+			trackPhaseSpeed = ConfigUtils.configFloat(config, "GuidedPhaseSpeed", trackPhaseSpeed);
+			trackPhaseTurn = ConfigUtils.configFloat(config, "GuidedPhaseTurnSpeed", trackPhaseTurn);
+			boostPhaseParticle = ConfigUtils.configString(config, "BoostParticle", boostPhaseParticle);
+			torpedo = ConfigUtils.configBool(config, "Torpedo", torpedo);
+
+
+			// Some content packs use 'true' and false after this, which confuses things...
+			ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Bomb" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.BOMB;
+				}
 			}
 
-			else if(split[0].equals("NumBullets"))
-				numBullets = Integer.parseInt(split[1]);
-			else if(split[0].equals("Accuracy") || split[0].equals("Spread"))
-				bulletSpread = Float.parseFloat(split[1]);
-
-			else if(split[0].equals("LivingProximityTrigger"))
-				livingProximityTrigger = Float.parseFloat(split[1]);
-			else if(split[0].equals("VehicleProximityTrigger"))
-				driveableProximityTrigger = Float.parseFloat(split[1]);
-			else if(split[0].equals("DamageToTriggerer"))
-				damageToTriggerer = Float.parseFloat(split[1]);
-			else if(split[0].equals("PrimeDelay") || split[0].equals("TriggerDelay"))
-				primeDelay = Integer.parseInt(split[1]);
-			else if(split[0].equals("NumExplodeParticles"))
-				explodeParticles = Integer.parseInt(split[1]);
-			else if(split[0].equals("ExplodeParticles"))
-				explodeParticleType = split[1];
-			else if(split[0].equals("SmokeTime"))
-				smokeTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("SmokeParticles"))
-				smokeParticleType = split[1];
-			else if(split[0].equals("SmokeEffect"))
-				smokeEffects.add(getPotionEffect(split));
-			else if(split[0].equals("SmokeRadius"))
-				smokeRadius = Float.parseFloat(split[1]);
-			else if(split[0].equals("VLS") || split[0].equals("HasDeadZone"))
-				VLS = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("VLSTime") || split[0].equals("DeadZoneTime"))
-				VLSTime = Integer.parseInt(split[1]);
-			else if(split[0].equals("FixedTrackDirection"))
-				fixedDirection = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("GuidedTurnRadius"))
-				turnRadius = Float.parseFloat(split[1]);
-			else if(split[0].equals("GuidedPhaseSpeed"))
-				trackPhaseSpeed = Float.parseFloat(split[1]);
-			else if(split[0].equals("GuidedPhaseTurnSpeed"))
-				trackPhaseTurn = Float.parseFloat(split[1]);
-			else if(split[0].equals("BoostParticle"))
-				boostPhaseParticle = split[1];
-			else if(split[0].equals("Torpedo"))
-				torpedo = Boolean.parseBoolean(split[1]);
-			
-			else if(split[0].equals("Bomb"))
-				weaponType = EnumWeaponType.BOMB;
-			else if(split[0].equals("Shell"))
-				weaponType = EnumWeaponType.SHELL;
-			else if(split[0].equals("Missile"))
-				weaponType = EnumWeaponType.MISSILE;
-			else if(split[0].equals("WeaponType"))
-				weaponType = EnumWeaponType.valueOf(split[1].toUpperCase());
-
-			else if(split[0].equals("LockOnToDriveables"))
-				lockOnToPlanes = lockOnToVehicles = lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnToVehicles"))
-				lockOnToVehicles = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnToPlanes"))
-				lockOnToPlanes = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnToMechas"))
-				lockOnToMechas = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnToPlayers"))
-				lockOnToPlayers = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnToLivings"))
-				lockOnToLivings = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("MaxLockOnAngle"))
-				maxLockOnAngle = Float.parseFloat(split[1]);
-			else if(split[0].equals("LockOnForce") || split[0].equals("TurningForce"))
-				lockOnForce = Float.parseFloat(split[1]);
-			else if(split[0].equals("MaxDegreeOfLockOnMissile"))
-				maxDegreeOfMissile = Integer.parseInt(split[1]);
-			else if(split[0].equals("TickStartHoming"))
-				tickStartHoming = Integer.parseInt(split[1]);
-			else if(split[0].equals("EnableSACLOS"))
-				enableSACLOS = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("MaxDegreeOFSACLOS"))
-				maxDegreeOfSACLOS = Integer.parseInt(split[1]);
-			else if(split[0].equals("MaxRangeOfMissile"))
-				maxRangeOfMissile = Integer.parseInt(split[1]);
-			else if(split[0].equals("CanSpotEntityDriveable"))
-				canSpotEntityDriveable = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("ShootForSettingPos"))
-				shootForSettingPos = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("ShootForSettingPosHeight"))
-				shootForSettingPosHeight = Integer.parseInt(split[1]);
-			else if(split[0].equals("IsDoTopAttack"))
-				isDoTopAttack = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("KnockbackModifier"))
-				knockbackModifier = Float.parseFloat(split[1]);
-
-
-
-			else if(split[0].equals("PotionEffect"))
-				hitEffects.add(getPotionEffect(split));
-			else if(split[0].equals("ManualGuidance"))
-				manualGuidance = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LaserGuidance"))
-				laserGuidance = Boolean.parseBoolean(split[1].toLowerCase());
-			else if(split[0].equals("LockOnFuse"))
-				lockOnFuse = Integer.parseInt(split[1]);
-			else if(split[0].equals("MaxRange"))
-				maxRange = Integer.parseInt(split[1]);
-			
-			else if(split[0].equals("FancyDescription"))
-				fancyDescription = Boolean.parseBoolean(split[1]);
-			else if(split[0].equals("BulletSpeedMultiplier"))
-				speedMultiplier = Float.parseFloat(split[1]);
-		}
-		catch (Exception e)
-		{
-			FlansMod.log("Reading bullet file failed.");
-			if(FlansMod.printStackTrace)
-			{
-				e.printStackTrace();
+			splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Shell" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.SHELL;
+				}
 			}
+
+			splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Missile" });
+			for (String[] split : splits) {
+				if (split.length == 1 || (split.length == 2 && split[1].equalsIgnoreCase("true"))) {
+					weaponType = EnumWeaponType.MISSILE;
+				}
+			}
+
+			if (config.containsKey("WeaponType")) {
+				String line = ConfigUtils.configString(config, "WeaponType", "Bomb");
+				try {
+					if (line != null) {
+						weaponType = EnumWeaponType.valueOf(line.toUpperCase());
+					}
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "WeaponType not known in BulletType", new String[] { "WeaponType", line}, ex);
+				}
+			}
+
+			if (config.containsKey("LockOnToDriveables"))
+				lockOnToPlanes = lockOnToVehicles = lockOnToMechas =  ConfigUtils.configBool(config, "LockOnToDriveables", lockOnToVehicles);
+
+			lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
+			lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
+			lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
+			lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
+			lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+
+			maxLockOnAngle = ConfigUtils.configFloat(config, "MaxLockOnAngle", maxLockOnAngle);
+			lockOnForce = ConfigUtils.configFloat(config, new String[]{"LockOnForce", "TurningForce"}, lockOnForce);
+			maxDegreeOfMissile = ConfigUtils.configInt(config, "MaxDegreeOfLockOnMissile", maxDegreeOfMissile);
+			tickStartHoming = ConfigUtils.configInt(config, "TickStartHoming", tickStartHoming);
+			enableSACLOS = ConfigUtils.configBool(config, "EnableSACLOS", enableSACLOS);
+			maxDegreeOfSACLOS = ConfigUtils.configInt(config, "MaxDegreeOFSACLOS", maxDegreeOfSACLOS);
+			maxRangeOfMissile = ConfigUtils.configInt(config, "MaxRangeOfMissile", maxRangeOfMissile);
+			canSpotEntityDriveable = ConfigUtils.configBool(config, "CanSpotEntityDriveable", canSpotEntityDriveable);
+			shootForSettingPos = ConfigUtils.configBool(config, "ShootForSettingPos", shootForSettingPos);
+			shootForSettingPosHeight = ConfigUtils.configInt(config, "ShootForSettingPosHeight", shootForSettingPosHeight);
+			isDoTopAttack = ConfigUtils.configBool(config, "IsDoTopAttack", isDoTopAttack);
+			knockbackModifier = ConfigUtils.configFloat(config, "KnockbackModifier", knockbackModifier);
+
+			lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PotionEffect" });
+			for (String[] split : lines) {
+				try {
+					hitEffects.add(getPotionEffect(split));
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Couldn't read PotionEffect for bullet", split, ex);
+				}
+			}
+
+			manualGuidance = ConfigUtils.configBool(config, "ManualGuidance", manualGuidance);
+			laserGuidance = ConfigUtils.configBool(config, "LaserGuidance", laserGuidance);
+			lockOnFuse = ConfigUtils.configInt(config, "LockOnFuse", lockOnFuse);
+			maxRange = ConfigUtils.configInt(config, "MaxRange", maxRange);
+			fancyDescription = ConfigUtils.configBool(config, "FancyDescription", fancyDescription);
+			speedMultiplier = ConfigUtils.configFloat(config, "BulletSpeedMultiplier", speedMultiplier);
+
+		} catch (Exception e) {
+			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading bullet config", null, e);
 		}
 	}
-	
+
 	public static BulletType getBullet(String s)
 	{
 		for(BulletType bullet : bullets)

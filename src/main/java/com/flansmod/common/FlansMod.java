@@ -23,6 +23,10 @@ import com.flansmod.client.FlanMouseButton;
 import com.flansmod.client.FlansCrash;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.model.GunAnimations;
+import com.flansmod.common.driveables.*;
+import com.flansmod.common.driveables.mechas.*;
+import com.flansmod.common.eventhandlers.*;
+import com.flansmod.common.guns.*;
 import com.flansmod.common.driveables.EntityPlane;
 import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.EntityVehicle;
@@ -192,15 +196,15 @@ public class FlansMod {
     public static float nameTagRenderRange = 64F;
     public static float nameTagSneakRenderRange = 32F;
     public static float maxHealth = 20;
-    
+
     public static boolean allowCombiningAmmoOnReload = true;
-    
+
     public static boolean enableBlockPenetration = false;
     public static float masterBlockPenetrationModifier = 0F;
     public static String[] penetrableBlocksArray = {"ID=20,HARDNESS=1.0,BREAKS=false", "ID=98:2,HARDNESS=2.0,BREAKS=false"};
-    
+
     public static ArrayList<PenetrableBlock> penetrableBlocks = new ArrayList<>();
-    
+
 
     public static int armourSpawnRate = 20;
 
@@ -760,7 +764,7 @@ public class FlansMod {
         bonusRegenFoodLimit = configFile.getInt("Bonus regen food limit", "Gameplay Settings (synced)", bonusRegenFoodLimit, 0, 20, "Amount of food required to activate this regen, vanilla is 18");
 
         allowCombiningAmmoOnReload = configFile.getBoolean("Allow Combining Ammo on Reload", "Gameplay Settings (synced)", allowCombiningAmmoOnReload, "If this is set to 'false', players will not be able to combine their ammo on reload");
-        
+
         enableBlockPenetration = configFile.getBoolean("Enable Block Penetration", "Gameplay Settings (synced)", enableBlockPenetration, "This will enable the block penetration system to be used");
         masterBlockPenetrationModifier = configFile.getFloat("Master Block Penetration Modifier", "Gameplay Settings (synced)", masterBlockPenetrationModifier, 0, 100, "Default block penetration modifier power. Individual bullets will override");
         penetrableBlocksArray = configFile.getStringList("Penetrable Blocks", "Gameplay Settings (synced)", penetrableBlocksArray, "Blocks that can be penetrated with bullets that have the required block penetrating power. (BREAKS = whether the block should break when hit)");
@@ -785,35 +789,35 @@ public class FlansMod {
         if (configFile.hasChanged())
             configFile.save();
     }
-    
+
     /*
      * Converts the String[] from the config to an ArrayList which can be used in the code more easily
      */
     public static void convertPenetrableBlocksArray(String[] penetrableBlocksArray) {
     	ArrayList<PenetrableBlock> list = new ArrayList<>();
     	//ID=20,HARDNESS=1,BREAKS=false
-    	
+
     	for(String s : penetrableBlocksArray) {
     		try {
     			String[] split = s.split(",");
-    			
+
     			String[] blockData = split[0].substring(3).split(":");
-    			
+
     			int metadata = -1;
     			if(blockData.length > 1) metadata = Integer.parseInt(blockData[1]);
-    			Block block = Block.getBlockById(Integer.parseInt(blockData[0]));  
-    			
-    			float hardness = Float.parseFloat( split[1].substring(9) );  
+    			Block block = Block.getBlockById(Integer.parseInt(blockData[0]));
+
+    			float hardness = Float.parseFloat( split[1].substring(9) );
     			boolean breaks = Boolean.parseBoolean( split[2].substring(7) );
-    			
+
     			PenetrableBlock pB = new PenetrableBlock(block, metadata, hardness, breaks);
-    			
+
     			list.add(pB);
     		} catch(Exception e) {
     			System.out.println("ERROR! - '" + s + "' couldn't be recognized as a penetrable block!");
     			e.printStackTrace();
-    		}    		
-    	}   	
+    		}
+    	}
     	FlansMod.penetrableBlocks = list;
     }
 
@@ -848,11 +852,11 @@ public class FlansMod {
             log(String.format("The fire button type '%s' does not exist.", aimTypeInput));
             FlansModClient.fireButton = FlanMouseButton.RIGHT;
         }
-        
+
         FlansModClient.combineAmmoOnReload = configFile.getBoolean("Combine Ammo On Reload", "Input Settings", true, "Whether or not to combine unloaded ammo with damaged ammo in the inventory");
 
         FlansModClient.ammoToUpperInventoryOnReload = configFile.getBoolean("Ammo To Upper Inventory On Reload", "Input Settings", false, "Whether or not to first try to put unloaded ammo in the upper inventory instead of the hotbar");
-        
+
         if (configFile.hasChanged())
             configFile.save();
     }
@@ -875,6 +879,32 @@ public class FlansMod {
     public static void log(Object obj) {
         if (printDebugLog) {
             logger.info(obj.toString());
+        }
+    }
+
+    public static void logException(String message, Throwable ex) {
+        if (printStackTrace) {
+            logger.info(message, ex);
+        }
+    }
+
+    // To display validation, parsing errors e.t.c.
+    public static void logPackError(String fileName, String pack, String shortname, String message, String[] split, Throwable ex) {
+        FlansMod.log("Error caused by file: %s pack: %s shortname: %s", fileName, pack, shortname);
+        FlansMod.log("\t%s", message);
+
+        if (split != null) {
+            StringBuilder b = new StringBuilder();
+
+            for (String sp : split) {
+                b.append(sp);
+                b.append(" ");
+            }
+            FlansMod.log("\tCaused by line: %s", b.toString());
+        }
+
+        if (ex != null && FlansMod.printStackTrace) {
+            logException("\tRelated Exception: ", ex);
         }
     }
 

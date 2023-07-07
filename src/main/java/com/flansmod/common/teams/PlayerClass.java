@@ -7,6 +7,8 @@ import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PlayerClass extends InfoType {
@@ -36,58 +39,74 @@ public class PlayerClass extends InfoType {
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
-        if (split[0].equals("AddItem")) {
-            startingItemStrings.add(split);
-        }
-        if (split[0].equals("UnlockLevel")) {
-            lvl = Integer.parseInt(split[1]);
-        }
-        if (split[0].equals("SkinOverride"))
-            texture = split[1];
-        if (split[0].equals("Hat") || split[0].equals("Helmet")) {
-            if (split[1].equals("None"))
-                return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
-                    hat = new ItemStack(item);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
+
+        startingItemStrings = ConfigUtils.getSplitsFromKey(config, new String[] { "AddItem" });
+
+        lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
+        texture = ConfigUtils.configString(config, "SkinOverride", texture);
+
+        try {
+            String hatShortName = ConfigUtils.configString(config, new String[]{"Hat", "Helmet"}, null);
+            if (hatShortName != null && !hatShortName.equalsIgnoreCase("None")) {
+                ArmourType potentialHat = ArmourType.getArmourType(hatShortName);
+                if (potentialHat == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Hat type not found for PlayerClass", new String[]{"Hat/Helmet", hatShortName}, null);
+                } else {
+                    hat = new ItemStack(potentialHat.item);
+                }
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Helmet to player class", null, ex);
         }
-        if (split[0].equals("Chest") || split[0].equals("Top")) {
-            if (split[1].equals("None"))
-                return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
-                    chest = new ItemStack(item);
+
+        try {
+            String chestShortName = ConfigUtils.configString(config, new String[]{"Chest", "Top"}, null);
+            if (chestShortName != null && !chestShortName.equalsIgnoreCase("None")) {
+                ArmourType potentialChest = ArmourType.getArmourType(chestShortName);
+                if (potentialChest == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Chest/Top type not found for PlayerClass", new String[]{"Chest/Top", chestShortName}, null);
+                } else {
+                    chest = new ItemStack(potentialChest.item);
+                }
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Chest/Top to player class", null, ex);
         }
-        if (split[0].equals("Legs") || split[0].equals("Bottom")) {
-            if (split[1].equals("None"))
-                return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
-                    legs = new ItemStack(item);
+
+        try {
+            String legsShortName = ConfigUtils.configString(config, new String[]{"Legs", "Bottom"}, null);
+            if (legsShortName != null && !legsShortName.equalsIgnoreCase("None")) {
+                ArmourType potentialLegs = ArmourType.getArmourType(legsShortName);
+                if (potentialLegs == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Legs/Bottom type not found for PlayerClass", new String[]{"Legs/Bottom", legsShortName}, null);
+                } else {
+                    legs = new ItemStack(potentialLegs.item);
+                }
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Legs/Bottom to player class", null, ex);
         }
-        if (split[0].equals("Shoes") || split[0].equals("Boots")) {
-            if (split[1].equals("None"))
-                return;
-            for (Item item : FlansMod.armourItems) {
-                ArmourType armour = ((ItemTeamArmour) item).type;
-                if (armour != null && armour.shortName.equals(split[1]))
-                    shoes = new ItemStack(item);
+
+        try {
+            String shoesShortName = ConfigUtils.configString(config, new String[]{"Shoes", "Boots"}, null);
+            if (shoesShortName != null && !shoesShortName.equalsIgnoreCase("None")) {
+                ArmourType potentialShoes = ArmourType.getArmourType(shoesShortName);
+                if (potentialShoes == null) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Shoes/Boots type not found for PlayerClass", new String[]{"Shoes/Boots", shoesShortName}, null);
+                } else {
+                    shoes = new ItemStack(potentialShoes.item);
+                }
             }
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Shoes/Boots to player class", null, ex);
         }
     }
 
 
     @Override
-    protected void preRead(TypeFile file) {
-    }
+    protected void preRead(TypeFile file) { }
 
     /**
      * This loads the items once for clients connecting to remote servers, since the clients can't tell what attachments a gun has in the GUI and they need to load it at least once
@@ -135,8 +154,9 @@ public class PlayerClass extends InfoType {
                     }
                 }
                 for (InfoType type : InfoType.infoTypes) {
-                    if (type.shortName.equals(itemNames[0]) && type.item != null)
+                    if (type.shortName.equals(itemNames[0]) && type.item != null) {
                         matchingItem = type.item;
+                    }
                 }
                 if (matchingItem == null) {
                     FlansMod.log("Tried to add " + split[1] + " to player class " + shortName + " but the item did not exist");
@@ -174,7 +194,6 @@ public class PlayerClass extends InfoType {
                                 case generic:
                                     tagName = "generic_" + genericID++;
                                     break;
-                                // TODO: Implement new attachments to classes
                                 case accessory:
                                     break;
                                 case gadget:

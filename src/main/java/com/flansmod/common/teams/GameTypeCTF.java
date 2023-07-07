@@ -255,8 +255,7 @@ public class GameTypeCTF extends GameType
 							getPlayerInfo(player).savePlayerStats();
 							TeamsManager.messageAll("\u00a7f" + player.getCommandSenderName() + " returned the \u00a7" + flagTeam.textColour + flagTeam.name + "\u00a7f flag");		
 						}
-						
-						//TODO : Move to be a proximity thing?
+
 						//They have another flag in hand
 						else if(player.riddenByEntity instanceof EntityFlag)
 						{

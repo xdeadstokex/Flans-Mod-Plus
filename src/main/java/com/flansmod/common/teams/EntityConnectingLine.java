@@ -17,7 +17,7 @@ public class EntityConnectingLine extends EntityFishHook {
 	public EntityConnectingLine(World world, EntityPlayer player, ITeamBase base)
     {
         super(world);
-        field_146043_c = this; //TODO : Double check that this is the correct field
+        field_146043_c = this;
         ignoreFrustumCheck = true;
         field_146042_b = player;
         field_146042_b.fishEntity = this;

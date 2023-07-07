@@ -581,7 +581,10 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 				itemName = itemName.split("\\.")[0];
 			}
 			ItemStack dropStack = InfoType.getRecipeElement(itemName, damage);
-			entityDropItem(dropStack, 1.0F);
+
+			if (dropStack != null) {
+				entityDropItem(dropStack, 1.0F);
+			}
 		}
 
 		//Start smoke counter

@@ -4,6 +4,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
+import com.flansmod.utils.ConfigMap;
+import com.flansmod.utils.ConfigUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
@@ -18,11 +20,11 @@ public class PartType extends InfoType {
     /**
      * Category (TODO : Replace with Enum)
      */
-    public int category;
+    public int category = 0;
     /**
      * Max stack size of item
      */
-    public int stackSize;
+    public int stackSize = 0;
     /**
      * (Engine) Multiplier applied to the thrust of the driveable
      */
@@ -86,51 +88,77 @@ public class PartType extends InfoType {
                     PartType possiblyInferiorEngine = defaultEngines.get(type);
                     if (isInferiorEngine(possiblyInferiorEngine))
                         defaultEngines.put(type, this);
-                } else defaultEngines.put(type, this);
+                } else {
+                    defaultEngines.put(type, this);
+                }
             }
         }
     }
 
     @Override
-    protected void read(String[] split, TypeFile file) {
-        super.read(split, file);
+    protected void read(ConfigMap config, TypeFile file) {
+        super.read(config, file);
         try {
-            if (split[0].equals("Category"))
-                category = getCategory(split[1]);
-            else if (split[0].equals("StackSize"))
-                stackSize = Integer.parseInt(split[1]);
-            else if (split[0].equals("EngineSpeed"))
-                engineSpeed = Float.parseFloat(split[1]);
-            else if (split[0].equals("FuelConsumption"))
-                fuelConsumption = Float.parseFloat(split[1]);
-            else if (split[0].equals("EnginePower"))
-                enginePower = Float.parseFloat(split[1]);
-            else if (split[0].equals("Fuel"))
-                fuel = Integer.parseInt(split[1]);
-                //Recipe
-            else if (split[0].equals("PartBoxRecipe")) {
-                ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
-                for (int i = 0; i < (split.length - 2) / 2; i++) {
-                    int amount = Integer.parseInt(split[2 * i + 2]);
-                    boolean damaged = split[2 * i + 3].contains(".");
-                    String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
-                    int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
-                    stacks[i] = getRecipeElement(itemName, amount, damage, shortName);
+            // Generic
+            category = getCategory(ConfigUtils.configString(config, "Category", "Cockpit"));
+            stackSize = ConfigUtils.configInt(config, "StackSize", stackSize);
+
+            // Engine
+            fuelConsumption = ConfigUtils.configFloat(config, "FuelConsumption", engineSpeed);
+            engineSpeed = ConfigUtils.configFloat(config, "EngineSpeed", engineSpeed);
+            enginePower = ConfigUtils.configFloat(config, "EnginePower", enginePower);
+            //RedstoneFlux, for engines
+            useRFPower = ConfigUtils.configBool(config, new String[]{"UseRF", "UseRFPower"}, useRFPower);
+            RFDrawRate = ConfigUtils.configInt(config, "RFDrawRate", RFDrawRate);
+            // Engine compatibility
+
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "WorksWith" });
+            try {
+                if (splits.size() > 0) {
+                    worksWith = new ArrayList<EnumType>();
                 }
-                partBoxRecipe.addAll(Arrays.asList(stacks));
-            } else if (split[0].equals("WorksWith")) {
-                worksWith = new ArrayList<EnumType>();
-                for (int i = 0; i < split.length - 1; i++) {
-                    worksWith.add(EnumType.get(split[i + 1]));
+                for (String[] split : splits) {
+                    for (int i=1; i<split.length; i++) {
+                        EnumType type = EnumType.get(split[i]);
+                        if (type == null) {
+                            FlansMod.logPackError(file.name, packName, shortName, "type not found for part WorksWith", split, null);
+                        } else {
+                            worksWith.add(type);
+                        }
+                    }
                 }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown wile processing WorksWith", null, ex);
             }
 
-            //------- RedstoneFlux -------
-            else if (split[0].equals("UseRF") || split[0].equals("UseRFPower"))
-                useRFPower = Boolean.parseBoolean(split[1]);
-            else if (split[0].equals("RFDrawRate"))
-                RFDrawRate = Integer.parseInt(split[1]);
-            //-----------------------------
+            // Fuel cans
+            fuel = ConfigUtils.configInt(config, "Fuel", fuel);
+
+            //Recipe
+            String[] split = ConfigUtils.getSplitFromKey(config, "PartBoxRecipe");
+            try {
+                if (split != null) {
+                    ItemStack[] stacks = new ItemStack[(split.length - 2) / 2];
+                    for (int i = 0; i < (split.length - 2) / 2; i++) {
+                        int amount = Integer.parseInt(split[2 * i + 2]);
+                        boolean damaged = split[2 * i + 3].contains(".");
+                        String itemName = damaged ? split[2 * i + 3].split("\\.")[0] : split[2 * i + 3];
+                        int damage = damaged ? Integer.parseInt(split[2 * i + 3].split("\\.")[1]) : 0;
+
+                        ItemStack recipeElement = getRecipeElement(itemName, amount, damage, shortName);
+
+                        if (recipeElement == null) {
+                            FlansMod.logPackError(file.name, packName, shortName, "Could not find item for PartBoxRecipe", split, null);
+                        }
+
+                        stacks[i] = recipeElement;
+                    }
+                    partBoxRecipe.addAll(Arrays.asList(stacks));
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while constructing PartBoxRecipe for part", split, ex);
+            }
+
         } catch (Exception e) {
             FlansMod.log("Reading part file failed.");
             e.printStackTrace();
@@ -150,29 +178,30 @@ public class PartType extends InfoType {
     }
 
     private int getCategory(String s) {
-        if (s.equals("Cockpit"))
-            return 0;
-        if (s.equals("Wing"))
-            return 1;
-        if (s.equals("Engine"))
-            return 2;
-        if (s.equals("Propeller"))
-            return 3;
-        if (s.equals("Bay"))
-            return 4;
-        if (s.equals("Tail"))
-            return 5;
-        if (s.equals("Wheel"))
-            return 6;
-        if (s.equals("Chassis"))
-            return 7;
-        if (s.equals("Turret"))
-            return 8;
-        if (s.equals("Fuel"))
-            return 9;
-        if (s.equals("Misc"))
-            return 10;
-        return 10;
+        switch (s) {
+            case "Cockpit":
+                return 0;
+            case "Wing":
+                return 1;
+            case "Engine":
+                return 2;
+            case "Propeller":
+                return 3;
+            case "Bay":
+                return 4;
+            case "Tail":
+                return 5;
+            case "Wheel":
+                return 6;
+            case "Chassis":
+                return 7;
+            case "Turret":
+                return 8;
+            case "Fuel":
+                return 9;
+            default: // "Misc"
+                return 10;
+        }
     }
 
     @Override

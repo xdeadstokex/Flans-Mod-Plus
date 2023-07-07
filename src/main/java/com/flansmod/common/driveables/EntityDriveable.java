@@ -633,7 +633,7 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
                 currentGun = (currentGun + 1) % shootPoints.size();
                 setCurrentGun(currentGun, secondary);
                 shootEach(type, shootPoints.get(currentGun), currentGun, secondary, weaponType);
-            } else for (int i = 0; i < shootPoints.size(); i++)
+           } else for (int i = 0; i < shootPoints.size(); i++)
                 shootEach(type, shootPoints.get(i), i, secondary, weaponType);
         }
     }

@@ -62,7 +62,6 @@ public class GuiArmourBox extends GuiScreen
 
 		//No idea why this works, but it makes the text bind its texture correctly
 		//mc.renderEngine.bindTexture("/terrain.png");
-		//TODO : Investigate
 		
 		drawCenteredString(fontRendererObj, type.name, k / 2, n + 5, 0xffffff);
 		mc.renderEngine.bindTexture(texture);
@@ -116,19 +115,22 @@ public class GuiArmourBox extends GuiScreen
 				//Iterate over y
 				for(int j = 0; j < 2; j++)
 				{
-					drawSlotInventory(new ItemStack(page.armours[i * 2 + j].item), m + 9 + 83 * i, n + 44 + 22 * j);
-					int numParts = page.requiredStacks[i * 2 + j].size();
-					//Find which 3 parts to render
-					int startPart = 0;
-					if (numParts >= 4)
-					{
-						startPart = (scroll / 40) % (numParts - 2);
+					if (page.armours[i * 2 +j] != null) {
+						drawSlotInventory(new ItemStack(page.armours[i * 2 + j].item), m + 9 + 83 * i, n + 44 + 22 * j);
+						int numParts = page.requiredStacks[i * 2 + j].size();
+						//Find which 3 parts to render
+						int startPart = 0;
+						if (numParts >= 4)
+						{
+							startPart = (scroll / 40) % (numParts - 2);
+						}
+
+						for(int p = 0; p < (Math.min(numParts, 3)); p++)
+						{
+							drawSlotInventory(page.requiredStacks[i * 2 + j].get(startPart + p), m + 30 + p * 19 + 83 * i, n + 44 + 22 * j);
+						}
 					}
-					
-					for(int p = 0; p < (numParts < 3 ? numParts : 3); p++)
-					{
-						drawSlotInventory(page.requiredStacks[i * 2 + j].get(startPart + p), m + 30 + p * 19 + 83 * i, n + 44 + 22 * j);
-					}
+
 				}
 			}
 	
