@@ -23,6 +23,8 @@ This version of Flan's Mod Plus aims to be the most recent and stable.
 * [Wiki: Sample Underbarrel](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Sample-Underbarrel)
 * [Wiki: Vehicle Guns](https://github.com/Unknown025/Flans-Mod-Plus/wiki/Vehicle-Guns)
 
+* [Desmos Ballistics Calculator](https://www.desmos.com/calculator/s77v4lzmge)
+
 
 [Discord (Support, Update Announcements)](https://discord.gg/JXxansAe3y)
 
