@@ -292,6 +292,8 @@ public class ModelGun extends ModelBase
     		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightmapLastX, lightmapLastY);
     	}
 
+		GL11.glDisable(GL11.GL_BLEND);
+
         GL11.glPopAttrib();
     }
 
