@@ -677,7 +677,7 @@ public class EntityPlane extends EntityDriveable {
                 float dLength = targetWheelLength - currentWheelLength;
                 float dAngle = Vector3f.angle(targetWheelPos, currentWheelPos);
 
-                //if(dLength > 0.01F || dAngle > 1F)
+                if (!(Float.isNaN(dAngle) || currentWheelLength < 0.0001))
                 {
                     //Now Lerp by wheelSpringStrength and work out the new positions
                     float newLength = currentWheelLength + dLength * type.wheelSpringStrength;
@@ -724,7 +724,6 @@ public class EntityPlane extends EntityDriveable {
             }
 
             moveEntity(amountToMoveCar.x, amountToMoveCar.y, amountToMoveCar.z);
-
         }
 
         if (this.ridingEntity != null) {
