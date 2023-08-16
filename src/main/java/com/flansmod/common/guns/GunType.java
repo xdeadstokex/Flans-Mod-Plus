@@ -112,8 +112,8 @@ public class GunType extends PaintableType implements IScope {
      * The amount that bullets spread out when fired from this gun
      */
     public float bulletSpread;
-    public float sneakSpreadMultiplier = 0.63F;
-    public float sprintSpreadMultiplier = 1.75F;
+    public float sneakSpreadModifier = 0.63F;
+    public float sprintSpreadModifier = 1.75F;
     /**
      * If true, spread determined by loaded ammo type
      */
@@ -513,8 +513,8 @@ public class GunType extends PaintableType implements IScope {
         recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
         recoilCounterCoefficientSneaking = ConfigUtils.configFloat(config, "CounterRecoilForceSneaking", recoilCounterCoefficientSneaking);
         recoilCounterCoefficientSprinting = ConfigUtils.configFloat(config, "CounterRecoilForceSprinting", recoilCounterCoefficientSprinting);
-        sneakSpreadMultiplier = ConfigUtils.configFloat(config, "SneakSpreadModifier", sneakSpreadMultiplier);
-        sprintSpreadMultiplier = ConfigUtils.configFloat(config, "SprintSpreadModifier", sprintSpreadMultiplier);
+        sneakSpreadModifier = ConfigUtils.configFloat(config, new String[] { "SneakSpreadModifier", "SneakSpreadMultiplier" }, sneakSpreadModifier);
+        sprintSpreadModifier = ConfigUtils.configFloat(config, new String[] { "SprintSpreadModifier", "SprintSpreadMultiplier"}, sprintSpreadModifier);
         canForceReload = ConfigUtils.configBool(config, "CanForceReload", canForceReload);
         allowRearm = ConfigUtils.configBool(config, "AllowRearm", allowRearm);
         reloadTime = ConfigUtils.configInt(config, "ReloadTime", reloadTime);
@@ -543,7 +543,7 @@ public class GunType extends PaintableType implements IScope {
         recoilSprintingMultiplier = ConfigUtils.configFloat(config, "RecoilSprintingMultiplier", recoilSprintingMultiplier);
         recoilSneakingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSneakingMultiplierYaw", recoilSneakingMultiplierYaw);
         recoilSprintingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSprintingMultiplierYaw", recoilSprintingMultiplierYaw);
-        defaultSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
+        defaultSpread = bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
         adsSpreadModifier = ConfigUtils.configFloat(config, "ADSSpreadModifier", adsSpreadModifier);
         adsSpreadModifierShotgun = ConfigUtils.configFloat(config, "ADSSpreadModifierShotgun", adsSpreadModifierShotgun);
         numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
@@ -1300,9 +1300,9 @@ public class GunType extends PaintableType implements IScope {
             stackSpread *= attachment.spreadMultiplier;
         }
         if (sprinting) {
-            stackSpread *= sprintSpreadMultiplier;
+            stackSpread *= sprintSpreadModifier;
         } else if (sneaking) {
-            stackSpread *= sneakSpreadMultiplier;
+            stackSpread *= sneakSpreadModifier;
         }
         return stackSpread;
     }
