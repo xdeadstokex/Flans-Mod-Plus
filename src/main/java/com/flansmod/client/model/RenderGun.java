@@ -183,6 +183,8 @@ public class RenderGun implements IItemRenderer {
 		if (FlansModClient.zoomProgress > 0.9F && scope.hasZoomOverlay() && !model.stillRenderGunWhenScopedOverlay) {
 			GL11.glPopMatrix();
 			return;
+
+
 		}
 
 		//Resting positions
