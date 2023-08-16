@@ -397,10 +397,7 @@ public class GunType extends PaintableType implements IScope {
      * For guns with 3D models
      */
     public ModelGun model;
-    /**
-     * For making detailed models and scaling down
-     */
-    public float modelScale = 1F;
+
     /**
      * For adding a bullet casing model to render
      */
