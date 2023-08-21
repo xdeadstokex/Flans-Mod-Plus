@@ -506,8 +506,7 @@ public class GunType extends PaintableType implements IScope {
         super.read(config, file);
 
         damage = ConfigUtils.configFloat(config, "Damage", damage);
-        meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
-        secondaryFunction = meleeDamage > 0 ? EnumSecondaryFunction.MELEE : secondaryFunction;
+
 
         meleeDamageDriveableModifier = ConfigUtils.configFloat(config, "MeleeDamageDriveableModifier", meleeDamageDriveableModifier);
         recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
@@ -618,13 +617,7 @@ public class GunType extends PaintableType implements IScope {
         distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
 
 
-        //Modes and zoom settings
-        hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
-        minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
-        maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
-        if(maxZoom>1F)
-            secondaryFunction=EnumSecondaryFunction.ZOOM;
-        zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
+
 
         aSplit = ConfigUtils.getSplitFromKey(config, "Mode");
 
@@ -650,13 +643,7 @@ public class GunType extends PaintableType implements IScope {
         }
 
         allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
-        zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
-        if (zoomLevel > 1F)
-            secondaryFunction = EnumSecondaryFunction.ZOOM;
 
-        FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
-        if (FOVFactor > 1F)
-            secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
 
         deployable = ConfigUtils.configBool(config, "Deployable", deployable);
 
@@ -714,16 +701,12 @@ public class GunType extends PaintableType implements IScope {
         canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
         oneHanded = ConfigUtils.configBool(config, "OneHanded", oneHanded);
 
-        String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
-        secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
+
 
         usableByPlayers = ConfigUtils.configBool(config, "UsableByPlayers", usableByPlayers);
         usableByMechas = ConfigUtils.configBool(config, "UsableByMechas", usableByMechas);
 
-        //Custom Melee Stuff
-        if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
-            secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
-        }
+
 
         if (ConfigUtils.configBool(config, "UseCustomMeleeWhenShoot", false)) {
             secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
@@ -797,6 +780,37 @@ public class GunType extends PaintableType implements IScope {
         } catch (Exception ex) {
             FlansMod.logPackError(file.name, packName, shortName, "Failed to config Shield", split, ex);
         }
+
+        // secondary functions are listed here highest priority last. (overwritten)
+
+        // Zoom: lowest priority
+        zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
+        if (zoomLevel > 1F)
+            secondaryFunction = EnumSecondaryFunction.ZOOM;
+
+        FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
+        if (FOVFactor > 1F)
+            secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
+
+        //Modes and zoom settings
+        hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
+        minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
+        maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
+        if(maxZoom>1F)
+            secondaryFunction=EnumSecondaryFunction.ZOOM;
+        zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
+
+        // Melee: higher priority
+        meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
+        secondaryFunction = meleeDamage > 0 ? EnumSecondaryFunction.MELEE : secondaryFunction;
+
+        if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
+            secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
+        }
+
+        // User specified: highest priority
+        String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
+        secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
 
 
         if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
