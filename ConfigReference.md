@@ -379,7 +379,7 @@ This will override the value set in the gun's model!
 | LivingProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a living |
 | VehicleProximityTrigger | Float | -1 | If greater than 1, explode when within this radius of a vehicle |
 | DamageToTriggerer | Float | 0 | Damage given to the entity who triggered it |
-| DetonateWhenShot | Boolean | false | When this entity is shot, it will explode |
+| DetonateWhenShot | Boolean | false | When this entity is shot or exploded, it will also detonate |
 | PrimeDelay / TriggerDelay | Integer | 0 | Detonation can only happen after this time in ticks |
 | StickToThrower | Boolean | false | Whether the grenade can stick to the person who threw it |
 | StickToEntity | Boolean | false | Sticks to X |
