@@ -64,8 +64,8 @@ public enum EnumType {
 
     public static EnumType get(String s) {
         for (EnumType e : values()) {
-            for (String folderName : e.folderNames) {
-                if (folderName.equals(s)) { return e; }
+            for (String folderName : e.folderNames) { // Also check for plurals
+                if (folderName.equalsIgnoreCase(s) || folderName.equalsIgnoreCase(s+"s")) { return e; }
             }
         }
         return null;

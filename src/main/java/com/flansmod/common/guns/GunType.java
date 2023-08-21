@@ -750,7 +750,7 @@ public class GunType extends PaintableType implements IScope {
                     if (type != null) {
                         allowedAttachments.add(type);
                     } else {
-                        FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments", split, null);
+                        FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments (" + split[i] + ")", split, null);
                     }
                 }
             }
