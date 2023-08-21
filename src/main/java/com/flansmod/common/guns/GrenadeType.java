@@ -201,6 +201,8 @@ public class GrenadeType extends ShootableType
 			motionSound = ConfigUtils.configSound(packName, config, "MotionSound", motionSound);
 			motionTime = ConfigUtils.configInt(config, "MotionTime", motionTime);
 
+			detonateWhenShot = ConfigUtils.configBool(config, "DetonateWhenShot", detonateWhenShot);
+
 
 			//Deployable Bag Stuff
 			if(config.containsKey("DeployableBag"))
