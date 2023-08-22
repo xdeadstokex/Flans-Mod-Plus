@@ -11,7 +11,7 @@ public enum EnumSecondaryFunction
 			return ZOOM;
 		else if(s.equals("melee")) 
 			return MELEE;
-		else if(s.equals("custommelee")) 
+		else if(s.equals("custommelee") || s.equals("custom_melee"))
 			return CUSTOM_MELEE;
 		else return ADS_ZOOM;
 	}

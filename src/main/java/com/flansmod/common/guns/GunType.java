@@ -783,6 +783,11 @@ public class GunType extends PaintableType implements IScope {
 
         // secondary functions are listed here highest priority last. (overwritten)
 
+        if (shortName.equalsIgnoreCase("baseballBat"))
+        {
+            FlansMod.log("AMOGS");
+        }
+
         // Zoom: lowest priority
         zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
         if (zoomLevel > 1F)
@@ -796,19 +801,18 @@ public class GunType extends PaintableType implements IScope {
         hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
         minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
         maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
-        if(maxZoom>1F)
+        if(maxZoom>1F && hasVariableZoom)
             secondaryFunction=EnumSecondaryFunction.ZOOM;
         zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
 
         // Melee: higher priority
         meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
-        secondaryFunction = meleeDamage > 0 ? EnumSecondaryFunction.MELEE : secondaryFunction;
+        secondaryFunction = meleeDamage > 0 && config.containsKey("MeleeDamage") ? EnumSecondaryFunction.MELEE : secondaryFunction;
 
         if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
             secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
         }
 
-        // User specified: highest priority
         String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
         secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
 
