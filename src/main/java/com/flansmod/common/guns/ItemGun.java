@@ -301,6 +301,25 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         EntityPlayer player = (EntityPlayer) entity;
         PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
 
+	//Switch Delay
+            if (mc.thePlayer == entity
+                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                    != GunAnimations.lastInventorySlot) {
+                ItemStack stack = mc.thePlayer.getHeldItem();
+                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+                if (stack != null && stack.getItem() instanceof ItemGun) {
+                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                    if (animationLength == 0) {
+                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                    } else {
+                        animations.switchAnimationProgress = 1;
+                        animations.switchAnimationLength = animationLength;
+                        FlansModClient.switchTime = Math.max(FlansModClient.switchTime, animationLength);
+                    }
+
+                }
+            }
+
         handleGunSwitchDelay(player, mc);
 
         //Play idle sounds
