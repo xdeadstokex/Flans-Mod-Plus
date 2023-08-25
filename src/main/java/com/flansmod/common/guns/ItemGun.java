@@ -359,7 +359,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
 
         //Else do shoot code
-        else {
+        else if (FlansModClient.switchTime <= 0) {
             //Get whether mice are held
             boolean lastRightMouseHeld = rightMouseHeld;
             lastLeftMouseHeld = leftMouseHeld;
