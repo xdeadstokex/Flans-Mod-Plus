@@ -631,7 +631,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
-        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
+        if (FlansModClient.switchTime <= 0 && FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
