@@ -66,6 +66,11 @@ public class FlansModClient extends FlansMod {
      */
     public static float shootTimeLeft, shootTimeRight;
 
+    /**
+     * The delay between switching slots
+     */
+    public static float switchTime;
+
     //Recoil variables
     /**
      * Fancy Recoil System
@@ -272,6 +277,8 @@ public class FlansModClient extends FlansMod {
             shootTimeLeft--;
         if (shootTimeRight > 0)
             shootTimeRight--;
+        if (switchTime > 0)
+            switchTime--;
         if (scopeTime > 0)
             scopeTime--;
         if(minecraft.thePlayer.getCurrentEquippedItem() != null &&

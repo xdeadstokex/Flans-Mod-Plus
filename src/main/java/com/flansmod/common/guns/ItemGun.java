@@ -301,6 +301,25 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         EntityPlayer player = (EntityPlayer) entity;
         PlayerData data = PlayerHandler.getPlayerData(player, Side.CLIENT);
 
+	//Switch Delay
+            if (mc.thePlayer == entity
+                    && Minecraft.getMinecraft().thePlayer.inventory.currentItem
+                    != GunAnimations.lastInventorySlot) {
+                ItemStack stack = mc.thePlayer.getHeldItem();
+                GunAnimations animations = FlansModClient.getGunAnimations((EntityLivingBase) entity, false);
+                if (stack != null && stack.getItem() instanceof ItemGun) {
+                    float animationLength = ((ItemGun) stack.getItem()).type.switchDelay;
+                    if (animationLength == 0) {
+                        animations.switchAnimationLength = animations.switchAnimationProgress = 0;
+                    } else {
+                        animations.switchAnimationProgress = 1;
+                        animations.switchAnimationLength = animationLength;
+                        FlansModClient.switchTime = Math.max(FlansModClient.switchTime, animationLength);
+                    }
+
+                }
+            }
+
         handleGunSwitchDelay(player, mc);
 
         //Play idle sounds
@@ -340,7 +359,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         }
 
         //Else do shoot code
-        else {
+        else if (FlansModClient.switchTime <= 0) {
             //Get whether mice are held
             boolean lastRightMouseHeld = rightMouseHeld;
             lastLeftMouseHeld = leftMouseHeld;
@@ -612,7 +631,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
-        if (FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
+        if (FlansModClient.switchTime <= 0 && FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
             for (int i = 0; i < gunType.getNumAmmoItemsInGun(stack); i++) {
