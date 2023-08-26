@@ -126,11 +126,15 @@ public class BulletType extends ShootableType
 	
 	public boolean laserGuidance = false;
 
+	// 0 = disable, otherwise sets velocity scale on block hit particle fx
+	public float blockHitFXScale;
+
 	/** The static bullets list */
 	
 	public static List<BulletType> bullets = new ArrayList<BulletType>();
 
-	public BulletType(TypeFile file)
+
+    public BulletType(TypeFile file)
 	{
 		super(file);
 		texture = "defaultBullet";
@@ -269,6 +273,8 @@ public class BulletType extends ShootableType
 			maxRange = ConfigUtils.configInt(config, "MaxRange", maxRange);
 			fancyDescription = ConfigUtils.configBool(config, "FancyDescription", fancyDescription);
 			speedMultiplier = ConfigUtils.configFloat(config, "BulletSpeedMultiplier", speedMultiplier);
+
+			blockHitFXScale = ConfigUtils.configFloat(config, "BlockHitFXScale", (float)((Math.log(explosionRadius + 2) / Math.log(2.15)) + 0.05));
 
 		} catch (Exception e) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading bullet config", null, e);

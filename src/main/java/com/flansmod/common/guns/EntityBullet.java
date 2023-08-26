@@ -29,6 +29,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -769,18 +770,35 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
 
                     if (worldObj.isRemote) {
-                        if (block.getMaterial() != Material.air && this.type.explosionRadius <= 0) {
-                            int num = 2 + this.rand.nextInt(3);
-                            for (int i = 0; i < num; i++) {
+                        if (block.getMaterial() != Material.air && this.type.explosionRadius <= 30 && type.blockHitFXScale > 0) {
+                            // Calculate the number of block particles proportionally to explosionRadius
+                            double scalingFactor = Minecraft.getMinecraft().gameSettings.fancyGraphics ? 10 : 2;
+                                    ; // Adjust this value based on your desired particle density
+                            int numBlockParticles = (int) (Math.pow((this.type.explosionRadius + 1), 1.5) * scalingFactor + 20);
+
+                            for (int i = 0; i < numBlockParticles; i++) {
+                                // First particle
                                 FlansMod.proxy.spawnParticle(
-                                        "blockcrack_" + Block.getIdFromBlock(block) + "_" + this.worldObj.getBlockMetadata(xTile, yTile, zTile),
-                                        hitVec.xCoord + ((double) this.rand.nextFloat() - 0.5D) * (double) this.width,
-                                        hitVec.yCoord + 0.1D,
-                                        hitVec.zCoord + ((double) this.rand.nextFloat() - 0.5D) * (double) this.width,
-                                        -this.motionX * 4.0D,
-                                        1.5D,
-                                        -this.motionZ * 4.0D);
-                                FlansMod.proxy.spawnParticle("explode", hitVec.xCoord, hitVec.yCoord, hitVec.zCoord, 0, 0, 0);
+                                        "blockdust_" + Block.getIdFromBlock(block) + "_" + this.worldObj.getBlockMetadata(xTile, xTile, xTile),
+                                        raytraceResult.hitVec.xCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
+                                        raytraceResult.hitVec.yCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
+                                        raytraceResult.hitVec.zCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
+                                        -this.motionX * (0.0011D + this.rand.nextGaussian() * 0.008D) * type.blockHitFXScale, // Adjusted horizontal velocity
+                                        Math.abs(0.305D + this.rand.nextDouble() * 0.125D) * type.blockHitFXScale, // Adjusted vertical velocity
+                                        -this.motionZ * (0.0011D + this.rand.nextGaussian() * 0.008D) * type.blockHitFXScale // Adjusted horizontal velocity
+                                );
+
+                                // Second particle
+                                FlansMod.proxy.spawnParticle(
+                                        "blockcrack_" + Block.getIdFromBlock(block) + "_" + this.worldObj.getBlockMetadata(xTile, xTile, xTile),
+                                        raytraceResult.hitVec.xCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
+                                        raytraceResult.hitVec.yCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
+                                        raytraceResult.hitVec.zCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
+                                        -this.motionX * (0.415D + this.rand.nextGaussian() * 0.1D) * type.blockHitFXScale, // Adjusted horizontal velocity
+                                        -this.motionY * (0.425D + Math.abs(this.rand.nextGaussian() * 0.1D)) * type.blockHitFXScale, // Adjusted vertical velocity
+                                        -this.motionZ * (0.415D + this.rand.nextGaussian() * 0.1D) * type.blockHitFXScale // Adjusted horizontal velocity
+                                );
+
                             }
                         }
                     }

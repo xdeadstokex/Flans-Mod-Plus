@@ -302,67 +302,68 @@ This will override the value set in the gun's model!
 | HasDynamicLight | Boolean | false | Bullet should emit light. |
 
 ### [BulletType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/BulletType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
-| Keyword | Type | Default | Purpose |
-|---------|------|---------|---------|
-| FlakParticles | Integer | 0 | The number of flak particles produced when exploding |
-| FlakParticleType | String | largesmoke | The type of flak particles to spawn |
-| SetEntitiesOnFire | Bool | false | Whether to set entities on fire upon collision |
-| HitSoundEnable | Boolean | false | Whether to play the hit sound |
-| HitSound | String | ~ | The hit sound to play if enabled |
-| HitSoundRange | Float | ~ | The range that the hit sound will play |
-| Penetration / PenetratingPower | Float | 1 | Penetration power |
-| PenetrationDecay | Float | 0 | Penetration to remove each tick, e.g. 0.01 -> 1% loss each tick |
-| DragInAir | Float | 0.99 | Drag coefficient (Possibly 1 - )? Between 0 and 1 |
-| DragInWater | Float | 0.80 | Drag coefficient in water (Possibly 1 - )? Between 0 and 1 |
-| NumBullets | Integer | -1 | Number of bullets to fire per shot. -1 is "let gun decide"? |
-| Accuracy / Spread | Float | -1 | Bullet accuracy. -1 is "let gun decide" |
-| LivingProximityTrigger | Float | -1 | If greater than 0, the bullet will explode with this radius of a living entity |
-| DriveableProximityTrigger | Float | -1 | If greater than 0, the bullet will explode with this radius of a Driveable |
-| DamageToTriggerer | Float | 0 | How much damage to do to the entity who triggered it |
-| PrimeDelay / TriggerDelay | Integer | 0 | Time after firing which the bullet may not detonate |
-| NumExplodeParticles | Integer | 0 | Number of explosion particles to create |
-| ExplodeParticles | String | largesmoke | The type of explosion particles to create |
-| SmokeTime | Integer | 0 | Time for smoke to remain after explosion |
-| SmokeParticles | String | explode | The type of particles to use for smoke |
-| SmokeEffect | String | ~ | Add a potion effect to the smoke |
-| SmokeRadius | Float | 5 | The radius that the smoke affects |
-| VLS / HasDeadZone | Bool | false | Whether this is a vertical launch system/guided thing |
-| VLS time / DeadZoneTime | Integer | 0 | How long it takes before guidance kicks in |
-| FixedTrackDirection | Boolean | false | Whether.. it can only go in a straight line? |
-| GuidedTurnRadius | Float | 3 | The turning radius of the guided missile |
-| GuidedPhaseSpeed | Float | 2 | The speed during guiding? |
-| GuidedPhaseTurnSpeed | Float | 0.2 | Speed of turning of guided missile? |
-| BostParticle | String | ~ | The particle type for "boost phase" ie when it isn't guided yet |
-| Torpedo | Boolean | false | Whether this is a torpedo or not |
-| Bomb | ~ | ~ | Add this to set this as a BOMB |
-| Shell | ~ | ~ | Add this to set this as a SHELL |
-| Missile | ~ | ~ | Add this to set this as a MISSILE |
-| WeaponType | String | ~ | Set weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE) |
-| LockOnToDriveables | Bool | false | Lock on to vehicles, planes and mechas. |
-| LockOnToVehicles | Bool | false | Lock on to X |
-| LockOnToPlanes | Bool | false | Lock on to X |
-| LockOnToMechas | Bool | false | Lock on to X |
-| LockOnToPlayers | Bool | false | Lock on to X |
-| LockOnToLivings | Bool | false | Lock on to X |
-| MaxLockOnAngle | Float | 45 | Maximum angle for locking on to a target |
-| LockOnForce / TurningForce | Float | 1 | The force locking the bullet onto the target |
-| MaxDegreeOfLockOnMissile | Integer | 20 | The highest degree that the missile will keep its target when locked on |
-| TickStartHoming | Integer | 5 | How many ticks before the missile starts to home |
-| EnableSACLOS | Boolean | false | Enable Wire/Radio guiding, (Semi-Active Guidance). Source must maintain lock for projctile to track |
-| MaxDegreeOfSACLOS | Integer | 5 | Max angle around look vector that projectile will track within. If outside, tracking is lost. |
-| MaxRangeOfMissile | Integer | 150 | Number of blocks that a missile can be guided for |
-| CanSpotEntityDriveable | Boolean | false | ? |
-| ShootForSettingPos | Boolean | false | ? |
-| ShootForSettingPosHeight| Integer | 100 | ? |
-| IsDoTopAttack | Boolean | false | Whether to hit from the top of the entitity it's locked on to |
-| PotionEffect | String | ~ | The effects done to the entity hit |
-| ManualGuidance | Boolean | false | Whether this is manually guided |
-| LaserGuidance | Boolean | false | Whether this is laser guided |
-| LockOnFuse | Integer | 10 | Ticks before explosion when locked on? |
-| MaxRange | Integer | -1 | Maximum distance for something. -1 is infinite. |
-| FancyDescription | Boolean | true | Whether to display information about the bullet/mag in the description, like a gun. |
-| KnockbackModifier | Float | 1 | Modifier for knockback. Smaller = less knockback, bigger = more knockback, 1 = default knockback. Applies players hit by the bullet only. |
-| BulletSpeedMultiplier | Float | 1 | Multiplier for bullet speed. Stacks with gun bullet speed. |
+| Keyword                        | Type    | Default    | Purpose                                                                                                                                   |
+|--------------------------------|---------|------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| FlakParticles                  | Integer | 0          | The number of flak particles produced when exploding                                                                                      |
+| FlakParticleType               | String  | largesmoke | The type of flak particles to spawn                                                                                                       |
+| SetEntitiesOnFire              | Bool    | false      | Whether to set entities on fire upon collision                                                                                            |
+| HitSoundEnable                 | Boolean | false      | Whether to play the hit sound                                                                                                             |
+| HitSound                       | String  | ~          | The hit sound to play if enabled                                                                                                          |
+| HitSoundRange                  | Float   | ~          | The range that the hit sound will play                                                                                                    |
+| Penetration / PenetratingPower | Float   | 1          | Penetration power                                                                                                                         |
+| PenetrationDecay               | Float   | 0          | Penetration to remove each tick, e.g. 0.01 -> 1% loss each tick                                                                           |
+| DragInAir                      | Float   | 0.99       | Drag coefficient (Possibly 1 - )? Between 0 and 1                                                                                         |
+| DragInWater                    | Float   | 0.80       | Drag coefficient in water (Possibly 1 - )? Between 0 and 1                                                                                |
+| NumBullets                     | Integer | -1         | Number of bullets to fire per shot. -1 is "let gun decide"?                                                                               |
+| Accuracy / Spread              | Float   | -1         | Bullet accuracy. -1 is "let gun decide"                                                                                                   |
+| LivingProximityTrigger         | Float   | -1         | If greater than 0, the bullet will explode with this radius of a living entity                                                            |
+| DriveableProximityTrigger      | Float   | -1         | If greater than 0, the bullet will explode with this radius of a Driveable                                                                |
+| DamageToTriggerer              | Float   | 0          | How much damage to do to the entity who triggered it                                                                                      |
+| PrimeDelay / TriggerDelay      | Integer | 0          | Time after firing which the bullet may not detonate                                                                                       |
+| NumExplodeParticles            | Integer | 0          | Number of explosion particles to create                                                                                                   |
+| ExplodeParticles               | String  | largesmoke | The type of explosion particles to create                                                                                                 |
+| SmokeTime                      | Integer | 0          | Time for smoke to remain after explosion                                                                                                  |
+| SmokeParticles                 | String  | explode    | The type of particles to use for smoke                                                                                                    |
+| SmokeEffect                    | String  | ~          | Add a potion effect to the smoke                                                                                                          |
+| SmokeRadius                    | Float   | 5          | The radius that the smoke affects                                                                                                         |
+| VLS / HasDeadZone              | Bool    | false      | Whether this is a vertical launch system/guided thing                                                                                     |
+| VLS time / DeadZoneTime        | Integer | 0          | How long it takes before guidance kicks in                                                                                                |
+| FixedTrackDirection            | Boolean | false      | Whether.. it can only go in a straight line?                                                                                              |
+| GuidedTurnRadius               | Float   | 3          | The turning radius of the guided missile                                                                                                  |
+| GuidedPhaseSpeed               | Float   | 2          | The speed during guiding?                                                                                                                 |
+| GuidedPhaseTurnSpeed           | Float   | 0.2        | Speed of turning of guided missile?                                                                                                       |
+| BostParticle                   | String  | ~          | The particle type for "boost phase" ie when it isn't guided yet                                                                           |
+| Torpedo                        | Boolean | false      | Whether this is a torpedo or not                                                                                                          |
+| Bomb                           | ~       | ~          | Add this to set this as a BOMB                                                                                                            |
+| Shell                          | ~       | ~          | Add this to set this as a SHELL                                                                                                           |
+| Missile                        | ~       | ~          | Add this to set this as a MISSILE                                                                                                         |
+| WeaponType                     | String  | ~          | Set weapon type (MISSILE, BOMB, SHELL, MINE, GUN, NONE)                                                                                   |
+| LockOnToDriveables             | Bool    | false      | Lock on to vehicles, planes and mechas.                                                                                                   |
+| LockOnToVehicles               | Bool    | false      | Lock on to X                                                                                                                              |
+| LockOnToPlanes                 | Bool    | false      | Lock on to X                                                                                                                              |
+| LockOnToMechas                 | Bool    | false      | Lock on to X                                                                                                                              |
+| LockOnToPlayers                | Bool    | false      | Lock on to X                                                                                                                              |
+| LockOnToLivings                | Bool    | false      | Lock on to X                                                                                                                              |
+| MaxLockOnAngle                 | Float   | 45         | Maximum angle for locking on to a target                                                                                                  |
+| LockOnForce / TurningForce     | Float   | 1          | The force locking the bullet onto the target                                                                                              |
+| MaxDegreeOfLockOnMissile       | Integer | 20         | The highest degree that the missile will keep its target when locked on                                                                   |
+| TickStartHoming                | Integer | 5          | How many ticks before the missile starts to home                                                                                          |
+| EnableSACLOS                   | Boolean | false      | Enable Wire/Radio guiding, (Semi-Active Guidance). Source must maintain lock for projctile to track                                       |
+| MaxDegreeOfSACLOS              | Integer | 5          | Max angle around look vector that projectile will track within. If outside, tracking is lost.                                             |
+| MaxRangeOfMissile              | Integer | 150        | Number of blocks that a missile can be guided for                                                                                         |
+| CanSpotEntityDriveable         | Boolean | false      | ?                                                                                                                                         |
+| ShootForSettingPos             | Boolean | false      | ?                                                                                                                                         |
+| ShootForSettingPosHeight       | Integer | 100        | ?                                                                                                                                         |
+| IsDoTopAttack                  | Boolean | false      | Whether to hit from the top of the entitity it's locked on to                                                                             |
+| PotionEffect                   | String  | ~          | The effects done to the entity hit                                                                                                        |
+| ManualGuidance                 | Boolean | false      | Whether this is manually guided                                                                                                           |
+| LaserGuidance                  | Boolean | false      | Whether this is laser guided                                                                                                              |
+| LockOnFuse                     | Integer | 10         | Ticks before explosion when locked on?                                                                                                    |
+| MaxRange                       | Integer | -1         | Maximum distance for something. -1 is infinite.                                                                                           |
+| FancyDescription               | Boolean | true       | Whether to display information about the bullet/mag in the description, like a gun.                                                       |
+| KnockbackModifier              | Float   | 1          | Modifier for knockback. Smaller = less knockback, bigger = more knockback, 1 = default knockback. Applies players hit by the bullet only. |
+| BulletSpeedMultiplier          | Float   | 1          | Multiplier for bullet speed. Stacks with gun bullet speed.                                                                                |
+| BlockHitFXScale                | Float   | Formula    | Scale for velocity of particles that spawn when the bullet hits a block. 0 = Disable                                                      |
 
 ### [GrenadeType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/GrenadeType.java) extends [ShootableType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/guns/ShootableType.java)
 | Keyword | Type | Default | Purpose |
