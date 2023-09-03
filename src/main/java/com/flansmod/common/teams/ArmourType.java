@@ -89,7 +89,10 @@ public class ArmourType extends InfoType {
 
     public ArmourType(TypeFile file) {
         super(file);
-        armours.add(this);
+
+        if (this.shortName != null) {
+            armours.add(this);
+        }
     }
 
     @Override

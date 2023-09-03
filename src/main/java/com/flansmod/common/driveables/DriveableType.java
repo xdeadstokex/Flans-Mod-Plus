@@ -350,7 +350,9 @@ public class DriveableType extends PaintableType {
     public void preRead(TypeFile file) {
         super.preRead(file);
 
-        types.add(this);
+        if (this.shortName != null) {
+            types.add(this);
+        }
     }
 
     @Override

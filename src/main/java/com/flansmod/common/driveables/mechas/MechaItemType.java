@@ -17,7 +17,7 @@ import com.flansmod.common.types.TypeFile;
 
 public class MechaItemType extends InfoType 
 {
-	public static ArrayList<MechaItemType> types = new ArrayList<MechaItemType>();
+	//public static ArrayList<MechaItemType> types = new ArrayList<MechaItemType>();
 	
 	/** The type of item */
 	public EnumMechaItemType type;

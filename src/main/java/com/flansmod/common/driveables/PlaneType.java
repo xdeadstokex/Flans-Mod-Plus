@@ -101,7 +101,9 @@ public class PlaneType extends DriveableType
     public PlaneType(TypeFile file)
     {
 		super(file);
-		types.add(this);
+		if (this.shortName != null) {
+			types.add(this);
+		}
     }
     
     @Override

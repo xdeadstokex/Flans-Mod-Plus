@@ -121,7 +121,9 @@ public class GrenadeType extends ShootableType
 
 	public GrenadeType(TypeFile file) {
 		super(file);
-		grenades.add(this);
+		if (this.shortName != null) {
+			grenades.add(this);
+		}
 	}
 	
 	@Override

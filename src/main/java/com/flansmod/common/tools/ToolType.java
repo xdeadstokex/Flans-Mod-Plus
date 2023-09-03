@@ -53,7 +53,9 @@ public class ToolType extends InfoType
 	@Override
 	protected void postRead(TypeFile file)
 	{
-		tools.put(shortName, this);
+		if (this.shortName != null) {
+			tools.put(shortName, this);
+		}
 	}
 
 

@@ -115,7 +115,7 @@ public abstract class InfoType implements IInfoType {
 
         if (shortName == null ) {
             infoTypes.remove(this);
-            FlansMod.log("Config without shortname removed %s in pack %s", file.name, file.pack);
+            FlansMod.log("Config without shortname removed pack: %s, filename: %s", file.pack, file.name);
         } else {
             read(configMap, file);
             postRead(file);

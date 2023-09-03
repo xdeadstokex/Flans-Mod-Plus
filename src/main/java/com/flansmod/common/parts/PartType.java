@@ -70,7 +70,9 @@ public class PartType extends InfoType {
 
     public PartType(TypeFile file) {
         super(file);
-        parts.add(this);
+        if (this.shortName != null) {
+            parts.add(this);
+        }
     }
 
     @Override

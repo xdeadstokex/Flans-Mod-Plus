@@ -52,7 +52,10 @@ public class AAGunType extends InfoType
 
 	public AAGunType(TypeFile file) {
 		super(file);
-		infoTypes.add(this);
+
+		if (this.shortName != null) {
+			infoTypes.add(this);
+		}
 	}
 
 	@Override

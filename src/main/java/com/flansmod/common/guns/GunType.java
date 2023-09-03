@@ -497,8 +497,10 @@ public class GunType extends PaintableType implements IScope {
     public void postRead(TypeFile file) {
         super.postRead(file);
 
-        gunList.add(this);
-        guns.put(shortName, this);
+        if (this.shortName != null) {
+            gunList.add(this);
+            guns.put(shortName, this);
+        }
     }
 
     @Override

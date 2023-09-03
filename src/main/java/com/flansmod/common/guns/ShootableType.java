@@ -159,7 +159,9 @@ public abstract class ShootableType extends InfoType {
             FlansMod.logPackError(file.name, packName, shortName, "Shootable with shortname already exists!", null, null);
         }
 
-        shootables.put(shortName, this);
+        if (this.shortName != null) {
+            shootables.put(shortName, this);
+        }
 
         if (!readDamageVsPlayer) {
             damageVsPlayer = damageVsLiving;

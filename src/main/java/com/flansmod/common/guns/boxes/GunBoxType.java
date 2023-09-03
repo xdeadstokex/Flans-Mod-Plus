@@ -66,7 +66,9 @@ public class GunBoxType extends InfoType
 		currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 		gunPages.add(currentPage);
 
-		gunBoxMap.put(this.shortName, this);
+		if (this.shortName != null) {
+			gunBoxMap.put(this.shortName, this);
+		}
 	}
 
 	@Override

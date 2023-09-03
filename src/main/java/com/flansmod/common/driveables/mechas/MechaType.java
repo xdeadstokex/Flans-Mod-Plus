@@ -94,7 +94,9 @@ public class MechaType extends DriveableType
 	public MechaType(TypeFile file)
 	{
 		super(file);
-		types.add(this);
+		if (this.shortName != null) {
+			types.add(this);
+		}
 	}
 	
     @Override

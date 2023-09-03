@@ -45,12 +45,16 @@ public class Team extends InfoType
 		name = s1;
 		teamColour = teamCol;
 		textColour = textCol;
-		teams.add(this);
+		if (this.shortName != null) {
+			teams.add(this);
+		}
 	}
 	
 	public Team(TypeFile file) {
 		super(file);
-		teams.add(this);
+		if (this.shortName != null) {
+			teams.add(this);
+		}
 	}
 
 	@Override
