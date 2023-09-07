@@ -35,7 +35,9 @@ public class PlayerClass extends InfoType {
 
     public PlayerClass(TypeFile file) {
         super(file);
-        classes.add(this);
+        if (this.shortName != null) {
+            classes.add(this);
+        }
     }
 
     @Override
