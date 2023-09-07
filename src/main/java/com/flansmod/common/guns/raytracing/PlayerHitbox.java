@@ -214,12 +214,27 @@ public class PlayerHitbox {
                     TeamsManager.getInstance().currentRound.gametype.playerAttacked((EntityPlayerMP) player, damagesource);
                 Vector3f motBefore = new Vector3f(player.motionX, player.motionY, player.motionZ);
                 //Attack the entity!
-                if (player.attackEntityFrom(damagesource, hitDamage)) {
-                    //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
-                    player.arrowHitTimer++;
-                    player.hurtResistantTime = player.maxHurtResistantTime / 2;
-                    //Yuck.
-                    //PacketDispatcher.sendPacketToAllAround(posX, posY, posZ, 50, dimension, PacketPlaySound.buildSoundPacket(posX, posY, posZ, type.hitSound, true));
+
+                boolean clientSideHitReg = true;
+
+                if (player.worldObj.isRemote || !clientSideHitReg) {
+
+                    // UUID player to hit
+                    // UUID bullet owner
+                    // float hitDamage
+                    // string bullet type
+                    // string gun type
+                    // bool headshot
+                    // bool melee
+
+                    // This doesn't damage the player on the client.
+                    if (player.attackEntityFrom(damagesource, hitDamage)) {
+                        //If the attack was allowed, we should remove their immortality cooldown so we can shoot them again. Without this, any rapid fire gun become useless
+                        player.arrowHitTimer++;
+                        player.hurtResistantTime = player.maxHurtResistantTime / 2;
+                        //Yuck.
+                        //PacketDispatcher.sendPacketToAllAround(posX, posY, posZ, 50, dimension, PacketPlaySound.buildSoundPacket(posX, posY, posZ, type.hitSound, true));
+                    }
                 }
 
                 // Handle knockback by finding entity motion before and after, and reapplying to negate effect of vanilla code.
