@@ -210,7 +210,7 @@ public class AttachmentType extends PaintableType implements IScope
 			FOVZoomLevel = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVZoomLevel);
 
 			String zoomOverlayString = ConfigUtils.configString(config, "ZoomOverlay", null);
-			if (zoomOverlayString == null || zoomOverlayString.equalsIgnoreCase("None")) {
+			if (zoomOverlayString == null || zoomOverlayString.isEmpty() || zoomOverlayString.equalsIgnoreCase("None")) {
 				hasScopeOverlay = false;
 			} else {
 				hasScopeOverlay = true;
