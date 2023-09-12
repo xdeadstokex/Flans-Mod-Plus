@@ -101,9 +101,6 @@ public class PlaneType extends DriveableType
     public PlaneType(TypeFile file)
     {
 		super(file);
-		if (this.shortName != null) {
-			types.add(this);
-		}
     }
     
     @Override
@@ -111,6 +108,13 @@ public class PlaneType extends DriveableType
     {
     	super.preRead(file);
     }
+
+	@Override
+	public void postRead(TypeFile file) {
+		if (this.shortName != null) {
+			types.add(this);
+		}
+	}
     
     @Override
 	protected void read(ConfigMap config, TypeFile file) {

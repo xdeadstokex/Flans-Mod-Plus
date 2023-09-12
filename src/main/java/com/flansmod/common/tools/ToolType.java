@@ -59,7 +59,6 @@ public class ToolType extends InfoType
 	}
 
 
-
 	/** Pack reader */
 	@Override
 	protected void read(ConfigMap config, TypeFile file)

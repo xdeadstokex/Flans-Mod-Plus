@@ -35,9 +35,6 @@ public class PlayerClass extends InfoType {
 
     public PlayerClass(TypeFile file) {
         super(file);
-        if (this.shortName != null) {
-            classes.add(this);
-        }
     }
 
     @Override
@@ -115,6 +112,10 @@ public class PlayerClass extends InfoType {
      */
     @Override
     protected void postRead(TypeFile file) {
+        if (this.shortName != null) {
+            classes.add(this);
+        }
+
         onWorldLoad(null);
     }
 

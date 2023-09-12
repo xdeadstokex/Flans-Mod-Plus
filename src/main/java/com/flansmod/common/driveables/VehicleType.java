@@ -91,10 +91,6 @@ public class VehicleType extends DriveableType {
 
     public VehicleType(TypeFile file) {
         super(file);
-
-        if (this.shortName != null) {
-            types.add(this);
-        }
     }
 
     @Override
@@ -105,7 +101,9 @@ public class VehicleType extends DriveableType {
 
     @Override
     public void postRead(TypeFile file) {
-        super.postRead(file);
+        if (this.shortName != null) {
+            types.add(this);
+        }
     }
 
     @Override

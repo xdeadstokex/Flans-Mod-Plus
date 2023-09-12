@@ -122,6 +122,11 @@ public class AttachmentType extends PaintableType implements IScope
 	{
 		super(file);
 
+
+	}
+
+	@Override
+	public void postRead(TypeFile file) {
 		if (this.shortName != null) {
 			attachments.add(this);
 		}

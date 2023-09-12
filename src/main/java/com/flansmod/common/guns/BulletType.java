@@ -1,5 +1,6 @@
 package com.flansmod.common.guns;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,7 +140,10 @@ public class BulletType extends ShootableType
 		super(file);
 		texture = "defaultBullet";
 		bounciness = 0f;
+	}
 
+	@Override
+	public void postRead(TypeFile file) {
 		if (this.shortName != null) {
 			bullets.add(this);
 		}

@@ -70,9 +70,6 @@ public class PartType extends InfoType {
 
     public PartType(TypeFile file) {
         super(file);
-        if (this.shortName != null) {
-            parts.add(this);
-        }
     }
 
     @Override
@@ -94,6 +91,10 @@ public class PartType extends InfoType {
                     defaultEngines.put(type, this);
                 }
             }
+        }
+
+        if (this.shortName != null) {
+            parts.add(this);
         }
     }
 

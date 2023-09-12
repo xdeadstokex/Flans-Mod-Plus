@@ -52,17 +52,17 @@ public class AAGunType extends InfoType
 
 	public AAGunType(TypeFile file) {
 		super(file);
-
-		if (this.shortName != null) {
-			infoTypes.add(this);
-		}
 	}
 
 	@Override
 	protected void preRead(TypeFile file) { }
 
 	@Override
-	protected void postRead(TypeFile file) { }
+	public void postRead(TypeFile file) {
+		if (this.shortName != null) {
+			infoTypes.add(this);
+		}
+	}
 	
 	@Override
 	protected void read(ConfigMap config, TypeFile file) {

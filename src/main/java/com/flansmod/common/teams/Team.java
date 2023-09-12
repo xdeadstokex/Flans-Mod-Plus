@@ -45,22 +45,25 @@ public class Team extends InfoType
 		name = s1;
 		teamColour = teamCol;
 		textColour = textCol;
-		if (this.shortName != null) {
-			teams.add(this);
-		}
 	}
 	
 	public Team(TypeFile file) {
 		super(file);
+
+	}
+
+	@Override
+	protected void preRead(TypeFile file) {
+
+	}
+	@Override
+	protected void postRead(TypeFile file)
+	{
 		if (this.shortName != null) {
 			teams.add(this);
 		}
 	}
 
-	@Override
-	protected void preRead(TypeFile file) { }
-	@Override
-	protected void postRead(TypeFile file) { }
 	@Override
 	protected void read(ConfigMap config, TypeFile file)
 	{

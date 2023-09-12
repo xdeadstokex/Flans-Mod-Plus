@@ -94,11 +94,15 @@ public class MechaType extends DriveableType
 	public MechaType(TypeFile file)
 	{
 		super(file);
+	}
+
+	@Override
+	public void postRead(TypeFile file) {
 		if (this.shortName != null) {
 			types.add(this);
 		}
 	}
-	
+
     @Override
 	protected void read(ConfigMap config, TypeFile file) {
 		super.read(config, file);
