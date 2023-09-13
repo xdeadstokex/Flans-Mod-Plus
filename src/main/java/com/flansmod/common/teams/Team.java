@@ -2,6 +2,7 @@ package com.flansmod.common.teams;
 
 import java.util.*;
 
+import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
@@ -117,9 +118,28 @@ public class Team extends InfoType
 				}
 			}
 
-			String defaultClass = ConfigUtils.configString(config, new String [] { "AddDefaultClass", "AddClass"}, null);
-			if(defaultClass != null) {
-				classes.add(PlayerClass.getClass(defaultClass));
+			List<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String [] { "AddDefaultClass", "AddClass"});
+			for (String[] aSplit : splits) {
+				try {
+					if (aSplit.length == 2) {
+						PlayerClass playerClass = PlayerClass.getClass(aSplit[1]);
+
+						if (playerClass != null)
+						{
+							classes.add(playerClass);
+						}
+						else
+						{
+							FlansMod.logPackError(file.name, packName, shortName, "Could not find PlayerClass for AddClass", split, null);
+						}
+					}
+					else
+					{
+						FlansMod.logPackError(file.name, packName, shortName, "Wrong number of arguments given to AddClass", split, null);
+					}
+				} catch (Exception ex) {
+					FlansMod.logPackError(file.name, packName, shortName, "Adding AddClass failed", split, ex);
+				}
 			}
 
 			allowedForRoundsGenerator = ConfigUtils.configBool(config, "AllowedForRoundsGenerator", allowedForRoundsGenerator);

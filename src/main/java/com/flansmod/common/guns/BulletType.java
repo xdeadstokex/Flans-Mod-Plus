@@ -144,6 +144,8 @@ public class BulletType extends ShootableType
 
 	@Override
 	public void postRead(TypeFile file) {
+		super.postRead(file);
+
 		if (this.shortName != null) {
 			bullets.add(this);
 		}

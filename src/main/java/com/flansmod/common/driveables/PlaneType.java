@@ -111,6 +111,8 @@ public class PlaneType extends DriveableType
 
 	@Override
 	public void postRead(TypeFile file) {
+		super.postRead(file);
+
 		if (this.shortName != null) {
 			types.add(this);
 		}

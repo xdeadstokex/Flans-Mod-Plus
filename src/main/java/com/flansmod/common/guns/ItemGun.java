@@ -1403,10 +1403,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             else if (gunType.shootSound != null)
                 soundToPlay = gunType.shootSound;
 
-             FlansMod.log(soundToPlay);
-
             if (soundToPlay != null)
-                PacketPlaySound.sendSoundPacket(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, type.gunSoundRange, entityPlayer.dimension, soundToPlay, gunType.distortSound, false);
+                PacketPlaySound.sendSoundPacket(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, type.gunSoundRange, entityPlayer.dimension, soundToPlay, gunType.distortSound, silenced);
             soundDelay = gunType.shootSoundLength;
             if (type.distantShootSound != null) {
                 FlansMod.packetHandler.sendToDonut(new PacketPlaySound(entityPlayer.posX, entityPlayer.posY,

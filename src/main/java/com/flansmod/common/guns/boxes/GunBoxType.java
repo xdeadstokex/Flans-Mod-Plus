@@ -62,6 +62,7 @@ public class GunBoxType extends InfoType
 	
 	@Override
 	public void postRead(TypeFile file) {
+
 		//Add any remaining gun entries to the pagelist if EOF.
 		currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 		gunPages.add(currentPage);

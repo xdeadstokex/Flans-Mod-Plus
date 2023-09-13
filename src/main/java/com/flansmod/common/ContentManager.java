@@ -14,10 +14,7 @@ import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
-import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.teams.ArmourType;
-import com.flansmod.common.teams.BlockArmourBox;
-import com.flansmod.common.teams.ItemTeamArmour;
+import com.flansmod.common.teams.*;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
 import com.flansmod.common.types.EnumType;
@@ -132,6 +129,7 @@ public class ContentManager {
                     if (!(typeFile.lines.size() == 0)) {
                         InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
                         infoType.read(typeFile);
+
                         if (infoType.shortName != null) {
                             switch (type) {
                                 case bullet:
