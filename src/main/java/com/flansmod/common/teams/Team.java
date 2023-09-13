@@ -157,6 +157,11 @@ public class Team extends InfoType
 			if(team.shortName.equals(s))
 				return team;
 		}
+
+		if (FlansMod.spectators.shortName.equals(s)) {
+			return  FlansMod.spectators;
+		}
+
 		return null;
 	}
 
