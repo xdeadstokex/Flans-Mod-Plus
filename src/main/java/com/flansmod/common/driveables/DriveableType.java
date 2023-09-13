@@ -350,9 +350,7 @@ public class DriveableType extends PaintableType {
     public void preRead(TypeFile file) {
         super.preRead(file);
 
-        if (this.shortName != null) {
-            types.add(this);
-        }
+
     }
 
     @Override
@@ -365,6 +363,10 @@ public class DriveableType extends PaintableType {
             }
 
             bulletDetectionRadius += 1;
+        }
+
+        if (this.shortName != null) {
+            types.add(this);
         }
     }
 
