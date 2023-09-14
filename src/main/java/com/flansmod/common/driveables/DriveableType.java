@@ -544,8 +544,8 @@ public class DriveableType extends PaintableType {
             //Flares
             hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
 
-            flareDelay = Math.min(1, ConfigUtils.configInt(config, "FlareDelay", flareDelay));
-            timeFlareUsing = Math.min(1, ConfigUtils.configInt(config, "TimeFlareUsing", timeFlareUsing));
+            flareDelay = Math.max(1, ConfigUtils.configInt(config, "FlareDelay", flareDelay));
+            timeFlareUsing = Math.max(1, ConfigUtils.configInt(config, "TimeFlareUsing", timeFlareUsing));
 
             //Boats
             if (config.containsKey("Boat")) {

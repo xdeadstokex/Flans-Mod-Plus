@@ -615,7 +615,7 @@ public class GunType extends PaintableType implements IScope {
         loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
         cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
         lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
-        distantShootSound = ConfigUtils.configGunSound(packName, config, "DistantSound", distantShootSound);
+        distantShootSound = ConfigUtils.configGunSound(packName, config, new String[] { "DistantSound", "DistantShootSound" }, distantShootSound);
         distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
 
 

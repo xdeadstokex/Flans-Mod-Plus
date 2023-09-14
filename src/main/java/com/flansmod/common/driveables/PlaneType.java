@@ -183,8 +183,7 @@ public class PlaneType extends DriveableType
 
 
 			hasFlare = ConfigUtils.configBool(config, "HasFlare", hasFlare);
-			flareDelay = ConfigUtils.configInt(config, "FlareDelay", flareDelay);
-			flareDelay = flareDelay <= 0 ? 1 : flareDelay;
+			flareDelay = Math.max(1, ConfigUtils.configInt(config, "FlareDelay", flareDelay));
 
 			timeFlareUsing = ConfigUtils.configInt(config, "TimeFlareUsing", timeFlareUsing);
 			timeFlareUsing = timeFlareUsing <= 0 ? 1 : timeFlareUsing;
