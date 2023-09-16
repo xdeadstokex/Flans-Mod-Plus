@@ -346,39 +346,25 @@ public class FlansMod {
         log("Loaded recipes.");
 
         //Register teams mod entities
-        EntityRegistry.registerGlobalEntityID(EntityFlagpole.class, "Flagpole", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityFlagpole.class, "Flagpole", 93, this, 40, 5, true);
-        EntityRegistry.registerGlobalEntityID(EntityFlag.class, "Flag", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityFlag.class, "Flag", 94, this, 40, 5, true);
-        EntityRegistry.registerGlobalEntityID(EntityTeamItem.class, "TeamsItem", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityTeamItem.class, "TeamsItem", 97, this, 100, 10000, true);
-        EntityRegistry.registerGlobalEntityID(EntityGunItem.class, "GunItem", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityGunItem.class, "GunItem", 98, this, 100, 20, true);
 
         //Register driveables
-        EntityRegistry.registerGlobalEntityID(EntityPlane.class, "Plane", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityPlane.class, "Plane", 90, this, 200, 3, true);
-        EntityRegistry.registerGlobalEntityID(EntityVehicle.class, "Vehicle", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityVehicle.class, "Vehicle", 95, this, 400, 10, true);
-        EntityRegistry.registerGlobalEntityID(EntitySeat.class, "Seat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntitySeat.class, "Seat", 99, this, 250, 10, true);
-        EntityRegistry.registerGlobalEntityID(EntityWheel.class, "Wheel", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityWheel.class, "Wheel", 103, this, 200, 20, true);
-        EntityRegistry.registerGlobalEntityID(EntityParachute.class, "Parachute", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityParachute.class, "Parachute", 101, this, 40, 20, false);
-        EntityRegistry.registerGlobalEntityID(EntityMecha.class, "Mecha", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityMecha.class, "Mecha", 102, this, 250, 20, false);
 
         //Register bullets and grenades
-        EntityRegistry.registerGlobalEntityID(EntityBullet.class, "Bullet", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityBullet.class, "Bullet", 96, this, 200, 20, false);
-        EntityRegistry.registerGlobalEntityID(EntityGrenade.class, "Grenade", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityGrenade.class, "Grenade", 100, this, 40, 100, true);
 
         //Register MGs and AA guns
-        EntityRegistry.registerGlobalEntityID(EntityMG.class, "MG", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityMG.class, "MG", 91, this, 40, 5, true);
-        EntityRegistry.registerGlobalEntityID(EntityAAGun.class, "AAGun", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityAAGun.class, "AAGun", 92, this, 40, 500, false);
 
         //Register the chunk loader
