@@ -370,9 +370,7 @@ public class FlansMod {
         EntityRegistry.registerModEntity(EntityMecha.class, "Mecha", 102, this, 250, 20, false);
 
         //Register bullets and grenades
-        EntityRegistry.registerGlobalEntityID(EntityBullet.class, "Bullet", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityBullet.class, "Bullet", 96, this, 200, 20, false);
-        EntityRegistry.registerGlobalEntityID(EntityGrenade.class, "Grenade", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityGrenade.class, "Grenade", 100, this, 40, 100, true);
 
         //Register MGs and AA guns
