@@ -32,6 +32,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -536,7 +537,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 }
             } else {
                 Entity entity = (Entity) obj;
-                if (entity != this && entity != owner && !entity.isDead && !(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb) && !(entity instanceof EntityArrow) &&
+                if (entity != owner && !entity.isDead && !(entity instanceof EntityBullet) && !(entity instanceof EntityItem) && !(entity instanceof IProjectile) &&
                         (!entity.getClass().toString().contains("flansmod.") || entity instanceof EntityAAGun || entity instanceof EntityGrenade)
                         && !entity.getClass().toString().contains("holographicdisplays") && !entity.getClass().toString().contains("EntityScent")
                         && !(entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getHealth() == 0.0)) {
