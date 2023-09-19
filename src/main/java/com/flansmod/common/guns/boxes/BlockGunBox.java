@@ -33,6 +33,7 @@ public class BlockGunBox extends Block {
         setBlockName(type.shortName);
         Block block = Block.getBlockFromName(FlansMod.MODID + ":gunBox." + type.shortName);
         if (block != null) {
+            FlansMod.logPackError(null, t.packName, t.shortName, "A gun box with this name already exists. Duplicate gun box found", null, null);
             throw new Exception("Caught an exception during block registration");
         }
         GameRegistry.registerBlock(this, "gunBox." + type.shortName);
