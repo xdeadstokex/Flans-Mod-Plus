@@ -118,7 +118,7 @@ public class TickHandlerClient {
                 }
             }
 
-            if (overlayTexture != null) {
+            if (overlayTexture != null && !overlayTexture.isEmpty()) {
                 FlansModClient.minecraft.entityRenderer.setupOverlayRendering();
                 GL11.glEnable(3042 /* GL_BLEND */);
                 GL11.glDisable(2929 /* GL_DEPTH_TEST */);
