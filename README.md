@@ -6,6 +6,17 @@ Please don't redistribute any code without permission.
 
 This version of Flan's Mod Plus aims to be the most recent and stable.
 
+## Project Status
+
+FMUSE has been actively maintained by [@GoldSloth](https://github.com/GoldSloth)
+and myself for the last 3+ years. While I genuinely appreciate all the support
+we've received, either as feedback or pull requests, as time has gone on, both
+GoldSloth and I have lost interest in Minecraft modding. We will continue providing bug
+fixes and support for the foreseeable future, and we're still accepting
+pull requests, but expect fewer releases and new features.
+
+ ~ Unknown025
+
 ## Useful stuff for Content Pack makers / Server Owners:
 
 [Config reference](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/ConfigReference.md)
