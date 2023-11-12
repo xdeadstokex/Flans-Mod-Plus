@@ -308,6 +308,11 @@ public abstract class EntityDriveable extends Entity implements IControllable, I
     @Override
     protected void readEntityFromNBT(NBTTagCompound tag) {
         driveableType = tag.getString("Type");
+        if (DriveableType.getDriveable(driveableType) == null) {
+            // If the type has been deleted, and we load it in... bad things happen. So, kill the vehicle.
+            setDead();
+            return;
+        }
         driveableData = new DriveableData(tag);
         initType(DriveableType.getDriveable(driveableType), false);
 

@@ -308,6 +308,7 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
             riddenByEntity.lastTickPosX = riddenByEntity.prevPosX = prevPlayerPosX;
             riddenByEntity.lastTickPosY = riddenByEntity.prevPosY = prevPlayerPosY;
             riddenByEntity.lastTickPosZ = riddenByEntity.prevPosZ = prevPlayerPosZ;
+
             riddenByEntity.setPosition(playerPosX, playerPosY, playerPosZ);
 
             //Calculate the local look axes globally
@@ -349,6 +350,8 @@ public class EntitySeat extends Entity implements IControllable, IEntityAddition
         riddenByEntity.lastTickPosX = riddenByEntity.prevPosX = prevPlayerPosX;
         riddenByEntity.lastTickPosY = riddenByEntity.prevPosY = prevPlayerPosY;
         riddenByEntity.lastTickPosZ = riddenByEntity.prevPosZ = prevPlayerPosZ;
+
+        riddenByEntity.setPosition(playerPosX, playerPosY, playerPosZ);
     }
 
     @Override

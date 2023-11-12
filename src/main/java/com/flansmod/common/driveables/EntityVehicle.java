@@ -705,7 +705,7 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                 wheel.moveEntity(0F, (!onDeck) ? -1.2F : 0, 0F);
             }*/
 
-            if ((throttle >= 1.1 || throttle <= -1.1)) {
+            /*if ((throttle >= 0.3 || throttle <= -0.3)) {
                 Vector3f motionVec = new Vector3f(0, 0, 0);
                 Vector3f targetVec = type.wheelPositions[wheel.ID].position;
                 targetVec = axes.findLocalVectorGlobally(targetVec);
@@ -715,16 +715,17 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
                 if ((wheel.ID == 0 || wheel.ID == 1) && wheelsYaw <= -0.1) motionVec = new Vector3f(motionVec.x, 0, -1);
                 motionVec = axes.findLocalVectorGlobally(motionVec);
                 Vector3f test1Pos = new Vector3f(posX + targetVec.x + motionVec.x, posY + targetVec.y, posZ + targetVec.z + motionVec.z);
-                boolean test1 = worldObj.isAirBlock(Math.round(test1Pos.x), Math.round(test1Pos.y), Math.round(test1Pos.z));
-                boolean test2 = worldObj.isAirBlock(Math.round(test1Pos.x), Math.round(test1Pos.y + type.wheelStepHeight), Math.round(test1Pos.z));
-                if (!test1 && !test2) {
+                boolean test1 = worldObj.isAirBlock(Math.round(test1Pos.x), (int)Math.floor(test1Pos.y), Math.round(test1Pos.z));
+                boolean test2 = worldObj.isAirBlock(test1Pos.x, (int)(test1Pos.y + type.wheelStepHeight), (int)test1Pos.z);
+                if (!test1 || !test2) {
                     // Tests to see if we are ascending tall terrain, or stuck in the ground.
-                    throttle *= 0.6;
+
+                    throttle *= 0.01;
                     for (EntityWheel wheel2 : wheels) {
                         Vector3f wheelPos3 = axes.findLocalVectorGlobally(type.wheelPositions[wheel2.ID].position);
                     }
                 }
-            }
+            }*/
         }
 
         if (wheels[0] != null && wheels[1] != null && wheels[2] != null && wheels[3] != null) {
@@ -848,8 +849,21 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             }
         }
 
+        // Decrease throttle each tick.
+
+        if (throttleDecayDelayTicks > 0) {
+            throttleDecayDelayTicks -= 1;
+        } else {
+            throttle -= Math.signum(throttle) * type.throttleDecay;
+        }
+
+        //Catch to round the throttle down to zero.
+        if (throttle < type.throttleDecay && throttle > -type.throttleDecay)
+            throttle = 0;
+
+
         //Calculate movement on the client and then send position, rotation etc to the server
-        if (thePlayerIsDrivingThis) {
+        if (thePlayerIsDrivingThis && ticksExisted % 5 == 0) {
             FlansMod.getPacketHandler().sendToServer(new PacketVehicleControl(this));
             serverPosX = posX;
             serverPosY = posY;
@@ -949,17 +963,6 @@ public class EntityVehicle extends EntityDriveable implements IExplodeable {
             animFrameRight = type.animFrames;
         }
 
-        // Decrease throttle each tick.
-
-        if (throttleDecayDelayTicks > 0) {
-            throttleDecayDelayTicks -= 1;
-        } else {
-            throttle -= Math.signum(throttle) * type.throttleDecay;
-        }
-
-        //Catch to round the throttle down to zero.
-        if (throttle < type.throttleDecay && throttle > -type.throttleDecay)
-            throttle = 0;
 
         //if(seats[0].riddenByEntity == null) throttle = 1F;
 
