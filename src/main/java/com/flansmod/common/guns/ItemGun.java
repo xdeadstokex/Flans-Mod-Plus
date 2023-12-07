@@ -1396,6 +1396,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             String soundToPlay = null;
             if (gunType.getSecondaryFire(stack) && grip != null && grip.secondaryShootSound != null)
                 soundToPlay = grip.secondaryShootSound;
+            else if (lastBullet && silenced && gunType.lastShootSoundSuppressed != null)
+                soundToPlay = gunType.lastShootSoundSuppressed;
             else if (lastBullet && gunType.lastShootSound != null)
                 soundToPlay = gunType.lastShootSound;
             else if (silenced && gunType.suppressedShootSound != null)

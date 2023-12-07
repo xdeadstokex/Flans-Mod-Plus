@@ -251,6 +251,9 @@ public class GunType extends PaintableType implements IScope {
      * The sound played upon shooting with a suppressor
      */
     public String suppressedShootSound;
+
+    public String lastShootSoundSuppressed;
+
     /**
      * The length of the sound for looping sounds
      */
@@ -596,6 +599,7 @@ public class GunType extends PaintableType implements IScope {
         actionSound = ConfigUtils.configGunSound(packName, config, "ActionSound", actionSound);
         lastShootSound = ConfigUtils.configGunSound(packName, config, "LastShootSound", lastShootSound);
         suppressedShootSound = ConfigUtils.configGunSound(packName, config, "SuppressedShootSound", suppressedShootSound);
+        lastShootSoundSuppressed = ConfigUtils.configGunSound(packName, config, "LastSuppressedShootSound", lastShootSoundSuppressed);
         reloadSound = ConfigUtils.configGunSound(packName, config, "ReloadSound", reloadSound);
         reloadSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyReloadSound", reloadSoundOnEmpty);
         clickSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyClickSound", clickSoundOnEmpty);
