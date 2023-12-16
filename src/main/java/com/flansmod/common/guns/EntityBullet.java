@@ -777,6 +777,8 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                                     ; // Adjust this value based on your desired particle density
                             int numBlockParticles = (int) (Math.pow((this.type.explosionRadius + 1), 1.5) * scalingFactor + 20);
 
+                            double velocityFactor = Math.sqrt(this.type.explosionRadius + 1) * type.blockHitFXScale * 0.5;
+
                             for (int i = 0; i < numBlockParticles; i++) {
                                 // First particle
                                 FlansMod.proxy.spawnParticle(
@@ -784,9 +786,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                                         raytraceResult.hitVec.xCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
                                         raytraceResult.hitVec.yCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
                                         raytraceResult.hitVec.zCoord + ((double) this.rand.nextFloat() - 0.3D) * (double) this.width * 0.05D,
-                                        -this.motionX * (0.0011D + this.rand.nextGaussian() * 0.008D) * type.blockHitFXScale, // Adjusted horizontal velocity
-                                        Math.abs(0.305D + this.rand.nextDouble() * 0.125D) * type.blockHitFXScale, // Adjusted vertical velocity
-                                        -this.motionZ * (0.0011D + this.rand.nextGaussian() * 0.008D) * type.blockHitFXScale // Adjusted horizontal velocity
+                                        -this.motionX * (0.0011D + this.rand.nextGaussian() * 0.008D) * velocityFactor, // Adjusted horizontal velocity
+                                        Math.abs(0.305D + this.rand.nextDouble() * 0.125D) * velocityFactor, // Adjusted vertical velocity
+                                        -this.motionZ * (0.0011D + this.rand.nextGaussian() * 0.008D) * velocityFactor // Adjusted horizontal velocity
                                 );
 
                                 // Second particle
@@ -795,9 +797,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                                         raytraceResult.hitVec.xCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
                                         raytraceResult.hitVec.yCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
                                         raytraceResult.hitVec.zCoord + ((double) this.rand.nextFloat() - 0.6D) * (double) this.width * 0.75D,
-                                        -this.motionX * (0.415D + this.rand.nextGaussian() * 0.1D) * type.blockHitFXScale, // Adjusted horizontal velocity
-                                        -this.motionY * (0.425D + Math.abs(this.rand.nextGaussian() * 0.1D)) * type.blockHitFXScale, // Adjusted vertical velocity
-                                        -this.motionZ * (0.415D + this.rand.nextGaussian() * 0.1D) * type.blockHitFXScale // Adjusted horizontal velocity
+                                        -this.motionX * (0.415D + this.rand.nextGaussian() * 0.1D) * velocityFactor, // Adjusted horizontal velocity
+                                        -this.motionY * (0.425D + Math.abs(this.rand.nextGaussian() * 0.1D)) * velocityFactor, // Adjusted vertical velocity
+                                        -this.motionZ * (0.415D + this.rand.nextGaussian() * 0.1D) * velocityFactor // Adjusted horizontal velocity
                                 );
 
                             }
