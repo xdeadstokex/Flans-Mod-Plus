@@ -69,6 +69,8 @@ public abstract class InfoType implements IInfoType {
         preRead(file);
         boolean readRecipe = false;
         int recipePart = 0;
+        ArrayList<String[]> sanitisedLines = new ArrayList<>();
+
         for (; ; ) {
             String line = file.readLine();
 
@@ -93,7 +95,9 @@ public abstract class InfoType implements IInfoType {
             if (line.startsWith("//") || line.trim().isEmpty())
                 continue;
 
-            readLine(line.split(" "), file);
+            sanitisedLines.add(line.split(" "));
+
+            //readLine(line.split(" "), file);
 
             if (!line.contains(" ")) {
                 configMap.put(line.trim(), "");
@@ -117,6 +121,11 @@ public abstract class InfoType implements IInfoType {
             infoTypes.remove(this);
             FlansMod.log("Config without shortname removed pack: %s, filename: %s", file.pack, file.name);
         } else {
+            // Read the shortname before doing any kind of readLine shenanigans.
+            for (String[] split : sanitisedLines) {
+                readLine(split, file);
+            }
+
             read(configMap, file);
             postRead(file);
         }
@@ -344,6 +353,11 @@ public abstract class InfoType implements IInfoType {
 
     public static InfoType getType(String s) {
         for (InfoType type : infoTypes) {
+            if (type == null || type.shortName == null) {
+                FlansMod.log("This is a bad thing that shouldn't happen. Please report this issue.");
+                continue;
+            }
+
             if (type.shortName.equals(s))
                 return type;
         }
