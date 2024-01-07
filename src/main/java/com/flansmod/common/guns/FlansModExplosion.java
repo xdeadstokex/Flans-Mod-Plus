@@ -215,7 +215,7 @@ public class FlansModExplosion extends Explosion
 
                     if( damage > 0.5F)
                     {
-                    	boolean b = entity.attackEntityFrom(player == null || type == null ? DamageSource.setExplosionSource(this) : new EntityDamageSourceFlans(type.shortName, entity, player, type, false, false), damage);
+                    	boolean b = entity.attackEntityFrom(player == null || type == null ? DamageSource.setExplosionSource(this) : new EntityDamageSourceFlans(type.shortName, entity, player, type, false, false).setExplosion(), damage);
                     	if(b && !worldObj.isRemote && player instanceof EntityPlayerMP)
                     	{
                     		FlansMod.getPacketHandler().sendTo(new PacketHitMarker(false, 1F, true), (EntityPlayerMP) player);

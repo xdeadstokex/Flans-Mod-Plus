@@ -54,7 +54,7 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
-        if (source instanceof EntityDamageSourceFlans && !((EntityDamageSourceFlans) source).melee) {
+        if (source instanceof EntityDamageSourceFlans && !((EntityDamageSourceFlans) source).melee && !source.isExplosion()) {
             return new ArmorProperties(1, type.bulletDefence, Integer.MAX_VALUE);
         } else {
             return new ArmorProperties(1, type.defence, Integer.MAX_VALUE);
