@@ -32,7 +32,12 @@ public class RenderVehicle extends Render implements IItemRenderer {
         bindEntityTexture(vehicle);
         VehicleType type = vehicle.getVehicleType();
         ModelVehicle modVehicle = (ModelVehicle) type.model;
-        Objects.requireNonNull(modVehicle, "Vehicle model for " + type.shortName + " is null!");
+
+        if (modVehicle == null) {
+            return;
+        }
+
+        //Objects.requireNonNull(modVehicle, "Vehicle model for " + type.shortName + " is null!");
 
         GL11.glPushMatrix();
         {

@@ -580,6 +580,9 @@ public class RenderGun implements IItemRenderer {
 		{
 			GL11.glScalef(type.modelScale, type.modelScale, type.modelScale);
 
+			//Handle muzzle flash stuffs
+			renderMuzzleFlash(animations, model, type, barrelAttachment, item, f);
+
 			model.renderGun(f);
 
 			// Render the guns default parts if no attachment is installed
@@ -599,13 +602,13 @@ public class RenderGun implements IItemRenderer {
 			if(model.isBulletCounterActive)
 				model.renderBulletCounter(f, numRounds);
 			GL11.glPopMatrix();
+
 			GL11.glPushMatrix();
 			if(model.isAdvBulletCounterActive)
 				model.renderAdvBulletCounter(f, numRounds, model.countOnRightHandSide);
 			GL11.glPopMatrix();
 
-			//Handle muzzle flash stuffs
-			renderMuzzleFlash(animations, model, type, barrelAttachment, item, f);
+
 
 			// Render the slide and charge action
 			if (slideAttachment == null)
@@ -633,6 +636,8 @@ public class RenderGun implements IItemRenderer {
 			//Render casing ejection
 			if (rtype == ItemRenderType.EQUIPPED_FIRST_PERSON && FlansMod.casingEnable && type.casingModel != null && !type.getSecondaryFire(item))
 				renderCasingEjection(type, animations, model, f, item);
+
+
 		}
 		GL11.glPopMatrix();
 

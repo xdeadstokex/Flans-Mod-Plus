@@ -259,11 +259,13 @@ public class ModelGun extends ModelBase
 
     public static void glowOn(int glow)
     {
-        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT); // Saves lighting stuff
+		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT); // Saves blend, alpha test
 
         GL11.glEnable(GL11.GL_BLEND);
-		//GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDisable(GL11.GL_LIGHTING);
 
         try
 		{
@@ -286,15 +288,13 @@ public class ModelGun extends ModelBase
 
     public static void glowOff()
     {
-        GL11.glEnable(GL11.GL_LIGHTING);
     	if(!optifineBreak)
     	{
     		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightmapLastX, lightmapLastY);
     	}
 
-		GL11.glDisable(GL11.GL_BLEND);
-
         GL11.glPopAttrib();
+		GL11.glPopAttrib();
     }
 
 	public void renderGun(float f)

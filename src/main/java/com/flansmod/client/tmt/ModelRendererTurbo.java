@@ -1949,16 +1949,19 @@ public class ModelRendererTurbo extends ModelRenderer {
             return;
         }
 
+
+
         int srcBlend = -1;
         int dstBlend = -1;
 
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
             GL11.glPushMatrix();
-            if (glow) {
-                glowOn();
-            }
-            GL11.glAlphaFunc(GL11.GL_GREATER, 0.001F);
+
+            if (glow) glowOn();
+
             GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+
             srcBlend = GL11.glGetInteger(GL11.GL_BLEND_SRC);
             dstBlend = GL11.glGetInteger(GL11.GL_BLEND_DST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -2011,12 +2014,18 @@ public class ModelRendererTurbo extends ModelRenderer {
             }
         }
 
+        if (Minecraft.getMinecraft().gameSettings.fancyGraphics && glow) {
+            GL11.glPushMatrix();
+            glowOn();
+        }
+
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
             if (glow) {
                 glowOff();
             }
             GL11.glBlendFunc(srcBlend, dstBlend);
             GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glPopMatrix();
         }
     }
