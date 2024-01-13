@@ -680,7 +680,7 @@ public class GunType extends PaintableType implements IScope {
         muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
         modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
         texture = ConfigUtils.configString(config, "Texture", texture);
-        hitTexture = ConfigUtils.configString(config, "CasingTexture", hitTexture);
+        hitTexture = ConfigUtils.configString(config, "HitTexture", hitTexture);
         deployableTexture = ConfigUtils.configString(config, "DeployedTexture", deployableTexture);
         topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", modelScale);
         bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
