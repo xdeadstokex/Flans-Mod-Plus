@@ -237,7 +237,7 @@ public abstract class ShootableType extends InfoType {
         fireRadius = ConfigUtils.configFloat(config, new String[]{"FireRadius", "Fire"},  fireRadius);
         explosionRadius = ConfigUtils.configFloat(config, new String[]{"ExplosionRadius", "Explosion"}, explosionRadius);
         explosionPower = ConfigUtils.configFloat(config, "ExplosionPower",  explosionPower);
-        explosionBreaksBlocks = ConfigUtils.configBool(config, "ExplosionBreaksBlocks",  explosionBreaksBlocks);
+        explosionBreaksBlocks = ConfigUtils.configBool(config, new String[] { "ExplosionBreaksBlocks", "ExplosionsBreaksBlocks", "ExplosionBreakBlocks", "ExplosionsBreakBlocks" },  explosionBreaksBlocks);
         explosionDamageVsLiving = ConfigUtils.configFloat(config, "ExplosionDamageVsLiving",  explosionDamageVsLiving);
         explosionDamageVsPlayer = ConfigUtils.configFloat(config, "ExplosionDamageVsPlayer",  explosionDamageVsPlayer);
         explosionDamageVsPlane = ConfigUtils.configFloat(config, "ExplosionDamageVsPlane",  explosionDamageVsPlane);
