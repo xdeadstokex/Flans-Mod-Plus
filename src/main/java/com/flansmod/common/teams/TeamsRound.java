@@ -24,7 +24,7 @@ public class TeamsRound implements Comparable<TeamsRound> {
      */
     public int scoreLimit;
     /**
-     * 0 is almost never picked, 1 is always always picked. Used to pick vote options
+     * 0 is almost never picked, 1 is always picked. Used to pick vote options
      */
     public float popularity;
     /**

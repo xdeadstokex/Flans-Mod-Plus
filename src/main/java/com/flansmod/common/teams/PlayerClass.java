@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.AttachmentType;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.ShootableType;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class PlayerClass extends InfoType {
@@ -41,7 +41,7 @@ public class PlayerClass extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
 
-        startingItemStrings = ConfigUtils.getSplitsFromKey(config, new String[] { "AddItem" });
+        startingItemStrings = ConfigUtils.getSplitsFromKey(config, new String[]{"AddItem"});
 
         lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
         texture = ConfigUtils.configString(config, "SkinOverride", texture);
@@ -105,7 +105,8 @@ public class PlayerClass extends InfoType {
 
 
     @Override
-    protected void preRead(TypeFile file) { }
+    protected void preRead(TypeFile file) {
+    }
 
     /**
      * This loads the items once for clients connecting to remote servers, since the clients can't tell what attachments a gun has in the GUI and they need to load it at least once
@@ -173,7 +174,8 @@ public class PlayerClass extends InfoType {
                 }
                 ItemStack stack = new ItemStack(matchingItem, amount, damage);
                 if (itemNames.length > 1 && matchingItem instanceof ItemGun) {
-                    GunType gunType = ((ItemGun) matchingItem).type;
+                    ItemGun itemGun = (ItemGun) matchingItem;
+                    GunType gunType = itemGun.type;
                     NBTTagCompound tags = new NBTTagCompound();
                     NBTTagCompound attachmentTags = new NBTTagCompound();
                     int genericID = 0;
@@ -219,6 +221,14 @@ public class PlayerClass extends InfoType {
                     }
                     tags.setTag("attachments", attachmentTags);
                     stack.stackTagCompound = tags;
+
+                    // Load the gun with default ammo.
+                    ShootableType ammo = gunType.getDefaultAmmo();
+                    if (ammo != null) {
+                        ItemStack ammoStack = new ItemStack(ammo.item);
+                        ammoStack.stackSize = 1;
+                        itemGun.setBulletItemStack(stack, ammoStack, 0);
+                    }
                 }
                 startingItems.add(stack);
             }
