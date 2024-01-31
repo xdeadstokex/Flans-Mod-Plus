@@ -324,7 +324,7 @@ This will override the value set in the gun's model!
 | ExplodeParticles               | String  | largesmoke | The type of explosion particles to create                                                                                                 |
 | SmokeTime                      | Integer | 0          | Time for smoke to remain after explosion                                                                                                  |
 | SmokeParticles                 | String  | explode    | The type of particles to use for smoke                                                                                                    |
-| SmokeEffect                    | String  | ~          | Add a potion effect to the smoke                                                                                                          |
+| SmokeEffect                    | String  | potionID Duration Amplifier          | Add a potion effect to the smoke.                                                                                                          |
 | SmokeRadius                    | Float   | 5          | The radius that the smoke affects                                                                                                         |
 | VLS / HasDeadZone              | Bool    | false      | Whether this is a vertical launch system/guided thing                                                                                     |
 | VLS time / DeadZoneTime        | Integer | 0          | How long it takes before guidance kicks in                                                                                                |
@@ -393,7 +393,7 @@ This will override the value set in the gun's model!
 | ExplodeParticles | String | largesmoke | The type of explosion particles to create |
 | SmokeTime | Integer | 0 | Time for smoke to remain after explosion |
 | SmokeParticles | String | explode | The type of particles to use for smoke |
-| SmokeEffect | String | ~ | Add a potion effect to the smoke |
+| SmokeEffect | String | PotionID Duration Amplifier | Add a potion effect to the smoke |
 | SmokeRadius | Float | 5 | The radius that the smoke affects |
 | SpinWhenThrown | Boolean | true | Whether the grenade should spin after thrown |
 | Remote | Boolean | false | Whether the grenade can be detonated using a remote detonator |
