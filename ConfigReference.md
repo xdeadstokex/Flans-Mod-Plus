@@ -355,7 +355,7 @@ This will override the value set in the gun's model!
 | ShootForSettingPos             | Boolean | false      | ?                                                                                                                                         |
 | ShootForSettingPosHeight       | Integer | 100        | ?                                                                                                                                         |
 | IsDoTopAttack                  | Boolean | false      | Whether to hit from the top of the entitity it's locked on to                                                                             |
-| PotionEffect                   | String  | ~          | The effects done to the entity hit                                                                                                        |
+| PotionEffect                   | String  | potionID Duration Amplifier          | The effects done to the entity hit                                                                                                        |
 | ManualGuidance                 | Boolean | false      | Whether this is manually guided                                                                                                           |
 | LaserGuidance                  | Boolean | false      | Whether this is laser guided                                                                                                              |
 | LockOnFuse                     | Integer | 10         | Ticks before explosion when locked on?                                                                                                    |
@@ -417,7 +417,7 @@ This will override the value set in the gun's model!
 | DeployableBag | Boolean | false | Whether this is actually a deployable bag, and not an explodey thing |
 | NumUses | Integer | 1 | The number of times the bag may be used before it runs out |
 | HealAmount | Float | 0 | Amount to heal players by who use this bag |
-| AddPotionEffect / PotionEffect | String | ~ | Add effect |
+| AddPotionEffect / PotionEffect | String | potionID Duration Amplifier | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
 
 ### [MechaItemType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaItemType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)
