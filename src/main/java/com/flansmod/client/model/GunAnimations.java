@@ -5,7 +5,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.vector.Vector3f;
+
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class GunAnimations {
     public static GunAnimations defaults = new GunAnimations();
@@ -47,6 +56,8 @@ public class GunAnimations {
     public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
     public int reloadAmmoCount = 1;
 
+    public ItemStack gunToReload;
+    
     public boolean singlesReload = false;
 
     public float minigunBarrelRotation = 0F;
@@ -195,7 +206,24 @@ public class GunAnimations {
         else if (gunSlide > 0 && !isGunEmpty)
             gunSlide *= 0.5F;
 
+        
         //Reload
+        if(FlansMod.cancelReloadOnWeaponSwitch) {
+            ItemStack heldItem = Minecraft.getMinecraft().thePlayer.getHeldItem();
+            if(reloading && gunToReload != null && (heldItem == null || !gunToReload.getItem().equals(heldItem.getItem()))) {
+            	gunToReload = null;
+            	
+            	PlayerData playerData = PlayerHandler.getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT);
+            	playerData.shootTimeLeft = 0;
+            	playerData.shootTimeRight = 0;
+            	
+            	FlansModClient.shootTimeRight = 0;
+            	FlansModClient.shootTimeLeft = 0;
+            	reloadAnimationProgress = 0F;
+            	reloading = false;
+            }
+        }
+        
         lastReloadAnimationProgress = reloadAnimationProgress;
         if (reloading)
             reloadAnimationProgress += 1F / reloadAnimationTime;
@@ -270,7 +298,7 @@ public class GunAnimations {
         }
     }
 
-    public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount, boolean single) {
+    public void doReload(ItemStack gunToReload, int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount, boolean single) {
         reloading = true;
         lastReloadAnimationProgress = reloadAnimationProgress = 0F;
         reloadAnimationTime = reloadTime;
@@ -281,6 +309,8 @@ public class GunAnimations {
         reloadAmmoCount = ammoCount;
         singlesReload = single;
         FlansModClient.lastBulletReload = ammoCount - 1;
+        
+        this.gunToReload = gunToReload;
     }
 
     public void doMelee(int meleeTime) {

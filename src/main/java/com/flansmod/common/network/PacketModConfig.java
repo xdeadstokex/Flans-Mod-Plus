@@ -62,6 +62,7 @@ public class PacketModConfig extends PacketBase {
     public float masterBlockPenetrationModifier;
     public String[] penetrableBlocksArray;
 
+    public boolean cancelReloadOnWeaponSwitch;
 
     public PacketModConfig() {
         enableKillMessages = FlansMod.enableKillMessages;
@@ -108,6 +109,8 @@ public class PacketModConfig extends PacketBase {
         enableBlockPenetration = FlansMod.enableBlockPenetration;
         masterBlockPenetrationModifier = FlansMod.masterBlockPenetrationModifier;
         penetrableBlocksArray = FlansMod.penetrableBlocksArray;
+        
+        cancelReloadOnWeaponSwitch = FlansMod.cancelReloadOnWeaponSwitch;
     }
 
     @Override
@@ -160,6 +163,7 @@ public class PacketModConfig extends PacketBase {
         	 writeUTF(data, s);
         }
 		
+        data.writeBoolean(cancelReloadOnWeaponSwitch);
     }
 
     @Override
@@ -213,6 +217,8 @@ public class PacketModConfig extends PacketBase {
         	penetrableBlocksArray[i] = readUTF(data);
         }
         this.penetrableBlocksArray = penetrableBlocksArray;
+        
+        cancelReloadOnWeaponSwitch = data.readBoolean();
     }
 
     @Override
@@ -269,6 +275,8 @@ public class PacketModConfig extends PacketBase {
         FlansMod.penetrableBlocksArray = penetrableBlocksArray;
         FlansMod.convertPenetrableBlocksArray(penetrableBlocksArray);
 
+        FlansMod.cancelReloadOnWeaponSwitch = cancelReloadOnWeaponSwitch;
+        
         FlansMod.log("Config synced successfully");
     }
 }

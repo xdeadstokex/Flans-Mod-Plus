@@ -205,6 +205,7 @@ public class FlansMod {
 
     public static ArrayList<PenetrableBlock> penetrableBlocks = new ArrayList<>();
 
+    public static boolean cancelReloadOnWeaponSwitch = true;
 
     public static int armourSpawnRate = 20;
 
@@ -768,6 +769,7 @@ public class FlansMod {
         penetrableBlocksArray = configFile.getStringList("Penetrable Blocks", "Gameplay Settings (synced)", penetrableBlocksArray, "Blocks that can be penetrated with bullets that have the required block penetrating power. (BREAKS = whether the block should break when hit)");
         FlansMod.convertPenetrableBlocksArray(penetrableBlocksArray);
 
+        cancelReloadOnWeaponSwitch = configFile.getBoolean("Cancel reload on weapon switch", "Gameplay Settings (synced)", cancelReloadOnWeaponSwitch, "This will cause the reload to be cancelled when switching to a different item");
 
         //Client Side Settings
         holdingGunsDisablesChests = configFile.getBoolean("Block Chests While Holding Guns", Configuration.CATEGORY_GENERAL, holdingGunsDisablesChests, "Stops right clicking from opening chests, furnaces, etc while holding a gun");

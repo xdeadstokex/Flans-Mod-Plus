@@ -128,10 +128,14 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         return true;
     }
 
+    public ItemStack getBulletItemStack(ItemStack gun, int id) {
+    	return getBulletItemStack(gun, id, false);
+    }
+    
     /**
      * Get the bullet item stack stored in the gun's NBT data (the loaded magazine / bullets)
      */
-    public ItemStack getBulletItemStack(ItemStack gun, int id) {
+    public ItemStack getBulletItemStack(ItemStack gun, int id, boolean getQueuedStack) {
         //If the gun has no tags, give it some
         if (!gun.hasTagCompound()) {
             gun.stackTagCompound = new NBTTagCompound();
@@ -143,6 +147,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             s = "secondaryAmmo";
         else
             s = "ammo";
+        
+        if(getQueuedStack) s += "Queued";
 
         //If the gun has no ammo tags, give it some
         if (!gun.stackTagCompound.hasKey(s)) {
@@ -160,21 +166,27 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         return ItemStack.loadItemStackFromNBT(ammoTags);
     }
 
+    public void setBulletItemStack(ItemStack gun, ItemStack bullet, int id) {
+    	setBulletItemStack(gun, bullet, id, false);
+    }
+    
     /**
      * Set the bullet item stack stored in the gun's NBT data (the loaded magazine / bullets)
      */
-    public void setBulletItemStack(ItemStack gun, ItemStack bullet, int id) {
+    public void setBulletItemStack(ItemStack gun, ItemStack bullet, int id, boolean setQueuedStack) {
         //If the gun has no tags, give it some
         if (!gun.hasTagCompound()) {
             gun.stackTagCompound = new NBTTagCompound();
         }
-
+        
         String s;
         if (type.getSecondaryFire(gun))
             s = "secondaryAmmo";
         else
             s = "ammo";
 
+        if(setQueuedStack) s += "Queued";
+        
         //If the gun has no ammo tags, give it some
         if (!gun.stackTagCompound.hasKey(s)) {
             NBTTagList ammoTagsList = new NBTTagList();
@@ -188,6 +200,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         //Get the specific ammo tags required
         NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
         //Represent empty slots by null types
+        
         if (bullet == null) {
             ammoTags = new NBTTagCompound();
         } else {
@@ -1174,12 +1187,12 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     reloadCount = 1;
                 }
 
-                if (reload(gunStack, gunType, world, entityplayer, false, left, false, false)) {
+                float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+                if (reload(gunStack, gunType, world, entityplayer, false, left, false, false, reloadTime)) {
                     //Set player shoot delay to be the reload delay
                     //Set both gun delays to avoid reloading two guns at once
                     //data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
-
-                    float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+             
                     data.shootTimeRight += reloadTime;
                     data.shootTimeLeft += reloadTime;
                     if (left) {
@@ -1248,14 +1261,14 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
     /**
      * Reload method. Called automatically when firing with an empty clip
      */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
-        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload, combineAmmoOnReload, ammoToUpperInventory);
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left, boolean combineAmmoOnReload, boolean ammoToUpperInventory, float reloadTime) {
+        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload, combineAmmoOnReload, ammoToUpperInventory, reloadTime);
     }
 
     /**
      * Reload method. Called automatically when firing with an empty clip
      */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory, float reloadTime) {
         GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
         MinecraftForge.EVENT_BUS.post(gunReloadEvent);
         if (gunReloadEvent.isCanceled()) return false;
@@ -1312,29 +1325,44 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     }
                 }
 
+                // check if there are unfinished reloads
+                ItemStack queuedStack = getBulletItemStack(gunStack, i, true);
+                if(queuedStack != null && queuedStack.getItemDamage() >= queuedStack.getMaxDamage()) queuedStack = null;
+                
                 //If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
-                if (bestSlot != -1) {
-                    ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
-                    //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
-                    if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
-                        dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
-                    //The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
-                    if (bulletStack != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
-                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative, combineAmmoOnReload, ammoToUpperInventory))
-                            entity.entityDropItem(bulletStack, 0.5F);
-                    }
+                if (bestSlot != -1 || queuedStack != null) {                   
+                	ItemStack newBulletStack = queuedStack != null ? queuedStack : inventory.getStackInSlot(bestSlot);
+                	
+                	if(!FlansMod.cancelReloadOnWeaponSwitch) {
+	                    //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
+	                    if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
+	                        dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
+	                    //The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
+	                    if (bulletStack != null && bulletStack.getItemDamage() < bulletStack.getMaxDamage()) {
+	                        if (!InventoryHelper.addItemStackToInventory(inventory, bulletStack, creative, combineAmmoOnReload, ammoToUpperInventory))
+	                            entity.entityDropItem(bulletStack, 0.5F);
+	                    }
+                	}
 
                     //Load the new magazine
                     ItemStack stackToLoad = newBulletStack.copy();
                     stackToLoad.stackSize = 1;
-                    setBulletItemStack(gunStack, stackToLoad, i);
+                    
+                    if(FlansMod.cancelReloadOnWeaponSwitch && entity instanceof EntityPlayer) {  
+                    	setBulletItemStack(gunStack, stackToLoad, i, true);
+                    	PlayerHandler.getPlayerData((EntityPlayer)entity).queueReload(gunStack, i, reloadTime,
+                    			world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);                   	
+                    } else {
+                    	setBulletItemStack(gunStack, stackToLoad, i);
+                    }
 
                     //Remove the magazine from the inventory
                     if (!creative)
                         newBulletStack.stackSize--;
                     if (newBulletStack.stackSize <= 0)
                         newBulletStack = null;
-                    inventory.setInventorySlotContents(bestSlot, newBulletStack);
+                    
+                    if(queuedStack == null) inventory.setInventorySlotContents(bestSlot, newBulletStack);
 
                     //Tell the sound player that we reloaded something
                     reloadedSomething = true;
