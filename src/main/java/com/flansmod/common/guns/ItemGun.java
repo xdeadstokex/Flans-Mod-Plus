@@ -1330,10 +1330,12 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 if(queuedStack != null && queuedStack.getItemDamage() >= queuedStack.getMaxDamage()) queuedStack = null;
                 
                 //If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
-                if (bestSlot != -1 || queuedStack != null) {                   
+                if (bestSlot != -1 || queuedStack != null) {  
+                	boolean isPlayer = entity instanceof EntityPlayer;
+                	
                 	ItemStack newBulletStack = queuedStack != null ? queuedStack : inventory.getStackInSlot(bestSlot);
                 	
-                	if(!FlansMod.cancelReloadOnWeaponSwitch) {
+                	if(!FlansMod.cancelReloadOnWeaponSwitch || !isPlayer) {
 	                    //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
 	                    if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
 	                        dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
@@ -1348,7 +1350,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     ItemStack stackToLoad = newBulletStack.copy();
                     stackToLoad.stackSize = 1;
                     
-                    if(FlansMod.cancelReloadOnWeaponSwitch && entity instanceof EntityPlayer) {  
+                    if(FlansMod.cancelReloadOnWeaponSwitch && isPlayer) {  
                     	setBulletItemStack(gunStack, stackToLoad, i, true);
                     	PlayerHandler.getPlayerData((EntityPlayer)entity).queueReload(gunStack, i, reloadTime,
                     			world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);                   	
