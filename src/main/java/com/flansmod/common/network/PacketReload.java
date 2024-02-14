@@ -114,7 +114,7 @@ public class PacketReload extends PacketBase {
                 reloadTime=0;
             }
             
-            if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left, combineAmmo, ammoToUpperInventory, reloadTime)) {                
+            if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left, combineAmmo, ammoToUpperInventory, reloadTime, FlansMod.cancelReloadOnWeaponSwitch)) {                
                 if(!data.reloadedAfterRespawn && TeamsManager.getInstance().currentMap != null){
                     data.reloadedAfterRespawn=true;
                 }

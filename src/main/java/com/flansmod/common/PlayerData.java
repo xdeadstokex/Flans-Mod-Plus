@@ -66,7 +66,7 @@ public class PlayerData
 	public int burstRoundsRemainingLeft = 0, burstRoundsRemainingRight = 0;
 
 	public ItemStack gunToReload;
-	private ArrayList<QueuedReload> queuedReloads = new ArrayList<>();
+	private QueuedReload queuedReload;
 	
 	public boolean isAmmoEmpty;
 	public boolean reloadedAfterRespawn = false;
@@ -123,24 +123,20 @@ public class PlayerData
 		
 		
 		// queued reloads
-		if(!player.worldObj.isRemote && queuedReloads.size() > 0) {
+		if(!player.worldObj.isRemote && queuedReload != null) {
 			ItemStack heldItem = player.getHeldItem();
 			
 	        if(gunToReload != null && (heldItem == null || !gunToReload.getItem().equals(heldItem.getItem())) ) {
 	        	this.shootTimeLeft = 0;
 	        	this.shootTimeRight = 0;
 	        	
-	        	queuedReloads.clear();
+	        	queuedReload = null;
+	        } else if(queuedReload.getReloadTime() > 0) {
+	        	queuedReload.decrementReloadTime();
+	        } else {
+	        	queuedReload.doReload();
+	        	queuedReload = null;
 	        }
-			
-			for(QueuedReload qR : new ArrayList<>(queuedReloads)) {
-				if(qR.getReloadTime() > 0) {
-					qR.decrementReloadTime();
-					continue;
-				}
-				qR.doReload();
-				queuedReloads.remove(qR);
-			}		
 		}		
 		
 		
@@ -161,10 +157,10 @@ public class PlayerData
 		snapshots[0] = new PlayerSnapshot(player);
 	}
 	
-	public void queueReload(ItemStack gunStack, int i, float reloadTime,
+	public void queueReload(ItemStack gunStack, float reloadTime,
 			World world, Entity entity, IInventory inventory, boolean creative, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
 		this.gunToReload = gunStack;
-		queuedReloads.add(new QueuedReload(gunStack, i, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory));
+		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
 	}
 	
 	public void clientTick(EntityPlayer player)
