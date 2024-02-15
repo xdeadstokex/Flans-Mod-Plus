@@ -48,7 +48,7 @@ public class QueuedReload {
 		didReload = true;
 		ItemGun gun = ((ItemGun)gunStack.getItem());
 		
-		gun.reload(gunStack, gun.type, world, entity, inventory, creative, true, combineAmmoOnReload, ammoToUpperInventory, reloadTime, false);		
+		gun.reload(gunStack, gun.type, world, entity, inventory, creative, true, combineAmmoOnReload, ammoToUpperInventory, reloadTime, false);
 	}
 	
 }

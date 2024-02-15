@@ -1257,7 +1257,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
      * Reload method. Called automatically when firing with an empty clip
      */
     public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory, float reloadTime, boolean onlyCheckIfPlayerCanReload) {
-        GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
+    	GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
         MinecraftForge.EVENT_BUS.post(gunReloadEvent);
         if (gunReloadEvent.isCanceled()) return false;
 

@@ -2,14 +2,8 @@ package com.flansmod.common;
 
 import java.util.ArrayList;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.guns.EntityGrenade;
 import com.flansmod.common.guns.EntityMG;
 import com.flansmod.common.guns.GunType;
@@ -23,6 +17,12 @@ import com.flansmod.common.vector.Vector3f;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public class PlayerData 
 {
@@ -123,21 +123,34 @@ public class PlayerData
 		
 		
 		// queued reloads
-		if(!player.worldObj.isRemote && queuedReload != null) {
-			ItemStack heldItem = player.getHeldItem();
-			
-	        if(gunToReload != null && (heldItem == null || !gunToReload.getItem().equals(heldItem.getItem())) ) {
-	        	this.shootTimeLeft = 0;
+		if(FlansMod.cancelReloadOnWeaponSwitch) {
+			if(gunToReload != null && !isHoldingGunToReload(player)) {
+				this.shootTimeLeft = 0;
 	        	this.shootTimeRight = 0;
 	        	
 	        	queuedReload = null;
-	        } else if(queuedReload.getReloadTime() > 0) {
-	        	queuedReload.decrementReloadTime();
-	        } else {
-	        	queuedReload.doReload();
-	        	queuedReload = null;
-	        }
-		}		
+	        	gunToReload = null;
+				
+				if(player.worldObj.isRemote) {
+					FlansModClient.shootTimeRight = 0;
+		        	FlansModClient.shootTimeLeft = 0;
+		        	
+		        	GunAnimations gunAnimationRight = FlansModClient.getGunAnimations(player, false);
+		        	gunAnimationRight.reloadAnimationProgress = 0F;
+		        	gunAnimationRight.reloading = false;
+		        	GunAnimations gunAnimationLeft = FlansModClient.getGunAnimations(player, true);
+		        	gunAnimationLeft.reloadAnimationProgress = 0F;
+		        	gunAnimationLeft.reloading = false;
+				} 
+			} else if(!player.worldObj.isRemote && queuedReload != null) {
+				if(queuedReload.getReloadTime() > 0) {
+		        	queuedReload.decrementReloadTime();
+		        } else {
+		        	queuedReload.doReload();
+		        	queuedReload = null;
+		        }
+			}
+		}
 		
 		
 		//Handle minigun speed
@@ -162,6 +175,12 @@ public class PlayerData
 		this.gunToReload = gunStack;
 		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
 	}
+	
+	public boolean isHoldingGunToReload(EntityPlayer player) {
+    	ItemStack heldItem = player.getHeldItem();
+
+    	return !(heldItem == null || gunToReload.stackTagCompound != heldItem.stackTagCompound);
+    }
 	
 	public void clientTick(EntityPlayer player)
 	{

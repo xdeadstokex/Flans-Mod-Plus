@@ -184,8 +184,11 @@ public class PacketReload extends PacketBase {
             int pumpTime = type.model == null ? 1 : type.model.pumpTime;
             int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
             int chargeTime = type.model == null ? 1 : type.model.chargeTime;
-            animations.doReload(stack, reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
-
+                      
+            PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT).gunToReload = stack;
+            animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
+            
+            
             //Iterate over all inventory slots and find the magazine / bullet item with the most bullets
             int bestSlot = -1;
             int bulletsInBestSlot = 0;

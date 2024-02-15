@@ -55,8 +55,6 @@ public class GunAnimations {
     public float reloadAnimationTime = 0;
     public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
     public int reloadAmmoCount = 1;
-
-    public ItemStack gunToReload;
     
     public boolean singlesReload = false;
 
@@ -208,22 +206,6 @@ public class GunAnimations {
 
         
         //Reload
-        if(FlansMod.cancelReloadOnWeaponSwitch) {
-            ItemStack heldItem = Minecraft.getMinecraft().thePlayer.getHeldItem();
-            if(reloading && gunToReload != null && (heldItem == null || !gunToReload.getItem().equals(heldItem.getItem()))) {
-            	gunToReload = null;
-            	
-            	PlayerData playerData = PlayerHandler.getPlayerData(Minecraft.getMinecraft().thePlayer, Side.CLIENT);
-            	playerData.shootTimeLeft = 0;
-            	playerData.shootTimeRight = 0;
-            	
-            	FlansModClient.shootTimeRight = 0;
-            	FlansModClient.shootTimeLeft = 0;
-            	reloadAnimationProgress = 0F;
-            	reloading = false;
-            }
-        }
-        
         lastReloadAnimationProgress = reloadAnimationProgress;
         if (reloading)
             reloadAnimationProgress += 1F / reloadAnimationTime;
@@ -298,7 +280,7 @@ public class GunAnimations {
         }
     }
 
-    public void doReload(ItemStack gunToReload, int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount, boolean single) {
+    public void doReload(int reloadTime, int pumpDelay, int pumpTime, int chargeDelay, int chargeTime, int ammoCount, boolean single) {
         reloading = true;
         lastReloadAnimationProgress = reloadAnimationProgress = 0F;
         reloadAnimationTime = reloadTime;
@@ -309,8 +291,6 @@ public class GunAnimations {
         reloadAmmoCount = ammoCount;
         singlesReload = single;
         FlansModClient.lastBulletReload = ammoCount - 1;
-        
-        this.gunToReload = gunToReload;
     }
 
     public void doMelee(int meleeTime) {
