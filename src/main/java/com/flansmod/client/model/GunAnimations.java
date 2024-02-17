@@ -46,7 +46,7 @@ public class GunAnimations {
     public float reloadAnimationTime = 0;
     public float reloadAnimationProgress = 0F, lastReloadAnimationProgress = 0F;
     public int reloadAmmoCount = 1;
-
+    
     public boolean singlesReload = false;
 
     public float minigunBarrelRotation = 0F;
@@ -195,6 +195,7 @@ public class GunAnimations {
         else if (gunSlide > 0 && !isGunEmpty)
             gunSlide *= 0.5F;
 
+        
         //Reload
         lastReloadAnimationProgress = reloadAnimationProgress;
         if (reloading)

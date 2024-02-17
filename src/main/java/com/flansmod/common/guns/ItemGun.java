@@ -127,7 +127,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
     public boolean getShareTag() {
         return true;
     }
-
+    
     /**
      * Get the bullet item stack stored in the gun's NBT data (the loaded magazine / bullets)
      */
@@ -159,7 +159,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
         return ItemStack.loadItemStackFromNBT(ammoTags);
     }
-
+    
     /**
      * Set the bullet item stack stored in the gun's NBT data (the loaded magazine / bullets)
      */
@@ -168,13 +168,13 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         if (!gun.hasTagCompound()) {
             gun.stackTagCompound = new NBTTagCompound();
         }
-
+        
         String s;
         if (type.getSecondaryFire(gun))
             s = "secondaryAmmo";
         else
             s = "ammo";
-
+        
         //If the gun has no ammo tags, give it some
         if (!gun.stackTagCompound.hasKey(s)) {
             NBTTagList ammoTagsList = new NBTTagList();
@@ -188,6 +188,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         //Get the specific ammo tags required
         NBTTagCompound ammoTags = ammoTagsList.getCompoundTagAt(id);
         //Represent empty slots by null types
+        
         if (bullet == null) {
             ammoTags = new NBTTagCompound();
         } else {
@@ -1174,12 +1175,12 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                     reloadCount = 1;
                 }
 
-                if (reload(gunStack, gunType, world, entityplayer, false, left, false, false)) {
+                float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+                if (reload(gunStack, gunType, world, entityplayer, false, left, false, false, reloadTime, FlansMod.cancelReloadOnWeaponSwitch)) {
                     //Set player shoot delay to be the reload delay
                     //Set both gun delays to avoid reloading two guns at once
                     //data.shootTimeRight = data.shootTimeLeft = (int)gunType.getReloadTime(gunStack);
-
-                    float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+             
                     data.shootTimeRight += reloadTime;
                     data.shootTimeLeft += reloadTime;
                     if (left) {
@@ -1248,15 +1249,15 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
     /**
      * Reload method. Called automatically when firing with an empty clip
      */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
-        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload, combineAmmoOnReload, ammoToUpperInventory);
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, EntityPlayer player, boolean forceReload, boolean left, boolean combineAmmoOnReload, boolean ammoToUpperInventory, float reloadTime, boolean onlyCheckIfPlayerCanReload) {
+        return reload(gunStack, gunType, world, player, player.inventory, player.capabilities.isCreativeMode, forceReload, combineAmmoOnReload, ammoToUpperInventory, reloadTime, onlyCheckIfPlayerCanReload);
     }
 
     /**
      * Reload method. Called automatically when firing with an empty clip
      */
-    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
-        GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
+    public boolean reload(ItemStack gunStack, GunType gunType, World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory, float reloadTime, boolean onlyCheckIfPlayerCanReload) {
+    	GunReloadEvent gunReloadEvent = new GunReloadEvent(entity, gunStack);
         MinecraftForge.EVENT_BUS.post(gunReloadEvent);
         if (gunReloadEvent.isCanceled()) return false;
 
@@ -1283,6 +1284,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         if (forceReload && !gunType.canForceReload)
             return false;
 
+        
+        
         String preferredAmmoShortname = ((ItemGun) gunStack.getItem()).getPreferredAmmoStack(gunStack);
         //Check each ammo slot, one at a time
         for (int i = 0; i < gunType.getNumAmmoItemsInGun(gunStack); i++) {
@@ -1313,9 +1316,16 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 }
 
                 //If there was a valid non-empty magazine / bullet item somewhere in the inventory, load it
-                if (bestSlot != -1) {
-                    ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
-                    //Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
+                if (bestSlot != -1) {  
+                	boolean isPlayer = entity instanceof EntityPlayer; 
+                	if(isPlayer && onlyCheckIfPlayerCanReload) {
+                		PlayerHandler.getPlayerData((EntityPlayer) entity).queueReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+                		return true;
+                	}
+                	
+                	ItemStack newBulletStack = inventory.getStackInSlot(bestSlot);
+                	
+                	//Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
                     if (bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !creative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
                         dropItem(world, entity, ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload);
                     //The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
@@ -1334,6 +1344,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         newBulletStack.stackSize--;
                     if (newBulletStack.stackSize <= 0)
                         newBulletStack = null;
+                    
                     inventory.setInventorySlotContents(bestSlot, newBulletStack);
 
                     //Tell the sound player that we reloaded something
