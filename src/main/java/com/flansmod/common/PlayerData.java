@@ -179,7 +179,7 @@ public class PlayerData
 	public boolean isHoldingGunToReload(EntityPlayer player) {
     	ItemStack heldItem = player.getHeldItem();
 
-    	return !(heldItem == null || gunToReload.stackTagCompound != heldItem.stackTagCompound);
+    	return !(heldItem == null || gunToReload != heldItem);
     }
 	
 	public void clientTick(EntityPlayer player)

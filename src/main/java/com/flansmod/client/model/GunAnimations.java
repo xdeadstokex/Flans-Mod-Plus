@@ -5,16 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.vector.Vector3f;
-
-import cpw.mods.fml.relauncher.Side;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 public class GunAnimations {
     public static GunAnimations defaults = new GunAnimations();
