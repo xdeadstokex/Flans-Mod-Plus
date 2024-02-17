@@ -123,34 +123,34 @@ public class PlayerData
 		
 		
 		// queued reloads
-		if(FlansMod.cancelReloadOnWeaponSwitch) {
-			if(gunToReload != null && !isHoldingGunToReload(player)) {
-				this.shootTimeLeft = 0;
-	        	this.shootTimeRight = 0;
-	        	
-	        	queuedReload = null;
-	        	gunToReload = null;
-				
-				if(player.worldObj.isRemote) {
-					FlansModClient.shootTimeRight = 0;
-		        	FlansModClient.shootTimeLeft = 0;
-		        	
-		        	GunAnimations gunAnimationRight = FlansModClient.getGunAnimations(player, false);
-		        	gunAnimationRight.reloadAnimationProgress = 0F;
-		        	gunAnimationRight.reloading = false;
-		        	GunAnimations gunAnimationLeft = FlansModClient.getGunAnimations(player, true);
-		        	gunAnimationLeft.reloadAnimationProgress = 0F;
-		        	gunAnimationLeft.reloading = false;
-				} 
-			} else if(!player.worldObj.isRemote && queuedReload != null) {
-				if(queuedReload.getReloadTime() > 0) {
-		        	queuedReload.decrementReloadTime();
-		        } else {
-		        	queuedReload.doReload();
-		        	queuedReload = null;
-		        }
-			}
-		}
+        if(FlansMod.cancelReloadOnWeaponSwitch) {
+            if(gunToReload != null && !isHoldingGunToReload(player)) {
+                this.shootTimeLeft = 0;
+                this.shootTimeRight = 0;
+
+                queuedReload = null;
+                gunToReload = null;
+
+                if(player.worldObj.isRemote) {
+                    FlansModClient.shootTimeRight = 0;
+                    FlansModClient.shootTimeLeft = 0;
+
+                    GunAnimations gunAnimationRight = FlansModClient.getGunAnimations(player, false);
+                    gunAnimationRight.reloadAnimationProgress = 0F;
+                    gunAnimationRight.reloading = false;
+                    GunAnimations gunAnimationLeft = FlansModClient.getGunAnimations(player, true);
+                    gunAnimationLeft.reloadAnimationProgress = 0F;
+                    gunAnimationLeft.reloading = false;
+                }
+            } else if(!player.worldObj.isRemote && queuedReload != null) {
+                if (queuedReload.getReloadTime() > 0) {
+                    queuedReload.decrementReloadTime();
+                } else {
+                    queuedReload.doReload();
+                    queuedReload = null;
+                }
+            }
+        } 
 		
 		
 		//Handle minigun speed
