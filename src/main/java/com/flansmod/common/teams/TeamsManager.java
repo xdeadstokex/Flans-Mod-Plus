@@ -1,13 +1,17 @@
 package com.flansmod.common.teams;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.*;
-
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.PlayerData;
+import com.flansmod.common.PlayerHandler;
+import com.flansmod.common.driveables.ItemPlane;
+import com.flansmod.common.driveables.ItemVehicle;
+import com.flansmod.common.guns.*;
 import com.flansmod.common.network.*;
+import com.flansmod.common.types.InfoType;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,12 +21,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,23 +35,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.PlayerData;
-import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.driveables.ItemPlane;
-import com.flansmod.common.driveables.ItemVehicle;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemAAGun;
-import com.flansmod.common.guns.ItemBullet;
-import com.flansmod.common.guns.ItemGun;
-import com.flansmod.common.guns.ItemShootable;
-import com.flansmod.common.guns.ShootableType;
-import com.flansmod.common.types.InfoType;
+import java.io.*;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class TeamsManager {
@@ -365,7 +350,7 @@ public class TeamsManager {
     }
 
     public void start() {
-        if (!enabled || rounds.size() == 0)
+        if (!enabled || rounds.isEmpty())
             return;
 
         //Can only start once
@@ -382,7 +367,7 @@ public class TeamsManager {
     }
 
     public void startNextRound() {
-        if (!enabled || rounds.size() == 0)
+        if (!enabled || rounds.isEmpty())
             return;
 
         //If the next round has not been forced
@@ -455,7 +440,6 @@ public class TeamsManager {
     }
 
     private void startRound() {
-
         if (roundsGenerator && rounds.size() < 4) {
             int roundCountForGenerate = 4 - rounds.size();
             generateRounds(roundCountForGenerate);
@@ -468,8 +452,8 @@ public class TeamsManager {
             base.startRound();
         }
 
-        for (EntityPlayer player : getPlayers())
-            forceRespawn((EntityPlayerMP) player);
+        for (EntityPlayerMP player : getPlayers())
+            forceRespawn(player);
 
         showTeamsMenuToAll();
 
@@ -492,20 +476,20 @@ public class TeamsManager {
             Team[] teamsToAdd = new Team[nextGameType.numTeamsRequired];
             teamsToAdd[0] = allowedTeams.get(rand.nextInt(allowedTeams.size()));
             teamsToAdd[1] = allowedTeams.get(rand.nextInt(allowedTeams.size()));
-            int timeLimit=10;
-            int scoreLimit=10;
-            if(nextGameType instanceof GameTypeCTF){
-                scoreLimit=5;
-            } else if(nextGameType instanceof GameTypeTDM){
-                scoreLimit=30;
-            } else if(nextGameType instanceof GameTypeDM){
-                scoreLimit=20;
+            int timeLimit = 10;
+            int scoreLimit = 10;
+            if (nextGameType instanceof GameTypeCTF) {
+                scoreLimit = 5;
+            } else if (nextGameType instanceof GameTypeTDM) {
+                scoreLimit = 30;
+            } else if (nextGameType instanceof GameTypeDM) {
+                scoreLimit = 20;
             }
             rounds.add(new TeamsRound(
                     TeamsMap.mapList.get(rand.nextInt(TeamsMap.mapList.size())),
                     allowedGameTypes.get(rand.nextInt(allowedGameTypes.size())),
                     teamsToAdd,
-                    timeLimit+rand.nextInt(10),scoreLimit
+                    timeLimit + rand.nextInt(10), scoreLimit
             ));
         }
 
@@ -1034,8 +1018,8 @@ public class TeamsManager {
             //Load up as many guns as possible
         }
         PlayerData data = PlayerHandler.getPlayerData(player);
-        data.reloadedAfterRespawn=false;
-        FlansMod.getPacketHandler().sendTo(new PacketRespawnFinished(),getPlayer(player.getDisplayName()));
+        data.reloadedAfterRespawn = false;
+        FlansMod.getPacketHandler().sendTo(new PacketRespawnFinished(), getPlayer(player.getDisplayName()));
 //        Preload each gun
 //        for (ItemStack stack : player.inventory.mainInventory) {
 //            if (stack != null && stack.getItem() instanceof ItemGun && !((ItemGun) stack.getItem()).type.ammo.isEmpty()) {

@@ -56,7 +56,6 @@ BAB
 | RecoilSprintingMultiplier                      | Float | 1 | Multiplies recoil when sprinting. 1 = no change                                                                                                                                                                                                                             |
 | RecoilSneakingMultiplierYaw                    | Float | 0.8 | Multiplies horizontal recoil when sneaking. 1 = no change                                                                                                                                                                                                                   |
 | RecoilSprintingMultiplierYaw                   | Float | 1.2 | Multiplies horizontal recoil when sprinting. 1 = no change                                                                                                                                                                                                                  |
-| Knockback                                      | Float | 0 | Amount of knockback to push the player when shot                                                                                                                                                                                                                            |
 | Accuracy / Spread                              | Float | 0 | Amount that the bullets spread out. Higher = wider cone                                                                                                                                                                                                                     |
 | SprintSpreadModifier/SprintSpreadMultiplier    | Float | 1.75 | Multiplier for spread applied when player is sprinting.                                                                                                                                                                                                                     |
 | SneakSpreadModifier/SneakSpreadMultiplier      | Float | 0.63 | Multiplier for spread applied when player is sneaking.                                                                                                                                                                                                                      |
@@ -75,7 +74,7 @@ BAB
 | LockOnToLivings                                | Bool | false |                                                                                                                                                                                                                                                                             |
 | ConsumeGunOnUse                                | Bool | false | Gun deletes when shot. (E.g. Panzerfaust)                                                                                                                                                                                                                                   |
 | ShowCrosshair                                  | Bool | false | Show a crosshair when holding the gun                                                                                                                                                                                                                                       |
-| DropItemOnShoot                                | Bool | false | Drop the item when gun has been shot onto the floor                                                                                                                                                                                                                         |
+| DropItemOnShoot                                | String | ~ | Drop the item specified when gun has been shot onto the floor                                                                                                                                                                                                                         |
 | NumBurstRounds                                 | Integer | 3 | Number of bullets to fire per burst in burst fire mode                                                                                                                                                                                                                      |
 | MinigunStartSpeed                              | Float | 15 | Required speed of revolution for minigun to start firing                                                                                                                                                                                                                    |
 | ItemUseAction                                  | EnumAction | EnumAction.bow | The type of action MC thinks you're doing.                                                                                                                                                                                                                                  |
@@ -325,7 +324,7 @@ This will override the value set in the gun's model!
 | ExplodeParticles               | String  | largesmoke | The type of explosion particles to create                                                                                                 |
 | SmokeTime                      | Integer | 0          | Time for smoke to remain after explosion                                                                                                  |
 | SmokeParticles                 | String  | explode    | The type of particles to use for smoke                                                                                                    |
-| SmokeEffect                    | String  | ~          | Add a potion effect to the smoke                                                                                                          |
+| SmokeEffect                    | String  | potionID Duration Amplifier          | Add a potion effect to the smoke.                                                                                                          |
 | SmokeRadius                    | Float   | 5          | The radius that the smoke affects                                                                                                         |
 | VLS / HasDeadZone              | Bool    | false      | Whether this is a vertical launch system/guided thing                                                                                     |
 | VLS time / DeadZoneTime        | Integer | 0          | How long it takes before guidance kicks in                                                                                                |
@@ -356,7 +355,7 @@ This will override the value set in the gun's model!
 | ShootForSettingPos             | Boolean | false      | ?                                                                                                                                         |
 | ShootForSettingPosHeight       | Integer | 100        | ?                                                                                                                                         |
 | IsDoTopAttack                  | Boolean | false      | Whether to hit from the top of the entitity it's locked on to                                                                             |
-| PotionEffect                   | String  | ~          | The effects done to the entity hit                                                                                                        |
+| PotionEffect                   | String  | potionID Duration Amplifier          | The effects done to the entity hit                                                                                                        |
 | ManualGuidance                 | Boolean | false      | Whether this is manually guided                                                                                                           |
 | LaserGuidance                  | Boolean | false      | Whether this is laser guided                                                                                                              |
 | LockOnFuse                     | Integer | 10         | Ticks before explosion when locked on?                                                                                                    |
@@ -394,7 +393,7 @@ This will override the value set in the gun's model!
 | ExplodeParticles | String | largesmoke | The type of explosion particles to create |
 | SmokeTime | Integer | 0 | Time for smoke to remain after explosion |
 | SmokeParticles | String | explode | The type of particles to use for smoke |
-| SmokeEffect | String | ~ | Add a potion effect to the smoke |
+| SmokeEffect | String | PotionID Duration Amplifier | Add a potion effect to the smoke |
 | SmokeRadius | Float | 5 | The radius that the smoke affects |
 | SpinWhenThrown | Boolean | true | Whether the grenade should spin after thrown |
 | Remote | Boolean | false | Whether the grenade can be detonated using a remote detonator |
@@ -418,7 +417,7 @@ This will override the value set in the gun's model!
 | DeployableBag | Boolean | false | Whether this is actually a deployable bag, and not an explodey thing |
 | NumUses | Integer | 1 | The number of times the bag may be used before it runs out |
 | HealAmount | Float | 0 | Amount to heal players by who use this bag |
-| AddPotionEffect / PotionEffect | String | ~ | Add effect |
+| AddPotionEffect / PotionEffect | String | potionID Duration Amplifier | Add effect |
 | NumClips | Integer | 0 | The number of ammo clips players get when using the ammo bag (multiplied by numBulletsInGun)|
 
 ### [MechaItemType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/driveables/mechas/MechaItemType.java) extends [InfoType](https://github.com/Unknown025/Flans-Mod-Plus/blob/Ultimate/src/main/java/com/flansmod/common/types/InfoType.java)

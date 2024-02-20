@@ -109,10 +109,13 @@ public class PacketReload extends PacketBase {
                 reloadCount = 1;
             }
             
-            if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left, combineAmmo, ammoToUpperInventory)) {
-                float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+            float reloadTime = singlesReload ? (type.getReloadTime(gunStack) / maxAmmo) * reloadCount : type.getReloadTime(gunStack);
+            if(!data.reloadedAfterRespawn && TeamsManager.getInstance().currentMap != null){
+                reloadTime=0;
+            }
+            
+            if (((ItemGun) gunStack.getItem()).reload(gunStack, type, playerEntity.worldObj, playerEntity, true, left, combineAmmo, ammoToUpperInventory, reloadTime, FlansMod.cancelReloadOnWeaponSwitch)) {                
                 if(!data.reloadedAfterRespawn && TeamsManager.getInstance().currentMap != null){
-                    reloadTime=0;
                     data.reloadedAfterRespawn=true;
                 }
                 data.shootTimeRight += reloadTime;
@@ -181,8 +184,11 @@ public class PacketReload extends PacketBase {
             int pumpTime = type.model == null ? 1 : type.model.pumpTime;
             int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
             int chargeTime = type.model == null ? 1 : type.model.chargeTime;
+                      
+            PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT).gunToReload = stack;
             animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
-
+            
+            
             //Iterate over all inventory slots and find the magazine / bullet item with the most bullets
             int bestSlot = -1;
             int bulletsInBestSlot = 0;

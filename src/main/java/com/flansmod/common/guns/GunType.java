@@ -1092,7 +1092,7 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public ShootableType getDefaultAmmo() {
-        if (ammo.size() >= 1) {
+        if (!ammo.isEmpty()) {
             return ammo.get(0);
         }
         return null;

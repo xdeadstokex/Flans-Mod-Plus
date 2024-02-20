@@ -2,15 +2,13 @@ package com.flansmod.common;
 
 import java.util.ArrayList;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.guns.EntityGrenade;
 import com.flansmod.common.guns.EntityMG;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
+import com.flansmod.common.guns.QueuedReload;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
 import com.flansmod.common.network.PacketSelectOffHandGun;
 import com.flansmod.common.teams.PlayerClass;
@@ -19,6 +17,12 @@ import com.flansmod.common.vector.Vector3f;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 public class PlayerData 
 {
@@ -61,6 +65,9 @@ public class PlayerData
 	/** When the player shoots a burst fire weapon, one shot is fired immediately and this counter keeps track of how many more should be fired */
 	public int burstRoundsRemainingLeft = 0, burstRoundsRemainingRight = 0;
 
+	public ItemStack gunToReload;
+	private QueuedReload queuedReload;
+	
 	public boolean isAmmoEmpty;
 	public boolean reloadedAfterRespawn = false;
 
@@ -114,6 +121,38 @@ public class PlayerData
 		if(shootClickDelay > 0)
 			shootClickDelay--;
 		
+		
+		// queued reloads
+        if(FlansMod.cancelReloadOnWeaponSwitch) {
+            if(gunToReload != null && !isHoldingGunToReload(player)) {
+                this.shootTimeLeft = 0;
+                this.shootTimeRight = 0;
+
+                queuedReload = null;
+                gunToReload = null;
+
+                if(player.worldObj.isRemote) {
+                    FlansModClient.shootTimeRight = 0;
+                    FlansModClient.shootTimeLeft = 0;
+
+                    GunAnimations gunAnimationRight = FlansModClient.getGunAnimations(player, false);
+                    gunAnimationRight.reloadAnimationProgress = 0F;
+                    gunAnimationRight.reloading = false;
+                    GunAnimations gunAnimationLeft = FlansModClient.getGunAnimations(player, true);
+                    gunAnimationLeft.reloadAnimationProgress = 0F;
+                    gunAnimationLeft.reloading = false;
+                }
+            } else if(!player.worldObj.isRemote && queuedReload != null) {
+                if (queuedReload.getReloadTime() > 0) {
+                    queuedReload.decrementReloadTime();
+                } else {
+                    queuedReload.doReload();
+                    queuedReload = null;
+                }
+            }
+        } 
+		
+		
 		//Handle minigun speed
 		if(isShootingRight && !reloadingRight)
 			minigunSpeed += 2F; 
@@ -130,6 +169,18 @@ public class PlayerData
 		//Take new snapshot
 		snapshots[0] = new PlayerSnapshot(player);
 	}
+	
+	public void queueReload(ItemStack gunStack, float reloadTime,
+			World world, Entity entity, IInventory inventory, boolean creative, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
+		this.gunToReload = gunStack;
+		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+	}
+	
+	public boolean isHoldingGunToReload(EntityPlayer player) {
+    	ItemStack heldItem = player.getHeldItem();
+
+    	return !(heldItem == null || gunToReload != heldItem);
+    }
 	
 	public void clientTick(EntityPlayer player)
 	{
