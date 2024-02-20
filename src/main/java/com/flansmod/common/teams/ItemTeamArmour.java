@@ -16,11 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.common.util.EnumHelper;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.EntityDamageSourceFlans;
@@ -35,10 +32,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanItem {
     public ArmourType type;
     protected static final UUID[] uuid = new UUID[]{UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()};
-    public static ArmorMaterial armorMat = EnumHelper.addArmorMaterial("FLANSARMOR", 10, new int[]{1, 3, 2, 1}, FlansMod.armourEnchantability);
+    //public static ArmorMaterial armorMat = EnumHelper.addArmorMaterial("FLANSARMOR", 10, new int[]{1, 3, 2, 1}, FlansMod.armourEnchantability);
+
+
 
     public ItemTeamArmour(ArmourType t) {
-        super(armorMat, 0, t.type);
+        super(ArmorMaterial.CLOTH, 0, t.type);
         type = t;
         type.item = this;
         setCreativeTab(FlansMod.tabFlanTeams);
@@ -65,6 +64,12 @@ public class ItemTeamArmour extends ItemArmor implements ISpecialArmor, IFlanIte
     @Override
     public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
         return (int) (type.defence * 20);
+    }
+
+    @Override
+    public int getItemEnchantability()
+    {
+        return FlansMod.armourEnchantability;
     }
 
     @Override
