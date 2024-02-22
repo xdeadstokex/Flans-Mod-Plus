@@ -5,7 +5,7 @@ import java.lang.Math;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.RotatedAxes;
+import com.flansmod.utils.RotatedAxes;
 import com.flansmod.common.driveables.collisions.CollisionTest;
 import com.flansmod.common.driveables.collisions.RidingEntityPosition;
 import com.flansmod.common.guns.EntityBullet;

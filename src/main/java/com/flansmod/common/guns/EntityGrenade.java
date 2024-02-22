@@ -28,10 +28,8 @@ import net.minecraftforge.common.MinecraftForge;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.common.RotatedAxes;
+import com.flansmod.utils.RotatedAxes;
 import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.eventhandlers.BulletHitEvent;
-import com.flansmod.common.eventhandlers.GrenadeProximityEvent;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.network.PacketFlashBang;
 import com.flansmod.common.network.PacketPlaySound;
@@ -44,7 +42,6 @@ import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.common.MinecraftForge;
 
 public class EntityGrenade extends EntityShootable implements IEntityAdditionalSpawnData
 {

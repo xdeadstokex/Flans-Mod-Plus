@@ -1,4 +1,4 @@
-package com.flansmod.common;
+package com.flansmod.utils;
 
 import com.flansmod.common.vector.Matrix4f;
 import com.flansmod.common.vector.Vector3f;

@@ -2,16 +2,13 @@ package com.flansmod.client.model;
 
 import org.lwjgl.opengl.GL11;
 
-import com.flansmod.client.FlansCrash;
 import com.flansmod.client.tmt.ModelRendererTurbo;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EnumDriveablePart;
 import com.flansmod.common.driveables.mechas.EntityMecha;
 import com.flansmod.common.driveables.mechas.MechaType;
 import com.flansmod.common.vector.Vector3f;
-import net.minecraft.util.Vec3;
 
 public class ModelMecha extends ModelDriveable 
 {

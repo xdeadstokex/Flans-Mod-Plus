@@ -1,6 +1,5 @@
 package com.flansmod.client.model;
 
-import com.flansmod.client.tmt.PositionTextureVertex;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;

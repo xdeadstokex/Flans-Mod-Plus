@@ -7,7 +7,6 @@ import com.flansmod.common.PlayerHandler;
 import com.flansmod.common.driveables.DriveablePart;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.guns.EntityGrenade;
-import com.flansmod.common.network.PacketDriveableDamage;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.network.NetworkRegistry;

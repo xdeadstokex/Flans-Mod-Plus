@@ -2,12 +2,10 @@ package com.flansmod.common.teams;
 
 import java.util.*;
 
-import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import com.flansmod.common.FlansMod;

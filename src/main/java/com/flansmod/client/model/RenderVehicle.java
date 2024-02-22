@@ -15,8 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Objects;
-
 public class RenderVehicle extends Render implements IItemRenderer {
     public RenderVehicle() {
         shadowSize = 1.0F;

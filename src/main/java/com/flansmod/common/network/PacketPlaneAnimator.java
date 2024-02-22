@@ -8,9 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntityVehicle;
 import com.flansmod.common.vector.Vector3f;
 
 public class PacketPlaneAnimator extends PacketBase

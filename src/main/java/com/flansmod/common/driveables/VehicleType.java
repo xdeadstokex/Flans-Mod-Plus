@@ -1,14 +1,11 @@
 package com.flansmod.common.driveables;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.flansmod.client.model.ModelVehicle;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.vector.Vector3i;
 import com.flansmod.utils.ConfigMap;
 import com.flansmod.utils.ConfigUtils;
 

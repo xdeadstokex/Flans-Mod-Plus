@@ -9,19 +9,15 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.model.animation.AnimationController;
 import com.flansmod.client.model.animation.AnimationPart;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.driveables.DriveablePart;
-import com.flansmod.common.driveables.DriveablePosition;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.driveables.EntityDriveable;
-import com.flansmod.common.driveables.EntitySeat;
 import com.flansmod.common.driveables.ShootPoint;
 import com.flansmod.common.paintjob.Paintjob;
 import com.flansmod.common.driveables.EntityPlane;
@@ -29,9 +25,6 @@ import com.flansmod.common.driveables.ItemPlane;
 import com.flansmod.common.driveables.PlaneType;
 import com.flansmod.common.driveables.Propeller;
 import com.flansmod.common.vector.Vector3f;
-import com.flansmod.common.vector.Quaternion;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class RenderPlane extends Render implements IItemRenderer 
 {	

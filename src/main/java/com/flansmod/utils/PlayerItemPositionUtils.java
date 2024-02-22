@@ -1,8 +1,5 @@
 package com.flansmod.utils;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.RotatedAxes;
-import com.flansmod.common.vector.Vector;
 import com.flansmod.common.vector.Vector3f;
 import net.minecraft.entity.player.EntityPlayer;
 

@@ -1,13 +1,12 @@
 package com.flansmod.common.driveables.mechas;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import com.flansmod.client.debug.EntityDebugVector;
 import com.flansmod.client.gui.GuiDriveableController;
 import com.flansmod.client.model.GunAnimations;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.RotatedAxes;
+import com.flansmod.utils.RotatedAxes;
 import com.flansmod.common.driveables.DriveableData;
 import com.flansmod.common.driveables.DriveablePart;
 import com.flansmod.common.driveables.DriveableType;

@@ -3,7 +3,7 @@ package com.flansmod.common.driveables;
 import com.flansmod.api.IControllable;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.RotatedAxes;
+import com.flansmod.utils.RotatedAxes;
 import com.flansmod.common.eventhandlers.PlayerEnterSeatEvent;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.network.*;

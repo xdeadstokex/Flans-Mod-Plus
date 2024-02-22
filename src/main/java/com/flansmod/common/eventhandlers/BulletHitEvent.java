@@ -1,22 +1,17 @@
 package com.flansmod.common.eventhandlers;
 
-import com.flansmod.client.debug.EntityDebugDot;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityShootable;
 import com.flansmod.common.guns.raytracing.BlockHit;
 import com.flansmod.common.guns.raytracing.BulletHit;
 import com.flansmod.common.guns.raytracing.DriveableHit;
 import com.flansmod.common.guns.raytracing.EntityHit;
 import com.flansmod.common.guns.raytracing.PlayerBulletHit;
-import com.flansmod.common.vector.Vector3f;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 
 @Cancelable
 public class BulletHitEvent extends Event {
