@@ -162,15 +162,16 @@ public abstract class InfoType implements IInfoType {
         recipeOutput = ConfigUtils.configInt(config, "RecipeOutput", recipeOutput);
 
         if (config.containsKey("Recipe")) {
-            String[] split = ConfigUtils.getSplitFromKey(config, "Recipe");
-            recipe = new Object[split.length + 2];
+            recipeLine = ConfigUtils.getSplitFromKey(config, "Recipe");
+
+            recipe = new Object[recipeLine.length + 2];
             recipe[0] = ConfigUtils.configString(config, "recipe0", "");
             recipe[1] = ConfigUtils.configString(config, "recipe1", "");
             recipe[2] = ConfigUtils.configString(config, "recipe2", "");
         }
 
         if (config.containsKey("ShapelessRecipe")) {
-            recipeLine = ConfigUtils.getSplitFromKey(config, "Recipe");
+            recipeLine = ConfigUtils.getSplitFromKey(config, "ShapelessRecipe");
             shapeless = true;
         }
         smeltableFrom = ConfigUtils.configString(configMap, "SmeltableFrom", smeltableFrom);
