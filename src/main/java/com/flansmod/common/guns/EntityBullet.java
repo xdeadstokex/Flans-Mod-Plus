@@ -19,7 +19,7 @@ import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.teams.TeamsManager;
 import com.flansmod.common.types.InfoType;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;

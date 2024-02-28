@@ -1,6 +1,6 @@
 package com.flansmod.common.network;
 
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.guns.AttachmentType;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.vector.Vector3f;

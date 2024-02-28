@@ -2,7 +2,7 @@ package com.flansmod.client.model.animation;
 
 import java.util.ArrayList;
 
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.vector.Vector3f;
 
 public class AnimationPart 

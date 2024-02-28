@@ -22,7 +22,7 @@ import com.flansmod.client.model.ModelAttachment;
 import com.flansmod.client.model.ModelDriveable;
 import com.flansmod.client.model.RenderGun;
 import com.flansmod.common.FlansMod;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.DriveableType;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.AttachmentType;

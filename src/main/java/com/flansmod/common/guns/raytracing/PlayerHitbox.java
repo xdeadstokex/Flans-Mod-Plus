@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.guns.EntityBullet;
 import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;

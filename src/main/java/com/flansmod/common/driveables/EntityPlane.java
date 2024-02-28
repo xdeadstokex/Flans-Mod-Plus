@@ -2,7 +2,7 @@ package com.flansmod.common.driveables;
 
 import com.flansmod.client.model.animation.AnimationController;
 import com.flansmod.common.FlansMod;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.eventhandlers.DriveableDeathByHandEvent;
 import com.flansmod.common.network.PacketDriveableControl;
 import com.flansmod.common.network.PacketDriveableKey;

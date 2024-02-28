@@ -28,7 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.EntityDriveable;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.network.PacketFlashBang;

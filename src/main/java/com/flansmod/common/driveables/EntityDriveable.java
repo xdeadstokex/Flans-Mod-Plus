@@ -9,7 +9,7 @@ import com.flansmod.client.debug.EntityDebugVector;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.PlayerData;
 import com.flansmod.common.PlayerHandler;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
 import com.flansmod.common.driveables.DriveableType.ShootParticle;
 import com.flansmod.common.driveables.collisions.CollisionPlane;

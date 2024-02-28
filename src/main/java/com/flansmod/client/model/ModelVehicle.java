@@ -3,7 +3,7 @@ package com.flansmod.client.model;
 import com.flansmod.client.FlansModResourceHandler;
 import com.flansmod.client.tmt.ModelRendererTurbo;
 import com.flansmod.common.FlansMod;
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.driveables.*;
 import com.flansmod.common.vector.Vector3f;
 import cpw.mods.fml.client.FMLClientHandler;

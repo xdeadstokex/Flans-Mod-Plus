@@ -1,17 +1,10 @@
 package com.flansmod.common.driveables.mechas;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.flansmod.client.model.ModelMecha;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.driveables.DriveablePosition;
 import com.flansmod.common.driveables.DriveableType;
-import com.flansmod.common.driveables.EnumDriveablePart;
-import com.flansmod.common.driveables.PilotGun;
-import com.flansmod.common.driveables.DriveableType.ParticleEmitter;
-import com.flansmod.common.guns.BulletType;
-import com.flansmod.common.guns.EnumFireMode;
 import com.flansmod.common.types.TypeFile;
 import com.flansmod.common.vector.Vector3f;
 import com.flansmod.utils.ConfigMap;

@@ -1,6 +1,6 @@
 package com.flansmod.client.model.animation;
 
-import com.flansmod.utils.RotatedAxes;
+import com.flansmod.common.RotatedAxes;
 import com.flansmod.common.vector.Vector3f;
 
 import java.util.ArrayList;
