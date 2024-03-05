@@ -246,12 +246,12 @@ public class PlayerStats {
         return listToSend;
     }
     public static int getPlayerLvl(EntityPlayerMP player){
-        PlayerStats stats = getPlayerStatsFromFile(player.getDisplayName());
+        PlayerStats stats = getPlayerStatsFromFile(player.getCommandSenderName());
         if(stats!=null){
             return stats.totalExp/1000;
         } else {
             new PlayerStats(player.worldObj,player);
-            stats = getPlayerStatsFromFile(player.getDisplayName());
+            stats = getPlayerStatsFromFile(player.getCommandSenderName());
         }
         return stats.totalExp/1000;
     }
