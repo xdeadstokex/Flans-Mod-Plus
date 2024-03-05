@@ -37,7 +37,7 @@ public class PlayerStats {
     public PlayerStats(World world, EntityPlayerMP player) {
         playerMP = player;
         this.world = world;
-        nickname = player.getDisplayName();
+        nickname = player.getCommandSenderName();
         savePlayerStats();
     }
 
@@ -54,7 +54,7 @@ public class PlayerStats {
         dir.mkdirs();
         dir.setReadable(true);
         dir.setWritable(true);
-        File file = new File(dir, getPlayer(nickname).getDisplayName() + " " + getPlayer(nickname).getUniqueID().toString() + ".dat");
+        File file = new File(dir, nickname + " " + getPlayer(nickname).getUniqueID().toString() + ".dat");
         dir.mkdirs();
         dir.setReadable(true);
         dir.setWritable(true);
@@ -246,12 +246,12 @@ public class PlayerStats {
         return listToSend;
     }
     public static int getPlayerLvl(EntityPlayerMP player){
-        PlayerStats stats = getPlayerStatsFromFile(player.getDisplayName());
+        PlayerStats stats = getPlayerStatsFromFile(player.getCommandSenderName());
         if(stats!=null){
             return stats.totalExp/1000;
         } else {
             new PlayerStats(player.worldObj,player);
-            stats = getPlayerStatsFromFile(player.getDisplayName());
+            stats = getPlayerStatsFromFile(player.getCommandSenderName());
         }
         return stats.totalExp/1000;
     }
