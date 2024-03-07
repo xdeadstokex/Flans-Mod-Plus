@@ -162,7 +162,7 @@ public class CommonProxy {
      * Play a block break sound here
      */
     public void playBlockBreakSound(int x, int y, int z, Block blockHit, int dimension) {
-        FlansMod.packetHandler.sendToAllAround(new PacketBreakSound(x, y, z, blockHit), x, y, z, 32, dimension);
+        FlansMod.getPacketHandler().sendToAllAround(new PacketBreakSound(x, y, z, blockHit), x, y, z, 32, dimension);
     }
 
     public void addItem(EntityPlayer player, int id) {
@@ -359,7 +359,7 @@ public class CommonProxy {
             part.onFire = false;
             part.dead = false;
             driving.checkParts();
-            FlansMod.packetHandler.sendToAllAround(new PacketDriveableDamage(driving), driving.posX, driving.posY, driving.posZ, FlansMod.driveableUpdateRange, driving.dimension);
+            FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(driving), driving.posX, driving.posY, driving.posZ, FlansMod.driveableUpdateRange, driving.dimension);
         }
     }
 

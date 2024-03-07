@@ -1412,7 +1412,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 PacketPlaySound.sendSoundPacket(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, type.gunSoundRange, entityPlayer.dimension, soundToPlay, gunType.distortSound, silenced);
             soundDelay = gunType.shootSoundLength;
             if (type.distantShootSound != null) {
-                FlansMod.packetHandler.sendToDonut(new PacketPlaySound(entityPlayer.posX, entityPlayer.posY,
+                FlansMod.getPacketHandler().sendToDonut(new PacketPlaySound(entityPlayer.posX, entityPlayer.posY,
                                 entityPlayer.posZ, type.distantShootSound), entityPlayer.posX, entityPlayer.posY,
                         entityPlayer.posZ, type.gunSoundRange, type.distantSoundRange, entityPlayer.dimension);
             }
@@ -1421,7 +1421,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
         AttachmentType barrel = gunType.getBarrel(stack);
         if ((barrel == null || !barrel.disableMuzzleFlash) && type.getShouldShowMuzzleFlash()) {
             PacketMuzzleFlash p = new PacketMuzzleFlash(entityPlayer, type.muzzleFlashParticle, type.muzzleFlashParticleSize, type.flashTexture == null, gunType.shortName);
-            FlansMod.packetHandler.sendToAllAround(p, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 160, entityPlayer.dimension);
+            FlansMod.getPacketHandler().sendToAllAround(p, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, 160, entityPlayer.dimension);
         }
 
 
@@ -1463,7 +1463,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         gunType));
             }
             if (!gunType.useFancyRecoil) {
-                FlansMod.packetHandler.sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting()), gunType.getRecoilYaw(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting())), (EntityPlayerMP) entityPlayer);
+                FlansMod.getPacketHandler().sendTo(new PacketGunRecoil(gunType.getRecoilPitch(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting()), gunType.getRecoilYaw(stack, entityPlayer.isSneaking(), entityPlayer.isSprinting())), (EntityPlayerMP) entityPlayer);
             }
             // Drop item on shooting if bullet requires it
             if (bullet.dropItemOnShoot != null && !entityPlayer.capabilities.isCreativeMode)

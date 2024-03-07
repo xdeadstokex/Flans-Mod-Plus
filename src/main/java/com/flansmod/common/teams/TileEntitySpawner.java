@@ -184,7 +184,7 @@ public class TileEntitySpawner extends TileEntity implements ITeamObject
 	@Override
 	public void onBaseSet(int newTeamID) 
 	{
-		FlansMod.packetHandler.sendToDimension(getDescriptionPacket(), worldObj == null ? dimension : worldObj.provider.dimensionId);
+		FlansMod.getPacketHandler().sendToDimension(getDescriptionPacket(), worldObj == null ? dimension : worldObj.provider.dimensionId);
 	}
 
 	@Override
@@ -199,7 +199,7 @@ public class TileEntitySpawner extends TileEntity implements ITeamObject
 		base = b;
 		if(b != null)
 			baseID = b.getBaseID();
-		FlansMod.packetHandler.sendToDimension(getDescriptionPacket(), worldObj == null ? dimension : worldObj.provider.dimensionId);
+		FlansMod.getPacketHandler().sendToDimension(getDescriptionPacket(), worldObj == null ? dimension : worldObj.provider.dimensionId);
 	}
 
 	@Override

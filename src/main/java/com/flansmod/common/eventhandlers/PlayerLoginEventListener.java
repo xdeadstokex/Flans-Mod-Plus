@@ -25,7 +25,7 @@ public class PlayerLoginEventListener {
 	@SubscribeEvent
 	public void OnPlayerLogin(PlayerLoggedInEvent event) {
 		//Sync the players config with the servers config
-		FlansMod.packetHandler.sendTo(new PacketModConfig(), (EntityPlayerMP) event.player);
+		FlansMod.getPacketHandler().sendTo(new PacketModConfig(), (EntityPlayerMP) event.player);
 
 		//Set the players max health
 		IAttributeInstance attribute = event.player.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.maxHealth);

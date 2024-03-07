@@ -150,7 +150,7 @@ public class KeyInputHandler {
             if (FlansMod.DEBUG)
                 FlansMod.DEBUG = false;
             else {
-                FlansMod.packetHandler.sendToServer(new PacketRequestDebug());
+                FlansMod.getPacketHandler().sendToServer(new PacketRequestDebug());
             }
         }
         if (reloadModelsKey.isPressed()) {

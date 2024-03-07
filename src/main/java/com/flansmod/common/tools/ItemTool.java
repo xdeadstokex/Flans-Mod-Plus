@@ -189,7 +189,7 @@ public class ItemTool extends ItemFood {
 									part.health = part.maxHealth;
 
 								// I don't think sending this is necessary.
-								//FlansMod.packetHandler.sendToAllAround(new PacketDriveableDamage(driveable), driveable.posX, driveable.posY, driveable.posZ, FlansMod.driveableUpdateRange, driveable.dimension);
+								//FlansMod.getPacketHandler().sendToAllAround(new PacketDriveableDamage(driveable), driveable.posX, driveable.posY, driveable.posZ, FlansMod.driveableUpdateRange, driveable.dimension);
 
 								//If not in creative and the tool should decay, damage it
 								if(!entityplayer.capabilities.isCreativeMode && type.toolLife > 0)

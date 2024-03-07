@@ -179,7 +179,7 @@ public class PlayerHandler {
     public void onPlayerEvent(PlayerEvent event) {
         if (event instanceof PlayerLoggedInEvent) {
             if (event.player instanceof EntityPlayerMP) {
-                FlansMod.packetHandler.sendTo(new PacketRequestDebug(false), (EntityPlayerMP) event.player);
+                FlansMod.getPacketHandler().sendTo(new PacketRequestDebug(false), (EntityPlayerMP) event.player);
             }
 
             EntityPlayer player = event.player;

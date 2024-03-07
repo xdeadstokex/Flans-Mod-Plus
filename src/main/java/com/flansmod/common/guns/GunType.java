@@ -670,11 +670,12 @@ public class GunType extends PaintableType implements IScope {
 
         casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
         flashTexture = ConfigUtils.configString(config, "FlashTexture", null);
-        muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", null);;
+        muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", muzzleFlashParticle);
         muzzleFlashParticleSize = ConfigUtils.configFloat(config, "MuzzleFlashParticleSize", muzzleFlashParticleSize);
+
+        useMuzzleFlashDefaults = !config.containsKey("ShowMuzzleFlashParticle");
         showMuzzleFlashParticles = ConfigUtils.configBool(config, "ShowMuzzleFlashParticle", showMuzzleFlashParticles);
-        if (showMuzzleFlashParticles)
-            useMuzzleFlashDefaults = false;
+
         showMuzzleFlashParticlesFirstPerson = ConfigUtils.configBool(config, "ShowMuzzleFlashParticleFirstPerson", showMuzzleFlashParticlesFirstPerson);
         muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
         muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
@@ -1637,6 +1638,9 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public boolean getShouldShowMuzzleFlash() {
+        FlansMod.log("A " + useMuzzleFlashDefaults);
+        FlansMod.log("B " + FlansMod.showMuzzleFlashParticlesDefault);
+        FlansMod.log("C " + showMuzzleFlashParticles);
         return useMuzzleFlashDefaults ? FlansMod.showMuzzleFlashParticlesDefault : showMuzzleFlashParticles;
     }
 
