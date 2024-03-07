@@ -850,10 +850,10 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Check to see if the ammo should be rendered first
-			if ((anim == EnumAnimationType.END_LOADED || anim == EnumAnimationType.BACK_LOADED) && empty) {
+			if ((anim == EnumAnimationType.END_LOADED || anim == EnumAnimationType.BACK_LOADED) && empty && !animations.reloading) {
 				shouldRender = false;
 			}
-
+			
 			// If it should be rendered, do the transformations required
 			if (shouldRender && animations.reloading && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
 			{

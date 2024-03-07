@@ -185,7 +185,9 @@ public class PacketReload extends PacketBase {
             int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
             int chargeTime = type.model == null ? 1 : type.model.chargeTime;
                       
-            PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT).gunToReload = stack;
+            PlayerData playerData = PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT);
+            playerData.gunToReload = stack;
+            playerData.reloadSlot = clientPlayer.inventory.currentItem;
             animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
             
             

@@ -1319,7 +1319,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 if (bestSlot != -1) {  
                 	boolean isPlayer = entity instanceof EntityPlayer; 
                 	if(isPlayer && onlyCheckIfPlayerCanReload) {
-                		PlayerHandler.getPlayerData((EntityPlayer) entity).queueReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+                	    EntityPlayer player = (EntityPlayer) entity;               	    
+                		PlayerHandler.getPlayerData(player).queueReload(gunStack, player.inventory.currentItem, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
                 		return true;
                 	}
                 	
