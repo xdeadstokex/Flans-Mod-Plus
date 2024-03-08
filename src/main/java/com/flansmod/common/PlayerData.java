@@ -144,7 +144,7 @@ public class PlayerData
                     gunAnimationLeft.reloading = false;
                 }
             } else if(!player.worldObj.isRemote && queuedReload != null) {
-                if (queuedReload.getReloadTime() > 0) {
+                if (queuedReload.getReloadTime() > 1) {
                     queuedReload.decrementReloadTime();
                 } else {
                     queuedReload.doReload();
