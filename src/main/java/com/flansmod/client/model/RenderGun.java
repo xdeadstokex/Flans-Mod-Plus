@@ -694,7 +694,7 @@ public class RenderGun implements IItemRenderer {
 		// Render the pump-action handle
 		if (pumpAttachment == null)
 		{
-			GL11.glPushMatrix();
+		        GL11.glPushMatrix();
 			{
 				GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 				model.renderPump(f);
