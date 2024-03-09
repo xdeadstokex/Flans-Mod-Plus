@@ -140,10 +140,7 @@ public class EntityGrenade extends EntityShootable implements IEntityAdditionalS
 				double dZ = (posZ - prevPosZ) / 10;
 				for (int i = 0; i < 10; i++)
 				{
-					EntityFX particle = FlansModClient.getParticle(type.trailParticleType, worldObj, prevPosX + dX * i, prevPosY + dY * i, prevPosZ + dZ * i);
-					if(particle != null && Minecraft.getMinecraft().gameSettings.fancyGraphics)
-						particle.renderDistanceWeight = 100D;
-					//worldObj.spawnEntityInWorld(particle);
+					FlansModClient.proxy.spawnParticle(type.trailParticleType, prevPosX + dX * i, prevPosY + dY * i, prevPosZ + dZ * i, 0, 0, 0);
 				}
 			}
 

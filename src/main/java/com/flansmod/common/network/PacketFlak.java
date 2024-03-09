@@ -4,11 +4,8 @@ import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.World;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -65,18 +62,17 @@ public class PacketFlak extends PacketBase
 	@SideOnly(Side.CLIENT)
 	public void handleClientSide(EntityPlayer clientPlayer) 
 	{
-		World world = clientPlayer.worldObj;
 		for (int i = 0; i < numParticles; i++)
 		{
-			EntityFX obj = FlansModClient.getParticle(particleType, world, x + rand.nextGaussian(), y + rand.nextGaussian(), z + rand.nextGaussian());
-			if(obj != null)
-			{
-				obj.motionX = rand.nextGaussian() / 20;
-				obj.motionY = rand.nextGaussian() / 20;
-				obj.motionZ = rand.nextGaussian() / 20;
-				obj.renderDistanceWeight = 250D;
-				FMLClientHandler.instance().getClient().effectRenderer.addEffect(obj);
-			}
-		}		
+			FlansModClient.proxy.spawnParticle(
+					particleType,
+					x + rand.nextGaussian(),
+					y + rand.nextGaussian(),
+					z + rand.nextGaussian(),
+					rand.nextGaussian() / 20,
+					rand.nextGaussian() / 20,
+					rand.nextGaussian() / 20
+			);
+		}
 	}
 }

@@ -1338,8 +1338,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                 }
             }
             //Send flak packet
-            if (type.flak > 0)
+            if (type.flak > 0) {
                 FlansMod.getPacketHandler().sendToAllAround(new PacketFlak(posX, posY, posZ, type.flak, type.flakParticles), posX, posY, posZ, 200, dimension);
+            }
             // Drop item on hitting if bullet requires it
             if (type.dropItemOnHit != null) {
                 String itemName = type.dropItemOnHit;
