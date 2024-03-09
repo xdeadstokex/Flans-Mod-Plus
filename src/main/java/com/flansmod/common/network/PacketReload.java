@@ -159,7 +159,7 @@ public class PacketReload extends PacketBase {
         
         if (stack != null && stack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) stack.getItem()).type;
-
+            
             if (left)
                 FlansModClient.shootTimeLeft += reloadTime;
             else FlansModClient.shootTimeRight += reloadTime;  

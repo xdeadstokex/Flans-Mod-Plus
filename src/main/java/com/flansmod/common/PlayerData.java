@@ -172,11 +172,11 @@ public class PlayerData
 	}
 	
 	public void queueReload(ItemStack gunStack, int reloadSlot, float reloadTime,
-			World world, Entity entity, IInventory inventory, boolean creative, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
+			World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
 		this.gunToReload = gunStack;
 		this.reloadSlot = reloadSlot;
 		
-		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, forceReload, combineAmmoOnReload, ammoToUpperInventory);
 	}
 	
 	public boolean isHoldingGunToReload(EntityPlayer player) {

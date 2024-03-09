@@ -14,6 +14,7 @@ public class QueuedReload {
 	private Entity entity;
 	private IInventory inventory;
 	private boolean creative, combineAmmoOnReload, ammoToUpperInventory;
+	private boolean forceReload;
 	
 	public final ItemStack gunStack;
 	
@@ -22,7 +23,7 @@ public class QueuedReload {
 	
 	
 	public QueuedReload(ItemStack gunStack, float reloadTime, World world,
-			Entity entity, IInventory inventory, boolean creative, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
+			Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {
 		this.gunStack = gunStack;
 		
 		this.reloadTime = reloadTime;
@@ -31,6 +32,7 @@ public class QueuedReload {
 		this.entity = entity;
 		this.inventory = inventory;
 		this.creative = creative;
+		this.forceReload = forceReload;
 		this.combineAmmoOnReload = combineAmmoOnReload;
 		this.ammoToUpperInventory = ammoToUpperInventory;
 	}
@@ -48,7 +50,7 @@ public class QueuedReload {
 		didReload = true;
 		ItemGun gun = ((ItemGun)gunStack.getItem());
 		
-		gun.reload(gunStack, gun.type, world, entity, inventory, creative, true, combineAmmoOnReload, ammoToUpperInventory, reloadTime, false);
+		gun.reload(gunStack, gun.type, world, entity, inventory, creative, forceReload, combineAmmoOnReload, ammoToUpperInventory, reloadTime, false);
 	}
 	
 }

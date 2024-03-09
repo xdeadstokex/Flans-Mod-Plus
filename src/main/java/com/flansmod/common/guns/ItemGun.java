@@ -1280,7 +1280,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             return false;
         //Melee cannot be reloaded
         if (gunType.ammo.isEmpty())
-            return false;
+            return false;        
         //If you cannot reload half way through a clip, reject the player for trying to do so
         if (forceReload && !gunType.canForceReload)
             return false;
@@ -1321,7 +1321,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 	boolean isPlayer = entity instanceof EntityPlayer; 
                 	if(isPlayer && onlyCheckIfPlayerCanReload) {
                 	    EntityPlayer player = (EntityPlayer) entity;               	    
-                		PlayerHandler.getPlayerData(player).queueReload(gunStack, player.inventory.currentItem, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+                		PlayerHandler.getPlayerData(player).queueReload(gunStack, player.inventory.currentItem, reloadTime, world, entity, inventory, creative, forceReload, combineAmmoOnReload, ammoToUpperInventory);
                 		return true;
                 	}
                 	
