@@ -159,10 +159,11 @@ public class PacketReload extends PacketBase {
         
         if (stack != null && stack.getItem() instanceof ItemGun) {
             GunType type = ((ItemGun) stack.getItem()).type;
+            
             if (left)
-                FlansModClient.shootTimeLeft += (int) type.getReloadTime(stack);
-            else FlansModClient.shootTimeRight += (int) type.getReloadTime(stack);
-
+                FlansModClient.shootTimeLeft += reloadTime;
+            else FlansModClient.shootTimeRight += reloadTime;  
+            
             //Apply animations
             GunAnimations animations = null;
             if (left) {
@@ -185,7 +186,9 @@ public class PacketReload extends PacketBase {
             int chargeDelay = type.model == null ? 0 : type.model.chargeDelayAfterReload;
             int chargeTime = type.model == null ? 1 : type.model.chargeTime;
                       
-            PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT).gunToReload = stack;
+            PlayerData playerData = PlayerHandler.getPlayerData(clientPlayer, Side.CLIENT);
+            playerData.gunToReload = stack;
+            playerData.reloadSlot = clientPlayer.inventory.currentItem;
             animations.doReload(reloadTime, pumpDelay, pumpTime, chargeDelay, chargeTime, amount, singlesReload);
             
             

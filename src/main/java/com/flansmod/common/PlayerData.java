@@ -66,6 +66,7 @@ public class PlayerData
 	public int burstRoundsRemainingLeft = 0, burstRoundsRemainingRight = 0;
 
 	public ItemStack gunToReload;
+	public int reloadSlot;
 	private QueuedReload queuedReload;
 	
 	public boolean isAmmoEmpty;
@@ -143,7 +144,7 @@ public class PlayerData
                     gunAnimationLeft.reloading = false;
                 }
             } else if(!player.worldObj.isRemote && queuedReload != null) {
-                if (queuedReload.getReloadTime() > 0) {
+                if (queuedReload.getReloadTime() > 1) {
                     queuedReload.decrementReloadTime();
                 } else {
                     queuedReload.doReload();
@@ -153,7 +154,7 @@ public class PlayerData
         } 
 		
 		
-		//Handle minigun speed
+        //Handle minigun speed
 		if(isShootingRight && !reloadingRight)
 			minigunSpeed += 2F; 
 		minigunSpeed *= 0.9F;
@@ -170,16 +171,18 @@ public class PlayerData
 		snapshots[0] = new PlayerSnapshot(player);
 	}
 	
-	public void queueReload(ItemStack gunStack, float reloadTime,
-			World world, Entity entity, IInventory inventory, boolean creative, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
+	public void queueReload(ItemStack gunStack, int reloadSlot, float reloadTime,
+			World world, Entity entity, IInventory inventory, boolean creative, boolean forceReload, boolean combineAmmoOnReload, boolean ammoToUpperInventory) {		
 		this.gunToReload = gunStack;
-		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+		this.reloadSlot = reloadSlot;
+		
+		queuedReload = new QueuedReload(gunStack, reloadTime, world, entity, inventory, creative, forceReload, combineAmmoOnReload, ammoToUpperInventory);
 	}
 	
 	public boolean isHoldingGunToReload(EntityPlayer player) {
     	ItemStack heldItem = player.getHeldItem();
 
-    	return !(heldItem == null || gunToReload != heldItem);
+    	return !(heldItem == null || gunToReload.getItem() != heldItem.getItem() || player.inventory.currentItem != reloadSlot);
     }
 	
 	public void clientTick(EntityPlayer player)

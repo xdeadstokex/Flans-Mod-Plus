@@ -378,13 +378,13 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                         GunType offHandGunType = ((ItemGun) offHandGunStack.getItem()).type;
                         if (offHandGunType.usableByPlayers) {
                             //If we are using a burst mode gun, and there is burst left to be done, try to do it
-                            if (offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.BURST && data.burstRoundsRemainingLeft > 0) {
+                            if (offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.BURST && data.burstRoundsRemainingLeft > 0) {                            
                                 if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
                                     player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
                             } else {
                                 //Send packet when firing a semi or starting to fire a full
                                 if (leftMouseHeld && !lastLeftMouseHeld) {
-                                    FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, true, player.rotationYaw, player.rotationPitch));
+                                    FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, true, player.rotationYaw, player.rotationPitch));                                   
                                     if (clientSideShoot(player, offHandGunStack, offHandGunType, true))
                                         player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
                                 }
@@ -392,7 +392,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                                 {
                                     FlansMod.getPacketHandler().sendToServer(new PacketGunFire(true, false, player.rotationYaw, player.rotationPitch));
                                 }
-                                if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && leftMouseHeld) {
+                                if ((offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.FULLAUTO || offHandGunType.getFireMode(offHandGunStack) == EnumFireMode.MINIGUN) && leftMouseHeld) {                                    
                                     if (clientSideShoot(player, offHandGunStack, offHandGunType, true)) {
                                         player.inventory.setInventorySlotContents(data.offHandGunSlot - 1, null);
                                     }
@@ -624,6 +624,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
         // ShootTime <= 0 and player is sprinting zoomed or player is not sprinting, or the player can hipFireWhileSprinting
         boolean canActuallyHipFire = (gunType.hipFireWhileSprinting != 2) && !(gunType.hipFireWhileSprinting == 0 && FlansMod.disableSprintHipFireByDefault);
+        
         if (FlansModClient.switchTime <= 0 && FlansModClient.shootTime(left) <= 0 && ((sprinting && isScoped) || !sprinting || canActuallyHipFire) && !(player.ridingEntity instanceof EntitySeat)) {
 //			boolean onLastBullet = false;
             boolean hasAmmo = false;
@@ -659,7 +660,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 int casingDelay = gunType.model == null ? 0 : gunType.model.casingDelay;
                 float hammerAngle = gunType.model == null ? 0 : gunType.model.hammerAngle;
                 float althammerAngle = gunType.model == null ? 0 : gunType.model.althammerAngle;
-
+                
 //				animations.onGunEmpty(onLastBullet);
                 animations.doShoot(pumpDelay, pumpTime, hammerDelay, hammerAngle, althammerAngle, casingDelay);
                 if (type.useFancyRecoil) {
@@ -1279,7 +1280,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
             return false;
         //Melee cannot be reloaded
         if (gunType.ammo.isEmpty())
-            return false;
+            return false;        
         //If you cannot reload half way through a clip, reject the player for trying to do so
         if (forceReload && !gunType.canForceReload)
             return false;
@@ -1319,7 +1320,8 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 if (bestSlot != -1) {  
                 	boolean isPlayer = entity instanceof EntityPlayer; 
                 	if(isPlayer && onlyCheckIfPlayerCanReload) {
-                		PlayerHandler.getPlayerData((EntityPlayer) entity).queueReload(gunStack, reloadTime, world, entity, inventory, creative, combineAmmoOnReload, ammoToUpperInventory);
+                	    EntityPlayer player = (EntityPlayer) entity;               	    
+                		PlayerHandler.getPlayerData(player).queueReload(gunStack, player.inventory.currentItem, reloadTime, world, entity, inventory, creative, forceReload, combineAmmoOnReload, ammoToUpperInventory);
                 		return true;
                 	}
                 	

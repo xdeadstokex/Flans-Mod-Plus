@@ -694,7 +694,7 @@ public class RenderGun implements IItemRenderer {
 		// Render the pump-action handle
 		if (pumpAttachment == null)
 		{
-			GL11.glPushMatrix();
+		        GL11.glPushMatrix();
 			{
 				GL11.glTranslatef(-(1 - Math.abs(animations.lastPumped + (animations.pumped - animations.lastPumped) * smoothing)) * model.pumpHandleDistance, 0F, 0F);
 				model.renderPump(f);
@@ -850,10 +850,10 @@ public class RenderGun implements IItemRenderer {
 			}
 
 			// Check to see if the ammo should be rendered first
-			if ((anim == EnumAnimationType.END_LOADED || anim == EnumAnimationType.BACK_LOADED) && empty) {
+			if ((anim == EnumAnimationType.END_LOADED || anim == EnumAnimationType.BACK_LOADED) && empty && !animations.reloading) {
 				shouldRender = false;
 			}
-
+			
 			// If it should be rendered, do the transformations required
 			if (shouldRender && animations.reloading && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
 			{
