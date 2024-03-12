@@ -18,8 +18,10 @@ public final class ConfigMap extends HashMap<String, ArrayList<String>> {
     }
 
     public String get(String key) {
-        if (defaultMap.get(key.toLowerCase()) != null) {
-            return defaultMap.get(key.toLowerCase()).get(0);
+        // Get last item instead of first, like Flans did before..
+        ArrayList<String> configList = defaultMap.get(key.toLowerCase());
+        if (configList != null && !configList.isEmpty()) {
+            return configList.get(configList.size() - 1);
         }
 
         return null;
