@@ -420,11 +420,15 @@ public class DriveableType extends PaintableType {
 
                     int numWheels = splits.size();
 
-                    if (numWheels < 2 || numWheels > 4) {
+                    if (numWheels < 2) {
                         FlansMod.logPackError(file.name, packName, shortName, "Fatal error: Either 3 or 4 wheels are required", null, null);
                         throw new Exception("Invalid Wheel Configuration");
                     } else {
-                        wheelPositions = new DriveablePosition[numWheels];
+                        if (numWheels > 4) {
+                            FlansMod.logPackError(file.name, packName, shortName, "Too many wheel definitions, the maximum is 4", null, null);
+                        }
+
+                        wheelPositions = new DriveablePosition[Math.min(4, numWheels)];
                     }
 
                     int counter = 0;
@@ -448,6 +452,11 @@ public class DriveableType extends PaintableType {
                         wheelPositions[wheelIndex] = wheelPosition;
 
                         counter++;
+
+                        if (counter >= 4) {
+                            // Skip any extra wheel definitions given
+                            break;
+                        }
                     }
                 } catch (Exception ex) {
                     FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while parsing wheels", null, ex);
