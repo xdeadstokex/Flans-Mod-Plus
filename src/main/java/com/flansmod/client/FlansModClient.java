@@ -1,5 +1,10 @@
 package com.flansmod.client;
 
+import java.util.HashMap;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
 import com.flansmod.api.IControllable;
 import com.flansmod.client.gui.GuiDriveableController;
 import com.flansmod.client.gui.GuiTeamScores;
@@ -16,6 +21,7 @@ import com.flansmod.common.network.PacketTeamInfo.PlayerScoreData;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.types.InfoType;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -24,6 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -149,6 +156,8 @@ public class FlansModClient extends FlansMod {
     
     public static boolean combineAmmoOnReload = true;
     public static boolean ammoToUpperInventoryOnReload = false;
+    
+    public static HashMap<String, ISound> reloadSound = new HashMap<>();
     
     
     public void load() {

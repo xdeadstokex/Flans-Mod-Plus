@@ -10,6 +10,7 @@ import com.flansmod.common.guns.GunType;
 import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.QueuedReload;
 import com.flansmod.common.guns.raytracing.PlayerSnapshot;
+import com.flansmod.common.network.PacketCancelReloadSound;
 import com.flansmod.common.network.PacketSelectOffHandGun;
 import com.flansmod.common.teams.PlayerClass;
 import com.flansmod.common.teams.Team;
@@ -129,9 +130,6 @@ public class PlayerData
                 this.shootTimeLeft = 0;
                 this.shootTimeRight = 0;
 
-                queuedReload = null;
-                gunToReload = null;
-
                 if(player.worldObj.isRemote) {
                     FlansModClient.shootTimeRight = 0;
                     FlansModClient.shootTimeLeft = 0;
@@ -142,7 +140,14 @@ public class PlayerData
                     GunAnimations gunAnimationLeft = FlansModClient.getGunAnimations(player, true);
                     gunAnimationLeft.reloadAnimationProgress = 0F;
                     gunAnimationLeft.reloading = false;
+                } else {
+                    GunType type = ((ItemGun)gunToReload.getItem()).type;
+                    
+                    FlansMod.getPacketHandler().sendToAllAround(new PacketCancelReloadSound(player.getCommandSenderName()), player.posX, player.posY, player.posZ, type.reloadSoundRange, player.dimension);
                 }
+                
+                queuedReload = null;
+                gunToReload = null;
             } else if(!player.worldObj.isRemote && queuedReload != null) {
                 if (queuedReload.getReloadTime() > 1) {
                     queuedReload.decrementReloadTime();
