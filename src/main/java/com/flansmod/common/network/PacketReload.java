@@ -140,7 +140,7 @@ public class PacketReload extends PacketBase {
                     soundToPlay = type.reloadSound;
 
                 if (soundToPlay != null && reloadTime>0)
-                    PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true);
+                    PacketPlaySound.sendSoundPacket(playerEntity.posX, playerEntity.posY, playerEntity.posZ, type.reloadSoundRange, playerEntity.dimension, soundToPlay, true, false, playerEntity.getCommandSenderName());
             }
         }
     }

@@ -173,7 +173,7 @@ public class PacketHandler extends MessageToMessageCodec<FMLProxyPacket, PacketB
         registerPacket(PacketSendPlayerClasses.class);
         registerPacket(PacketRespawnFinished.class);
         registerPacket(PacketChangeZoom.class);
-
+        registerPacket(PacketCancelReloadSound.class);
     }
 
     /**
