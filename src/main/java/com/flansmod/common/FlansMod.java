@@ -1,23 +1,5 @@
 package com.flansmod.common;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.flansmod.client.AimType;
 import com.flansmod.client.FlanMouseButton;
 import com.flansmod.client.FlansCrash;
@@ -27,40 +9,6 @@ import com.flansmod.common.driveables.*;
 import com.flansmod.common.driveables.mechas.*;
 import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
-import com.flansmod.common.driveables.EntityPlane;
-import com.flansmod.common.driveables.EntitySeat;
-import com.flansmod.common.driveables.EntityVehicle;
-import com.flansmod.common.driveables.EntityWheel;
-import com.flansmod.common.driveables.ItemPlane;
-import com.flansmod.common.driveables.ItemVehicle;
-import com.flansmod.common.driveables.PlaneType;
-import com.flansmod.common.driveables.VehicleType;
-import com.flansmod.common.driveables.mechas.EntityMecha;
-import com.flansmod.common.driveables.mechas.ItemMecha;
-import com.flansmod.common.driveables.mechas.ItemMechaAddon;
-import com.flansmod.common.driveables.mechas.MechaItemType;
-import com.flansmod.common.driveables.mechas.MechaType;
-import com.flansmod.common.eventhandlers.AnvilUpdateEventListener;
-import com.flansmod.common.eventhandlers.LivingSpawnEventListener;
-import com.flansmod.common.eventhandlers.PlayerDeathEventListener;
-import com.flansmod.common.eventhandlers.PlayerDropsEventListener;
-import com.flansmod.common.eventhandlers.PlayerLoginEventListener;
-import com.flansmod.common.eventhandlers.PlayerSpawnEventListener;
-import com.flansmod.common.eventhandlers.ServerTickEvent;
-import com.flansmod.common.guns.AAGunType;
-import com.flansmod.common.guns.AttachmentType;
-import com.flansmod.common.guns.BulletType;
-import com.flansmod.common.guns.EntityAAGun;
-import com.flansmod.common.guns.EntityBullet;
-import com.flansmod.common.guns.EntityGrenade;
-import com.flansmod.common.guns.EntityMG;
-import com.flansmod.common.guns.GrenadeType;
-import com.flansmod.common.guns.GunType;
-import com.flansmod.common.guns.ItemAAGun;
-import com.flansmod.common.guns.ItemAttachment;
-import com.flansmod.common.guns.ItemBullet;
-import com.flansmod.common.guns.ItemGrenade;
-import com.flansmod.common.guns.ItemGun;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxEntry;
 import com.flansmod.common.guns.boxes.GunBoxType;
@@ -72,22 +20,7 @@ import com.flansmod.common.parts.ItemPart;
 import com.flansmod.common.parts.PartType;
 import com.flansmod.common.sync.Sync;
 import com.flansmod.common.sync.SyncEventHandler;
-import com.flansmod.common.teams.ArmourBoxType;
-import com.flansmod.common.teams.ArmourType;
-import com.flansmod.common.teams.BlockArmourBox;
-import com.flansmod.common.teams.BlockSpawner;
-import com.flansmod.common.teams.ChunkLoadingHandler;
-import com.flansmod.common.teams.CommandTeams;
-import com.flansmod.common.teams.EntityFlag;
-import com.flansmod.common.teams.EntityFlagpole;
-import com.flansmod.common.teams.EntityGunItem;
-import com.flansmod.common.teams.EntityTeamItem;
-import com.flansmod.common.teams.ItemFlagpole;
-import com.flansmod.common.teams.ItemOpStick;
-import com.flansmod.common.teams.ItemTeamArmour;
-import com.flansmod.common.teams.Team;
-import com.flansmod.common.teams.TeamsManager;
-import com.flansmod.common.teams.TileEntitySpawner;
+import com.flansmod.common.teams.*;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
 import com.flansmod.common.tools.ToolType;
@@ -95,7 +28,6 @@ import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.IGunboxDescriptionable;
 import com.flansmod.common.types.InfoType;
 import com.flansmod.common.types.TypeFile;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -118,11 +50,23 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate (Stability Edition)", version = FlansMod.VERSION, acceptableRemoteVersions = "[" + FlansMod.VERSION + "]", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
@@ -307,7 +251,7 @@ public class FlansMod {
         proxy.loadFlanAssets();
         contentManager.createItems();
 
-        if (gunItems.size() >= 1) {
+        if (!gunItems.isEmpty()) {
             MinecraftForge.EVENT_BUS.register(gunItems.get(0));
         }
 
@@ -449,7 +393,7 @@ public class FlansMod {
                         //If an exception is caught and the debug log is enabled, print the exception and a message
                         if (FlansMod.printDebugLog) {
                             FlansMod.log("A gunbox entry appears to be null");
-                            e.printStackTrace();
+                            logger.error(e);
                         }
                     }
                 }
@@ -517,7 +461,7 @@ public class FlansMod {
                                 }
                                 reader.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                logger.error(e);
                             }
                         }
                     }
@@ -525,7 +469,7 @@ public class FlansMod {
             } else {
                 try {
                     ZipFile zip = new ZipFile(contentPack);
-                    ZipInputStream zipStream = new ZipInputStream(new FileInputStream(contentPack));
+                    ZipInputStream zipStream = new ZipInputStream(Files.newInputStream(contentPack.toPath()));
                     BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
                     ZipEntry zipEntry;
                     do {
@@ -561,7 +505,7 @@ public class FlansMod {
                     zip.close();
                     zipStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
             }
         }
@@ -585,7 +529,7 @@ public class FlansMod {
         } catch (Exception e) {
             log("Failed to get class loader. All content loading will now fail.");
             if (FlansMod.printStackTrace) {
-                e.printStackTrace();
+                logger.error(e);
             }
             return;
         }
@@ -664,7 +608,7 @@ public class FlansMod {
                 } catch (Exception e) {
                     log("Failed to add " + type.name() + " : " + typeFile.name);
                     if (FlansMod.printStackTrace) {
-                        e.printStackTrace();
+                        logger.error(e);
                     }
                 }
             }
@@ -815,7 +759,7 @@ public class FlansMod {
     			list.add(pB);
     		} catch(Exception e) {
     			System.out.println("ERROR! - '" + s + "' couldn't be recognized as a penetrable block!");
-    			e.printStackTrace();
+    			logger.error(e);
     		}
     	}
     	FlansMod.penetrableBlocks = list;

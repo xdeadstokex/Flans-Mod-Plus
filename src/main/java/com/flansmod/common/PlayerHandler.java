@@ -167,10 +167,10 @@ public class PlayerHandler {
         String username = player.getCommandSenderName();
         if (side.isClient()) {
             if (!clientSidePlayerStats.containsKey(username))
-                clientSidePlayerStats.put(username, new PlayerStats(player.worldObj, player));
+                clientSidePlayerStats.put(username, new PlayerStats(player));
         } else {
             if (!serverSidePlayerStats.containsKey(username))
-                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, player));
+                serverSidePlayerStats.put(username, new PlayerStats(player));
         }
         return side.isClient() ? clientSidePlayerStats.get(username) : serverSidePlayerStats.get(username);
     }
@@ -188,7 +188,7 @@ public class PlayerHandler {
                 serverSideData.put(username, new PlayerData(username));
             clientsToRemoveAfterThisRound.remove(username);
             if (!serverSidePlayerStats.containsKey(username))
-                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, (EntityPlayerMP)player));
+                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP)player));
 
         } else if (event instanceof PlayerLoggedOutEvent) {
             EntityPlayer player = event.player;
@@ -202,7 +202,7 @@ public class PlayerHandler {
             if (!serverSideData.containsKey(username))
                 serverSideData.put(username, new PlayerData(username));
             if (!serverSidePlayerStats.containsKey(username))
-                serverSidePlayerStats.put(username, new PlayerStats(player.worldObj, (EntityPlayerMP)player));
+                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP)player));
 
         }
     }
