@@ -790,18 +790,13 @@ public class GunType extends PaintableType implements IScope {
 
         // secondary functions are listed here highest priority last. (overwritten)
 
-        if (shortName.equalsIgnoreCase("baseballBat"))
-        {
-            FlansMod.log("AMOGS");
-        }
-
         // Zoom: lowest priority
         zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
-        if (zoomLevel > 1F)
+        if (config.containsKey("ZoomLevel") && zoomLevel > 1F)
             secondaryFunction = EnumSecondaryFunction.ZOOM;
 
         FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
-        if (FOVFactor > 1F)
+        if (config.containsKey("FOVZoomLevel") && FOVFactor > 1F)
             secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
 
         //Modes and zoom settings
@@ -814,7 +809,7 @@ public class GunType extends PaintableType implements IScope {
 
         // Melee: higher priority
         meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
-        secondaryFunction = meleeDamage > 0 && config.containsKey("MeleeDamage") ? EnumSecondaryFunction.MELEE : secondaryFunction;
+        secondaryFunction = meleeDamage > 0 && config.containsKey("MeleeDamage") && !hasZoomOverlay() ? EnumSecondaryFunction.MELEE : secondaryFunction;
 
         if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
             secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
