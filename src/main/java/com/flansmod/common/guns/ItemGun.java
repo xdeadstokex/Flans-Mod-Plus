@@ -1207,7 +1207,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
 
                     if (soundToPlay != null) {
                         PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ,
-                                type.reloadSoundRange, entityplayer.dimension, soundToPlay, true);
+                                type.reloadSoundRange, entityplayer.dimension, soundToPlay, true, false, entityplayer.getCommandSenderName());
                     }
                 } else if ((gunType.clickSoundOnEmpty != null) && canClick) {
                     PacketPlaySound.sendSoundPacket(entityplayer.posX, entityplayer.posY, entityplayer.posZ, type.reloadSoundRange, entityplayer.dimension, gunType.clickSoundOnEmpty, true);
