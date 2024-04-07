@@ -70,12 +70,12 @@ public abstract class PaintableType extends InfoType
 						dyeStacks[i] = new ItemStack(Items.dye, Integer.parseInt(split[i * 2 + 4]), dyeID);
 					}
 
-					if(split[1].contains("_"))
-					{
-						String[] splat = split[1].split("_");
-						if(splat[0].equals(iconPath))
-							split[1] = splat[1];
-					}
+					//if(split[1].contains("_"))
+					//{
+					//	String[] splat = split[1].split("_");
+					//	if(splat[0].equals(iconPath))
+					//		split[1] = splat[1];
+					//}
 					paintjobs.add(new Paintjob(nextPaintjobID++, split[1], split[2], dyeStacks, true));
 				} catch (Exception e) {
 					FlansMod.logPackError(file.name, packName, shortName, "Reading paintjob line failed", split, e);
