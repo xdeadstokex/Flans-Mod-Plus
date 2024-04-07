@@ -97,7 +97,7 @@ public class ArmourType extends InfoType {
 
     @Override
     public void postRead(TypeFile file) {
-        if (this.shortName != null) {
+        if (this.shortName != null && isValid) {
             armours.add(this);
         }
     }
@@ -159,6 +159,7 @@ public class ArmourType extends InfoType {
             armourTextureName = ConfigUtils.configString(config, new String[]{"ArmourTexture", "ArmorTexture"}, armourTextureName);
         } catch (Exception ex) {
             FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading armour file", null, ex);
+            isValid = false;
         }
     }
 

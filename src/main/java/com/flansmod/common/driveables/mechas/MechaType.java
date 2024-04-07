@@ -93,7 +93,7 @@ public class MechaType extends DriveableType
 	public void postRead(TypeFile file) {
 		super.postRead(file);
 
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			types.add(this);
 		}
 	}
@@ -204,6 +204,7 @@ public class MechaType extends DriveableType
 
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading Mecha Type", null, ex);
+			isValid = false;
 		}
     }
     

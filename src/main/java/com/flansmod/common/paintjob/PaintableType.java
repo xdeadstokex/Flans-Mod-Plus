@@ -53,6 +53,7 @@ public abstract class PaintableType extends InfoType
 		super.read(config, file);
 		//iconName textureName [dyeName dyeAmount (dyeDamage)]
 
+
 		try {
 			ArrayList<String[]> lines = ConfigUtils.getSplitsFromKey(config, new String[] { "PaintJob"} );
 			for (String[] split : lines) {
@@ -125,6 +126,7 @@ public abstract class PaintableType extends InfoType
 			}
 		} catch (Exception e) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading paintjob", null, e);
+			isValid = false;
 		}
 	}
 	

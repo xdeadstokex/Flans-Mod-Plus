@@ -41,65 +41,70 @@ public class PlayerClass extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
 
-        startingItemStrings = ConfigUtils.getSplitsFromKey(config, new String[]{"AddItem"});
-
-        lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
-        texture = ConfigUtils.configString(config, "SkinOverride", texture);
-
         try {
-            String hatShortName = ConfigUtils.configString(config, new String[]{"Hat", "Helmet"}, null);
-            if (hatShortName != null && !hatShortName.equalsIgnoreCase("None")) {
-                ArmourType potentialHat = ArmourType.getArmourType(hatShortName);
-                if (potentialHat == null) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Hat type not found for PlayerClass", new String[]{"Hat/Helmet", hatShortName}, null);
-                } else {
-                    hat = new ItemStack(potentialHat.item);
+            startingItemStrings = ConfigUtils.getSplitsFromKey(config, new String[]{"AddItem"});
+
+            lvl = ConfigUtils.configInt(config, "UnlockLevel", lvl);
+            texture = ConfigUtils.configString(config, "SkinOverride", texture);
+
+            try {
+                String hatShortName = ConfigUtils.configString(config, new String[]{"Hat", "Helmet"}, null);
+                if (hatShortName != null && !hatShortName.equalsIgnoreCase("None")) {
+                    ArmourType potentialHat = ArmourType.getArmourType(hatShortName);
+                    if (potentialHat == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Hat type not found for PlayerClass", new String[]{"Hat/Helmet", hatShortName}, null);
+                    } else {
+                        hat = new ItemStack(potentialHat.item);
+                    }
                 }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Helmet to player class", null, ex);
+            }
+
+            try {
+                String chestShortName = ConfigUtils.configString(config, new String[]{"Chest", "Top"}, null);
+                if (chestShortName != null && !chestShortName.equalsIgnoreCase("None")) {
+                    ArmourType potentialChest = ArmourType.getArmourType(chestShortName);
+                    if (potentialChest == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Chest/Top type not found for PlayerClass", new String[]{"Chest/Top", chestShortName}, null);
+                    } else {
+                        chest = new ItemStack(potentialChest.item);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Chest/Top to player class", null, ex);
+            }
+
+            try {
+                String legsShortName = ConfigUtils.configString(config, new String[]{"Legs", "Bottom"}, null);
+                if (legsShortName != null && !legsShortName.equalsIgnoreCase("None")) {
+                    ArmourType potentialLegs = ArmourType.getArmourType(legsShortName);
+                    if (potentialLegs == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Legs/Bottom type not found for PlayerClass", new String[]{"Legs/Bottom", legsShortName}, null);
+                    } else {
+                        legs = new ItemStack(potentialLegs.item);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Legs/Bottom to player class", null, ex);
+            }
+
+            try {
+                String shoesShortName = ConfigUtils.configString(config, new String[]{"Shoes", "Boots"}, null);
+                if (shoesShortName != null && !shoesShortName.equalsIgnoreCase("None")) {
+                    ArmourType potentialShoes = ArmourType.getArmourType(shoesShortName);
+                    if (potentialShoes == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Shoes/Boots type not found for PlayerClass", new String[]{"Shoes/Boots", shoesShortName}, null);
+                    } else {
+                        shoes = new ItemStack(potentialShoes.item);
+                    }
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Shoes/Boots to player class", null, ex);
             }
         } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Helmet to player class", null, ex);
-        }
-
-        try {
-            String chestShortName = ConfigUtils.configString(config, new String[]{"Chest", "Top"}, null);
-            if (chestShortName != null && !chestShortName.equalsIgnoreCase("None")) {
-                ArmourType potentialChest = ArmourType.getArmourType(chestShortName);
-                if (potentialChest == null) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Chest/Top type not found for PlayerClass", new String[]{"Chest/Top", chestShortName}, null);
-                } else {
-                    chest = new ItemStack(potentialChest.item);
-                }
-            }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Chest/Top to player class", null, ex);
-        }
-
-        try {
-            String legsShortName = ConfigUtils.configString(config, new String[]{"Legs", "Bottom"}, null);
-            if (legsShortName != null && !legsShortName.equalsIgnoreCase("None")) {
-                ArmourType potentialLegs = ArmourType.getArmourType(legsShortName);
-                if (potentialLegs == null) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Legs/Bottom type not found for PlayerClass", new String[]{"Legs/Bottom", legsShortName}, null);
-                } else {
-                    legs = new ItemStack(potentialLegs.item);
-                }
-            }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Legs/Bottom to player class", null, ex);
-        }
-
-        try {
-            String shoesShortName = ConfigUtils.configString(config, new String[]{"Shoes", "Boots"}, null);
-            if (shoesShortName != null && !shoesShortName.equalsIgnoreCase("None")) {
-                ArmourType potentialShoes = ArmourType.getArmourType(shoesShortName);
-                if (potentialShoes == null) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Shoes/Boots type not found for PlayerClass", new String[]{"Shoes/Boots", shoesShortName}, null);
-                } else {
-                    shoes = new ItemStack(potentialShoes.item);
-                }
-            }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Shoes/Boots to player class", null, ex);
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while reading player class", null, ex);
+            isValid = false;
         }
     }
 
@@ -113,11 +118,12 @@ public class PlayerClass extends InfoType {
      */
     @Override
     protected void postRead(TypeFile file) {
-        if (this.shortName != null) {
+        if (this.shortName != null && isValid) {
             classes.add(this);
+
+            onWorldLoad(null);
         }
 
-        onWorldLoad(null);
     }
 
     /**

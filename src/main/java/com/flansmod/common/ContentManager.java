@@ -130,7 +130,7 @@ public class ContentManager {
                         InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
                         infoType.read(typeFile);
 
-                        if (infoType.shortName != null) {
+                        if (infoType.shortName != null && infoType.isValid) {
                             switch (type) {
                                 case bullet:
                                     FlansMod.bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));

@@ -80,7 +80,7 @@ public class PartType extends InfoType {
 
     @Override
     public void postRead(TypeFile file) {
-        if (category == 2 && !useRFPower) {
+        if (category == 2 && !useRFPower && isValid) {
             for (EnumType type : worksWith) {
                 //If there is already a default engine for this type, compare and see if this one is better
                 if (defaultEngines.containsKey(type)) {
@@ -93,7 +93,7 @@ public class PartType extends InfoType {
             }
         }
 
-        if (this.shortName != null) {
+        if (this.shortName != null && isValid) {
             parts.add(this);
         }
     }
@@ -162,9 +162,9 @@ public class PartType extends InfoType {
                 FlansMod.logPackError(file.name, packName, shortName, "Error thrown while constructing PartBoxRecipe for part", split, ex);
             }
 
-        } catch (Exception e) {
-            FlansMod.log("Reading part file failed.");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while reading part", null, ex);
+            isValid = false;
         }
     }
 

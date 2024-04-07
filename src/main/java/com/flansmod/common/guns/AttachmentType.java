@@ -129,7 +129,7 @@ public class AttachmentType extends PaintableType implements IScope
 	public void postRead(TypeFile file) {
 		super.postRead(file);
 
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			attachments.add(this);
 		}
 	}
@@ -227,6 +227,7 @@ public class AttachmentType extends PaintableType implements IScope
 
 		} catch (Exception e) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading attachment config", null, e);
+			isValid = false;
 		}
 	}
 	

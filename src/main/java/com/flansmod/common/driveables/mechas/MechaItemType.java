@@ -124,6 +124,7 @@ public class MechaItemType extends InfoType
 			wasteCompact = ConfigUtils.configBool(config, "WasteCompact", wasteCompact);
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading Mecha Item file", null, ex);
+			isValid = false;
 		}
     }
 	

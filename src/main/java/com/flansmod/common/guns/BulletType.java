@@ -146,7 +146,7 @@ public class BulletType extends ShootableType
 	public void postRead(TypeFile file) {
 		super.postRead(file);
 
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			bullets.add(this);
 		}
 	}
@@ -287,6 +287,7 @@ public class BulletType extends ShootableType
 
 		} catch (Exception e) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error reading bullet config", null, e);
+			isValid = false;
 		}
 	}
 

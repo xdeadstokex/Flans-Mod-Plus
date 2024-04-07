@@ -159,7 +159,7 @@ public abstract class ShootableType extends InfoType {
             FlansMod.logPackError(file.name, packName, shortName, "Shootable with shortname already exists!", null, null);
         }
 
-        if (this.shortName != null) {
+        if (this.shortName != null && isValid) {
             shootables.put(shortName, this);
         }
 
@@ -176,87 +176,92 @@ public abstract class ShootableType extends InfoType {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
 
-        //Model and Texture
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            model = FlansMod.proxy.loadModel(modelString, shortName, ModelBase.class);
+        try {
+            //Model and Texture
+            if (FMLCommonHandler.instance().getSide().isClient()) {
+                model = FlansMod.proxy.loadModel(modelString, shortName, ModelBase.class);
+            }
+
+            texture = ConfigUtils.configString(config, "Texture", texture);
+
+            //Item Stuff
+            maxStackSize = ConfigUtils.configInt(config, new String[]{"StackSize", "MaxStackSize"}, maxStackSize);
+            dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", dropItemOnShoot);
+            dropItemOnReload = ConfigUtils.configString(config, "DropItemOnReload", dropItemOnReload);
+            dropItemOnHit = ConfigUtils.configString(config, "DropItemOnHit", dropItemOnHit);
+            roundsPerItem = ConfigUtils.configInt(config, "RoundsPerItem", roundsPerItem);
+
+            //Physics
+            fallSpeed = ConfigUtils.configFloat(config, "FallSpeed", fallSpeed);
+            throwSpeed = ConfigUtils.configFloat(config, new String[]{"ThrowSpeed", "ShootSpeed"}, throwSpeed);
+            hitBoxSize = ConfigUtils.configFloat(config, "HitBoxSize", hitBoxSize);
+
+            //Hit stuff - goofy logic, idk why.
+            if (config.containsKey("Damage")) {
+                damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = ConfigUtils.configFloat(config, "Damage", 0F);
+            }
+
+            damageVsLiving = ConfigUtils.configFloat(config, "DamageVsLiving", damageVsLiving);
+
+            if (config.containsKey("DamageVsPlayer")) {
+                damageVsPlayer = ConfigUtils.configFloat(config, "DamageVsPlayer", damageVsPlayer);
+                readDamageVsPlayer = true;
+            }
+
+            if (config.containsKey("DamageVsEntity")) {
+                damageVsEntity = ConfigUtils.configFloat(config, "DamageVsEntity", damageVsEntity);
+                readDamageVsEntity = true;
+            }
+
+            damageVsVehicles = ConfigUtils.configFloat(config, "DamageVsVehicles", damageVsVehicles);
+
+            if (config.containsKey("DamageVsPlanes")) {
+                damageVsPlanes = ConfigUtils.configFloat(config, "DamageVsPlanes", damageVsPlanes);
+                readDamageVsPlanes = true;
+            }
+
+
+            blockPenetrationModifier = ConfigUtils.configFloat(config, "BlockPenetrationModifier", blockPenetrationModifier);
+            ignoreArmorProbability = ConfigUtils.configFloat(config, "IgnoreArmorProbability", ignoreArmorProbability);
+            ignoreArmorDamageFactor = ConfigUtils.configFloat(config, "IgnoreArmorDamageFactor", ignoreArmorDamageFactor);
+            breaksGlass = ConfigUtils.configBool(config, "BreaksGlass", breaksGlass);
+            bounciness = ConfigUtils.configFloat(config, "Bounciness", bounciness);
+            hasLight = ConfigUtils.configBool(config, "HasLight", hasLight);
+            hasDynamicLight = ConfigUtils.configBool(config, "HasDynamicLight", hasDynamicLight);
+
+            //Detonation conditions etc
+            fuse = ConfigUtils.configInt(config, "Fuse", fuse);
+            despawnTime = ConfigUtils.configInt(config, "DespawnTime", despawnTime);
+            explodeOnImpact = ConfigUtils.configBool(config, new String[]{"ExplodeOnImpact", "DetonateOnImpact"}, explodeOnImpact);
+
+            //Detonation
+            fireRadius = ConfigUtils.configFloat(config, new String[]{"FireRadius", "Fire"}, fireRadius);
+            explosionRadius = ConfigUtils.configFloat(config, new String[]{"ExplosionRadius", "Explosion"}, explosionRadius);
+            explosionPower = ConfigUtils.configFloat(config, "ExplosionPower", explosionPower);
+            explosionBreaksBlocks = ConfigUtils.configBool(config, new String[]{"ExplosionBreaksBlocks", "ExplosionsBreaksBlocks", "ExplosionBreakBlocks", "ExplosionsBreakBlocks"}, explosionBreaksBlocks);
+            explosionDamageVsLiving = ConfigUtils.configFloat(config, "ExplosionDamageVsLiving", explosionDamageVsLiving);
+            explosionDamageVsPlayer = ConfigUtils.configFloat(config, "ExplosionDamageVsPlayer", explosionDamageVsPlayer);
+            explosionDamageVsPlane = ConfigUtils.configFloat(config, "ExplosionDamageVsPlane", explosionDamageVsPlane);
+            explosionDamageVsVehicle = ConfigUtils.configFloat(config, "ExplosionDamageVsVehicle", explosionDamageVsVehicle);
+            dropItemOnDetonate = ConfigUtils.configString(config, "DropItemOnDetonate", dropItemOnDetonate);
+            detonateSound = ConfigUtils.configString(config, "DetonateSound", detonateSound);
+
+            //Submunitions
+            hasSubmunitions = ConfigUtils.configBool(config, "HasSubmunitions", hasSubmunitions);
+            submunition = ConfigUtils.configString(config, "Submunition", submunition);
+            numSubmunitions = ConfigUtils.configInt(config, "NumSubmunitions", numSubmunitions);
+            subMunitionTimer = ConfigUtils.configInt(config, "SubmunitionDelay", subMunitionTimer);
+            submunitionSpread = ConfigUtils.configFloat(config, "SubmunitionSpread", submunitionSpread);
+            smokeParticleCount = ConfigUtils.configInt(config, "FlareParticleCount", smokeParticleCount);
+            debrisParticleCount = ConfigUtils.configInt(config, "DebrisParticleCount", debrisParticleCount);
+
+            //Particles
+            trailParticles = ConfigUtils.configBool(config, new String[]{"TrailParticles", "SmokeTrail"}, trailParticles);
+            trailParticleType = ConfigUtils.configString(config, "TrailParticleType", trailParticleType);
+        } catch (Exception ex) {
+            FlansMod.logPackError(file.name, packName, shortName, "Fatal error while reading Shootable", null, ex);
+            isValid = false;
         }
-
-        texture = ConfigUtils.configString(config, "Texture", texture);
-
-        //Item Stuff
-        maxStackSize = ConfigUtils.configInt(config, new String[]{"StackSize", "MaxStackSize"}, maxStackSize);
-        dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", dropItemOnShoot);
-        dropItemOnReload = ConfigUtils.configString(config, "DropItemOnReload", dropItemOnReload);
-        dropItemOnHit = ConfigUtils.configString(config, "DropItemOnHit", dropItemOnHit);
-        roundsPerItem = ConfigUtils.configInt(config, "RoundsPerItem",  roundsPerItem);
-
-        //Physics
-        fallSpeed = ConfigUtils.configFloat(config, "FallSpeed",  fallSpeed);
-        throwSpeed = ConfigUtils.configFloat(config, new String[]{"ThrowSpeed", "ShootSpeed"}, throwSpeed);
-        hitBoxSize = ConfigUtils.configFloat(config, "HitBoxSize",  hitBoxSize);
-
-        //Hit stuff - goofy logic, idk why.
-        if (config.containsKey("Damage")) {
-            damageVsLiving = damageVsPlayer = damageVsEntity = damageVsPlanes = damageVsVehicles = ConfigUtils.configFloat(config, "Damage", 0F);
-        }
-
-        damageVsLiving = ConfigUtils.configFloat(config, "DamageVsLiving",  damageVsLiving);
-
-        if (config.containsKey("DamageVsPlayer")) {
-            damageVsPlayer = ConfigUtils.configFloat(config, "DamageVsPlayer",  damageVsPlayer);
-            readDamageVsPlayer = true;
-        }
-
-        if (config.containsKey("DamageVsEntity")) {
-            damageVsEntity = ConfigUtils.configFloat(config, "DamageVsEntity",  damageVsEntity);
-            readDamageVsEntity = true;
-        }
-
-        damageVsVehicles = ConfigUtils.configFloat(config, "DamageVsVehicles",  damageVsVehicles);
-
-        if (config.containsKey("DamageVsPlanes")) {
-            damageVsPlanes = ConfigUtils.configFloat(config, "DamageVsPlanes",  damageVsPlanes);
-            readDamageVsPlanes = true;
-        }
-
-
-        blockPenetrationModifier = ConfigUtils.configFloat(config, "BlockPenetrationModifier", blockPenetrationModifier);
-        ignoreArmorProbability = ConfigUtils.configFloat(config, "IgnoreArmorProbability",  ignoreArmorProbability);
-        ignoreArmorDamageFactor = ConfigUtils.configFloat(config, "IgnoreArmorDamageFactor",  ignoreArmorDamageFactor);
-        breaksGlass = ConfigUtils.configBool(config, "BreaksGlass",  breaksGlass);
-        bounciness = ConfigUtils.configFloat(config, "Bounciness",  bounciness);
-        hasLight = ConfigUtils.configBool(config, "HasLight",  hasLight);
-        hasDynamicLight = ConfigUtils.configBool(config, "HasDynamicLight",  hasDynamicLight);
-
-        //Detonation conditions etc
-        fuse = ConfigUtils.configInt(config, "Fuse",  fuse);
-        despawnTime = ConfigUtils.configInt(config, "DespawnTime",  despawnTime);
-        explodeOnImpact = ConfigUtils.configBool(config, new String[]{"ExplodeOnImpact", "DetonateOnImpact"},  explodeOnImpact);
-
-        //Detonation
-        fireRadius = ConfigUtils.configFloat(config, new String[]{"FireRadius", "Fire"},  fireRadius);
-        explosionRadius = ConfigUtils.configFloat(config, new String[]{"ExplosionRadius", "Explosion"}, explosionRadius);
-        explosionPower = ConfigUtils.configFloat(config, "ExplosionPower",  explosionPower);
-        explosionBreaksBlocks = ConfigUtils.configBool(config, new String[] { "ExplosionBreaksBlocks", "ExplosionsBreaksBlocks", "ExplosionBreakBlocks", "ExplosionsBreakBlocks" },  explosionBreaksBlocks);
-        explosionDamageVsLiving = ConfigUtils.configFloat(config, "ExplosionDamageVsLiving",  explosionDamageVsLiving);
-        explosionDamageVsPlayer = ConfigUtils.configFloat(config, "ExplosionDamageVsPlayer",  explosionDamageVsPlayer);
-        explosionDamageVsPlane = ConfigUtils.configFloat(config, "ExplosionDamageVsPlane",  explosionDamageVsPlane);
-        explosionDamageVsVehicle = ConfigUtils.configFloat(config, "ExplosionDamageVsVehicle",  explosionDamageVsVehicle);
-        dropItemOnDetonate = ConfigUtils.configString(config, "DropItemOnDetonate", dropItemOnDetonate);
-        detonateSound = ConfigUtils.configString(config, "DetonateSound", detonateSound);
-
-        //Submunitions
-        hasSubmunitions = ConfigUtils.configBool(config, "HasSubmunitions",  hasSubmunitions);
-        submunition = ConfigUtils.configString(config, "Submunition", submunition);
-        numSubmunitions = ConfigUtils.configInt(config, "NumSubmunitions",  numSubmunitions);
-        subMunitionTimer = ConfigUtils.configInt(config, "SubmunitionDelay",  subMunitionTimer);
-        submunitionSpread = ConfigUtils.configFloat(config, "SubmunitionSpread",  submunitionSpread);
-        smokeParticleCount = ConfigUtils.configInt(config, "FlareParticleCount",  smokeParticleCount);
-        debrisParticleCount = ConfigUtils.configInt(config, "DebrisParticleCount",  debrisParticleCount);
-
-        //Particles
-        trailParticles = ConfigUtils.configBool(config, new String[]{"TrailParticles", "SmokeTrail"},  trailParticles);
-        trailParticleType = ConfigUtils.configString(config, "TrailParticleType", trailParticleType);
     }
 
     public static ShootableType getShootableType(String string) {

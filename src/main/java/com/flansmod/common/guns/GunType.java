@@ -500,7 +500,7 @@ public class GunType extends PaintableType implements IScope {
     public void postRead(TypeFile file) {
         super.postRead(file);
 
-        if (this.shortName != null) {
+        if (this.shortName != null & isValid) {
             gunList.add(this);
             guns.put(shortName, this);
         }
@@ -510,317 +510,317 @@ public class GunType extends PaintableType implements IScope {
     protected void read(ConfigMap config, TypeFile file) {
         super.read(config, file);
 
-        damage = ConfigUtils.configFloat(config, "Damage", damage);
-
-
-        meleeDamageDriveableModifier = ConfigUtils.configFloat(config, "MeleeDamageDriveableModifier", meleeDamageDriveableModifier);
-        recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
-        recoilCounterCoefficientSneaking = ConfigUtils.configFloat(config, "CounterRecoilForceSneaking", recoilCounterCoefficientSneaking);
-        recoilCounterCoefficientSprinting = ConfigUtils.configFloat(config, "CounterRecoilForceSprinting", recoilCounterCoefficientSprinting);
-        sneakSpreadModifier = ConfigUtils.configFloat(config, new String[] { "SneakSpreadModifier", "SneakSpreadMultiplier" }, sneakSpreadModifier);
-        sprintSpreadModifier = ConfigUtils.configFloat(config, new String[] { "SprintSpreadModifier", "SprintSpreadMultiplier"}, sprintSpreadModifier);
-        canForceReload = ConfigUtils.configBool(config, "CanForceReload", canForceReload);
-        allowRearm = ConfigUtils.configBool(config, "AllowRearm", allowRearm);
-        reloadTime = ConfigUtils.configInt(config, "ReloadTime", reloadTime);
-
-        //Recoil
-        recoilPitch = ConfigUtils.configFloat(config, "Recoil", recoilPitch);
-
-        String[] aSplit = ConfigUtils.getSplitFromKey(config, "FancyRecoil");
         try {
-            if (aSplit != null && aSplit.length > 1) {
-                recoil.read(aSplit);
-                useFancyRecoil = true;
-            }
-        } catch (Exception ex) {
-            useFancyRecoil = false;
-            FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", aSplit, ex);
-        }
-
-        recoilYaw = ConfigUtils.configFloat(config, "RecoilYaw", recoilYaw) / 10;
-        rndRecoilPitchRange = ConfigUtils.configFloat(config, "RandomRecoilRange", rndRecoilPitchRange);
-        rndRecoilYawRange = ConfigUtils.configFloat(config, "RandomRecoilYawRange", rndRecoilYawRange);
-        decreaseRecoilPitch = ConfigUtils.configFloat(config, "DecreaseRecoil", decreaseRecoilPitch);
-        decreaseRecoilYaw = ConfigUtils.configFloat(config, "DecreaseRecoilYaw", decreaseRecoilYaw);
-        decreaseRecoilYaw = decreaseRecoilYaw > 0 ? decreaseRecoilYaw : 0.5F;
-        recoilSneakingMultiplier = ConfigUtils.configFloat(config, "RecoilSneakingMultiplier", recoilSneakingMultiplier);
-        recoilSprintingMultiplier = ConfigUtils.configFloat(config, "RecoilSprintingMultiplier", recoilSprintingMultiplier);
-        recoilSneakingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSneakingMultiplierYaw", recoilSneakingMultiplierYaw);
-        recoilSprintingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSprintingMultiplierYaw", recoilSprintingMultiplierYaw);
-        defaultSpread = bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
-        adsSpreadModifier = ConfigUtils.configFloat(config, "ADSSpreadModifier", adsSpreadModifier);
-        adsSpreadModifierShotgun = ConfigUtils.configFloat(config, "ADSSpreadModifierShotgun", adsSpreadModifierShotgun);
-        numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
-        allowNumBulletsByBulletType = ConfigUtils.configBool(config, "AllowNumBulletsByBulletType", allowNumBulletsByBulletType);
-        allowSpreadByBullet = ConfigUtils.configBool(config, "AllowSpreadByBullet", allowSpreadByBullet);
-        canLockOnAngle = ConfigUtils.configInt(config, "CanLockAngle", canLockOnAngle);
-
-        //Lock on settings
-        lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
-        if (config.containsKey("LockOnToDriveables"))
-            lockOnToPlanes = lockOnToVehicles = lockOnToMechas = ConfigUtils.configBool(config, "LockOnToDriveables", false);
-        lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
-        lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
-        lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
-        lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
-        lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
-        maxRangeLockOn = ConfigUtils.configInt(config, "MaxRangeLockOn", maxRangeLockOn);
-
-        consumeGunUponUse = ConfigUtils.configBool(config, "ConsumeGunOnUse", consumeGunUponUse);
-        showCrosshair = ConfigUtils.configBool(config, "ShowCrosshair", showCrosshair);
-        dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", null);
-        numBurstRounds = ConfigUtils.configInt(config, "NumBurstRounds", numBurstRounds);
-        minigunStartSpeed = ConfigUtils.configFloat(config, "MinigunStartSpeed", minigunStartSpeed);
-
-        String line = ConfigUtils.configString(config, "ItemUseAction", null);
-        try {
-            if (line != null) {
-                itemUseAction = EnumAction.valueOf(line.toLowerCase());
-            }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "ItemUseAction not recognised in gun", new String[] { "ItemUseAction", line }, ex);
-        }
-
-        // This is needed, because the presence of the value overrides the default value of zero.
-        if (config.containsKey("HipFireWhileSprinting"))
-           hipFireWhileSprinting = ConfigUtils.configBool(config, "HipFireWhileSprinting", false) ? 1 : 2;
-
-        //Sounds
-        shootDelay = ConfigUtils.configFloat(config, "ShootDelay", shootDelay);
-        roundsPerMin = ConfigUtils.configFloat(config, "RoundsPerMin", roundsPerMin);
-        shootSoundLength = ConfigUtils.configInt(config, "SoundLength", shootSoundLength);
-        distortSound = ConfigUtils.configBool(config, "DistortSound", distortSound);
-        idleSoundRange = ConfigUtils.configInt(config, "IdleSoundRange", idleSoundRange);
-        meleeSoundRange = ConfigUtils.configInt(config, "MeleeSoundRange", meleeSoundRange);
-        reloadSoundRange = ConfigUtils.configInt(config, "ReloadSoundRange", reloadSoundRange);
-        gunSoundRange = ConfigUtils.configInt(config, "GunSoundRange", gunSoundRange);
-        shootSound = ConfigUtils.configGunSound(packName, config, "ShootSound", shootSound);
-        bulletInsert = ConfigUtils.configGunSound(packName, config, "BulletInsertSound", bulletInsert);
-        actionSound = ConfigUtils.configGunSound(packName, config, "ActionSound", actionSound);
-        lastShootSound = ConfigUtils.configGunSound(packName, config, "LastShootSound", lastShootSound);
-        suppressedShootSound = ConfigUtils.configGunSound(packName, config, "SuppressedShootSound", suppressedShootSound);
-        lastShootSoundSuppressed = ConfigUtils.configGunSound(packName, config, "LastSuppressedShootSound", lastShootSoundSuppressed);
-        reloadSound = ConfigUtils.configGunSound(packName, config, "ReloadSound", reloadSound);
-        reloadSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyReloadSound", reloadSoundOnEmpty);
-        clickSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyClickSound", clickSoundOnEmpty);
-        clickSoundOnEmptyRepeated = ConfigUtils.configGunSound(packName, config, "EmptyClickSoundRepeated", clickSoundOnEmptyRepeated);
-        idleSound = ConfigUtils.configGunSound(packName, config, "IdleSound", idleSound);
-        idleSoundLength = ConfigUtils.configInt(config, "IdleSoundLength", idleSoundLength);
-        meleeSound = ConfigUtils.configGunSound(packName, config, "MeleeSound", meleeSound);
-
-        //Looping sounds
-        warmupSound = ConfigUtils.configGunSound(packName, config, "WarmupSound", warmupSound);
-        warmupSoundLength = ConfigUtils.configInt(config, "WarmupSoundLength", warmupSoundLength);
-
-        loopedSound = ConfigUtils.configGunSound(packName, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
-        if (loopedSound != null && !loopedSound.isEmpty())
-            useLoopingSounds = true;
-
-        loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
-        cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
-        lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
-        distantShootSound = ConfigUtils.configGunSound(packName, config, new String[] { "DistantSound", "DistantShootSound" }, distantShootSound);
-        distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
+            damage = ConfigUtils.configFloat(config, "Damage", damage);
 
 
+            meleeDamageDriveableModifier = ConfigUtils.configFloat(config, "MeleeDamageDriveableModifier", meleeDamageDriveableModifier);
+            recoilCounterCoefficient = ConfigUtils.configFloat(config, "CounterRecoilForce", recoilCounterCoefficient);
+            recoilCounterCoefficientSneaking = ConfigUtils.configFloat(config, "CounterRecoilForceSneaking", recoilCounterCoefficientSneaking);
+            recoilCounterCoefficientSprinting = ConfigUtils.configFloat(config, "CounterRecoilForceSprinting", recoilCounterCoefficientSprinting);
+            sneakSpreadModifier = ConfigUtils.configFloat(config, new String[]{"SneakSpreadModifier", "SneakSpreadMultiplier"}, sneakSpreadModifier);
+            sprintSpreadModifier = ConfigUtils.configFloat(config, new String[]{"SprintSpreadModifier", "SprintSpreadMultiplier"}, sprintSpreadModifier);
+            canForceReload = ConfigUtils.configBool(config, "CanForceReload", canForceReload);
+            allowRearm = ConfigUtils.configBool(config, "AllowRearm", allowRearm);
+            reloadTime = ConfigUtils.configInt(config, "ReloadTime", reloadTime);
 
+            //Recoil
+            recoilPitch = ConfigUtils.configFloat(config, "Recoil", recoilPitch);
 
-        aSplit = ConfigUtils.getSplitFromKey(config, "Mode");
-
-        if (aSplit != null) {
+            String[] aSplit = ConfigUtils.getSplitFromKey(config, "FancyRecoil");
             try {
-                mode = EnumFireMode.getFireMode(aSplit[1]);
-                defaultmode = mode;
-                submode = new EnumFireMode[aSplit.length - 1];
-                for (int i = 0; i < submode.length; i++) {
-                    submode[i] = EnumFireMode.getFireMode(aSplit[1 + i]);
+                if (aSplit != null && aSplit.length > 1) {
+                    recoil.read(aSplit);
+                    useFancyRecoil = true;
                 }
             } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting gun mode", aSplit, ex);
+                useFancyRecoil = false;
+                FlansMod.logPackError(file.name, packName, shortName, "Failed to read fancy recoil", aSplit, ex);
             }
-        }
 
-        String scopeString = ConfigUtils.configString(config, "Scope", null);
-        if (scopeString == null || scopeString.equalsIgnoreCase("None")) {
-            hasScopeOverlay = false;
-        } else {
-            hasScopeOverlay = true;
-            defaultScopeTexture = scopeString;
-        }
+            recoilYaw = ConfigUtils.configFloat(config, "RecoilYaw", recoilYaw) / 10;
+            rndRecoilPitchRange = ConfigUtils.configFloat(config, "RandomRecoilRange", rndRecoilPitchRange);
+            rndRecoilYawRange = ConfigUtils.configFloat(config, "RandomRecoilYawRange", rndRecoilYawRange);
+            decreaseRecoilPitch = ConfigUtils.configFloat(config, "DecreaseRecoil", decreaseRecoilPitch);
+            decreaseRecoilYaw = ConfigUtils.configFloat(config, "DecreaseRecoilYaw", decreaseRecoilYaw);
+            decreaseRecoilYaw = decreaseRecoilYaw > 0 ? decreaseRecoilYaw : 0.5F;
+            recoilSneakingMultiplier = ConfigUtils.configFloat(config, "RecoilSneakingMultiplier", recoilSneakingMultiplier);
+            recoilSprintingMultiplier = ConfigUtils.configFloat(config, "RecoilSprintingMultiplier", recoilSprintingMultiplier);
+            recoilSneakingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSneakingMultiplierYaw", recoilSneakingMultiplierYaw);
+            recoilSprintingMultiplierYaw = ConfigUtils.configFloat(config, "RecoilSprintingMultiplierYaw", recoilSprintingMultiplierYaw);
+            defaultSpread = bulletSpread = ConfigUtils.configFloat(config, new String[]{"Accuracy", "Spread"}, defaultSpread);
+            adsSpreadModifier = ConfigUtils.configFloat(config, "ADSSpreadModifier", adsSpreadModifier);
+            adsSpreadModifierShotgun = ConfigUtils.configFloat(config, "ADSSpreadModifierShotgun", adsSpreadModifierShotgun);
+            numBullets = ConfigUtils.configInt(config, "NumBullets", numBullets);
+            allowNumBulletsByBulletType = ConfigUtils.configBool(config, "AllowNumBulletsByBulletType", allowNumBulletsByBulletType);
+            allowSpreadByBullet = ConfigUtils.configBool(config, "AllowSpreadByBullet", allowSpreadByBullet);
+            canLockOnAngle = ConfigUtils.configInt(config, "CanLockAngle", canLockOnAngle);
 
-        allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
+            //Lock on settings
+            lockOnSoundTime = ConfigUtils.configInt(config, "LockOnSoundTime", lockOnSoundTime);
+            if (config.containsKey("LockOnToDriveables"))
+                lockOnToPlanes = lockOnToVehicles = lockOnToMechas = ConfigUtils.configBool(config, "LockOnToDriveables", false);
+            lockOnToVehicles = ConfigUtils.configBool(config, "LockOnToVehicles", lockOnToVehicles);
+            lockOnToPlanes = ConfigUtils.configBool(config, "LockOnToPlanes", lockOnToPlanes);
+            lockOnToMechas = ConfigUtils.configBool(config, "LockOnToMechas", lockOnToMechas);
+            lockOnToPlayers = ConfigUtils.configBool(config, "LockOnToPlayers", lockOnToPlayers);
+            lockOnToLivings = ConfigUtils.configBool(config, "LockOnToLivings", lockOnToLivings);
+            maxRangeLockOn = ConfigUtils.configInt(config, "MaxRangeLockOn", maxRangeLockOn);
 
+            consumeGunUponUse = ConfigUtils.configBool(config, "ConsumeGunOnUse", consumeGunUponUse);
+            showCrosshair = ConfigUtils.configBool(config, "ShowCrosshair", showCrosshair);
+            dropItemOnShoot = ConfigUtils.configString(config, "DropItemOnShoot", null);
+            numBurstRounds = ConfigUtils.configInt(config, "NumBurstRounds", numBurstRounds);
+            minigunStartSpeed = ConfigUtils.configFloat(config, "MinigunStartSpeed", minigunStartSpeed);
 
-        deployable = ConfigUtils.configBool(config, "Deployable", deployable);
-
-        deployableModelString = ConfigUtils.configString(configMap, "DeployedModel", null);
-
-        casingModelString = ConfigUtils.configString(config, "CasingModel", null);
-
-        flashModelString = ConfigUtils.configString(config, "FlashModel", null);
-
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
-            casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
-            flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
-            model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
-        }
-
-
-
-        casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
-        flashTexture = ConfigUtils.configString(config, "FlashTexture", null);
-        muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", muzzleFlashParticle);
-        muzzleFlashParticleSize = ConfigUtils.configFloat(config, "MuzzleFlashParticleSize", muzzleFlashParticleSize);
-
-        useMuzzleFlashDefaults = !config.containsKey("ShowMuzzleFlashParticle");
-        showMuzzleFlashParticles = ConfigUtils.configBool(config, "ShowMuzzleFlashParticle", showMuzzleFlashParticles);
-
-        showMuzzleFlashParticlesFirstPerson = ConfigUtils.configBool(config, "ShowMuzzleFlashParticleFirstPerson", showMuzzleFlashParticlesFirstPerson);
-        muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
-        muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
-        modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
-        texture = ConfigUtils.configString(config, "Texture", texture);
-        hitTexture = ConfigUtils.configString(config, "HitTexture", hitTexture);
-        deployableTexture = ConfigUtils.configString(config, "DeployedTexture", deployableTexture);
-        topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", modelScale);
-        bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
-        sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
-        pivotHeight = ConfigUtils.configFloat(config, "PivotHeight", modelScale);
-
-        ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[] { "Ammo" });
-        for (String[] split : splits) {
+            String line = ConfigUtils.configString(config, "ItemUseAction", null);
             try {
-                ShootableType type = ShootableType.getShootableType(split[1]);
-                if (type == null) {
-                    FlansMod.logPackError(file.name, packName, shortName, "Couldn't find shootable type for adding Ammo to gun", split, null);
-                } else {
-                    ammo.add(type);
+                if (line != null) {
+                    itemUseAction = EnumAction.valueOf(line.toLowerCase());
                 }
             } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Ammo for gun", split, ex);
+                FlansMod.logPackError(file.name, packName, shortName, "ItemUseAction not recognised in gun", new String[]{"ItemUseAction", line}, ex);
             }
-        }
 
-        numPrimaryAmmoItems = ConfigUtils.configInt(config, new String[]{"NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun"},  numPrimaryAmmoItems);
-        bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
-        canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
-        canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
-        oneHanded = ConfigUtils.configBool(config, "OneHanded", oneHanded);
+            // This is needed, because the presence of the value overrides the default value of zero.
+            if (config.containsKey("HipFireWhileSprinting"))
+                hipFireWhileSprinting = ConfigUtils.configBool(config, "HipFireWhileSprinting", false) ? 1 : 2;
+
+            //Sounds
+            shootDelay = ConfigUtils.configFloat(config, "ShootDelay", shootDelay);
+            roundsPerMin = ConfigUtils.configFloat(config, "RoundsPerMin", roundsPerMin);
+            shootSoundLength = ConfigUtils.configInt(config, "SoundLength", shootSoundLength);
+            distortSound = ConfigUtils.configBool(config, "DistortSound", distortSound);
+            idleSoundRange = ConfigUtils.configInt(config, "IdleSoundRange", idleSoundRange);
+            meleeSoundRange = ConfigUtils.configInt(config, "MeleeSoundRange", meleeSoundRange);
+            reloadSoundRange = ConfigUtils.configInt(config, "ReloadSoundRange", reloadSoundRange);
+            gunSoundRange = ConfigUtils.configInt(config, "GunSoundRange", gunSoundRange);
+            shootSound = ConfigUtils.configGunSound(packName, config, "ShootSound", shootSound);
+            bulletInsert = ConfigUtils.configGunSound(packName, config, "BulletInsertSound", bulletInsert);
+            actionSound = ConfigUtils.configGunSound(packName, config, "ActionSound", actionSound);
+            lastShootSound = ConfigUtils.configGunSound(packName, config, "LastShootSound", lastShootSound);
+            suppressedShootSound = ConfigUtils.configGunSound(packName, config, "SuppressedShootSound", suppressedShootSound);
+            lastShootSoundSuppressed = ConfigUtils.configGunSound(packName, config, "LastSuppressedShootSound", lastShootSoundSuppressed);
+            reloadSound = ConfigUtils.configGunSound(packName, config, "ReloadSound", reloadSound);
+            reloadSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyReloadSound", reloadSoundOnEmpty);
+            clickSoundOnEmpty = ConfigUtils.configGunSound(packName, config, "EmptyClickSound", clickSoundOnEmpty);
+            clickSoundOnEmptyRepeated = ConfigUtils.configGunSound(packName, config, "EmptyClickSoundRepeated", clickSoundOnEmptyRepeated);
+            idleSound = ConfigUtils.configGunSound(packName, config, "IdleSound", idleSound);
+            idleSoundLength = ConfigUtils.configInt(config, "IdleSoundLength", idleSoundLength);
+            meleeSound = ConfigUtils.configGunSound(packName, config, "MeleeSound", meleeSound);
+
+            //Looping sounds
+            warmupSound = ConfigUtils.configGunSound(packName, config, "WarmupSound", warmupSound);
+            warmupSoundLength = ConfigUtils.configInt(config, "WarmupSoundLength", warmupSoundLength);
+
+            loopedSound = ConfigUtils.configGunSound(packName, config, new String[]{"LoopedSound", "SpinSound"}, loopedSound);
+            if (loopedSound != null && !loopedSound.isEmpty())
+                useLoopingSounds = true;
+
+            loopedSoundLength = ConfigUtils.configInt(config, new String[]{"LoopedSoundLength", "SpinSoundLength"}, loopedSoundLength);
+            cooldownSound = ConfigUtils.configGunSound(packName, config, "CooldownSound", cooldownSound);
+            lockOnSound = ConfigUtils.configGunSound(packName, config, "LockOnSound", lockOnSound);
+            distantShootSound = ConfigUtils.configGunSound(packName, config, new String[]{"DistantSound", "DistantShootSound"}, distantShootSound);
+            distantSoundRange = ConfigUtils.configInt(config, "DistantSoundRange", distantSoundRange);
 
 
+            aSplit = ConfigUtils.getSplitFromKey(config, "Mode");
 
-        usableByPlayers = ConfigUtils.configBool(config, "UsableByPlayers", usableByPlayers);
-        usableByMechas = ConfigUtils.configBool(config, "UsableByMechas", usableByMechas);
-
-
-
-        if (ConfigUtils.configBool(config, "UseCustomMeleeWhenShoot", false)) {
-            secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
-        }
-
-        meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
-
-        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AddNode" });
-        for (String[] split : splits) {
-            try {
-                meleePath.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
-                meleePathAngles.add(new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6])));
-            } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", split, ex);
+            if (aSplit != null) {
+                try {
+                    mode = EnumFireMode.getFireMode(aSplit[1]);
+                    defaultmode = mode;
+                    submode = new EnumFireMode[aSplit.length - 1];
+                    for (int i = 0; i < submode.length; i++) {
+                        submode[i] = EnumFireMode.getFireMode(aSplit[1 + i]);
+                    }
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while setting gun mode", aSplit, ex);
+                }
             }
-        }
 
-        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "MeleeDamagePoint", "MeleeDamageOffset" });
-        for (String[] split : splits) {
-            try {
-                meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
-            } catch (Exception ex) {
-                FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", split, ex);
+            String scopeString = ConfigUtils.configString(config, "Scope", null);
+            if (scopeString == null || scopeString.equalsIgnoreCase("None")) {
+                hasScopeOverlay = false;
+            } else {
+                hasScopeOverlay = true;
+                defaultScopeTexture = scopeString;
             }
-        }
+
+            allowNightVision = ConfigUtils.configBool(config, "AllowNightVision", allowNightVision);
 
 
-        //Player modifiers
-        moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
-        knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
-        switchDelay = ConfigUtils.configFloat(config, "SwitchDelay", switchDelay);
+            deployable = ConfigUtils.configBool(config, "Deployable", deployable);
 
-        //Attachment settings
-        allowAllAttachments = ConfigUtils.configBool(config, "AllowAllAttachments", allowAllAttachments);
+            deployableModelString = ConfigUtils.configString(configMap, "DeployedModel", null);
 
-        splits = ConfigUtils.getSplitsFromKey(config, new String[] { "AllowAttachments" });
-        try {
+            casingModelString = ConfigUtils.configString(config, "CasingModel", null);
+
+            flashModelString = ConfigUtils.configString(config, "FlashModel", null);
+
+            if (FMLCommonHandler.instance().getSide().isClient()) {
+                deployableModel = FlansMod.proxy.loadModel(deployableModelString, shortName, ModelMG.class);
+                casingModel = FlansMod.proxy.loadModel(casingModelString, shortName, ModelCasing.class);
+                flashModel = FlansMod.proxy.loadModel(flashModelString, shortName, ModelFlash.class);
+                model = FlansMod.proxy.loadModel(modelString, shortName, ModelGun.class);
+            }
+
+
+            casingTexture = ConfigUtils.configString(config, "CasingTexture", null);
+            flashTexture = ConfigUtils.configString(config, "FlashTexture", null);
+            muzzleFlashParticle = ConfigUtils.configString(config, "MuzzleFlashParticle", muzzleFlashParticle);
+            muzzleFlashParticleSize = ConfigUtils.configFloat(config, "MuzzleFlashParticleSize", muzzleFlashParticleSize);
+
+            useMuzzleFlashDefaults = !config.containsKey("ShowMuzzleFlashParticle");
+            showMuzzleFlashParticles = ConfigUtils.configBool(config, "ShowMuzzleFlashParticle", showMuzzleFlashParticles);
+
+            showMuzzleFlashParticlesFirstPerson = ConfigUtils.configBool(config, "ShowMuzzleFlashParticleFirstPerson", showMuzzleFlashParticlesFirstPerson);
+            muzzleFlashParticlesShoulderOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleShoulderOffset", muzzleFlashParticlesShoulderOffset);
+            muzzleFlashParticlesHandOffset = ConfigUtils.configVector(config, "MuzzleFlashParticleHandOffset", muzzleFlashParticlesHandOffset);
+            modelScale = ConfigUtils.configFloat(config, "ModelScale", modelScale);
+            texture = ConfigUtils.configString(config, "Texture", texture);
+            hitTexture = ConfigUtils.configString(config, "HitTexture", hitTexture);
+            deployableTexture = ConfigUtils.configString(config, "DeployedTexture", deployableTexture);
+            topViewLimit = ConfigUtils.configFloat(config, "TopViewLimit", modelScale);
+            bottomViewLimit = ConfigUtils.configFloat(config, "BottomViewLimit", modelScale);
+            sideViewLimit = ConfigUtils.configFloat(config, "SideViewLimit", modelScale);
+            pivotHeight = ConfigUtils.configFloat(config, "PivotHeight", modelScale);
+
+            ArrayList<String[]> splits = ConfigUtils.getSplitsFromKey(config, new String[]{"Ammo"});
             for (String[] split : splits) {
-                for (int i=1; i<split.length; i++) {
-                    AttachmentType type = AttachmentType.getAttachment(split[i]);
-                    if (type != null) {
-                        allowedAttachments.add(type);
+                try {
+                    ShootableType type = ShootableType.getShootableType(split[1]);
+                    if (type == null) {
+                        FlansMod.logPackError(file.name, packName, shortName, "Couldn't find shootable type for adding Ammo to gun", split, null);
                     } else {
-                        FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments (" + split[i] + ")", split, null);
+                        ammo.add(type);
+                    }
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown while adding Ammo for gun", split, ex);
+                }
+            }
+
+            numPrimaryAmmoItems = ConfigUtils.configInt(config, new String[]{"NumAmmoSlots", "NumAmmoItemsInGun", "LoadIntoGun"}, numPrimaryAmmoItems);
+            bulletSpeed = ConfigUtils.configFloat(config, "BulletSpeed", bulletSpeed);
+            canShootUnderwater = ConfigUtils.configBool(config, "CanShootUnderwater", canShootUnderwater);
+            canSetPosition = ConfigUtils.configBool(config, "CanSetPosition", canSetPosition);
+            oneHanded = ConfigUtils.configBool(config, "OneHanded", oneHanded);
+
+
+            usableByPlayers = ConfigUtils.configBool(config, "UsableByPlayers", usableByPlayers);
+            usableByMechas = ConfigUtils.configBool(config, "UsableByMechas", usableByMechas);
+
+
+            if (ConfigUtils.configBool(config, "UseCustomMeleeWhenShoot", false)) {
+                secondaryFunctionWhenShoot = EnumSecondaryFunction.CUSTOM_MELEE;
+            }
+
+            meleeTime = ConfigUtils.configInt(config, "MeleeTime", meleeTime);
+
+            splits = ConfigUtils.getSplitsFromKey(config, new String[]{"AddNode"});
+            for (String[] split : splits) {
+                try {
+                    meleePath.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+                    meleePathAngles.add(new Vector3f(Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6])));
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown during AddNode", split, ex);
+                }
+            }
+
+            splits = ConfigUtils.getSplitsFromKey(config, new String[]{"MeleeDamagePoint", "MeleeDamageOffset"});
+            for (String[] split : splits) {
+                try {
+                    meleeDamagePoints.add(new Vector3f(Float.parseFloat(split[1]) / 16F, Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F));
+                } catch (Exception ex) {
+                    FlansMod.logPackError(file.name, packName, shortName, "Error thrown during MeleeDamagePoint", split, ex);
+                }
+            }
+
+
+            //Player modifiers
+            moveSpeedModifier = ConfigUtils.configFloat(config, new String[]{"MoveSpeedModifier", "Slowness"}, moveSpeedModifier);
+            knockbackModifier = ConfigUtils.configFloat(config, new String[]{"KnockbackReduction", "KnockbackModifier"}, knockbackModifier);
+            switchDelay = ConfigUtils.configFloat(config, "SwitchDelay", switchDelay);
+
+            //Attachment settings
+            allowAllAttachments = ConfigUtils.configBool(config, "AllowAllAttachments", allowAllAttachments);
+
+            splits = ConfigUtils.getSplitsFromKey(config, new String[]{"AllowAttachments"});
+            try {
+                for (String[] split : splits) {
+                    for (int i = 1; i < split.length; i++) {
+                        AttachmentType type = AttachmentType.getAttachment(split[i]);
+                        if (type != null) {
+                            allowedAttachments.add(type);
+                        } else {
+                            FlansMod.logPackError(file.name, packName, shortName, "Attachment type not found for AllowAttachments (" + split[i] + ")", split, null);
+                        }
                     }
                 }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Failed to add allowed attachment with AllowAttachments", aSplit, ex);
             }
-        } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Failed to add allowed attachment with AllowAttachments", aSplit, ex);
-        }
 
-        allowBarrelAttachments = ConfigUtils.configBool(config, "AllowBarrelAttachments", allowBarrelAttachments);
-        allowScopeAttachments = ConfigUtils.configBool(config, "AllowScopeAttachments", allowScopeAttachments);
-        allowStockAttachments = ConfigUtils.configBool(config, "AllowStockAttachments", allowStockAttachments);
-        allowGripAttachments = ConfigUtils.configBool(config, "AllowGripAttachments", allowGripAttachments);
-        allowGadgetAttachments = ConfigUtils.configBool(config, "AllowGadgetAttachments", allowGadgetAttachments);
-        allowSlideAttachments = ConfigUtils.configBool(config, "AllowSlideAttachments", allowSlideAttachments);
-        allowPumpAttachments = ConfigUtils.configBool(config, "AllowPumpAttachments", allowPumpAttachments);
-        allowAccessoryAttachments = ConfigUtils.configBool(config, "AllowAccessoryAttachments", allowAccessoryAttachments);
-        numGenericAttachmentSlots = ConfigUtils.configInt(config, "NumGenericAttachmentSlots", numGenericAttachmentSlots);
+            allowBarrelAttachments = ConfigUtils.configBool(config, "AllowBarrelAttachments", allowBarrelAttachments);
+            allowScopeAttachments = ConfigUtils.configBool(config, "AllowScopeAttachments", allowScopeAttachments);
+            allowStockAttachments = ConfigUtils.configBool(config, "AllowStockAttachments", allowStockAttachments);
+            allowGripAttachments = ConfigUtils.configBool(config, "AllowGripAttachments", allowGripAttachments);
+            allowGadgetAttachments = ConfigUtils.configBool(config, "AllowGadgetAttachments", allowGadgetAttachments);
+            allowSlideAttachments = ConfigUtils.configBool(config, "AllowSlideAttachments", allowSlideAttachments);
+            allowPumpAttachments = ConfigUtils.configBool(config, "AllowPumpAttachments", allowPumpAttachments);
+            allowAccessoryAttachments = ConfigUtils.configBool(config, "AllowAccessoryAttachments", allowAccessoryAttachments);
+            numGenericAttachmentSlots = ConfigUtils.configInt(config, "NumGenericAttachmentSlots", numGenericAttachmentSlots);
 
             //Shield settings
-        String[] split = ConfigUtils.getSplitFromKey(config, "Shield");
-        try {
-            if (split != null) {
-                shield = true;
-                shieldDamageAbsorption = Float.parseFloat(split[1]);
-                shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
-                shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+            String[] split = ConfigUtils.getSplitFromKey(config, "Shield");
+            try {
+                if (split != null) {
+                    shield = true;
+                    shieldDamageAbsorption = Float.parseFloat(split[1]);
+                    shieldOrigin = new Vector3f(Float.parseFloat(split[2]) / 16F, Float.parseFloat(split[3]) / 16F, Float.parseFloat(split[4]) / 16F);
+                    shieldDimensions = new Vector3f(Float.parseFloat(split[5]) / 16F, Float.parseFloat(split[6]) / 16F, Float.parseFloat(split[7]) / 16F);
+                }
+            } catch (Exception ex) {
+                FlansMod.logPackError(file.name, packName, shortName, "Failed to config Shield", split, ex);
+            }
+
+            // secondary functions are listed here highest priority last. (overwritten)
+
+            // Zoom: lowest priority
+            zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
+            if (config.containsKey("ZoomLevel") && zoomLevel > 1F)
+                secondaryFunction = EnumSecondaryFunction.ZOOM;
+
+            FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
+            if (config.containsKey("FOVZoomLevel") && FOVFactor > 1F)
+                secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
+
+            //Modes and zoom settings
+            hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
+            minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
+            maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
+            if (maxZoom > 1F && hasVariableZoom)
+                secondaryFunction = EnumSecondaryFunction.ZOOM;
+            zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
+
+            // Melee: higher priority
+            meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
+            secondaryFunction = meleeDamage > 0 && config.containsKey("MeleeDamage") && !hasZoomOverlay() ? EnumSecondaryFunction.MELEE : secondaryFunction;
+
+            if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
+                secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
+            }
+
+            String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
+            secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
+
+
+            if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
+                processAnimationConfigs(config);
             }
         } catch (Exception ex) {
-            FlansMod.logPackError(file.name, packName, shortName, "Failed to config Shield", split, ex);
-        }
-
-        // secondary functions are listed here highest priority last. (overwritten)
-
-        // Zoom: lowest priority
-        zoomLevel = ConfigUtils.configFloat(config, "ZoomLevel", zoomLevel);
-        if (config.containsKey("ZoomLevel") && zoomLevel > 1F)
-            secondaryFunction = EnumSecondaryFunction.ZOOM;
-
-        FOVFactor = ConfigUtils.configFloat(config, "FOVZoomLevel", FOVFactor);
-        if (config.containsKey("FOVZoomLevel") && FOVFactor > 1F)
-            secondaryFunction = EnumSecondaryFunction.ADS_ZOOM;
-
-        //Modes and zoom settings
-        hasVariableZoom = ConfigUtils.configBool(config, "HasVariableZoom", hasVariableZoom);
-        minZoom = ConfigUtils.configFloat(config, "MinZoom", minZoom);
-        maxZoom = ConfigUtils.configFloat(config, "MaxZoom", maxZoom);
-        if(maxZoom>1F && hasVariableZoom)
-            secondaryFunction=EnumSecondaryFunction.ZOOM;
-        zoomAugment = ConfigUtils.configFloat(config, "ZoomAugment", zoomAugment);
-
-        // Melee: higher priority
-        meleeDamage = ConfigUtils.configFloat(config, "MeleeDamage", meleeDamage);
-        secondaryFunction = meleeDamage > 0 && config.containsKey("MeleeDamage") && !hasZoomOverlay() ? EnumSecondaryFunction.MELEE : secondaryFunction;
-
-        if (ConfigUtils.configBool(config, "UseCustomMelee", false)) {
-            secondaryFunction = EnumSecondaryFunction.CUSTOM_MELEE;
-        }
-
-        String secondaryFunctionString = ConfigUtils.configString(config, "SecondaryFunction", secondaryFunction.toString());
-        secondaryFunction = EnumSecondaryFunction.get(secondaryFunctionString);
-
-
-        if (FMLCommonHandler.instance().getSide().isClient() && model != null) {
-            processAnimationConfigs(config);
+            FlansMod.logPackError(file.name, shortName, packName, "Fatal error while loading gun", null, ex);
+            isValid = false;
         }
     }
 

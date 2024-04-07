@@ -133,7 +133,7 @@ public class GrenadeType extends ShootableType
 	public void postRead(TypeFile file) {
 		super.postRead(file);
 
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			grenades.add(this);
 		}
 	}
@@ -231,6 +231,7 @@ public class GrenadeType extends ShootableType
 			numClips = ConfigUtils.configInt(config, "NumClips", numClips);
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading grenade file", null, ex);
+			isValid = false;
 		}
 	}
 

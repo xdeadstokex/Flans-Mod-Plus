@@ -44,7 +44,7 @@ public class ArmourBoxType extends InfoType
 	@Override
 	public void postRead(TypeFile file)
 	{
-		if (this.shortName != null)
+		if (this.shortName != null && this.isValid)
 		{
 			boxes.put(shortName, this);
 		}
@@ -114,6 +114,7 @@ public class ArmourBoxType extends InfoType
 			sideTexturePath = ConfigUtils.configString(config, "SideTexture", sideTexturePath);
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading armour box", null, ex);
+			isValid = false;
 		}
 	}
 

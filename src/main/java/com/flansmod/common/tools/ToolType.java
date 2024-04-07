@@ -53,7 +53,7 @@ public class ToolType extends InfoType
 	@Override
 	protected void postRead(TypeFile file)
 	{
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			tools.put(shortName, this);
 		}
 	}
@@ -110,6 +110,7 @@ public class ToolType extends InfoType
 			foodness = ConfigUtils.configInt(config, new String[]{"Food", "Foodness"}, foodness);
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred while reading tool file", null, ex);
+			isValid = false;
 		}
 	}
 	

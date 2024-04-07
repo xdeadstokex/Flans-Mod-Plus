@@ -26,6 +26,8 @@ public abstract class InfoType implements IInfoType {
      */
     public static List<InfoType> infoTypes = new ArrayList<>();
 
+    public boolean isValid = true;
+
     public Item item;
     public int colour = 0xffffff;
     public String iconPath;
@@ -119,7 +121,7 @@ public abstract class InfoType implements IInfoType {
 
         shortName = ConfigUtils.configString(configMap, "ShortName", shortName);
 
-        if (shortName == null ) {
+        if (shortName == null) {
             infoTypes.remove(this);
             FlansMod.log("Config without shortname removed pack: %s, filename: %s", file.pack, file.name);
         } else {
@@ -127,6 +129,10 @@ public abstract class InfoType implements IInfoType {
 
             read(configMap, file);
             postRead(file);
+
+            if (!isValid) {
+                infoTypes.remove(this);
+            }
         }
     }
 

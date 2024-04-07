@@ -59,7 +59,7 @@ public class AAGunType extends InfoType
 
 	@Override
 	public void postRead(TypeFile file) {
-		if (this.shortName != null) {
+		if (this.shortName != null && this.isValid) {
 			infoTypes.add(this);
 		}
 	}
@@ -162,6 +162,7 @@ public class AAGunType extends InfoType
 
 		} catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error occurred when reading AAGun", null, ex);
+			isValid = false;
 		}
 	}
 

@@ -67,7 +67,7 @@ public class GunBoxType extends InfoType
 		currentPage.addGunList(Arrays.copyOf(gunEntries, nextGun + 1));
 		gunPages.add(currentPage);
 
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			gunBoxMap.put(this.shortName, this);
 		}
 	}
@@ -171,6 +171,7 @@ public class GunBoxType extends InfoType
 		}
 		catch (Exception ex) {
 			FlansMod.logPackError(file.name, packName, shortName, "Fatal error thrown while loading GunBox", null, ex);
+			isValid = false;
 		}
 	}
 

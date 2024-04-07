@@ -58,7 +58,7 @@ public class Team extends InfoType
 	@Override
 	protected void postRead(TypeFile file)
 	{
-		if (this.shortName != null) {
+		if (this.shortName != null && isValid) {
 			teams.add(this);
 		}
 	}
@@ -145,6 +145,7 @@ public class Team extends InfoType
 		{
 			FlansMod.log("Reading team file failed.");
 			e.printStackTrace();
+			isValid = false;
 		}
 	}
 	

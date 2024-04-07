@@ -365,7 +365,7 @@ public class DriveableType extends PaintableType {
             bulletDetectionRadius += 1;
         }
 
-        if (this.shortName != null) {
+        if (this.shortName != null && isValid) {
             types.add(this);
         }
     }
@@ -1283,6 +1283,7 @@ public class DriveableType extends PaintableType {
 
         } catch (Exception ex) {
             FlansMod.logPackError(file.name, packName, shortName, "Fatal Error! Reading DriveableType failed", null, ex);
+            isValid = false;
         }
     }
 
