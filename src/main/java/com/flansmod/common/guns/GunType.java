@@ -1633,9 +1633,6 @@ public class GunType extends PaintableType implements IScope {
     }
 
     public boolean getShouldShowMuzzleFlash() {
-        FlansMod.log("A " + useMuzzleFlashDefaults);
-        FlansMod.log("B " + FlansMod.showMuzzleFlashParticlesDefault);
-        FlansMod.log("C " + showMuzzleFlashParticles);
         return useMuzzleFlashDefaults ? FlansMod.showMuzzleFlashParticlesDefault : showMuzzleFlashParticles;
     }
 
