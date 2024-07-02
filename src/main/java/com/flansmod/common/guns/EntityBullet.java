@@ -15,6 +15,7 @@ import com.flansmod.common.guns.PenetrationLoss.PenetrationLossType;
 import com.flansmod.common.guns.raytracing.*;
 import com.flansmod.common.network.PacketFlak;
 import com.flansmod.common.network.PacketHitMarker;
+import com.flansmod.common.network.PacketManualGuidance;
 import com.flansmod.common.network.PacketPlaySound;
 import com.flansmod.common.teams.Team;
 import com.flansmod.common.teams.TeamsManager;
@@ -52,6 +53,8 @@ import java.util.List;
 public class EntityBullet extends EntityShootable implements IEntityAdditionalSpawnData, IEntityBullet {
     private static int bulletLife = 600; //Kill bullets after 30 seconds
     public Entity owner;
+    public Vector3f ownerPos = null;
+    public Vector3f ownerLook = null;
     private int ticksInAir;
     public BulletType type;
 
@@ -1098,6 +1101,26 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
         }
         this.renderDistanceWeight = 256D;
         if (owner != null && type.manualGuidance && VLSDelay <= 0 && lockedOnTo == null) {
+            if (worldObj.isRemote && owner == Minecraft.getMinecraft().thePlayer) {
+                Vector3f tempPos = new Vector3f((float)owner.posX, (float)owner.posY, (float)owner.posZ);
+                Vector3f tempLook = new Vector3f((float)owner.getLookVec().xCoord, (float)owner.getLookVec().yCoord, (float)owner.getLookVec().zCoord);
+
+                float deltaPos = ownerPos == null ? 1000 : Vector3f.sub(tempPos, ownerPos, null).lengthSquared();
+                float deltaLook = ownerLook == null ? 1000 : Vector3f.sub(tempLook, ownerLook, null).lengthSquared();
+
+                ownerPos = tempPos;
+                ownerLook = tempLook;
+
+                if (deltaPos > 1 || deltaLook > 0.0001) {
+                    FlansMod.getPacketHandler().sendToServer(
+                            new PacketManualGuidance(
+                                    getEntityId(),
+                                    ownerPos.x, ownerPos.y, ownerPos.z,
+                                    ownerLook.x, ownerLook.y, ownerLook.z
+                            )
+                    );
+                }
+            }
             /*
              boolean beamRider = true;
              if(!beamRider)
@@ -1114,8 +1137,9 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
 
             Vector3f lookVec;
             Vector3f origin2;
-            lookVec = new Vector3f((float) owner.getLookVec().xCoord, (float) owner.getLookVec().yCoord, (float) owner.getLookVec().zCoord);
-            origin2 = new Vector3f(owner.posX, owner.posY, owner.posZ);
+            lookVec = ownerLook != null ? ownerLook : new Vector3f((float) owner.getLookVec().xCoord, (float) owner.getLookVec().yCoord, (float) owner.getLookVec().zCoord);
+
+            origin2 = ownerPos != null ? ownerPos : new Vector3f(owner.posX, owner.posY, owner.posZ);
 
             if (type.fixedDirection) {
                 lookVec = lookVector;
@@ -1131,11 +1155,6 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
             lookVec.normalise();
 
             Vector3f targetPoint = new Vector3f(origin2.x + (lookVec.x * d), origin2.y + (lookVec.y * d), origin2.z + (lookVec.z * d));
-            //FlansMod.proxy.spawnParticle("explode", targetPoint.x,targetPoint.y,targetPoint.z, 0,0,0);
-            //double dX = owner.posX - this.posX;
-            //double dY = owner.posY - this.posY;
-            //double dZ = owner.posZ - this.posZ;
-            //targetPoint = new Vector3f(owner.posX, owner.posY, owner.posZ);
 
             Vector3f diff = Vector3f.sub(targetPoint, new Vector3f(posX, posY, posZ), null);
 
