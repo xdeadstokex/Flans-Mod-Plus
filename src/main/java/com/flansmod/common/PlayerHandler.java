@@ -36,7 +36,7 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class PlayerHandler {
     private static final Random rand = new Random();
-    private boolean statsSynced=false;
+    private boolean statsSynced = false;
     public static Map<String, PlayerData> serverSideData = new HashMap<String, PlayerData>();
     public static Map<String, PlayerData> clientSideData = new HashMap<String, PlayerData>();
     public static Map<String, PlayerStats> serverSidePlayerStats = new HashMap<String, PlayerStats>();
@@ -106,7 +106,7 @@ public class PlayerHandler {
                 getPlayerData((EntityPlayer) player).tick((EntityPlayer) player);
             }
         }
-        if(TeamsManager.getInstance().currentRound!=null) {
+        if (TeamsManager.getInstance().currentRound != null) {
             if (!statsSynced) {
                 if (PlayerStats.getAllPlayersStats() != null) {
                     for (PlayerStats stats : PlayerStats.getAllPlayersStats()) {
@@ -188,7 +188,7 @@ public class PlayerHandler {
                 serverSideData.put(username, new PlayerData(username));
             clientsToRemoveAfterThisRound.remove(username);
             if (!serverSidePlayerStats.containsKey(username))
-                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP)player));
+                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP) player));
 
         } else if (event instanceof PlayerLoggedOutEvent) {
             EntityPlayer player = event.player;
@@ -202,7 +202,7 @@ public class PlayerHandler {
             if (!serverSideData.containsKey(username))
                 serverSideData.put(username, new PlayerData(username));
             if (!serverSidePlayerStats.containsKey(username))
-                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP)player));
+                serverSidePlayerStats.put(username, new PlayerStats((EntityPlayerMP) player));
 
         }
     }

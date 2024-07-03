@@ -36,7 +36,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -237,7 +240,7 @@ public class TeamsManager {
             }
 
             if (autoBalance() && time % autoBalanceInterval == autoBalanceInterval - 200 && needAutobalance()) {
-                TeamsManager.messageAll("\u00a7fAutobalancing teams...");
+                TeamsManager.messageAll("§fAutobalancing teams...");
             }
             if (autoBalance() && time % autoBalanceInterval == 0 && needAutobalance()) {
                 autobalance();
@@ -259,9 +262,7 @@ public class TeamsManager {
             return false;
         int membersTeamA = currentRound.teams[0].members.size();
         int membersTeamB = currentRound.teams[1].members.size();
-        if (Math.abs(membersTeamA - membersTeamB) > 1)
-            return true;
-        return false;
+        return Math.abs(membersTeamA - membersTeamB) > 1;
     }
 
     public void autobalance() {
@@ -317,24 +318,23 @@ public class TeamsManager {
             case 2:
                 return "Everybody's a loser but the clock.";
             default:
-                return "Time up.";
+                return "Time's up.";
         }
     }
 
     public void displayScoreboardGUI() {
-        for (EntityPlayer player : getPlayers()) {
+        for (EntityPlayerMP player : getPlayers()) {
             PlayerData data = PlayerHandler.getPlayerData(player);
             if (!data.builder)
-                sendPacketToPlayer(new PacketRoundFinished(scoreDisplayTime), (EntityPlayerMP) player);
+                sendPacketToPlayer(new PacketRoundFinished(scoreDisplayTime), player);
         }
     }
 
     public void displayVotingGUI() {
-
-        for (EntityPlayer player : getPlayers()) {
+        for (EntityPlayerMP player : getPlayers()) {
             PlayerData data = PlayerHandler.getPlayerData(player);
             if (!data.builder)
-                sendPacketToPlayer(new PacketVoting(this), (EntityPlayerMP) player);
+                sendPacketToPlayer(new PacketVoting(this), player);
         }
     }
 
@@ -457,7 +457,7 @@ public class TeamsManager {
 
         showTeamsMenuToAll();
 
-        messageAll("\u00a7fA new round has started!");
+        messageAll("§fA new round has started!");
     }
 
     private void generateRounds(int roundCountForGenerate) {
@@ -503,7 +503,7 @@ public class TeamsManager {
     }
 
     public void showTeamsMenuToAll(boolean info) {
-        for (EntityPlayer player : getPlayers()) {
+        for (EntityPlayerMP player : getPlayers()) {
             PlayerData data = PlayerHandler.getPlayerData(player);
             //Catch for broken player data
             if (data == null)
@@ -512,7 +512,7 @@ public class TeamsManager {
             if (data.builder && playerIsOp(player))
                 continue;
 
-            sendTeamsMenuToPlayer((EntityPlayerMP) player, info);
+            sendTeamsMenuToPlayer(player, info);
         }
     }
 
@@ -843,8 +843,8 @@ public class TeamsManager {
         Team team = PlayerHandler.getPlayerData(player).newTeam;
         if (team == null) {
             sendTeamsMenuToPlayer(player);
-        } else if (team != Team.spectators && team.classes.size() > 0) {
-            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[team.classes.size()]), PlayerStats.getPlayerLvl(player)), player);
+        } else if (team != Team.spectators && !team.classes.isEmpty()) {
+            sendPacketToPlayer(new PacketTeamSelect(team.classes.toArray(new PlayerClass[0]), PlayerStats.getPlayerLvl(player)), player);
         }
     }
 
@@ -1072,7 +1072,7 @@ public class TeamsManager {
         if (!checkFileExists(file))
             return;
         try {
-            NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(new FileInputStream(file)));
+            NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(Files.newInputStream(file.toPath())));
             nextBaseID = tags.getInteger("NextBaseID");
             //Read maps
             for (int i = 0; i < tags.getInteger("NumberOfMaps"); i++) {
@@ -1081,7 +1081,7 @@ public class TeamsManager {
                 maps.put(map.shortName, map);
             }
 
-            if (maps.size() == 0) {
+            if (maps.isEmpty()) {
                 maps.put("default" + world.getWorldInfo().getVanillaDimension(), new TeamsMap(world, "default" + world.getWorldInfo().getVanillaDimension(), "Default " + world.getWorldInfo().getWorldName()));
             }
 
@@ -1104,7 +1104,7 @@ public class TeamsManager {
             canBreakGlass = tags.getBoolean("CanBreakGlass");
             if (tags.hasKey("SurvivalCanBreakVehicles")) {
                 survivalCanBreakVehicles = tags.getBoolean("SurvivalCanBreakVehicles");
-                // default is false if key aint there
+                // default is false if key ain't there
             } else {
                 survivalCanBreakVehicles = true;
             }
@@ -1126,12 +1126,10 @@ public class TeamsManager {
             driveablesBreakBlocks = tags.getBoolean("BreakBlocks");
 
             //Start the rotation
-            if (enabled && rounds.size() > 0)
+            if (enabled && !rounds.isEmpty())
                 start();
         } catch (Exception e) {
-            FlansMod.log("Failed to load from teams.dat");
-            e.printStackTrace();
-
+            FlansMod.logException("Failed to load from teams.dat", e);
         }
 
         //Reset all infotypes. Specifically, send this to player classes so that they may create itemstacks from strings regarding attachments for guns
@@ -1200,22 +1198,18 @@ public class TeamsManager {
             tags.setInteger("PlaneLife", planeLife);
             tags.setBoolean("BreakBlocks", driveablesBreakBlocks);
 
-            CompressedStreamTools.write(tags, new DataOutputStream(new FileOutputStream(file)));
+            CompressedStreamTools.write(tags, new DataOutputStream(Files.newOutputStream(file.toPath())));
         } catch (Exception e) {
-            FlansMod.log("Failed to save to teams.dat");
-            e.printStackTrace();
+            FlansMod.logger.error("Failed to save to teams.dat", e);
         }
     }
 
-    private boolean checkFileExists(File file) {
+    public static boolean checkFileExists(File file) {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                FlansMod.log("Created new file");
             } catch (Exception e) {
-                FlansMod.log("Failed to create file");
-                FlansMod.log(file.getAbsolutePath());
-                e.printStackTrace();
+                FlansMod.logException("Failed to create file", e);
             }
             return false;
         }

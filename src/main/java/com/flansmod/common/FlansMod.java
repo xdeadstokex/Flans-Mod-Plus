@@ -11,23 +11,17 @@ import com.flansmod.common.eventhandlers.*;
 import com.flansmod.common.guns.*;
 import com.flansmod.common.guns.boxes.BlockGunBox;
 import com.flansmod.common.guns.boxes.GunBoxEntry;
-import com.flansmod.common.guns.boxes.GunBoxType;
 import com.flansmod.common.guns.boxes.GunPage;
 import com.flansmod.common.network.PacketHandler;
 import com.flansmod.common.paintjob.BlockPaintjobTable;
 import com.flansmod.common.paintjob.TileEntityPaintjobTable;
 import com.flansmod.common.parts.ItemPart;
-import com.flansmod.common.parts.PartType;
-import com.flansmod.common.sync.Sync;
 import com.flansmod.common.sync.SyncEventHandler;
 import com.flansmod.common.teams.*;
 import com.flansmod.common.tools.EntityParachute;
 import com.flansmod.common.tools.ItemTool;
-import com.flansmod.common.tools.ToolType;
-import com.flansmod.common.types.EnumType;
 import com.flansmod.common.types.IGunboxDescriptionable;
 import com.flansmod.common.types.InfoType;
-import com.flansmod.common.types.TypeFile;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -58,15 +52,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Mod(modid = FlansMod.MODID, name = "Flan's Mod Ultimate (Stability Edition)", version = FlansMod.VERSION, acceptableRemoteVersions = "[" + FlansMod.VERSION + "]", guiFactory = "com.flansmod.client.gui.config.ModGuiFactory")
@@ -226,7 +214,7 @@ public class FlansMod {
         }
 
         //Set up mod blocks and items
-	    crosshairsymbol = (new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
+        crosshairsymbol = (new Item()).setUnlocalizedName("crosshairsymbol").setTextureName("FlansMod:" + "crosshairsymbol");
         workbench = (BlockFlansWorkbench) (new BlockFlansWorkbench(1, 0).setBlockName("flansWorkbench").setBlockTextureName("flansWorkbench"));
         GameRegistry.registerBlock(workbench, ItemBlockManyNames.class, "flansWorkbench");
         GameRegistry.addRecipe(new ItemStack(workbench, 1, 0), "BBB", "III", "III", 'B', Items.bowl, 'I', Items.iron_ingot);
@@ -346,7 +334,7 @@ public class FlansMod {
      * The mod post-initialisation method
      */
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) throws Exception {
+    public void postInit(FMLPostInitializationEvent event) {
         //Initialize the packet handler
         packetHandler.postInitialise();
 
@@ -409,7 +397,7 @@ public class FlansMod {
     @EventHandler
     public void registerCommand(FMLServerStartedEvent e) {
         CommandHandler handler = ((CommandHandler) FMLCommonHandler.instance().getSidedDelegate().getServer().getCommandManager());
-	    //handler.registerCommand(new CommandFlans());
+        //handler.registerCommand(new CommandFlans());
         handler.registerCommand(new CommandTeams());
     }
 
@@ -419,217 +407,17 @@ public class FlansMod {
             syncCommonConfig();
     }
 
-    /**
-     * Reads type files from all content packs
-     * @deprecated Use {@link ContentManager#loadContent()}.
-     */
-    @Deprecated
-    private void getTypeFiles(List<File> contentPacks) {
-        for (File contentPack : contentPacks) {
-            if (contentPack.isDirectory()) {
-                File mainConfig = new File(contentPack, "pack.txt");
-                if (mainConfig.exists()) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new FileReader(mainConfig));
-
-                    } catch (IOException e) {
-                        FlansMod.logger.error("Could not read pack configuration", e);
-                    }
-                }
-
-                for (EnumType typeToCheckFor : EnumType.values()) {
-                    for (String folderName : typeToCheckFor.folderNames) {
-                        File typesDir = new File(contentPack, "/" + folderName + "/");
-                        if (!typesDir.exists())
-                            continue;
-
-                        for (File file : typesDir.listFiles()) {
-                            try {
-                                BufferedReader reader = new BufferedReader(new FileReader(file));
-                                String[] splitName = file.getName().split("/");
-                                TypeFile typeFile = new TypeFile(typeToCheckFor, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
-                                for (; ; ) {
-                                    String line;
-                                    try {
-                                        line = reader.readLine();
-                                    } catch (Exception e) {
-                                        break;
-                                    }
-                                    if (line == null)
-                                        break;
-                                    typeFile.lines.add(line);
-                                }
-                                reader.close();
-                            } catch (IOException e) {
-                                logger.error(e);
-                            }
-                        }
-                    }
-                }
-            } else {
-                try {
-                    ZipFile zip = new ZipFile(contentPack);
-                    ZipInputStream zipStream = new ZipInputStream(Files.newInputStream(contentPack.toPath()));
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(zipStream));
-                    ZipEntry zipEntry;
-                    do {
-                        zipEntry = zipStream.getNextEntry();
-                        if (zipEntry == null)
-                            continue;
-                        TypeFile typeFile = null;
-                        for (EnumType type : EnumType.values()) {
-                            for (String folderName : type.folderNames) {
-                                if (zipEntry.getName().startsWith(folderName + "/") && zipEntry.getName().split(folderName + "/").length > 1 && zipEntry.getName().split(folderName + "/")[1].length() > 0) {
-                                    String[] splitName = zipEntry.getName().split("/");
-                                    typeFile = new TypeFile(type, splitName[splitName.length - 1].split("\\.")[0], contentPack.getName());
-                                }
-                            }
-                        }
-                        if (typeFile == null) {
-                            continue;
-                        }
-                        for (; ; ) {
-                            String line;
-                            try {
-                                line = reader.readLine();
-                            } catch (Exception e) {
-                                break;
-                            }
-                            if (line == null)
-                                break;
-                            typeFile.lines.add(line);
-                        }
-                    }
-                    while (zipEntry != null);
-                    reader.close();
-                    zip.close();
-                    zipStream.close();
-                } catch (IOException e) {
-                    logger.error(e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Reads Flan content packs.
-     *
-     * @param event Forge PreInitialization event.
-     * @deprecated Use {@link ContentManager#loadContent()} instead.
-     */
-    @Deprecated
-    private void readContentPacks(FMLPreInitializationEvent event) {
-        // Icons, Skins, Models
-        // Get the classloader in order to load the images
-        ClassLoader classloader = (net.minecraft.server.MinecraftServer.class).getClassLoader();
-        Method method;
-        try {
-            method = (java.net.URLClassLoader.class).getDeclaredMethod("addURL", java.net.URL.class);
-            method.setAccessible(true);
-        } catch (Exception e) {
-            log("Failed to get class loader. All content loading will now fail.");
-            if (FlansMod.printStackTrace) {
-                logger.error(e);
-            }
-            return;
-        }
-
-        List<File> contentPacks = proxy.getContentList(method, classloader);
-
-        if (!event.getSide().equals(Side.CLIENT)) {
-            //Gametypes (Server only)
-            // TODO: gametype loader
-        }
-
-        getTypeFiles(contentPacks);
-
-        for (EnumType type : EnumType.values()) {
-            Class<? extends InfoType> typeClass = type.getTypeClass();
-            for (TypeFile typeFile : TypeFile.files.get(type)) {
-                try {
-                    if (!(typeFile.lines.size() == 0)) {
-                        InfoType infoType = (typeClass.getConstructor(TypeFile.class).newInstance(typeFile));
-                        infoType.read(typeFile);
-                        if (infoType.shortName != null) {
-                            switch (type) {
-                                case bullet:
-                                    bulletItems.add((ItemBullet) new ItemBullet((BulletType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case attachment:
-                                    attachmentItems.add((ItemAttachment) new ItemAttachment((AttachmentType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case gun:
-                                    gunItems.add((ItemGun) new ItemGun((GunType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case grenade:
-                                    grenadeItems.add((ItemGrenade) new ItemGrenade((GrenadeType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case part:
-                                    partItems.add((ItemPart) new ItemPart((PartType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case plane:
-                                    planeItems.add((ItemPlane) new ItemPlane((PlaneType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case vehicle:
-                                    vehicleItems.add((ItemVehicle) new ItemVehicle((VehicleType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case aa:
-                                    aaGunItems.add((ItemAAGun) new ItemAAGun((AAGunType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case mechaItem:
-                                    mechaToolItems.add((ItemMechaAddon) new ItemMechaAddon((MechaItemType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case mecha:
-                                    mechaItems.add((ItemMecha) new ItemMecha((MechaType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case tool:
-                                    toolItems.add((ItemTool) new ItemTool((ToolType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case box:
-                                    gunBoxBlocks.add((BlockGunBox) new BlockGunBox((GunBoxType) infoType).setBlockName(infoType.shortName));
-                                    break;
-                                case armour:
-                                    armourItems.add((ItemTeamArmour) new ItemTeamArmour((ArmourType) infoType).setUnlocalizedName(infoType.shortName));
-                                    break;
-                                case armourBox:
-                                    armourBoxBlocks.add((BlockArmourBox) new BlockArmourBox((ArmourBoxType) infoType).setBlockName(infoType.shortName));
-                                    break;
-                                case playerClass:
-                                case team:
-                                    break;
-                                default:
-                                    log("Unrecognized type for " + infoType.shortName);
-                                    break;
-                            }
-                            Sync.addHash(typeFile.lines.toString(), infoType.shortName);
-                        }
-
-                    }
-                } catch (Exception e) {
-                    log("Failed to add " + type.name() + " : " + typeFile.name);
-                    if (FlansMod.printStackTrace) {
-                        logger.error(e);
-                    }
-                }
-            }
-            log("Loaded " + type.name() + ".");
-        }
-        Sync.getUnifiedHash();
-        log("Client Hash: " + Sync.getUnifiedHash());
-        Team.spectators = spectators;
-    }
-
     public static IGunboxDescriptionable getGunBoxItem(InfoType item) {
         if (item instanceof GunType) {
-            for (ItemGun gitem : gunItems) {
-                if (Objects.equals(gitem.type.shortName, item.shortName)) {
-                    return gitem;
+            for (ItemGun gun : gunItems) {
+                if (Objects.equals(gun.type.shortName, item.shortName)) {
+                    return gun;
                 }
             }
         } else if (item instanceof BulletType) {
-            for (ItemBullet bitem : bulletItems) {
-                if (Objects.equals(bitem.type.shortName, item.shortName)) {
-                    return bitem;
+            for (ItemBullet bullet : bulletItems) {
+                if (Objects.equals(bullet.type.shortName, item.shortName)) {
+                    return bullet;
                 }
             }
         }
@@ -641,7 +429,9 @@ public class FlansMod {
         return packetHandler;
     }
 
-    /** Sync common and client config if required */
+    /**
+     * Sync common and client config if required
+     */
     public static void syncConfig(Side side) {
         syncCommonConfig();
 
@@ -650,7 +440,9 @@ public class FlansMod {
         }
     }
 
-    /** Handles client/server common configuration */
+    /**
+     * Handles client/server common configuration
+     */
     public static void syncCommonConfig() {
         //Teams/Advanced Settings
         printDebugLog = configFile.getBoolean("Print Debug Log", "Teams/advanced settings", printDebugLog, "");
@@ -660,7 +452,7 @@ public class FlansMod {
         TeamsManager.bulletSnapshotDivisor = configFile.getInt("BltSS_Divisor", "Teams/advanced settings", 50, 0, 1000, "Divisor");
 
         //Server/Gameplay Settings (Server-client synced)
-        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages,"Enable killMessage display");
+        enableKillMessages = configFile.getBoolean("enableKillMessages", "Gameplay Settings (synced)", enableKillMessages, "Enable killMessage display");
         gunCarryLimitEnable = configFile.getBoolean("gunCarryLimitEnable", "Gameplay Settings (synced)", gunCarryLimitEnable, "Enable a soft limit to hotbar weapons, applies slowness++ when >= limit");
         gunCarryLimit = configFile.getInt("gunCarryLimit", "Gameplay Settings (synced)", 3, 2, 9, "Set the soft carry limit for guns(2-9)");
         bulletGuiEnable = configFile.getBoolean("Enable bullet HUD", "Gameplay Settings (synced)", bulletGuiEnable, "Enable bullet gui");
@@ -668,7 +460,7 @@ public class FlansMod {
         hitCrossHairEnable = configFile.getBoolean("Enable hitmarkers", "Gameplay Settings (synced)", hitCrossHairEnable, "");
         realisticRecoil = configFile.getBoolean("Enable realistic recoil", "Gameplay Settings (synced)", realisticRecoil, "Changes recoil to be more realistic.");
         enableSightDownwardMovement = configFile.getBoolean("Enable downward movement of the sight after shot", "Gameplay Settings (synced)", enableSightDownwardMovement, "Enable downward movement of the sight after shot.");
-	    crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
+        crosshairEnable = configFile.getBoolean("Enable crosshairs", "Gameplay Settings (synced)", crosshairEnable, "Enable default crosshair");
         breakableArmor = configFile.getInt("breakableArmor", "Gameplay Settings (synced)", 0, 0, 2, "0 = Non-breakable, 1 = All breakable, 2 = Refer to armor config");
         defaultArmorDurability = configFile.getInt("defaultArmorDurability", "Gameplay Settings (synced)", 500, 1, 10000, "Default durability if breakable = 1");
         addGunpowderRecipe = configFile.getBoolean("Gunpowder Recipe", "Gameplay Settings (synced)", addGunpowderRecipe, "Whether or not to add the extra gunpowder recipe (3 charcoal + 1 lightstone)");
@@ -738,34 +530,36 @@ public class FlansMod {
      * Converts the String[] from the config to an ArrayList which can be used in the code more easily
      */
     public static void convertPenetrableBlocksArray(String[] penetrableBlocksArray) {
-    	ArrayList<PenetrableBlock> list = new ArrayList<>();
-    	//ID=20,HARDNESS=1,BREAKS=false
+        ArrayList<PenetrableBlock> list = new ArrayList<>();
+        //ID=20,HARDNESS=1,BREAKS=false
 
-    	for(String s : penetrableBlocksArray) {
-    		try {
-    			String[] split = s.split(",");
+        for (String s : penetrableBlocksArray) {
+            try {
+                String[] split = s.split(",");
 
-    			String[] blockData = split[0].substring(3).split(":");
+                String[] blockData = split[0].substring(3).split(":");
 
-    			int metadata = -1;
-    			if(blockData.length > 1) metadata = Integer.parseInt(blockData[1]);
-    			Block block = Block.getBlockById(Integer.parseInt(blockData[0]));
+                int metadata = -1;
+                if (blockData.length > 1) metadata = Integer.parseInt(blockData[1]);
+                Block block = Block.getBlockById(Integer.parseInt(blockData[0]));
 
-    			float hardness = Float.parseFloat( split[1].substring(9) );
-    			boolean breaks = Boolean.parseBoolean( split[2].substring(7) );
+                float hardness = Float.parseFloat(split[1].substring(9));
+                boolean breaks = Boolean.parseBoolean(split[2].substring(7));
 
-    			PenetrableBlock pB = new PenetrableBlock(block, metadata, hardness, breaks);
+                PenetrableBlock pB = new PenetrableBlock(block, metadata, hardness, breaks);
 
-    			list.add(pB);
-    		} catch(Exception e) {
-    			System.out.println("ERROR! - '" + s + "' couldn't be recognized as a penetrable block!");
-    			logger.error(e);
-    		}
-    	}
-    	FlansMod.penetrableBlocks = list;
+                list.add(pB);
+            } catch (Exception e) {
+                System.out.println("ERROR! - '" + s + "' couldn't be recognized as a penetrable block!");
+                logger.error(e);
+            }
+        }
+        FlansMod.penetrableBlocks = list;
     }
 
-    /** Handles client specific configuration */
+    /**
+     * Handles client specific configuration
+     */
     public static void syncClientConfig() {
         String aimTypeInput = configFile.getString("Aim Type", "Input Settings", "hold", "The type of aiming that you want to use 'toggle' or 'hold'");
         AimType aimType = AimType.fromString(aimTypeInput);

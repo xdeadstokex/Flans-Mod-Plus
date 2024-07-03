@@ -20,7 +20,10 @@ import java.util.List;
 /**
  * Saves player stats for teams events.
  */
+@SuppressWarnings("DataFlowIssue")
 public class PlayerStats {
+    public static final File STATS_DIR = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
+
     public String nickname = "NaN";
     public int kills = 0; //done
     public int deaths = 0; //done
@@ -62,16 +65,16 @@ public class PlayerStats {
     /**
      * Saves the current stats into an NBT file.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void savePlayerStats() {
-        File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
-        dir.mkdirs();
-        dir.setReadable(true);
-        dir.setWritable(true);
-        File file = new File(dir, nickname + " " + getPlayer(nickname).getUniqueID().toString() + ".dat");
-        dir.mkdirs();
-        dir.setReadable(true);
-        dir.setWritable(true);
-        checkFileExists(file);
+        STATS_DIR.mkdirs();
+        STATS_DIR.setReadable(true);
+        STATS_DIR.setWritable(true);
+        File file = new File(STATS_DIR, nickname + " " + getPlayer(nickname).getUniqueID().toString() + ".dat");
+        STATS_DIR.mkdirs();
+        STATS_DIR.setReadable(true);
+        STATS_DIR.setWritable(true);
+        TeamsManager.checkFileExists(file);
         try {
             NBTTagCompound tags = new NBTTagCompound();
 
@@ -98,21 +101,6 @@ public class PlayerStats {
         }
     }
 
-    private static boolean checkFileExists(File file) {
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                FlansMod.log("Created new file");
-            } catch (Exception e) {
-                FlansMod.log("Failed to create file");
-                FlansMod.log(file.getAbsolutePath());
-                FlansMod.logger.error(e);
-            }
-            return false;
-        }
-        return true;
-    }
-
     //TODO: Check if XP should be saved as an int or float.
     public void addExp(float a) {
         exp += a;
@@ -134,13 +122,11 @@ public class PlayerStats {
         avg = (double) kills / playedRounds;
     }
 
-
     public static PlayerStats getPlayerStatsFromFile(String name) {
         PlayerStats toSend = new PlayerStats();
-        File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
-        for (File file : dir.listFiles()) {
+        for (File file : STATS_DIR.listFiles()) {
             if (file.getName().startsWith(name)) {
-                checkFileExists(file);
+                TeamsManager.checkFileExists(file);
                 try {
                     NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(Files.newInputStream(file.toPath())));
                     toSend.nickname = tags.getString("Nickname");
@@ -172,7 +158,7 @@ public class PlayerStats {
         List<String> nameList = new ArrayList<>();
         File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
         for (File file : dir.listFiles()) {
-            checkFileExists(file);
+            TeamsManager.checkFileExists(file);
             try {
                 NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(Files.newInputStream(file.toPath())));
                 String nickname = tags.getString("Nickname");
@@ -229,10 +215,9 @@ public class PlayerStats {
 
     public static List<PlayerStats> getAllPlayersStats() {
         List<PlayerStats> listToSend = new ArrayList<>();
-        File dir = new File(MinecraftServer.getServer().getEntityWorld().getSaveHandler().getWorldDirectory() + "\\FlansMod players statistics\\");
-        if (dir.listFiles() == null) return null;
-        for (File file : dir.listFiles()) {
-            checkFileExists(file);
+        if (STATS_DIR.listFiles() == null) return null;
+        for (File file : STATS_DIR.listFiles()) {
+            TeamsManager.checkFileExists(file);
             try {
                 PlayerStats toSend = new PlayerStats();
                 NBTTagCompound tags = CompressedStreamTools.read(new DataInputStream(Files.newInputStream(file.toPath())));
@@ -252,8 +237,7 @@ public class PlayerStats {
                 toSend.vehiclesDestroyed = tags.getInteger("Vehicles Destroyed");
                 listToSend.add(toSend);
             } catch (Exception e) {
-                FlansMod.log("Failed to save to teams.dat");
-                FlansMod.logger.error(e);
+                FlansMod.logException("Failed to save to teams.dat", e);
                 return null;
             }
         }
