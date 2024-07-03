@@ -24,7 +24,7 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'maven-publish'
 
-version = "1.58"
+version = "1.59"
 group = "com.flansmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Flan's Mod Ultimate Stability Edition"
 
@@ -110,6 +110,7 @@ task outputJar(type: Jar) {
         exclude '**/yeolde/'
         exclude '**/zombie/'
     }
+//    archiveName = "${archivesBaseName} ${version} [1.7.10].jar"
 }
 
 task srcJar(type: Jar) {
