@@ -1959,8 +1959,9 @@ public class ModelRendererTurbo extends ModelRenderer {
 
             if (glow) glowOn();
 
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.001F);
             GL11.glEnable(GL11.GL_BLEND);
-            GL11.glDisable(GL11.GL_ALPHA_TEST);
+            //GL11.glDisable(GL11.GL_ALPHA_TEST);
 
             srcBlend = GL11.glGetInteger(GL11.GL_BLEND_SRC);
             dstBlend = GL11.glGetInteger(GL11.GL_BLEND_DST);
@@ -2014,18 +2015,13 @@ public class ModelRendererTurbo extends ModelRenderer {
             }
         }
 
-        if (Minecraft.getMinecraft().gameSettings.fancyGraphics && glow) {
-            GL11.glPushMatrix();
-            glowOn();
-        }
-
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
             if (glow) {
                 glowOff();
             }
             GL11.glBlendFunc(srcBlend, dstBlend);
             GL11.glDisable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            //GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glPopMatrix();
         }
     }
