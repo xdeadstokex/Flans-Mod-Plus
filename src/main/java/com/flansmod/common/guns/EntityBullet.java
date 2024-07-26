@@ -746,7 +746,7 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                     }
 
                     if (type.hitSoundEnable)
-                        PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, type.hitSound, true);
+
 
                     //If the bullet breaks glass, and can do so according to FlansMod, do so.
                     if (type.breaksGlass && mat == Material.glass) {
@@ -756,19 +756,29 @@ public class EntityBullet extends EntityShootable implements IEntityAdditionalSp
                         }
                     }
                     if (type.hitSoundEnable) {
-                        if (block.equals(Blocks.brick_block)) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_bricks").toString(), 0.5F, 1);
+                        String hitToUse = null;
+                        if (type.hitSound != null) {
+                            hitToUse = type.hitSound;
+                        } else if (block.equals(Blocks.brick_block)) {
+                            hitToUse = "impact_bricks";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_bricks").toString(), 0.5F, 1);
                         } else if (mat == Material.ground || mat == Material.grass || mat == Material.sand || mat == Material.clay || mat == Material.tnt) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_dirt").toString(), 0.5F, 1);
+                            hitToUse = "impact_dirt";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_dirt").toString(), 0.5F, 1);
                         } else if (mat == Material.glass || mat == Material.redstoneLight || mat == Material.ice || mat == Material.packedIce) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_glass").toString(), 0.5F, 1);
+                            hitToUse = "impact_glass";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_glass").toString(), 0.5F, 1);
                         } else if (mat == Material.iron || mat == Material.anvil) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_metal").toString(), 0.5F, 1);
+                            hitToUse = "impact_metal";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_metal").toString(), 0.5F, 1);
                         } else if (mat == Material.rock) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_rock").toString(), 0.5F, 1);
+                            hitToUse = "impact_rock";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_rock").toString(), 0.5F, 1);
                         } else if (mat == Material.wood) {
-                            worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_wood").toString(), 0.5F, 1);
+                            hitToUse = "impact_wood";
+                            //worldObj.playSoundEffect(posX, posY, posZ, FlansModResourceHandler.getSound("impact_wood").toString(), 0.5F, 1);
                         }
+                        PacketPlaySound.sendSoundPacket(posX, posY, posZ, type.hitSoundRange, dimension, hitToUse, true);
                     }
 
 

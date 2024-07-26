@@ -41,7 +41,7 @@ public class BulletType extends ShootableType
 	public EnumWeaponType weaponType = EnumWeaponType.NONE;
 
 	public String hitSound;
-	public float hitSoundRange;
+	public float hitSoundRange = 64;
 	public boolean hitSoundEnable = false;
 	public boolean entityHitSoundEnable = false;
 
