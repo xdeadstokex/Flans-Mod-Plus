@@ -294,6 +294,7 @@ This will override the value set in the gun's model!
 | Submunition | String | ~ | Set the submunition |
 | NumSubmunitions | Integer | 0 | Number of submunitions to create |
 | SubmunitionDelay | Integer | ~ | Delay to create submunitions after impact / firing? |
+| SubmunitionSpread | Float | 1 | Spread when deploying submunitions |
 | FlareParticleCount | Integer | 0 | Number of smoke particles to create |
 | DebrisParticleCount | Integer | 0 | Number of debris particles to create |
 | TrailParticles / SmokeTrail | Bool | false | Whether to create a trail of particles. |
