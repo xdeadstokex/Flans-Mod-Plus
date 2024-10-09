@@ -865,6 +865,11 @@ public class TickHandlerClient {
         }
     }
 
+    @SubscribeEvent
+    public void chatMsgEvent(ClientChatReceivedEvent event){
+        event.setCanceled(event.message.getUnformattedText().contains("#flansmod"));
+    }
+	
     private void drawInventoryItem(FontRenderer fontRenderer, ItemStack itemstack, int i, int j) {
         if (itemstack == null || itemstack.getItem() == null)
             return;
