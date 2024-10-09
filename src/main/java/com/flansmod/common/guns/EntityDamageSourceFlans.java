@@ -64,7 +64,7 @@ public class EntityDamageSourceFlans extends EntityDamageSourceIndirect {
             (FlansMod.showDistanceInKillMessage ?
             "" + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " from " +
             EnumChatFormatting.ITALIC + EnumChatFormatting.DARK_AQUA + String.format("%.1f", dist) + "m" +
-            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " away" : ""):""
+            EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " away" : ""):"#flansmod"
             );
     }
 }
