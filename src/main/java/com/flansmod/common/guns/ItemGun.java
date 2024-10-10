@@ -253,6 +253,7 @@ public class ItemGun extends Item implements IPaintableItem, IGunboxDescriptiona
                 lines.add("\u00a79Recoil Control" + "\u00a77: "
                         + String.format("%s %s %s", sprintingControl, normalControl, sneakingControl));
                 lines.add("\u00a79Accuracy" + "\u00a77: " + roundFloat(type.getSpread(stack, false, false), 2));
+                lines.add("\u00a79Switch Delay" + "\u00a77: " + roundFloat(type.switchDelay, 2));
                 lines.add("\u00a79Reload Time" + "\u00a77: " + roundFloat(type.getReloadTime(stack) / 20, 2) + "s");
                 lines.add("\u00a79Bullet Speed" + "\u00a77: " + roundFloat(type.getBulletSpeed(stack), 2));
                 // TODO Convert to stack values so this works with attachments
