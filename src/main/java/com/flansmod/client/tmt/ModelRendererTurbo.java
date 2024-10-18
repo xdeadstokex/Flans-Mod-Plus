@@ -1942,14 +1942,7 @@ public class ModelRendererTurbo extends ModelRenderer {
      * @param oldRotateOrder Whether to use the old rotate order (ZYX) instead of the new one (YZX)
      */
     public void render(float worldScale, boolean oldRotateOrder) {
-        if (isHidden) {
-            return;
-        }
-        if (!showModel) {
-            return;
-        }
-
-
+       if (isHidden || !showModel) return;
 
         int srcBlend = -1;
         int dstBlend = -1;
@@ -2028,12 +2021,8 @@ public class ModelRendererTurbo extends ModelRenderer {
 
     @Override
     public void renderWithRotation(float f) {
-        if (isHidden) {
-            return;
-        }
-        if (!showModel) {
-            return;
-        }
+       if (isHidden || !showModel) return;
+        
         if (!compiled) {
             compileDisplayList(f);
         }
@@ -2054,12 +2043,8 @@ public class ModelRendererTurbo extends ModelRenderer {
 
     @Override
     public void postRender(float f) {
-        if (isHidden) {
-            return;
-        }
-        if (!showModel) {
-            return;
-        }
+        if (isHidden || !showModel) return;
+        
         if (!compiled || forcedRecompile) {
             compileDisplayList(f);
         }
