@@ -1734,12 +1734,15 @@ public class ModelRendererTurbo extends ModelRenderer {
      * @param z whether the model should be mirrored in the z-direction
      */
     public void doMirror(boolean x, boolean y, boolean z) {
+		int x_mul=x ? -1 : 1;
+		int y_mul=y ? -1 : 1;
+		int z_mul=z ? -1 : 1;
         for (TexturedPolygon face : faces) {
             PositionTextureVertex[] verts = face.vertexPositions;
             for (int j = 0; j < verts.length; j++) {
-                verts[j].vector3D.xCoord *= (x ? -1 : 1);
-                verts[j].vector3D.yCoord *= (y ? -1 : 1);
-                verts[j].vector3D.zCoord *= (z ? -1 : 1);
+                verts[j].vector3D.xCoord *= x_mul;
+                verts[j].vector3D.yCoord *= y_mul;
+                verts[j].vector3D.zCoord *= z_mul;
             }
             if (x ^ y ^ z) face.flipFace();
         }
